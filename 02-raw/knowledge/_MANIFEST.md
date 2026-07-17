@@ -12,7 +12,7 @@ Luật:
 
 | # | File nguồn | Hành động | Đích | Dùng cho WS / công đoạn | Ngày sync |
 |---|---|---|---|---|---|
-| 1 | 01-topical-map.md | Copy nguyên | sop/01-topical-map.md | WS05 Content plan — #4, 9, 10 (DoD 14 mục chốt topical map) | 2026-07-17 |
+| 1 | 01-topical-map.md | Copy nguyên | sop/01-topical-map.md | WS05 Content plan — #4, 9, 10 (DoD 15 mục chốt topical map) | 2026-07-17 |
 | 2 | 02-content-brief.md | Copy nguyên | sop/02-content-brief.md | WS05 Content plan — #15, 16, 17, 19 | 2026-07-17 |
 | 3 | 03-internal-linking.md | Copy nguyên | sop/03-internal-linking.md | WS06 Onpage & IL — #18 | 2026-07-17 |
 | 4 | 04-entity-optimization.md | Copy nguyên | sop/04-entity-optimization.md | WS06 Onpage & IL — #13 | 2026-07-17 |
@@ -24,11 +24,11 @@ Luật:
 | 10 | 09-project-timeline/10-thang-thuc-day.md | Copy nguyên | sop/09-timeline/10-thang-thuc-day.md | Timeline toàn dự án — SETUP bước 4 (retiming gói 8/10/12 tháng), bảng B index | 2026-07-17 |
 | 11 | 09-project-timeline/khung-duy-tri.md | Copy nguyên | sop/09-timeline/khung-duy-tri.md | WS11 Handover — #33 | 2026-07-17 |
 | 12 | 09-project-timeline/README.md | Copy nguyên | sop/09-timeline/README.md | Tổng quan quy trình 10 tháng + pointer lưu đồ | 2026-07-17 |
-| 13 | 06-self-checklist/tier-1-outline-am.md | Chưng cất — giữ O1-O18 + P0 (ID + mô tả check + ngưỡng pass); lược evidence/rationale/ví dụ dài (~50% dung lượng). Đang chưng cất bởi agent riêng, xem file đích | sop/06-self-checklist/tier-1-outline-am.md | WS05 — QC outline/AM (bài viết chạy ở fork Content Production) | 2026-07-17 |
-| 14 | 06-self-checklist/tier-1-content-writing.md | Chưng cất — giữ W1-W21 + Depth/Tone /23; lược evidence/ví dụ dài. Đang chưng cất bởi agent riêng, xem file đích | sop/06-self-checklist/tier-1-content-writing.md | WS05 — QC bài viết | 2026-07-17 |
-| 15 | 06-self-checklist/tier-3-technical-advance.md | Chưng cất — bỏ cột Data/Evidence, giữ item + ngưỡng. Đang chưng cất bởi agent riêng, xem file đích | sop/06-self-checklist/tier-3-technical-advance.md | WS03 Audit — #27, 29 | 2026-07-17 |
-| 16 | 07-visual-semantic.md | Chưng cất — giữ Phần B (process B0-B8 + Output + checkbox), Phần C (RACI), Phần D (trade-offs); LOẠI HOÀN TOÀN Phần A (deep theory bảo mật: patents, leak factors, 4 Pillars, centerpiece dial). Đang chưng cất bởi agent riêng, xem file đích | sop/07-visual-semantic.md | WS04 Structure — #11 | 2026-07-17 |
-| 17 | 08-onpage-checklist.md | Chưng cất — giữ nguyên P0-P23 (/23) + T2-P1..8 (/31) + T3-P1..8 (/39) + AX1-AX5 (chấm riêng) + luật scoring + luật "sửa nền trước"; lược evidence inline, cột cross-ref wikilink, bảng reconciliation OP1-OP55. Đang chưng cất bởi agent riêng, xem file đích | sop/08-onpage-checklist.md | WS06 Onpage & IL — #7, 13, 18, 23 · WS08 GEO (AX1-AX5) — #14, 21, 28 | 2026-07-17 |
+| 13 | 06-self-checklist/tier-1-outline-am.md | Chưng cất — giữ O1-O18 + P0 (ID + mô tả check + ngưỡng pass); lược evidence/rationale/ví dụ dài (~50% dung lượng) | sop/06-self-checklist/tier-1-outline-am.md | WS05 — QC outline/AM (bài viết chạy ở fork Content Production) | 2026-07-17 |
+| 14 | 06-self-checklist/tier-1-content-writing.md | Chưng cất — giữ W1-W21 + Depth/Tone /23; lược evidence/ví dụ dài | sop/06-self-checklist/tier-1-content-writing.md | WS05 — QC bài viết | 2026-07-17 |
+| 15 | 06-self-checklist/tier-3-technical-advance.md | Chưng cất — bỏ cột Data/Evidence, giữ item + ngưỡng | sop/06-self-checklist/tier-3-technical-advance.md | WS03 Audit — #27, 29 | 2026-07-17 |
+| 16 | 07-visual-semantic.md | Chưng cất — giữ Phần B (process Bước 0-8 — viết tắt B0-B8 — + Output + checkbox), Phần C (RACI), Phần D (trade-offs); LOẠI HOÀN TOÀN Phần A (deep theory bảo mật: patents, leak factors, 4 Pillars, centerpiece dial) | sop/07-visual-semantic.md | WS04 Structure — #11 | 2026-07-17 |
+| 17 | 08-onpage-checklist.md | Chưng cất — giữ nguyên P0-P23 (/23) + T2-P1..8 (/31) + T3-P1..8 (/39) + AX1-AX5 (chấm riêng) + luật scoring + luật "sửa nền trước"; lược evidence inline, cột cross-ref wikilink, bảng reconciliation OP1-OP55 | sop/08-onpage-checklist.md | WS06 Onpage & IL — #7, 13, 18, 23 · WS08 GEO (AX1-AX5) — #14, 21, 28 | 2026-07-17 |
 
 ## Nhóm KHÔNG copy
 

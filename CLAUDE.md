@@ -12,7 +12,7 @@
 
 ## §0. Execution Rule
 
-**Luôn show plan. Chờ duyệt. Rồi thực hiện.** Không có ngoại lệ.
+**Luôn show plan. Chờ duyệt. Rồi thực hiện.** Ngoại lệ duy nhất: task trivial read-only (đọc file, tra index) theo AGENT.md §4.
 
 ### 4 Meta-Principles — ALWAYS ON (inline, không phụ thuộc file ngoài)
 
@@ -103,7 +103,7 @@ Không rõ phân loại → hỏi, không đoán. Trích context từ raw → sh
 0. `AGENT.md` — communication persona.
 1. `index.md` — dòng công đoạn liên quan: status hiện tại, PIC, tháng, deliverable, Ghi chú.
 2. `12-feedback-lessons/lessons/lessons-ws<XX>.md` — nếu file tồn tại cho workstream đang làm. Lesson là luật đã trả giá — không lặp lại lỗi cũ.
-3. Cheat-sheet workstream trong `02-raw/knowledge/cheat-sheets/` — vd Work WS06 → `ws06-onpage-il.md`.
+3. Cheat-sheet workstream trong `02-raw/knowledge/cheat-sheets/` — nếu WS có cheat-sheet (hiện có ws03→ws08) — vd Work WS06 → `ws06-onpage-il.md`.
 4. Checklist đầy đủ theo ma trận M (§5) — CHỈ khi: (a) Work công đoạn có checklist, hoặc (b) đang chạy QC.
 5. `00-client-context/kpi-commitments.md` — nếu deliverable chạm KPI, cam kết hợp đồng hoặc báo cáo.
 
@@ -203,11 +203,11 @@ Luật cứng folder:
 
 | WS | Folder | Công đoạn | Skill chính | Checklist QC (02-raw/knowledge/) | Done-criteria |
 |---|---|---|---|---|---|
-| Context | 00-client-context | 1, 3 | — | DoD trong template | 3 file context stable, HĐ trích vào kpi-commitments |
+| Context | 00-client-context | 1, 3 | — | DoD trong template | 3 file context stable + hop-dong-cam-ket.md đã chưng cất từ HĐ, HĐ trích vào kpi-commitments |
 | Strategy | 01-strategy-okrs | 1, 8, 24(OKRs), 31 | okrs-gtv-tag-framework | DoD template okrs | OKRs được SEO Director duyệt, có backup plan |
 | Audit | 03-audits | 2, 5, 6◇, 7(plan), 22◇, 24, 27, 29 | semantic-content-audit, technical-seo-audit, competitor-seo-gap-analysis, content-refresh | sop/05-audit-checklist.md + sop/06-self-checklist/tier-3-audit-configuration.md + tier-3-technical-advance.md | Audit report + phân loại action full URL + owner/deadline |
-| Structure | 04-structure-ux-cro | 11 | visual-semantic-seo, semantic-html-optimization | sop/07-visual-semantic.md (B0-B8 + RACI) | Wireframe + HTML template semantic được duyệt, ≤15 ngày đầu T2 |
-| Content plan | 05-content-plan | 4, 9, 10, 15, 16, 17, 19 | topical-map-creation, competitor-seo-gap-analysis | sop/01-topical-map.md (DoD 14) + sop/02-content-brief.md + tier-1 outline/writing (QC bài) | Topical map chốt + SCN; plan traffic ≥ cam kết +20%; ma trận content đủ % mốc |
+| Structure | 04-structure-ux-cro | 11 | visual-semantic-seo, semantic-html-optimization | sop/07-visual-semantic.md (Bước 0-8 — viết tắt B0-B8 — + RACI) | Wireframe + HTML template semantic được duyệt, ≤15 ngày đầu T2 |
+| Content plan | 05-content-plan | 4, 9, 10, 15, 16, 17, 19 | topical-map-creation, competitor-seo-gap-analysis | sop/01-topical-map.md (DoD 15) + sop/02-content-brief.md + tier-1 outline/writing (QC bài) | Topical map chốt + SCN; plan traffic ≥ cam kết +20%; ma trận content đủ % mốc |
 | Onpage & IL | 06-onpage-internal-link | 7(execute), 13, 18, 23 | seo-onpage, internal-linking, schema-markup-generator, image-seo-optimize | sop/08-onpage-checklist.md (P0→/23→/31→/39) + sop/03-internal-linking.md + sop/04-entity-optimization.md | Batch onpage pass /23 (tier theo kick-off); IL plan thực thi, orphan=0 |
 | Offpage | 07-offpage | 20, 25◇, 26 | backlink-research, backlink-plan, textlink-analyzer | DoD gate-offpage-decision + backlink-campaign template | Gate có verdict; campaign đúng velocity/anchor plan |
 | GEO | 08-geo-ai-visibility | 14, 21, 28 | geo-tracking-prompt-selection, geo-content-optimization | AX1-AX5 (trong sop/08) + DoD geo-baseline | Baseline đo được; đợt FS/AIO có danh sách query + kết quả cite |

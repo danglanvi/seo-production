@@ -1,5 +1,7 @@
 # Cheat-sheet WS04 — Structure / UX / CRO (04-structure-ux-cro)
 
+Ký hiệu B0-B8 trong file này = «Bước 0»→«Bước 8» của `../sop/07-visual-semantic.md`.
+
 > Bản 1 trang, chưng cất từ `../sop/07-visual-semantic.md` (Phần B process 8 bước + Phần C RACI) ngày 2026-07-17.
 > QC chính thức PHẢI chấm theo checklist đầy đủ trong `../sop/07-visual-semantic.md` — cheat-sheet chỉ để nạp nhanh trước khi làm.
 

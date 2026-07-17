@@ -16,6 +16,14 @@ master_version: v2026.07
 
 ## 1. Có gì mới
 
+### v2026.07 (vá 2026-07-18) — 17 fix từ đợt verification chéo
+
+- DoD topical map chuẩn **15 mục** (trước ghi 14) — đồng bộ CLAUDE.md ma trận M, `index.md`, knowledge pack, cheat-sheet ws05, README WS05 và template topical-map (tách item Document Design Template / Content Briefs cho khớp sop/01).
+- Chuẩn hóa `SYNC.md`: prompt migration mục 6 trỏ về bảng 2.A (GHI ĐÈ) / 2.B (GIỮ) của MIGRATION.md thay vì hard-code; danh sách read-only mục 3 đồng bộ đủ bảng 2.A; nhịp hằng ngày đổi thứ tự **commit TRƯỚC pull**; bootstrap `init -b main`; escape `\|` bảng ba file dùng chung.
+- File thứ 4 `00-client-context/hop-dong-cam-ket.md` khai báo chính thức: SETUP bước 3 tạo + verify tồn tại, done-criteria ma trận M dòng Context, README WS00, pointer trong `kpi-commitments.md`.
+- Ký hiệu **B0-B8** khai báo tường minh = «Bước 0»→«Bước 8» của `sop/07-visual-semantic.md` (CLAUDE.md, knowledge README, `_MANIFEST.md`, README WS04, cheat-sheet ws04); cheat-sheets ghi rõ 6 file WS03→WS08 + điều kiện ở pre-work §3.
+- Dọn khác: quick-start README lên 5 lệnh (thêm `ingest`), banner 3 file .html lưu đồ không đóng gói (`sop/09-timeline/README.md`), `_MANIFEST.md` bỏ vế "Đang chưng cất bởi agent riêng", ngoại lệ trivial read-only ở CLAUDE.md §0, bảng 2.B ghi rõ trừ README `12-feedback-lessons/`, ghi chú standalone bước 7 trong SETUP.md.
+
 ### v2026.07 — khởi tạo master
 
 Bản đầu tiên của hệ SEO Production. Không có instance cũ để migrate — entry này là mốc gốc.
@@ -59,7 +67,7 @@ Bản đầu tiên của hệ SEO Production. Không có instance cũ để migr
 | Registry | `index.md` · `log.md` |
 | Raw client | `02-raw/contracts-proposals/` · `seo-data/` · `logfiles/` · `client-docs/` · `screenshots/` (mọi thứ NGOÀI `README.md`) |
 | **Deliverable** | mọi file trong `01-strategy-okrs/` → `11-handover-maintenance/` (trừ `README.md` từng folder) |
-| Feedback & lessons | `12-feedback-lessons/` toàn bộ (`feedback-log.md` · `lessons/` · `retro/`) |
+| Feedback & lessons | `12-feedback-lessons/` toàn bộ (`feedback-log.md` · `lessons/` · `retro/`) — trừ `README.md` (thuộc nhóm A) |
 | Archive | `99-archive/` |
 
 > ⚠ **Điểm khéo:** workstream folder chứa CẢ `README.md` (infra) LẪN deliverable (data). Chỉ đè `README.md`, giữ nguyên deliverable. Vì vậy KHÔNG `cp -R` cả workstream folder — dùng cách Claude-assisted ở mục 3.

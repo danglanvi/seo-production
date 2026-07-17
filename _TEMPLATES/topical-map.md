@@ -9,7 +9,7 @@ version: v1
 
 # {{CLIENT}} — Topical Map + SCN
 
-> Checklist QC: `02-raw/knowledge/sop/01-topical-map.md` (DoD 14 mục). Skill: `skills/topical-map-creation`.
+> Checklist QC: `02-raw/knowledge/sop/01-topical-map.md` (DoD 15 mục). Skill: `skills/topical-map-creation`.
 > Input: 9 câu client discovery (Business/Audience/Competition) + gap-analysis.md + GSC/Ahrefs access.
 > Naming: `{{CLIENT}}_topical-map_v{{N}}.md`. Delivery target: 5-10 ngày làm việc theo niche size.
 
@@ -62,7 +62,7 @@ Golden Rule: ONE Macro Context per page. L0 (Answer-First) mandatory mọi H2/H3
 3. Publishing order matters: ghi rõ thứ tự trong calendar.
 4. Benchmark momentum đối thủ: {{số bài/tháng của đối thủ mạnh nhất}}.
 
-## Done-criteria (DoD 14 mục — sop/01)
+## Done-criteria (DoD 15 mục — sop/01)
 
 - [ ] 2-3 Buyer Personas documented với goals + challenges + search behavior.
 - [ ] Source Context + Central Entity (Wikipedia-verified) + Central Search Intent locked.
@@ -76,5 +76,6 @@ Golden Rule: ONE Macro Context per page. L0 (Answer-First) mandatory mọi H2/H3
 - [ ] ≥3 Quality Nodes + ≥2 Trending Nodes identified.
 - [ ] Core ↔ Outer internal link map — signals flow về Core.
 - [ ] Publication calendar (5-phase) + competitor momentum benchmark.
-- [ ] Document Design Template per page type + Content Briefs top 20 pages (L0 mandatory + E-A-V).
+- [ ] Document Design Template per page type.
+- [ ] Content Briefs top 20 pages (L0 mandatory + E-A-V).
 - [ ] GEO audit: Gate #1 Title/Meta + Gate #2 Speed <2s + Gate #3 Chunk/L0 PASS cho Quality Nodes.

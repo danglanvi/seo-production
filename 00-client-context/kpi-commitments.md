@@ -8,7 +8,7 @@ updated: "{{NGAY_CAP_NHAT}}"
 
 # {{CLIENT}} — KPI cam kết theo hợp đồng
 
-> Trích từ HĐ trong `02-raw/contracts-proposals/` theo schema `_TEMPLATES/hop-dong-cam-ket.md`. Đây là nguồn duy nhất WS 09 Reporting được phép báo cáo. Điền xong đổi `status: stable`.
+> Trích từ HĐ trong `02-raw/contracts-proposals/` theo schema `_TEMPLATES/hop-dong-cam-ket.md` — bản chưng cất đầy đủ nằm ở `hop-dong-cam-ket.md` cùng folder. Đây là nguồn duy nhất WS 09 Reporting được phép báo cáo. Điền xong đổi `status: stable`.
 
 ## 1. KPI cam kết theo HĐ
 

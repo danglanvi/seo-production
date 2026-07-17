@@ -34,7 +34,7 @@ Luật đọc bảng:
 | 7 | Xử lý action audit content (xong hết T3) | T2→T3 | 03+06 | | SEO Lead Project | GTV | SEO Lead Project | todo | — | Plan ở 03, execute ở 06 · mốc cứng: xong hết T3 |
 | 8 | Chiến lược + OKRs/KPI dự án | T1 | 01 | | SEO Lead Project | GTV | SEO Director | todo | — | Thứ tự triển khai topic + backup plan |
 | 9 | Research Outer Section trước | T2 | 05 | | Content Leader | GTV | SEO Lead Project | todo | — | Ưu tiên trước để tạo Historical Data sớm |
-| 10 | Topical Map + outer ước tính → SCN | T1→T2 | 05 | | SEO Lead Project | GTV | SEO Leader → SEO Director | todo | — | Demo T1 → chốt SCN đầu T2 · DoD 14 mục |
+| 10 | Topical Map + outer ước tính → SCN | T1→T2 | 05 | | SEO Lead Project | GTV | SEO Leader → SEO Director | todo | — | Demo T1 → chốt SCN đầu T2 · DoD 15 mục |
 | 11 | Cấu trúc site + wireframe UX/UI | T1→T2 | 04 | | SEO Lead Project, CRO, Coder | GTV | SEO Leader | todo | — | Mốc cứng: lock ≤15 ngày đầu T2 · HTML template semantic · site-wide CRO T2→T3 |
 | 12 | Kick-off dự án với khách hàng | T1 | 10 | | Account, SEO Lead Project | GTV | Account | todo | — | Chốt Tier 2 checklist được bật — ghi tại dòng này |
 | 13 | Entity onsite/offsite + Content Entity | T1→T3 | 06 | | Content Leader | GTV | SEO Lead Project | todo | — | Cuối T1 → ≤15 ngày đầu T3 · viết bài ở fork Content Production |

@@ -49,10 +49,10 @@ Mô hình nhánh: **main-only**. Team không tạo branch, không tạo PR. Ch�
 2. **Kết thúc mỗi khối việc** (không đợi cuối ngày):
 
    ```bash
-   git pull && git add -A && git commit -m "<client>: <workstream> — <việc>" && git push
+   git add -A && git commit -m "<client>: <workstream> — <việc>" && git pull && git push
    ```
 
-   Chuỗi này làm 4 bước liền: kéo bản mới nhất → gom thay đổi của bạn → chốt phiên bản kèm mô tả → đẩy lên server. GitHub Desktop: `Pull origin` → điền message → `Commit to main` → `Push origin`.
+   Chuỗi này làm 4 bước liền: gom thay đổi của bạn → chốt phiên bản kèm mô tả (commit TRƯỚC để thay đổi của bạn được an toàn) → kéo bản mới nhất về trộn → đẩy lên server. GitHub Desktop: điền message → `Commit to main` → `Fetch origin` / `Pull origin` → `Push origin`.
 3. Commit message theo đúng format `<client>: <workstream> — <việc>`, ví dụ: `acme: onpage — audit entity trang danh mục`.
 4. **Luật vàng: không để việc qua đêm chưa push.** Chưa xong cũng push — bản dở trên server tốt hơn bản đẹp kẹt trong máy hỏng.
 
@@ -61,15 +61,17 @@ Mô hình nhánh: **main-only**. Team không tạo branch, không tạo PR. Ch�
 ## 3. Khu vực ghi của bạn
 
 1. **1 file — 1 PIC.** Mỗi file deliverable có đúng 1 PIC, ghi ở cột PIC trong `index.md`. Chỉ PIC được ghi file đó. Người khác góp ý qua `12-feedback-lessons/feedback-log.md`, không sửa thẳng.
-2. **File cấu trúc/luật là read-only với team** — chỉ Lead đụng, và chỉ qua MIGRATION (mục 6):
-   - `CLAUDE.md`, `AGENTS.md`, `AGENT.md`, `SYNC.md`
-   - `_TEMPLATES/`, `skills/`, `.claude/skills/`, `.agents/skills/`, `knowledge/`
+2. **File cấu trúc/luật là read-only với team** — chỉ Lead đụng, và chỉ qua MIGRATION (mục 6). Danh sách khớp bảng 2.A của `MIGRATION.md`:
+   - 7 file root: `CLAUDE.md`, `AGENT.md`, `AGENTS.md`, `README.md`, `SETUP.md`, `MIGRATION.md`, `SYNC.md`
+   - `.gitignore` · `.gitattributes`
+   - `_TEMPLATES/`, `skills/`, `.claude/skills/`, `.agents/skills/`, `02-raw/knowledge/`, `config/`
+   - `README.md` của mọi WS folder (`00-client-context/` → `12-feedback-lessons/`)
 3. **Ba file dùng chung** — mỗi file một luật riêng:
 
    | File | Cơ chế | Luật ghi |
    |---|---|---|
-   | `log.md` | merge=union (git giữ cả hai phía, không nổ conflict) | Append-only: chỉ thêm entry mới dạng `## [YYYY-MM-DD] <op> | <title> — @<alias>`. CẤM sửa entry cũ — union sẽ nhân đôi dòng bị sửa. |
-   | `12-feedback-lessons/feedback-log.md` | merge=union | Mỗi feedback 1 block: `### FB-YYYY-MM-DD-<alias>-<nn> | <nguồn: client/internal/QC> | <workstream>` + `- Nội dung:` + `- Đề xuất:` + `- Trạng thái distill: pending`. Chỉ Lead được đổi dòng Trạng thái distill. |
+   | `log.md` | merge=union (git giữ cả hai phía, không nổ conflict) | Append-only: chỉ thêm entry mới dạng `## [YYYY-MM-DD] <op> \| <title> — @<alias>`. CẤM sửa entry cũ — union sẽ nhân đôi dòng bị sửa. |
+   | `12-feedback-lessons/feedback-log.md` | merge=union | Mỗi feedback 1 block: `### FB-YYYY-MM-DD-<alias>-<nn> \| <nguồn: client/internal/QC> \| <workstream>` + `- Nội dung:` + `- Đề xuất:` + `- Trạng thái distill: pending`. Chỉ Lead được đổi dòng Trạng thái distill. |
    | `index.md` | KHÔNG union — conflict xử theo mục 4 | Mỗi công đoạn 1 dòng, chỉ PIC sửa dòng của mình. Luôn `git pull` NGAY TRƯỚC khi sửa. Cấu trúc bảng chỉ Lead đổi, vào thời điểm Lead đã báo team push hết. |
 
 ---
@@ -131,11 +133,7 @@ Master đổi (luật, template, skill mới) → repo dự án KHÔNG tự nh�
 2. Mở AI tại repo DỰ ÁN (không phải folder tạm), dán nguyên văn prompt:
 
    ```text
-   Chạy MIGRATION từ master cho repo dự án này. Bản master mới nằm ở /tmp/seo-master-new, tag <tag, ví dụ v2026.07>. Luật:
-   - GHI ĐÈ infra từ master: file luật (CLAUDE.md, AGENTS.md, AGENT.md, SYNC.md), _TEMPLATES/, skills/, mirror .claude/skills/ + .agents/skills/, knowledge/.
-   - GIỮ NGUYÊN toàn bộ data dự án: các folder 00→12, 99-archive, config/, log.md, index.md, feedback-log.md và mọi deliverable.
-   - Liệt kê diff từng file (ghi đè / thêm mới / giữ nguyên) cho tôi duyệt TRƯỚC khi ghi bất kỳ file nào.
-   - Sau khi tôi duyệt: áp thay đổi, cập nhật master_version trong frontmatter MIGRATION.md thành tag mới, commit message 'migration: master <tag>' và push.
+   Master mới ở /tmp/seo-master-new, tag <tag, ví dụ v2026.07>. Đọc `MIGRATION.md` của bản master mới, thực hiện đúng bảng 2.A (GHI ĐÈ) và 2.B (GIỮ) của nó. Báo diff cho tôi duyệt TRƯỚC khi ghi. Sau khi ghi: cập nhật `master_version` trong MIGRATION.md của repo này, commit 'migration: master <tag>' và push.
    ```
 
 3. Duyệt diff → AI commit + push. Báo team chạy `git pull` để nhận bản mới.
@@ -175,7 +173,7 @@ Chỉ Vincent hoặc Lead làm mục này. Lệnh copy-paste:
 
 ```bash
 # Master (1 lần, tại workspace root):
-git -C "SEO Production" init && git -C "SEO Production" add -A && git -C "SEO Production" commit -m "bootstrap: master v2026.07" && git -C "SEO Production" tag v2026.07
+git -C "SEO Production" init -b main && git -C "SEO Production" add -A && git -C "SEO Production" commit -m "bootstrap: master v2026.07" && git -C "SEO Production" tag v2026.07
 # Khi có GitHub org: tạo repo private seo-production-master (bật Template repository) rồi:
 git -C "SEO Production" remote add origin git@github.com:<org>/seo-production-master.git && git -C "SEO Production" push -u origin main --tags
 # Repo dự án mới: GitHub "Use this template" → seo-<client> → clone vào PROJECTS/<client>/

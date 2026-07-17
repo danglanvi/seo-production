@@ -19,6 +19,8 @@
 | **Trong workspace Vincent** (tồn tại `../GTV Ops/`) | Vincent, SEO Lead trên máy master | Bước 3 đọc được client meta từ `GTV Ops/wiki/entities/clients/`; bước 7-8 chạy đủ |
 | **Standalone** (clone repo dự án của team) | Executive, Account, Lead làm remote | Không có `GTV Ops/` — bước 3 Claude hỏi thông tin thay vì tự đọc; bước 8 bỏ phần bookkeeping GTV Ops |
 
+Standalone: bước 7 (fork Content Production) do Vincent/Lead thực hiện trên máy master rồi cấp repo content cho team; instance chỉ giữ link fork trong `05-content-plan/README.md`.
+
 ### Điều kiện tiên quyết
 
 | Điều kiện | Vì sao | Bắt buộc? |
@@ -123,6 +125,10 @@ grep -rn "{{" 00-client-context/ index.md
 # 2. Log có entry op=setup
 grep "setup" log.md
 # Expected: ≥1 entry "## [YYYY-MM-DD] setup | ..."
+
+# 3. File thứ 4 đã được tạo ở bước 3 (bản chưng cất HĐ đầy đủ)
+ls 00-client-context/hop-dong-cam-ket.md
+# Expected: file tồn tại
 ```
 
 Kiểm tra bằng mắt trong `index.md`:
@@ -150,7 +156,7 @@ Kiểm tra bằng mắt trong `index.md`:
 
 ## 4. Sau setup — bắt đầu vận hành
 
-Quick start 4 lệnh (chi tiết `README.md` + `CLAUDE.md`):
+Bộ lệnh vận hành — xem bảng quick-start `README.md` (chi tiết `CLAUDE.md`):
 
 ```
 "làm công đoạn <n>"

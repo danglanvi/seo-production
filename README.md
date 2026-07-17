@@ -40,14 +40,15 @@ Master template cho một dự án SEO delivery trọn gói: 33 công đoạn, 1
 
 Chi tiết công đoạn ↔ WS ↔ checklist ↔ skill: ma trận M trong `CLAUDE.md`. README từng WS folder ghi deliverable chuẩn + done-criteria.
 
-## Quick start — 4 lệnh
+## Quick start — 5 lệnh
 
 | Lệnh | Việc AI làm |
 |---|---|
-| `setup client <tên>` | Nhân bản master thành instance, điền context + bảng A index, retiming gói 8/10/12 tháng (protocol 9 bước — `SETUP.md`) |
+| `setup client <tên>` | Điền context + bảng A index + retiming gói 8/10/12 tháng — chạy SAU khi đã duplicate master và drop raw bằng tay (SETUP.md bước 1-2; protocol đủ 9 bước) |
 | `làm công đoạn <n>` | Pre-work protocol → làm deliverable theo template + cheat-sheet WS → update index + log |
 | `QC <path> theo công đoạn <n>` | Chấm từng item theo checklist ma trận M, evidence cụ thể → QC report vào `03-audits/qc/` + verdict PASS/FAIL vào index |
 | `feedback: <nội dung>` | Ghi entry vào `12-feedback-lessons/feedback-log.md`; pattern lặp ≥2 lần → đề xuất promote lesson |
+| `ingest <file> vào 02-raw` | Phân loại raw + chưng cất context (CLAUDE.md §2) |
 
 Luật cứng: công đoạn có checklist không được set done khi chưa QC PASS. `02-raw/` immutable — chỉ thêm, không sửa/xóa. `02-raw/knowledge/` chỉ vá ở master, instance nhận qua MIGRATION.
 

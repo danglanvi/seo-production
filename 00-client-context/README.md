@@ -2,7 +2,7 @@
 
 1. **Mục đích**: Nguồn sự thật duy nhất về client — mọi Work/QC chạm KPI hoặc context phải đọc folder này trước.
 2. **Công đoạn phụ trách**: #1 (Ký hợp đồng · OKRs năm & quý), #3 (Marketing Foundation).
-3. **Deliverable chuẩn**: 3 file cố định `client-profile.md` · `marketing-foundation.md` · `kpi-commitments.md` — cập nhật tại chỗ, không version theo naming WS.
+3. **Deliverable chuẩn**: 3 file cố định `client-profile.md` · `marketing-foundation.md` · `kpi-commitments.md` + `hop-dong-cam-ket.md` (tạo lúc SETUP bước 3 từ `_TEMPLATES/hop-dong-cam-ket.md` — bản chưng cất HĐ đầy đủ) — cập nhật tại chỗ, không version theo naming WS.
 4. **Template**: skeleton có sẵn trong folder; trích hợp đồng theo schema `_TEMPLATES/hop-dong-cam-ket.md`.
 5. **Checklist QC**: DoD ghi cuối mỗi skeleton (WS này không có checklist riêng trong `02-raw/knowledge/`).
 6. **Skill gọi**: — (fill bằng protocol "setup client <tên>" trong `SETUP.md`).

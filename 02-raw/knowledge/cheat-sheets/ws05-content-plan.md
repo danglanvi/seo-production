@@ -1,6 +1,6 @@
 # Cheat-sheet WS05 — Content Plan (05-content-plan)
 
-> Bản 1 trang, chưng cất từ `../sop/01-topical-map.md` (DoD 14 mục) + `../sop/02-content-brief.md` + `../sop/09-timeline/10-thang-thuc-day.md` (ma trận content type × timeline) ngày 2026-07-17.
+> Bản 1 trang, chưng cất từ `../sop/01-topical-map.md` (DoD 15 mục) + `../sop/02-content-brief.md` + `../sop/09-timeline/10-thang-thuc-day.md` (ma trận content type × timeline) ngày 2026-07-17.
 > QC chính thức PHẢI chấm theo checklist đầy đủ trong `../sop/` — cheat-sheet chỉ để nạp nhanh trước khi làm.
 
 ## 1. Mục tiêu WS
@@ -34,7 +34,7 @@ Công đoạn phụ trách: **4, 9, 10, 15, 16, 17, 19**.
 
 ## 4. Ngưỡng pass
 
-- Topical Map chốt = **DoD 14 mục trong `../sop/01-topical-map.md` tick 100%** — đây là checklist chốt, không thay bằng 10 dòng trên.
+- Topical Map chốt = **DoD 15 mục trong `../sop/01-topical-map.md` tick 100%** — đây là checklist chốt, không thay bằng 10 dòng trên.
 - Plan traffic tổng dự phóng **≥ cam kết +20%**; ma trận content đủ % theo mốc tháng (gói 8/12 tháng retiming theo bảng biến thể trong `../sop/09-timeline/10-thang-thuc-day.md`).
 - Luật thời gian bất biến khi xếp lịch: content cần **~100 ngày mature** → phải làm trước 2-3 tháng so với thời điểm cần kết quả; dây chuyền **content → +10-15 ngày onpage → +15-30 ngày internal link semantic**.
 - Brief PASS khi 100% section fill, không TBD — writer không phải SEO specialist vẫn viết đúng Central Search Intent.

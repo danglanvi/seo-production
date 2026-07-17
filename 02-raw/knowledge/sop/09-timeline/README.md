@@ -1,6 +1,7 @@
 > Bản đóng gói cho SEO Production — sync từ `SEO Knowledge/Semantic SEO A - Z/sop/09-project-timeline/README.md` ngày 2026-07-17.
 > Wikilink [[...]] trong file = tri thức nội bộ sâu (wiki Semantic SEO, không đóng gói theo dự án).
 > Gặp wikilink cần đào sâu → hỏi SEO Lead / Vincent, hoặc tra kho gốc trên máy master.
+> 3 file .html lưu đồ (quy-trinh-seo-10-thang / duy-tri / account) KHÔNG đóng gói theo dự án — xem trên máy master (xem `_MANIFEST.md`).
 
 # SOP 09 — Project Timeline: Quy trình dự án SEO GTV
 
