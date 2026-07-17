@@ -1,0 +1,591 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GTV SEO — Client Report Dashboard (Demo v1)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap');
+  :root{
+    --blue:#0693E3; --purple:#6F2CC4; --purple-hot:#9900EF; --cyan:#0BC5FC;
+    --amber:#B7791F; --green:#16A34A; --red:#DC2626;
+    --ink1:#0F172A; --ink2:#334155; --ink3:#64748B; --ink4:#94A3B8;
+    --bg:#F8FAFC; --card:#FFFFFF; --line:#E2E8F0; --line2:#CBD5E1;
+    --tintblue:#EFF6FF; --tintpurple:#F3EEFB; --tintamber:#FBF3E4; --tintgreen:#E9F7EE; --tintred:#FDECEC;
+    --grad:linear-gradient(90deg,#0693E3 0%,#6F2CC4 100%);
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --r:10px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink1);
+    font:14px/1.55 "Be Vietnam Pro",system-ui,-apple-system,sans-serif;}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px 70px}
+
+  /* ── Header ── */
+  .top{background:var(--card);border-bottom:1px solid var(--line)}
+  .topin{max-width:1180px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:16px;letter-spacing:-.01em}
+  .logo .dot{width:26px;height:26px;border-radius:7px;background:var(--grad)}
+  .logo small{font-weight:600;color:var(--ink3);font-size:11px;display:block;letter-spacing:.06em;text-transform:uppercase}
+  .spacer{flex:1}
+  select.proj{font:600 13px "Be Vietnam Pro",sans-serif;color:var(--ink1);background:var(--card);
+    border:1.5px solid var(--line2);border-radius:8px;padding:7px 10px}
+  .badge{font:700 10.5px var(--mono);letter-spacing:.06em;padding:4px 9px;border-radius:999px;
+    background:var(--tintamber);color:var(--amber);border:1px solid #E7D3AC}
+  .badge.live{background:var(--tintgreen);color:var(--green);border-color:#BBE3C8}
+
+  .hero{background:var(--grad);color:#fff;border-radius:var(--r);padding:22px 26px;margin:22px 0 18px;
+    display:flex;gap:18px;align-items:flex-end;flex-wrap:wrap}
+  .hero h1{margin:0;font-size:clamp(19px,2.6vw,26px);font-weight:800;letter-spacing:-.01em}
+  .hero .sub{opacity:.92;font-size:12.5px;margin-top:4px}
+  .hero .chips{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+  .hero .chip{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35);border-radius:999px;
+    padding:4px 12px;font-size:11.5px;font-weight:600}
+
+  /* ── Tabs ── */
+  .tabs{display:flex;gap:4px;border-bottom:2px solid var(--line);margin-bottom:20px;overflow-x:auto}
+  .tab{border:none;background:none;font:600 13.5px "Be Vietnam Pro",sans-serif;color:var(--ink3);
+    padding:10px 14px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap}
+  .tab.on{color:var(--blue);border-bottom-color:var(--blue)}
+  .panel{display:none}
+  .panel.on{display:block}
+
+  h2.sec{font-size:15px;font-weight:800;margin:26px 0 4px;letter-spacing:-.01em}
+  p.note{font-size:12px;color:var(--ink3);margin:0 0 12px;max-width:88ch}
+
+  /* ── Stat tiles ── */
+  .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:12px;margin:12px 0 6px}
+  .tile{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:13px 15px 12px;position:relative}
+  .tile::before{content:"";position:absolute;left:0;top:12px;bottom:12px;width:3px;border-radius:3px;background:var(--tc,var(--blue))}
+  .tile .tl{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink3)}
+  .tile .tv{font:800 24px/1.15 "Be Vietnam Pro",sans-serif;letter-spacing:-.02em;margin-top:3px;font-variant-numeric:tabular-nums}
+  .tile .td{font-size:11.5px;color:var(--ink3);margin-top:3px}
+  .tile .td b.up{color:var(--green)} .tile .td b.down{color:var(--red)}
+  .tile .src{position:absolute;top:11px;right:12px;font:600 9px var(--mono);color:var(--ink4);
+    border:1px solid var(--line);border-radius:4px;padding:1px 5px;letter-spacing:.04em}
+
+  /* progress */
+  .prog{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:15px 18px;margin:12px 0}
+  .prog .pl{display:flex;justify-content:space-between;font-size:12.5px;font-weight:600;color:var(--ink2)}
+  .prog .bar{height:10px;border-radius:6px;background:var(--line);margin:8px 0 4px;position:relative;overflow:hidden}
+  .prog .bar i{position:absolute;left:0;top:0;bottom:0;border-radius:6px;background:var(--grad)}
+  .prog .bar em{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--ink2)}
+  .prog .pm{font-size:11px;color:var(--ink3)}
+
+  /* ── Cards / charts ── */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;margin:12px 0}
+  .card h3{margin:0 0 2px;font-size:13.5px;font-weight:700}
+  .card .cs{font-size:11.5px;color:var(--ink3);margin-bottom:10px}
+  .legend{display:flex;gap:16px;font-size:11.5px;color:var(--ink2);margin:2px 0 8px;flex-wrap:wrap}
+  .legend b{display:inline-block;width:16px;height:3px;border-radius:2px;vertical-align:3px;margin-right:6px}
+  .chartbox{position:relative;width:100%;overflow:hidden}
+  .chartbox svg{display:block;width:100%;height:auto}
+  .tip{position:absolute;pointer-events:none;background:var(--ink1);color:#fff;border-radius:7px;
+    font-size:11px;line-height:1.5;padding:7px 10px;opacity:0;transform:translate(-50%,-110%);white-space:nowrap;z-index:5}
+  .tip b{font-variant-numeric:tabular-nums}
+
+  /* ── Tables ── */
+  .twrap{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:6px 16px 10px;margin:12px 0}
+  table{border-collapse:collapse;width:100%;font-size:12.5px;min-width:620px}
+  th{font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);text-align:left;
+    border-bottom:2px solid var(--ink1);padding:9px 10px 7px 0;font-weight:700;white-space:nowrap}
+  th.num,td.num{text-align:right;font-variant-numeric:tabular-nums}
+  td{border-bottom:1px solid var(--line);padding:8px 10px 8px 0;vertical-align:middle}
+  tr:last-child td{border-bottom:none}
+  tr.total td{font-weight:800;border-top:2px solid var(--ink1)}
+  .sharebar{display:inline-block;height:9px;border-radius:3px;background:var(--blue);vertical-align:-1px;margin-left:8px;min-width:2px}
+  .delta{font-weight:700;font-size:11.5px;white-space:nowrap}
+  .delta.up{color:var(--green)} .delta.down{color:var(--red)} .delta.flat{color:var(--ink4)}
+  .pill{display:inline-block;font:700 10px var(--mono);padding:2px 8px;border-radius:999px}
+  .pill.ok{background:var(--tintgreen);color:var(--green)}
+  .pill.warn{background:var(--tintamber);color:var(--amber)}
+  .pill.bad{background:var(--tintred);color:var(--red)}
+  td.url{font:500 11.5px var(--mono);color:var(--ink2);max-width:340px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:860px){.grid2{grid-template-columns:1fr}}
+
+  .footer{border-top:1px solid var(--line2);margin-top:40px;padding-top:14px;font-size:11.5px;color:var(--ink3)}
+  .footer code{font-family:var(--mono);font-size:10.5px}
+</style>
+</head>
+<body>
+
+<div class="top"><div class="topin">
+  <div class="logo"><span class="dot"></span><span>GTV SEO<small>AI-Powered SEO &amp; GEO</small></span></div>
+  <div class="spacer"></div>
+  <label style="font-size:12px;color:var(--ink3);font-weight:600">Dự án:</label>
+  <select class="proj" id="projSel"></select>
+  <span class="badge" id="modeBadge">DEMO DATA</span>
+</div></div>
+
+<div class="wrap">
+  <div class="hero">
+    <div>
+      <h1 id="heroTitle">—</h1>
+      <div class="sub" id="heroSub">—</div>
+    </div>
+    <div class="chips" id="heroChips"></div>
+  </div>
+
+  <div class="tabs" id="tabs"></div>
+
+  <!-- TAB 1: Executive KPI -->
+  <div class="panel" data-p="exec">
+    <h2 class="sec">KPI cam kết hợp đồng — kỳ hiện tại</h2>
+    <p class="note">Cam kết lấy từ Phụ lục hợp đồng (nhập qua Google Sheet «File theo dõi»). Thực tế lấy tự động từ GA4 API theo đúng cách đo tại Tài liệu kỹ thuật hợp đồng. Tỷ lệ nghiệm thu cap 100%/hạng mục.</p>
+    <div class="tiles" id="execTiles"></div>
+    <div class="prog" id="phaseProg"></div>
+    <div class="card">
+      <h3 id="dailyTitle">Diễn biến 30 ngày — so với kỳ trước</h3>
+      <div class="cs" id="dailySub"></div>
+      <div class="legend" id="dailyLegend"></div>
+      <div class="chartbox" id="dailyChart"></div>
+    </div>
+  </div>
+
+  <!-- TAB 2: Chuyển đổi -->
+  <div class="panel" data-p="conv">
+    <h2 class="sec" id="convTitle">Chuyển đổi</h2>
+    <p class="note" id="convNote"></p>
+    <div class="tiles" id="convTiles"></div>
+    <div class="card">
+      <h3 id="convChartTitle">Diễn biến chuyển đổi theo ngày — so với kỳ trước</h3>
+      <div class="legend" id="convLegend"></div>
+      <div class="chartbox" id="convChart"></div>
+    </div>
+    <div class="twrap" id="crTableWrap"></div>
+  </div>
+
+  <!-- TAB 3: Nhóm trang & Landing -->
+  <div class="panel" data-p="pages">
+    <h2 class="sec">Hiệu suất theo nhóm trang</h2>
+    <p class="note">Organic Pageview 30 ngày gần nhất theo Page Group — % share và biến động so kỳ trước. Nguồn: GA4 API, mapping nhóm trang theo quy tắc thống nhất với khách.</p>
+    <div class="twrap" id="pgTable"></div>
+    <h2 class="sec">Top landing pages</h2>
+    <p class="note">Top URL theo Organic Pageview kèm chuyển đổi và CR — dùng để ưu tiên CRO / internal link.</p>
+    <div class="twrap" id="landingTable"></div>
+  </div>
+
+  <!-- TAB 4: Thứ hạng từ khóa -->
+  <div class="panel" data-p="rank">
+    <h2 class="sec" id="rankTitle">Thứ hạng bộ từ khóa cam kết</h2>
+    <p class="note" id="rankNote">Nguồn: SpySERP (google.com.vn, VN) — SA cập nhật vào Google Sheet ranking, dashboard đọc qua Sheets API. Ngày tracking ghi trên từng cột.</p>
+    <div class="tiles" id="rankTiles"></div>
+    <div class="card">
+      <h3>Diễn biến TOP theo kỳ tracking</h3>
+      <div class="cs">% bộ từ khóa đạt mức TOP tại mỗi kỳ — vạch đen đứng (nếu có) = mức cam kết hợp đồng; dự án không cam kết TOP thì không có vạch</div>
+      <div id="rankBars"></div>
+    </div>
+  </div>
+
+  <!-- TAB 5: Nghiệm thu & Runrate -->
+  <div class="panel" data-p="accept">
+    <h2 class="sec">Runrate — KPI kế hoạch vs thực tế theo tháng</h2>
+    <p class="note">Bảng chuẩn nghiệm thu: mỗi hạng mục KPI theo timeline Phụ lục hợp đồng. «KPI run-rate» = lũy kế thực tế / lũy kế kế hoạch; «Time run-rate» = % thời gian dự án đã trôi qua. Kỳ chưa có dữ liệu để trống (không hiển thị 0 gây hiểu nhầm).</p>
+    <div class="twrap" id="runrateTable"></div>
+    <h2 class="sec">Bảng KPI nghiệm thu kỳ hiện tại (khớp mẫu BBNT)</h2>
+    <p class="note">Đúng cấu trúc bảng trong email báo cáo + Biên bản nghiệm thu: cam kết → kết quả → tỷ lệ thực tế → tỷ lệ để nghiệm thu (cap 100%).</p>
+    <div class="twrap" id="acceptTable"></div>
+  </div>
+
+  <div class="footer">
+    <p><strong>GTV SEO — Client Reporting Dashboard (demo v1 · 07/2026).</strong> Dữ liệu minh họa theo cấu trúc dự án thật; bản production đọc dữ liệu qua: <code>GA4 Data API</code> (traffic/pageview/sự kiện) · <code>GSC API</code> (impression/click/query) · <code>Google Sheets API</code> (KPI cam kết, ranking SpySERP, kế hoạch công việc). Cách nhập liệu &amp; kiến trúc: xem <code>account-report_Tu-van-he-thong-bao-cao_v1.md</code>. Tài liệu gửi khách theo dự án tương ứng — không dùng chéo số liệu giữa các khách hàng.</p>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* ═══════════ DATA LAYER ═══════════
+   Cấu trúc này = contract cho pipeline thật:
+   production sẽ fetch JSON cùng schema từ endpoint (Apps Script/Cloud Run)
+   thay vì đọc object nhúng. */
+function genDaily(base,amp,n,seedShift,weekendDip){
+  var out=[],v;
+  for(var i=0;i<n;i++){
+    var dow=(i+seedShift)%7;
+    v=base + amp*Math.sin(i/3.1+seedShift) + (dow===5||dow===6?-weekendDip:0) + amp*0.35*Math.sin(i/1.7);
+    out.push(Math.round(v));
+  }
+  return out;
+}
+var DATA={
+  careerviet:{
+    name:"CareerViet", domain:"careerviet.vn",
+    period:"Kỳ dữ liệu: 05/06/2026 – 04/07/2026 · Tháng dự án thứ 2 (T6/2026)",
+    scope:"Organic Pageview = Việc làm + Tool + 332 URL Blog CV/Lương · Nguồn: Organic Search",
+    chips:["Hợp đồng 12 tháng · 4 đợt","KPI: Organic Pageview (60%) + Ứng tuyển thành công (40%)","Nghiệm thu đợt: 3 tháng"],
+    tabs:["exec","conv","pages","rank","accept"],
+    rank:{
+      title:"Theo dõi thứ hạng từ khóa (tham khảo)",
+      note:"⚠️ Hợp đồng CareerViet KHÔNG cam kết TOP từ khóa — KPI cam kết là Organic Pageview + Apply. Bảng ranking dưới đây là chỉ số vận hành để đội ngũ và khách theo dõi sức khỏe SEO theo cụm chủ đề; không dùng làm căn cứ nghiệm thu. Nguồn: SpySERP → Google Sheet → Sheets API.",
+      tiles:[
+        {l:"Từ khóa theo dõi",v:1850,src:"SHEET",tc:"var(--ink3)",d:"7 cụm chủ đề Việc làm + Tool + Blog"},
+        {l:"TOP 3",v:"31%",src:"SHEET",tc:"var(--blue)",d:"574 kw · <b class='up'>▲ +3 điểm</b> vs tháng trước"},
+        {l:"TOP 10",v:"58%",src:"SHEET",tc:"var(--purple)",d:"1.073 kw · <b class='up'>▲ +5 điểm</b>"},
+        {l:"Ngày tracking",v:"02/07",src:"SPYSERP",tc:"var(--ink3)",d:"google.com.vn — Việt Nam"}
+      ],
+      bars:[
+        {label:"Cụm Việc làm theo ngành — TOP 10 (tham khảo, không cam kết)",commit:null,series:[["T4",41],["T5",47],["T6",54],["T7",58]]},
+        {label:"Cụm Mẫu CV & Thư xin việc — TOP 10",commit:null,series:[["T4",52],["T5",58],["T6",63],["T7",67]]},
+        {label:"Cụm Tool (tính lương, trắc nghiệm) — TOP 10",commit:null,series:[["T4",38],["T5",40],["T6",47],["T7",51]]},
+        {label:"Cụm Blog Lương & Nghề nghiệp — TOP 10",commit:null,series:[["T4",44],["T5",49],["T6",55],["T7",59]]}
+      ]
+    },
+    exec:{
+      unit:"Organic Pageview",
+      tiles:[
+        {l:"KPI tháng (cam kết HĐ)",v:4428386,src:"SHEET",tc:"var(--purple)",d:"Theo timeline PL01 — T6/2026"},
+        {l:"Thực tế đạt (30 ngày)",v:4916870,src:"GA4",tc:"var(--blue)",d:"<b class='up'>▲ 141.5%</b> run-rate so KPI tháng"},
+        {l:"M-o-M growth",v:"+1.9%",src:"GA4",tc:"var(--amber)",d:"so 30 ngày liền trước"},
+        {l:"Y-o-Y cùng kỳ 06/2025",v:6839414,src:"GA4",tc:"var(--ink3)",d:"nền cao mùa tuyển dụng — theo dõi phục hồi"}
+      ],
+      phase:{label:"Lũy kế Phase 1 (T5–T10/2026)",target:32637245,actual:10587246,timePct:33,
+        note:"KPI run-rate lũy kế 115.4% · Time run-rate 33% (2/6 tháng phase)"},
+      dailyLabel:"Organic Pageview theo ngày",
+      daily:{cur:genDaily(163000,21000,30,2,36000),prev:genDaily(155000,19000,30,5,33000)}
+    },
+    conv:{
+      title:"Sự kiện Ứng tuyển thành công (Apply Thanks)",
+      note:"Đo theo pageview URL */applythanks — Session source/medium: (google/organic)|(google_jobs_apply/organic)|(direct)/(none)|search.google.com/referral — đúng Tài liệu kỹ thuật HĐ.",
+      tiles:[
+        {l:"KPI Apply tháng",v:74137,src:"SHEET",tc:"var(--purple)",d:"apply_target T6/2026"},
+        {l:"Thực tế đạt (30 ngày)",v:77673,src:"GA4",tc:"var(--blue)",d:"<b class='up'>▲ 104.8%</b> so KPI tháng"},
+        {l:"W-o-W growth",v:"+9.4%",src:"GA4",tc:"var(--amber)",d:"tuần 9 so tuần 8"},
+        {l:"Y-o-Y cùng kỳ",v:178369,src:"GA4",tc:"var(--ink3)",d:"<b class='down'>▼ −55.9%</b> — thị trường tuyển dụng thu hẹp, xem ghi chú kỳ"}
+      ],
+      daily:{cur:genDaily(2760,620,30,1,1150),prev:genDaily(2610,560,30,4,1050)},
+      crTable:{
+        cap:"CR theo nhóm trang (Apply Thanks / Organic Pageview — 30 ngày)",
+        cols:["Page Group (Landing)","Apply thanks","Organic PV","CR"],
+        rows:[
+          ["Job Detail",13086,1004618,"1.30%"],
+          ["Homepage",9621,1059504,"0.91%"],
+          ["Need To Login",8834,986363,"0.90%"],
+          ["Tool",140,14879,"0.94%"],
+          ["Job Listing",23007,4014202,"0.57%"],
+          ["Recruiter",4694,1051086,"0.45%"],
+          ["Blog",122,496186,"0.02%"]
+        ]
+      }
+    },
+    pages:{
+      groups:[
+        ["Job Listing",2194117,-6.6],["Need To Login",1430475,-9.0],["Khác",1354376,38.1],
+        ["Recruiter",1034840,-3.7],["Blog",366896,-5.0],["Homepage",203394,-1.2],
+        ["Tool",29790,1.9],["404",4924,-28.1]
+      ],
+      landing:[
+        ["/","Homepage",913504,10790,"1.18%"],
+        ["/viec-lam/ho-chi-minh-l8-vi.html","Job Listing",133004,1476,"1.11%"],
+        ["/vi/employers/hrcentral/posting","Need To Login",131693,23,"0.02%"],
+        ["/vi","Homepage",128057,1544,"1.21%"],
+        ["/vi/jobseekers/dashboard","Need To Login",103504,1349,"1.30%"],
+        ["/vi/talentcommunity/1001-stt-hay…","Blog",87434,0,"0.00%"],
+        ["/viec-lam/tat-ca-viec-lam-vi.html","Job Listing",45590,555,"1.22%"]
+      ]
+    },
+    runrate:{
+      unitRows:[
+        {name:"A · Organic Pageview (Việc làm + Tool)",kpi:[4179267,4428386,4877275,5334580,6434756,7382981,7436492,7265746,6397421,6234281,9266790,9048796],
+         act:[4824920,4916870,null,null,null,null,null,null,null,null,null,null]},
+        {name:"B · Apply CV (sự kiện ApplyThanks)",kpi:[71970,74137,76242,79542,84668,94094,95785,92497,73253,57758,115705,108526],
+         act:[77673,77900,null,null,null,null,null,null,null,null,null,null]}
+      ],
+      months:["T5/26","T6/26","T7/26","T8/26","T9/26","T10/26","T11/26","T12/26","T1/27","T2/27","T3/27","T4/27"]
+    },
+    accept:[
+      ["ORGANIC PAGEVIEW","Việc làm + Tool + 332 Blog — GA4, kỳ 05/06–04/07","4.428.386","4.916.870","111%","100%"],
+      ["CHUYỂN ĐỔI","Sự kiện Apply Thanks (Organic + Direct theo quy tắc HĐ)","74.137","77.673","105%","100%"],
+      ["CÔNG VIỆC","Hạng mục hoạch định T6 (content, technical, entity)","12","11","92%","92%"]
+    ],
+    acceptTotal:"98% — đạt ngưỡng nghiệm thu tối thiểu 75%"
+  },
+
+  pvi:{
+    name:"PVI Digital", domain:"online.pvi.com.vn",
+    period:"Kỳ dữ liệu: 01/05/2026 – 30/06/2026 · Đợt 3 (Tháng thứ 7–8)",
+    scope:"KPI ranking 2 bộ từ khóa (SpySERP) + Organic Session (GA4)",
+    chips:["Hợp đồng 4 kỳ thanh toán","Nghiệm thu đợt: 2 tháng","KPI: TOP + Organic Session"],
+    tabs:["exec","pages","rank","accept"],
+    exec:{
+      unit:"Organic Session",
+      tiles:[
+        {l:"KPI Session (cam kết đợt)",v:7364,src:"SHEET",tc:"var(--purple)",d:"chỉ số tải về GA4 — đợt 3"},
+        {l:"Thực tế đạt",v:6241,src:"GA4",tc:"var(--blue)",d:"<b class='down'>▼ 85%</b> — ghi nhận 85% khi nghiệm thu"},
+        {l:"M-o-M growth",v:"+6.2%",src:"GA4",tc:"var(--amber)",d:"đà tăng sau đợt onpage T6"},
+        {l:"Kết quả KPI đợt",v:"97%",src:"CALC",tc:"var(--green)",d:"bình quân TOP + Session — đạt ngưỡng 75%"}
+      ],
+      phase:{label:"Lũy kế hợp đồng (T1–T8/10 tháng)",target:100,actual:78,timePct:80,
+        note:"78% khối lượng công việc hoàn thành · 80% thời gian trôi qua",rawPct:true},
+      dailyLabel:"Organic Session theo ngày",
+      daily:{cur:genDaily(208,38,30,3,52),prev:genDaily(196,34,30,6,48)}
+    },
+    pages:{
+      groups:[
+        ["Bảo hiểm xe máy",48210,12.4],["Bảo hiểm du lịch",41830,21.9],["Bảo hiểm ô tô",30115,8.3],
+        ["Trang sản phẩm",22409,4.1],["Blog khác",9640,-3.2]
+      ],
+      landing:[
+        ["/bao-hiem-xe-may/","SP Bảo hiểm xe máy",18240,214,"1.17%"],
+        ["/blog/cac-loai-bao-hiem-xe-may","Blog",9412,66,"0.70%"],
+        ["/bao-hiem-du-lich-quoc-te/","SP Bảo hiểm du lịch",8930,131,"1.47%"],
+        ["/blog/bao-hiem-du-lich-chau-au","Blog",5210,38,"0.73%"]
+      ]
+    },
+    rank:{
+      tiles:[
+        {l:"Bộ Brand · TOP 3",v:"58%",src:"SHEET",tc:"var(--blue)",d:"cam kết 45% — <b class='up'>vượt</b>"},
+        {l:"Bộ Brand · TOP 5",v:"72%",src:"SHEET",tc:"var(--blue)",d:"cam kết 65% — <b class='up'>vượt</b>"},
+        {l:"Bộ Bảo hiểm · TOP 3",v:"26%",src:"SHEET",tc:"var(--purple)",d:"cam kết 11% — <b class='up'>vượt</b>"},
+        {l:"Bộ Bảo hiểm · TOP 10",v:"57%",src:"SHEET",tc:"var(--purple)",d:"cam kết 43% — <b class='up'>vượt</b>"}
+      ],
+      bars:[
+        {label:"Brand · TOP 3 (cam kết 45%)",commit:45,series:[["T4",38],["T5",44],["T6",51],["T7",55],["T8",58]]},
+        {label:"Brand · TOP 5 (cam kết 65%)",commit:65,series:[["T4",52],["T5",58],["T6",64],["T7",69],["T8",72]]},
+        {label:"Bảo hiểm · TOP 3 (cam kết 11%)",commit:11,series:[["T4",6],["T5",10],["T6",16],["T7",22],["T8",26]]},
+        {label:"Bảo hiểm · TOP 10 (cam kết 43%)",commit:43,series:[["T4",28],["T5",35],["T6",44],["T7",51],["T8",57]]}
+      ]
+    },
+    runrate:{
+      unitRows:[
+        {name:"A · Organic Session",kpi:[3200,3600,4100,4700,5400,6100,6800,7364,null,null,null,null],
+         act:[3350,3720,4260,4510,5620,6350,6120,6241,null,null,null,null]}
+      ],
+      months:["T1","T2","T3","T4","T5","T6","T7","T8","T9","T10","—","—"]
+    },
+    accept:[
+      ["KPI","Bộ từ khóa Brand — TOP 3","45%","58%","130%","100%"],
+      ["KPI","Bộ từ khóa Brand — TOP 5","65%","72%","111%","100%"],
+      ["KPI","Bộ từ khóa Bảo hiểm — TOP 3","11%","26%","234%","100%"],
+      ["KPI","Bộ từ khóa Bảo hiểm — TOP 5","18%","38%","213%","100%"],
+      ["KPI","Bộ từ khóa Bảo hiểm — TOP 10","43%","57%","133%","100%"],
+      ["TRAFFIC","Organic Session (chỉ số tải về GA4)","7.364","6.241","85%","85%"]
+    ],
+    acceptTotal:"97% — đạt ngưỡng nghiệm thu (BBNT đợt 3 số 62/GTV/NT-07/2026)"
+  },
+
+  mtm:{
+    name:"Minh Tuấn Mobile", domain:"minhtuanmobile.com",
+    period:"Kỳ dữ liệu: 01/06/2026 – 30/06/2026 · Tháng thứ 1 (nghiệm thu hàng tháng)",
+    scope:"Hợp đồng Cố vấn SEO — KPI: TOP bộ 1.377 từ khóa + Organic Cate & Product PV (Apple) + Citation AIO",
+    chips:["Nghiệm thu 12 đợt/tháng","Thanh toán 5 ngày LV/đợt","Có KPI Citation AIO (Ahrefs)"],
+    tabs:["exec","pages","rank","accept"],
+    exec:{
+      unit:"Organic Cate & Product Pageview (Apple)",
+      tiles:[
+        {l:"KPI PV tháng (cam kết)",v:98000,src:"SHEET",tc:"var(--purple)",d:"nhóm Cate & Product thuộc Apple"},
+        {l:"Thực tế đạt",v:104300,src:"GA4",tc:"var(--blue)",d:"<b class='up'>▲ 106%</b> so cam kết tháng"},
+        {l:"Citation AIO",v:64,src:"AHREFS",tc:"var(--amber)",d:"số citation ghi nhận trên Ahrefs — baseline 41"},
+        {l:"Kết quả KPI tháng",v:"103%",src:"CALC",tc:"var(--green)",d:"bình quân các hạng mục — đạt ngưỡng 75%"}
+      ],
+      phase:{label:"Lũy kế hợp đồng 12 tháng",target:100,actual:8,timePct:8,
+        note:"tháng 1/12 — nhịp nghiệm thu hàng tháng, cap 100%/hạng mục",rawPct:true},
+      dailyLabel:"Organic Cate & Product PV theo ngày",
+      daily:{cur:genDaily(3480,540,30,4,620),prev:genDaily(3260,500,30,0,590)}
+    },
+    pages:{
+      groups:[
+        ["Product Apple",61240,9.6],["Category Apple",43060,7.1],["Blog tư vấn",28810,14.9],
+        ["Product khác",21520,2.2],["Trang hỗ trợ",8110,-1.4]
+      ],
+      landing:[
+        ["/iphone-15-pro-max","Product Apple",12140,388,"3.20%"],
+        ["/dtdd-apple-iphone","Category Apple",9860,242,"2.45%"],
+        ["/blog/nen-mua-iphone-nao-2026","Blog",6120,105,"1.72%"],
+        ["/macbook-air-m3","Product Apple",5480,131,"2.39%"]
+      ]
+    },
+    rank:{
+      tiles:[
+        {l:"TOP 5 (cam kết 20% = 275 kw)",v:"7%",src:"SHEET",tc:"var(--blue)",d:"96/1.377 kw — tháng 1, đúng lộ trình ramp-up"},
+        {l:"TOP 10 (cam kết 50% = 688 kw)",v:"18%",src:"SHEET",tc:"var(--purple)",d:"248/1.377 kw"},
+        {l:"Ngày tracking",v:"28/06",src:"SPYSERP",tc:"var(--ink3)",d:"google.com — thị trường Việt Nam"},
+        {l:"Công việc hoạch định T1",v:"9/9",src:"SHEET",tc:"var(--green)",d:"OKRs quý + audit + cấu trúc — 100%"}
+      ],
+      bars:[
+        {label:"TOP 5 (cam kết cuối kỳ 20%)",commit:20,series:[["T0",2],["T1",7]]},
+        {label:"TOP 10 (cam kết cuối kỳ 50%)",commit:50,series:[["T0",6],["T1",18]]}
+      ]
+    },
+    runrate:{
+      unitRows:[
+        {name:"A · Organic Cate & Product PV (Apple)",kpi:[98000,101000,105000,110000,116000,123000,131000,138000,144000,150000,158000,165000],
+         act:[104300,null,null,null,null,null,null,null,null,null,null,null]}
+      ],
+      months:["T1","T2","T3","T4","T5","T6","T7","T8","T9","T10","T11","T12"]
+    },
+    accept:[
+      ["TOP","Bộ 1.377 từ khóa — TOP 5 (lộ trình T1)","5%","7%","140%","100%"],
+      ["TOP","Bộ 1.377 từ khóa — TOP 10 (lộ trình T1)","15%","18%","120%","100%"],
+      ["TRAFFIC","Organic Cate & Product PV (Apple)","98.000","104.300","106%","100%"],
+      ["CÔNG VIỆC","Hạng mục hoạch định tháng 1","9","9","100%","100%"]
+    ],
+    acceptTotal:"100% — đủ điều kiện thanh toán đợt 2 trong 05 ngày làm việc"
+  }
+};
+
+/* ═══════════ RENDER ═══════════ */
+var $=function(s){return document.querySelector(s)};
+var fmt=function(n){return (typeof n==="number")?n.toLocaleString("vi-VN"):n};
+var TABNAMES={exec:"Tổng quan KPI",conv:"Chuyển đổi",pages:"Nhóm trang & Landing",rank:"Thứ hạng từ khóa",accept:"Nghiệm thu & Runrate"};
+
+function tile(t){
+  return '<div class="tile" style="--tc:'+(t.tc||"var(--blue)")+'"><span class="src">'+(t.src||"")+'</span>'+
+    '<div class="tl">'+t.l+'</div><div class="tv">'+fmt(t.v)+'</div><div class="td">'+(t.d||"")+'</div></div>';
+}
+
+/* line chart: current vs previous, crosshair + tooltip, endpoint labels only */
+function lineChart(el,cur,prev,names){
+  var W=980,H=280,P={t:16,r:14,b:26,l:56};
+  var n=cur.length;
+  var all=cur.concat(prev.filter(function(v){return v!=null}));
+  var mx=Math.max.apply(null,all)*1.08, mn=0;
+  var x=function(i){return P.l+(W-P.l-P.r)*i/(n-1)};
+  var y=function(v){return P.t+(H-P.t-P.b)*(1-(v-mn)/(mx-mn))};
+  function path(a){var s="";for(var i=0;i<n;i++){if(a[i]==null)continue;s+=(s?" L":"M")+x(i).toFixed(1)+" "+y(a[i]).toFixed(1);}return s;}
+  var ticks="",ty;
+  for(var k=0;k<=4;k++){ty=mn+(mx-mn)*k/4;
+    ticks+='<line x1="'+P.l+'" y1="'+y(ty)+'" x2="'+(W-P.r)+'" y2="'+y(ty)+'" stroke="#EEF2F7" stroke-width="1"/>'+
+      '<text x="'+(P.l-8)+'" y="'+(y(ty)+3.5)+'" text-anchor="end" font-size="10" fill="#94A3B8">'+
+      (ty>=1000000?(ty/1000000).toFixed(1)+"M":ty>=1000?Math.round(ty/1000)+"K":Math.round(ty))+'</text>';}
+  var xl="";
+  [0,Math.floor(n/2),n-1].forEach(function(i){
+    xl+='<text x="'+x(i)+'" y="'+(H-8)+'" text-anchor="middle" font-size="10" fill="#94A3B8">Ngày '+(i+1)+'</text>';});
+  var endLb='<text x="'+(x(n-1)-6)+'" y="'+(y(cur[n-1])-8)+'" text-anchor="end" font-size="10.5" font-weight="700" fill="#0693E3">'+fmt(cur[n-1])+'</text>';
+  var svg='<svg viewBox="0 0 '+W+' '+H+'" role="img">'+ticks+xl+
+    '<path d="'+path(prev)+'" fill="none" stroke="#6F2CC4" stroke-width="2" stroke-opacity=".45" stroke-dasharray="1 0"/>'+
+    '<path d="'+path(cur)+'" fill="none" stroke="#0693E3" stroke-width="2.2"/>'+endLb+
+    '<line id="ch" x1="0" y1="'+P.t+'" x2="0" y2="'+(H-P.b)+'" stroke="#334155" stroke-width="1" stroke-dasharray="3 3" opacity="0"/>'+
+    '<circle id="c1" r="4" fill="#0693E3" stroke="#fff" stroke-width="2" opacity="0"/>'+
+    '<circle id="c2" r="4" fill="#6F2CC4" stroke="#fff" stroke-width="2" opacity="0"/></svg>'+
+    '<div class="tip"></div>';
+  el.innerHTML=svg;
+  var box=el, tip=el.querySelector(".tip"), sv=el.querySelector("svg"),
+      ch=sv.querySelector("#ch"), c1=sv.querySelector("#c1"), c2=sv.querySelector("#c2");
+  sv.addEventListener("mousemove",function(ev){
+    var r=sv.getBoundingClientRect(), sx=(ev.clientX-r.left)*W/r.width;
+    var i=Math.round((sx-P.l)/(W-P.l-P.r)*(n-1)); i=Math.max(0,Math.min(n-1,i));
+    var xi=x(i);
+    ch.setAttribute("x1",xi);ch.setAttribute("x2",xi);ch.setAttribute("opacity",1);
+    c1.setAttribute("cx",xi);c1.setAttribute("cy",y(cur[i]));c1.setAttribute("opacity",1);
+    if(prev[i]!=null){c2.setAttribute("cx",xi);c2.setAttribute("cy",y(prev[i]));c2.setAttribute("opacity",1);}else{c2.setAttribute("opacity",0);}
+    tip.innerHTML='<div>Ngày '+(i+1)+'</div><div>● '+names[0]+': <b>'+fmt(cur[i])+'</b></div>'+
+      (prev[i]!=null?'<div style="opacity:.75">● '+names[1]+': <b>'+fmt(prev[i])+'</b></div>':"");
+    tip.style.left=(xi*r.width/W)+"px";
+    tip.style.top=(y(cur[i])*r.height/H)+"px";
+    tip.style.opacity=1;
+  });
+  sv.addEventListener("mouseleave",function(){tip.style.opacity=0;ch.setAttribute("opacity",0);c1.setAttribute("opacity",0);c2.setAttribute("opacity",0);});
+}
+
+function renderProject(key){
+  var d=DATA[key];
+  $("#heroTitle").textContent="Báo cáo dự án SEO — "+d.name;
+  $("#heroSub").textContent=d.period+" · "+d.scope;
+  $("#heroChips").innerHTML=d.chips.map(function(c){return '<span class="chip">'+c+'</span>'}).join("");
+
+  /* tabs */
+  var tabs=$("#tabs");tabs.innerHTML="";
+  d.tabs.forEach(function(t,i){
+    var b=document.createElement("button");b.className="tab"+(i===0?" on":"");b.textContent=TABNAMES[t];b.dataset.t=t;
+    b.onclick=function(){
+      tabs.querySelectorAll(".tab").forEach(function(x){x.classList.remove("on")});b.classList.add("on");
+      document.querySelectorAll(".panel").forEach(function(p){p.classList.toggle("on",p.dataset.p===t)});
+    };
+    tabs.appendChild(b);
+  });
+  document.querySelectorAll(".panel").forEach(function(p){p.classList.toggle("on",p.dataset.p===d.tabs[0])});
+
+  /* exec */
+  $("#execTiles").innerHTML=d.exec.tiles.map(tile).join("");
+  var ph=d.exec.phase, pct=ph.rawPct?ph.actual:Math.round(ph.actual/ph.target*100);
+  $("#phaseProg").innerHTML='<div class="pl"><span>'+ph.label+'</span><span>'+
+    (ph.rawPct?ph.actual+"%":fmt(ph.actual)+" / "+fmt(ph.target))+'</span></div>'+
+    '<div class="bar"><i style="width:'+Math.min(100,pct)+'%"></i><em style="left:'+ph.timePct+'%"></em></div>'+
+    '<div class="pm">'+ph.note+' · vạch đen = time run-rate '+ph.timePct+'%</div>';
+  $("#dailyTitle").textContent=d.exec.dailyLabel+" — 30 ngày so với kỳ trước";
+  $("#dailySub").textContent="Nguồn: GA4 API · cập nhật hằng đêm · không hiển thị nhãn từng điểm — rê chuột để xem chi tiết";
+  $("#dailyLegend").innerHTML='<span><b style="background:#0693E3"></b>Kỳ hiện tại</span><span><b style="background:#6F2CC4;opacity:.55"></b>Kỳ trước</span>';
+  lineChart($("#dailyChart"),d.exec.daily.cur,d.exec.daily.prev,["Kỳ này","Kỳ trước"]);
+
+  /* conv */
+  if(d.tabs.indexOf("conv")>-1){
+    $("#convTitle").textContent=d.conv.title;
+    $("#convNote").textContent=d.conv.note;
+    $("#convTiles").innerHTML=d.conv.tiles.map(tile).join("");
+    $("#convLegend").innerHTML='<span><b style="background:#0693E3"></b>Kỳ hiện tại</span><span><b style="background:#6F2CC4;opacity:.55"></b>Kỳ trước</span>';
+    lineChart($("#convChart"),d.conv.daily.cur,d.conv.daily.prev,["Kỳ này","Kỳ trước"]);
+    var ct=d.conv.crTable;
+    $("#crTableWrap").innerHTML='<table><caption style="caption-side:top;text-align:left;font-weight:700;font-size:12.5px;padding:10px 0 4px">'+ct.cap+'</caption>'+
+      '<tr>'+ct.cols.map(function(c,i){return '<th'+(i>0?' class="num"':'')+'>'+c+'</th>'}).join("")+'</tr>'+
+      ct.rows.map(function(r){return '<tr><td>'+r[0]+'</td><td class="num">'+fmt(r[1])+'</td><td class="num">'+fmt(r[2])+'</td><td class="num"><b>'+r[3]+'</b></td></tr>'}).join("")+'</table>';
+  }
+
+  /* pages */
+  var g=d.pages.groups, tot=g.reduce(function(s,r){return s+r[1]},0), mxs=Math.max.apply(null,g.map(function(r){return r[1]}));
+  $("#pgTable").innerHTML='<table><tr><th>Page group</th><th class="num">Pageviews</th><th class="num">% share</th><th class="num">Δ vs kỳ trước</th></tr>'+
+    g.map(function(r){
+      var share=r[1]/tot*100, dl=r[2];
+      return '<tr><td>'+r[0]+'</td><td class="num">'+fmt(r[1])+'</td>'+
+        '<td class="num">'+share.toFixed(1)+'%<span class="sharebar" style="width:'+(r[1]/mxs*90)+'px"></span></td>'+
+        '<td class="num"><span class="delta '+(dl>1?"up":dl<-1?"down":"flat")+'">'+(dl>0?"▲ +":dl<0?"▼ ":"")+dl.toFixed(1)+'%</span></td></tr>';
+    }).join("")+
+    '<tr class="total"><td>Tổng</td><td class="num">'+fmt(tot)+'</td><td class="num">100%</td><td></td></tr></table>';
+  $("#landingTable").innerHTML='<table><tr><th>Landing page</th><th>Nhóm</th><th class="num">Views</th><th class="num">Chuyển đổi</th><th class="num">CR</th></tr>'+
+    d.pages.landing.map(function(r){return '<tr><td class="url">'+r[0]+'</td><td>'+r[1]+'</td><td class="num">'+fmt(r[2])+'</td><td class="num">'+fmt(r[3])+'</td><td class="num"><b>'+r[4]+'</b></td></tr>'}).join("")+'</table>';
+
+  /* rank */
+  if(d.tabs.indexOf("rank")>-1){
+    $("#rankTitle").textContent=d.rank.title||"Thứ hạng bộ từ khóa cam kết";
+    $("#rankNote").textContent=d.rank.note||"Nguồn: SpySERP (google.com.vn, VN) — SA cập nhật vào Google Sheet ranking, dashboard đọc qua Sheets API. Ngày tracking ghi trên từng cột.";
+    $("#rankTiles").innerHTML=d.rank.tiles.map(tile).join("");
+    $("#rankBars").innerHTML=d.rank.bars.map(function(b){
+      var hasC=b.commit!=null;
+      var mxv=Math.max(hasC?b.commit:0,b.series[b.series.length-1][1])*1.25;
+      return '<div style="margin:14px 0 18px"><div style="font-size:12px;font-weight:700;margin-bottom:6px">'+b.label+'</div>'+
+        b.series.map(function(s){
+          var w=s[1]/mxv*100, hit=hasC?s[1]>=b.commit:true;
+          return '<div style="display:flex;align-items:center;gap:8px;margin:3px 0">'+
+            '<span style="font:700 10.5px var(--mono);color:var(--ink3);width:26px">'+s[0]+'</span>'+
+            '<span style="flex:1;position:relative;height:13px;background:var(--bg);border-radius:4px;overflow:visible">'+
+              '<i style="position:absolute;left:0;top:0;bottom:0;width:'+w+'%;border-radius:4px;background:'+(hit?"var(--blue)":"#9DC9E8")+'"></i>'+
+              (hasC?'<em style="position:absolute;left:'+(b.commit/mxv*100)+'%;top:-3px;bottom:-3px;width:2px;background:var(--ink1)"></em>':"")+
+            '</span><span style="font:700 11px var(--mono);width:38px;text-align:right;color:'+(hit?"var(--blue)":"var(--ink3)")+'">'+s[1]+'%</span></div>';
+        }).join("")+'</div>';
+    }).join("");
+  }
+
+  /* runrate + accept */
+  var rr=d.runrate;
+  $("#runrateTable").innerHTML='<table><tr><th>Chỉ số</th>'+rr.months.map(function(m){return '<th class="num">'+m+'</th>'}).join("")+'<th class="num">KPI run-rate</th></tr>'+
+    rr.unitRows.map(function(row){
+      var cumK=0,cumA=0;
+      var kcells=row.kpi.map(function(v){return '<td class="num" style="color:var(--ink3)">'+(v==null?"—":fmt(v))+'</td>'}).join("");
+      var acells=row.act.map(function(v,i){
+        if(v!=null&&row.kpi[i]!=null){cumK+=row.kpi[i];cumA+=v;}
+        if(v==null)return '<td class="num" style="color:var(--ink4)">·</td>';
+        var ok=row.kpi[i]!=null&&v>=row.kpi[i]*0.75;
+        return '<td class="num"><b style="color:'+(ok?"var(--ink1)":"var(--red)")+'">'+fmt(v)+'</b></td>';
+      }).join("");
+      var runrate=cumK?Math.round(cumA/cumK*100):null;
+      return '<tr><td style="font-weight:700">'+row.name+' — KPI</td>'+kcells+'<td class="num">·</td></tr>'+
+             '<tr><td style="padding-left:14px;color:var(--ink3)">Thực tế</td>'+acells+
+             '<td class="num"><span class="pill '+(runrate>=100?"ok":runrate>=75?"warn":"bad")+'">'+(runrate!=null?runrate+"%":"—")+'</span></td></tr>';
+    }).join("")+'</table>';
+
+  $("#acceptTable").innerHTML='<table><tr><th>Loại KPI</th><th>Hạng mục</th><th class="num">Cam kết</th><th class="num">Kết quả</th><th class="num">Tỷ lệ thực tế</th><th class="num">Tỷ lệ để nghiệm thu</th></tr>'+
+    d.accept.map(function(r){return '<tr><td style="font-weight:700">'+r[0]+'</td><td>'+r[1]+'</td><td class="num">'+r[2]+'</td><td class="num"><b>'+r[3]+'</b></td><td class="num">'+r[4]+'</td><td class="num"><b>'+r[5]+'</b></td></tr>'}).join("")+
+    '<tr class="total"><td colspan="5">KẾT QUẢ KPI KỲ NÀY</td><td class="num">'+d.acceptTotal+'</td></tr></table>';
+}
+
+/* init */
+var sel=$("#projSel");
+Object.keys(DATA).forEach(function(k){
+  var o=document.createElement("option");o.value=k;o.textContent=DATA[k].name;sel.appendChild(o);
+});
+sel.onchange=function(){renderProject(sel.value)};
+renderProject("careerviet");
+</script>
+</body>
+</html>

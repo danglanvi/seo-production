@@ -1,0 +1,50 @@
+{
+  "_huong_dan": [
+    "File này là BẢN MẪU cấu hình MCP server cho hệ SEO Production — không chứa key thật, không dùng trực tiếp.",
+    "Cách dùng: copy file này thành .mcp.json ở root repo (cùng cấp SYNC.md), điền key/đường dẫn thật của máy bạn, xóa những server bạn không có key.",
+    "File .mcp.json thật đã nằm trong .gitignore — không bao giờ bị commit, API key chỉ tồn tại trên máy bạn. CẤM commit key dưới mọi hình thức.",
+    "Placeholder dạng {{TEN_BIEN}} phải thay TOÀN BỘ, kể cả hai cặp ngoặc nhọn. Đường dẫn file phải là đường dẫn tuyệt đối trên máy bạn.",
+    "ga4, gsc và google-sheets dùng chung 1 file service account JSON (Google Cloud → IAM → Service Accounts → tạo key). Nhớ bật API tương ứng và cấp quyền cho service account trong GA4/GSC/Sheet.",
+    "Máy thiếu server nào thì skill tương ứng chạy fallback và ghi rõ giới hạn dữ liệu — xem bảng SYNC.md mục 8.",
+    "JSON không cho phép comment nên mọi hướng dẫn nằm trong key _huong_dan này; có thể xóa key này trong file .mcp.json thật của bạn."
+  ],
+  "mcpServers": {
+    "ahrefs": {
+      "command": "npx",
+      "args": ["-y", "@ahrefs/mcp"],
+      "env": {
+        "API_KEY": "{{AHREFS_API_KEY}}"
+      }
+    },
+    "firecrawl": {
+      "command": "npx",
+      "args": ["-y", "firecrawl-mcp"],
+      "env": {
+        "FIRECRAWL_API_KEY": "{{FIRECRAWL_API_KEY}}"
+      }
+    },
+    "ga4-mcp": {
+      "command": "uvx",
+      "args": ["ga4-mcp-server"],
+      "env": {
+        "GOOGLE_APPLICATION_CREDENTIALS": "{{DUONG_DAN_TUYET_DOI_SERVICE_ACCOUNT_JSON}}",
+        "GA4_PROPERTY_ID": "{{GA4_PROPERTY_ID}}"
+      }
+    },
+    "mcp-gsc": {
+      "command": "uvx",
+      "args": ["mcp-server-gsc"],
+      "env": {
+        "GOOGLE_APPLICATION_CREDENTIALS": "{{DUONG_DAN_TUYET_DOI_SERVICE_ACCOUNT_JSON}}"
+      }
+    },
+    "google-sheets": {
+      "command": "uvx",
+      "args": ["mcp-google-sheets"],
+      "env": {
+        "SERVICE_ACCOUNT_PATH": "{{DUONG_DAN_TUYET_DOI_SERVICE_ACCOUNT_JSON}}",
+        "DRIVE_FOLDER_ID": "{{DRIVE_FOLDER_ID}}"
+      }
+    }
+  }
+}

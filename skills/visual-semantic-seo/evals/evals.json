@@ -1,0 +1,39 @@
+{
+  "skill_name": "visual-semantic-seo",
+  "evals": [
+    {
+      "id": 0,
+      "eval_name": "design-service-page-mockup",
+      "prompt": "Tôi cần thiết kế layout cho trang dịch vụ 'thay màn hình iPhone tại Đà Nẵng' của một cửa hàng sửa điện thoại (khách tìm chủ yếu trên mobile, quan tâm nhất là giá và thời gian thay, có 3 gói: màn zin / màn linh kiện cao cấp / màn linh kiện thường). Hãy design block map + HTML mockup cho trang này.",
+      "expected_output": "Block map trước (zone weights, heading levels, L0, visual/function/CTA slots) rồi HTML mockup semantic (main/article/section, H1 36px+ above-fold kèm giá, entity card skeleton cho 3 gói màn hình, CTA interleave, DOM order = visual order).",
+      "files": [],
+      "assertions": [
+        "Có block map riêng (trước/kèm HTML) liệt kê blocks theo thứ tự với zone weight % cho từng block",
+        "HTML dùng semantic tags: có <main> và ít nhất 3 <section>/<article>, không phải toàn <div>",
+        "H1 above-fold, font-size >=36px (CSS), chứa entity 'thay màn hình iPhone' + 'Đà Nẵng'",
+        "Giá (số/khoảng giá) và thời gian thay xuất hiện dạng TEXT ở viewport đầu — không chỉ trong ảnh hay tab ẩn",
+        "3 gói màn hình render thành 3 card cùng skeleton lặp (templated >=3), mỗi card có heading + giá + CTA/function",
+        "Mọi thẻ <img> có alt và width/height",
+        "KHÔNG cite US8949242B1 làm centerpiece patent; KHÔNG dùng tên 'vboostFactor'"
+      ]
+    },
+    {
+      "id": 1,
+      "eval_name": "audit-bad-layout",
+      "prompt": "Audit trang HTML này theo visual semantic SEO và đưa danh sách fix theo thứ tự ưu tiên (file: bad-service-page.html).",
+      "expected_output": "Nhận diện: hero image chiếm 100vh + H1 18px (fail blur test), sidebar 45% ngang main, bảng giá là ẢNH + giấu trong tab ẩn, FAQ trả lời 'liên hệ hotline' (không answer-first), ảnh gom cuối trang + stock, title stuffing. Fix list ưu tiên kèm evidence đúng (không cite US8949242B1 làm centerpiece patent, không dùng vboostFactor).",
+      "files": [
+        "visual-semantic-seo-workspace/fixtures/bad-service-page.html"
+      ],
+      "assertions": [
+        "Phát hiện hero image chiếm cả viewport + H1 18px quá nhỏ (fail Blur Test / centerpiece yếu)",
+        "Phát hiện sidebar 45% ngang hàng main content (centerpiece confusion)",
+        "Phát hiện bảng giá là ẢNH và nằm trong tab ẩn — đề xuất đưa giá ra HTML text, không giấu critical info",
+        "Phát hiện FAQ trả lời 'liên hệ hotline' — không answer-first L0",
+        "Phát hiện ảnh gom cuối trang + stock generic không chứa entity — đề xuất đặt ảnh cạnh text liên quan",
+        "Fix list có thứ tự ưu tiên rõ ràng",
+        "KHÔNG cite US8949242B1 làm centerpiece patent; KHÔNG dùng tên 'vboostFactor'"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+# Append-only: merge kiểu union — git giữ cả hai phía, không nổ conflict
+log.md merge=union
+12-feedback-lessons/feedback-log.md merge=union

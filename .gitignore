@@ -1,0 +1,28 @@
+# ===== Secrets — không bao giờ commit =====
+.env
+*.env
+.agent-secrets/
+.claude/.env
+
+# ===== Cấu hình máy cá nhân =====
+.claude/settings.local.json
+.mcp.json
+
+# ===== OS noise =====
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===== Tạm / cache =====
+*.tmp
+*.bak
+~$*
+.~lock.*
+node_modules/
+__pycache__/
+.cache/
+
+# ===== KHÔNG ignore (để đời sau không thêm nhầm) =====
+# .claude/skills/   — mirror committed, bắt buộc có trong repo
+# .agents/skills/   — mirror committed, bắt buộc có trong repo
+# .gitattributes    — luật merge=union

@@ -1,0 +1,35 @@
+{
+  "skill_name": "topical-map-creation",
+  "evals": [
+    {
+      "id": 0,
+      "eval_name": "new-topical-map-vn-brand",
+      "prompt": "Tạo topical map rút gọn cho website mới bán máy lọc nước tại Việt Nam (brand mới, DR thấp, bán online + dịch vụ lắp đặt tại Hà Nội/HCM). Cho tôi: central entity, source context, central search intent, cấu trúc core/outer section với ~20 nodes đầu tiên kèm quyết định publish/merge/skip cho từng node, và kế hoạch publish 3 tháng đầu.",
+      "expected_output": "Đủ 6 components (có Root), ratio Core:Outer 30-40:60-70, mỗi node có quyết định QDP/QDH/QDS hoặc publish/merge/skip, có video/corroboration nodes, ignitor strategy cho DR thấp, publication phases.",
+      "files": [],
+      "assertions": [
+        "Nêu đủ Source Context, Central Entity, Central Search Intent, Core Section, Outer Section; có nhắc Root component",
+        "Ratio Core:Outer khoảng 30-40% : 60-70% (nêu rõ hoặc số node phản ánh đúng)",
+        "Từng node/nhóm node có quyết định publish/merge/skip hoặc QDP/QDH/QDS",
+        "Có ignitor strategy cho site DR thấp (outer dễ rank trước → transfer authority về core)",
+        "Map có node video/YouTube hoặc corroboration/off-site (Surround Sound)",
+        "Kế hoạch publish 3 tháng có phases (bulk launch → rhythm → scale)"
+      ]
+    },
+    {
+      "id": 1,
+      "eval_name": "aio-era-map-refresh",
+      "prompt": "Website dạy tiếng Anh online của tôi có ~300 bài blog, traffic giảm 40% từ khi Google AI Overviews phủ rộng dù impressions vẫn tăng. Hãy rà soát lại chiến lược topical map: cần merge/skip những gì, cần thêm node/lớp nào cho thời AI search, và KPI nên đổi thế nào?",
+      "expected_output": "Chẩn đoán Great Decoupling, quality gate merge/skip chống overclustering, query fan-out coverage check, thêm video nodes + corroboration (Surround Sound), KPI shift sang LLM citations/Topic Share, map refresh cadence.",
+      "files": [],
+      "assertions": [
+        "Chẩn đoán đúng: impressions tăng + clicks giảm = tác động AIO (Great Decoupling)",
+        "Đề xuất quality gate merge/skip chống overclustering/thin content",
+        "Có bước query fan-out coverage check (sinh sub-queries, đối chiếu map)",
+        "Đề xuất video nodes và/hoặc corroboration off-site (brand mentions/Surround Sound)",
+        "KPI shift: track LLM citations / AI share of voice / Topic Share song song clicks",
+        "Có refresh cadence định kỳ cho map"
+      ]
+    }
+  ]
+}
