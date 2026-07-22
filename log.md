@@ -105,3 +105,9 @@ Luật ghi:
 - rubric: pattern "URL swap/redirect" + "Scope vênh". Template (+instance): CSS .crumb/.page-no/.scope-note.
 - Files touched: skills/gtv-weekly-report/**, _TEMPLATES/weekly-report-slides/deck-template.html, .claude/skills/gtv-weekly-report/**
 - Công đoạn: — · WS: 09
+
+## [2026-07-22] refactor | Round 3 (Vincent): luật trình bày #7-11 + INLINE EDIT template + pv_movers dims — @claude
+- Nguồn: FB-2026-07-22-vincent-01 (instance careerviet). slide-map +5 luật; template weekly-report-slides nhúng edit-mode (E/localStorage/guard nav) + Description 92px; pv_movers.py thêm cột phân loại; SKILL.md bước 2b (EDIT_KEY riêng per deck, ES5 Safari-safe).
+- Mirror: 2 instance + root đã sync; lint PASS.
+- Files touched: skills/gtv-weekly-report/**, _TEMPLATES/weekly-report-slides/deck-template.html, MIGRATION.md
+- Công đoạn: — · WS: 09

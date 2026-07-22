@@ -183,6 +183,12 @@ svg.line-chart polyline { fill:none; stroke-width:4; stroke-linejoin:round; stro
 
 /* ---- ghi chú nguồn dữ liệu bắt buộc (luật Reporter) ---- */
 .data-meta { position:absolute; left:72px; bottom:26px; font-size:19px; color:var(--mut); }
+
+/* ---- INLINE EDIT (bấm E — feedback Vincent 22/07) ---- */
+body.editing [contenteditable="true"] { outline:2px dashed rgba(6,147,227,.55); outline-offset:4px; border-radius:4px; }
+.edit-btn { position:fixed; right:18px; bottom:18px; z-index:1200; width:44px; height:44px; border-radius:50%; border:none; background:#0693E3; color:#fff; font-size:20px; cursor:pointer; opacity:.25; transition:opacity .2s; }
+.edit-btn:hover, .edit-btn.active { opacity:1; background:#9900EF; }
+@media print { .edit-btn { display:none !important; } }
 </style>
 </head>
 <body>
@@ -438,9 +444,9 @@ svg.line-chart polyline { fill:none; stroke-width:4; stroke-linejoin:round; stro
     <div class="content">
       <div class="tbl-wrap">
         <table class="data">
-          <thead><tr><th style="width:34%">SCOPE</th><th>Description</th></tr></thead>
+          <thead><tr><th style="width:30%">SCOPE</th><th>Description — điền trong họp / khi edit (phím E)</th></tr></thead>
           <tbody>
-            <tr><td class="name">Technical</td><td class="name">&nbsp;</td></tr>
+            <tr style="height:92px"><td class="name" style="vertical-align:top">Technical</td><td class="name" style="vertical-align:top">&nbsp;</td></tr>
             <tr><td class="name">UX/UI</td><td class="name">&nbsp;</td></tr>
             <tr><td class="name">Phối hợp triển khai Content</td><td class="name">&nbsp;</td></tr>
           </tbody>
@@ -531,6 +537,33 @@ svg.line-chart polyline { fill:none; stroke-width:4; stroke-linejoin:round; stro
 <div class="deck-controls"></div>
 
 <script>
+/* INLINE EDIT — bấm E bật/tắt, lưu localStorage. ĐỔI EDIT_KEY theo deck tuần (vd 'crv-w12-v1'). */
+var EDIT_KEY = 'weekly-deck-template';
+var editor = {
+  active: false,
+  toggle: function () {
+    this.active = !this.active;
+    document.body.classList.toggle('editing', this.active);
+    var b = document.querySelector('.edit-btn');
+    if (b) b.classList.toggle('active', this.active);
+    var els = document.querySelectorAll('h1,h2,h3,h4,p,li,td,th');
+    for (var i = 0; i < els.length; i++) els[i].setAttribute('contenteditable', this.active);
+    if (!this.active) this.save();
+  },
+  save: function () { try { localStorage.setItem(EDIT_KEY, document.querySelector('.deck-stage').innerHTML); } catch (e) {} },
+  load: function () { try { var h = localStorage.getItem(EDIT_KEY); if (h) document.querySelector('.deck-stage').innerHTML = h; } catch (e) {} }
+};
+editor.load(); /* load TRƯỚC khi nav bind slide — innerHTML thay sau sẽ làm nav trỏ node cũ */
+(function () {
+  var b = document.createElement('button');
+  b.className = 'edit-btn'; b.type = 'button'; b.title = 'Sửa trực tiếp (phím E) — sửa xong bấm E lần nữa để lưu'; b.textContent = '\u270E';
+  document.body.appendChild(b);
+  b.addEventListener('click', function (ev) { ev.stopPropagation(); editor.toggle(); });
+})();
+window.addEventListener('keydown', function (e) {
+  if ((e.key === 'e' || e.key === 'E') && !e.target.isContentEditable && !e.metaKey && !e.ctrlKey) editor.toggle();
+});
+
 /* Stage scale + điều hướng — chuẩn frontend-slides */
 (function () {
   var stage = document.querySelector('.deck-stage');
@@ -548,12 +581,14 @@ svg.line-chart polyline { fill:none; stroke-width:4; stroke-linejoin:round; stro
   }
   show(cur);
   window.addEventListener('keydown', function (e) {
+    if (e.target.isContentEditable) return;
     if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') show(cur + 1);
     if (e.key === 'ArrowLeft' || e.key === 'PageUp') show(cur - 1);
     if (e.key === 'Home') show(0);
     if (e.key === 'End') show(slides.length - 1);
   });
   window.addEventListener('click', function (e) {
+    if (editor.active || (e.target && e.target.isContentEditable)) return;
     if (e.clientX > window.innerWidth / 2) show(cur + 1); else show(cur - 1);
   });
 })();

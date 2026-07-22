@@ -118,6 +118,16 @@ def main():
     ck = [j for j, c in enumerate(low) if "click" in c]
     im = [j for j, c in enumerate(low) if re.search(r"imp", c)]
     ps = [j for j, c in enumerate(low) if re.search(r"\bpos", c)]
+    # Cột phân loại (Intent/Nhóm ngành/Nhóm chủ đề/Location) — đưa vào item để
+    # slide đọc pattern theo nhóm mà không phải tra lại CSV (feedback Vincent 22/07)
+    DIM_KEYS = {"intent": "intent", "nhóm ngành": "nganh", "nhóm chủ đề": "chu_de",
+                "location": "location", "khu vực": "location", "seo / non": "seo_flag"}
+    dims = []
+    for j, c in enumerate(low):
+        for pat, key in DIM_KEYS.items():
+            if pat in c:
+                dims.append((j, key))
+                break
 
     items = []
     for r in rows[hdr_i + 1:]:
@@ -144,6 +154,10 @@ def main():
             p1, p0 = to_num(r[ps[0]] if ps[0] < len(r) else None), to_num(r[ps[1]] if ps[1] < len(r) else None)
             if p1 is not None and p0 is not None:
                 it["pos"], it["pos_prev"] = p1, p0
+        for j, key in dims:
+            v = str(r[j]).strip() if j < len(r) else ""
+            if v:
+                it[key] = v
         items.append(it)
 
     items.sort(key=lambda x: x["d_pv"])

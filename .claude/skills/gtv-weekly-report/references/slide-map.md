@@ -35,6 +35,11 @@
 4. **Chẩn đoán per nhóm giảm ở BẢNG 1**: mỗi nhóm trang giảm (JD, Blog, NTD…) có 1 dòng chẩn đoán riêng theo ma trận — không mượn chẩn đoán của nhóm khác.
 5. **Action phải cụ thể**: {làm gì × trên nhóm/URL nào × nối task SOW đang chạy (đích danh) × owner}. Cấm action mơ hồ kiểu "cơ hội title/meta" không kèm danh sách nhóm/URL.
 6. **Text nhiều → TÁCH SLIDE, không nén font** (feedback Vincent 22/07): slide có bảng lớn + nhận xét/chẩn đoán dài thì tách thành 2 slide — slide bảng (+ 1-2 bullet tóm tắt, trỏ "chẩn đoán ở slide kế tiếp") và slide "Chẩn đoán & Action" chữ cỡ chuẩn. Đã áp cho BẢNG 1 (4→4+5), 1.2 ngành (7→7+8), Blog (12→12+13) ở deck W11 v3. Chữ không được nhỏ hơn ~21px; chữ tràn/đè `.data-meta` = FAIL tự kiểm — soi bằng render thử vài trang PDF ra PNG trước khi giao.
+7. **Ngôn ngữ senior-SEO, không mật mã** (feedback Vincent 22/07 round 3): mọi NHẬN XÉT/CHẨN ĐOÁN/ACTION viết câu hoàn chỉnh, đọc phát hiểu ngay. CẤM ký hiệu nén kiểu "Imp↑ CTR↓", "-1.36đ", "check SERP + drift", "URL swap" trần trụi — ký hiệu/khái niệm nào dùng lần đầu phải nói bằng lời ("được Google hiển thị nhiều hơn nhưng tỷ lệ click giảm 1,36 điểm %"; "nhiều khả năng website đã redirect/đổi URL — traffic không mất mà chuyển nhà"). Action đủ 4 vế: **làm gì — trên nhóm/URL nào — vì sao — ai làm**. Độ chắc viết "(độ chắc: khá/trung bình/thấp)".
+8. **Mọi mục phân tích có CẢ TĂNG lẫn GIẢM** (feedback Vincent 22/07 round 3): tăng để thấy kết quả + cơ hội khai thác tiếp, giảm để xử lý. Chiều nào rỗng thật thì ghi rõ ("Không có nhóm nào tăng kỳ này — giảm diện rộng 14/14 nhóm"), không im lặng bỏ chiều.
+9. **Top pages = TOP 20 mỗi chiều** (thay vì 8), bảng đủ cột `PV · Δ PV · % · Clicks · Δ Clicks · Pos · Δ Pos` (Clicks/Pos 2 kỳ — pv_movers.py đã trả sẵn) + cột Intent/nhóm khi có. Nhiều URL → tách 2-3 slide thoải mái (slide nhiều hơn là chấp nhận được, chi tiết + action rõ quan trọng hơn ngắn).
+10. **Blog chẩn đoán: 3 bài tiêu biểu mỗi nhóm chủ đề** (thay vì 1), lấy từ movers_pv_blog.json; cần thì tách 2 slide.
+11. **Deck phải EDIT được tại chỗ**: bấm phím E bật/tắt chế độ sửa (contenteditable + lưu localStorage, key riêng theo deck) — port từ khối editor trong template `weekly-report-slides`. Bảng điền-tay (vd «Cần client hỗ trợ») cột Description rộng ≥65%, mỗi hàng cao ≥90px để gõ nhiều dòng.
 
 ## Luật render bảng
 

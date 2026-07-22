@@ -51,7 +51,8 @@ python3 skills/gtv-weekly-report/scripts/fetch_weekly_data.py \
 
 ### Pha 3 — RENDER
 1. CLONE `09-reporting/weekly-template/deck-template.html` → `09-reporting/weekly/<YYYY>-W<NN>/<CLIENT>_bao-cao-tuan-W<NN>_v1.html` (đã tồn tại → tăng version).
-2. Điền slide theo `references/slide-map.md` — bảng render từ digest (class `pos`/`neg`/`mut`, nhóm KPI `kpi-row`, dòng tuần hiện tại `hl`), NHẬN XÉT lấy từ insights (rút gọn cho slide, giữ số).
+2. Điền slide theo `references/slide-map.md` — bảng render từ digest (class `pos`/`neg`/`mut`, nhóm KPI `kpi-row`, dòng tuần hiện tại `hl`), NHẬN XÉT lấy từ insights (rút gọn cho slide, giữ số). Tuân 11 luật trình bày trong slide-map — đặc biệt: ngôn ngữ senior-SEO không mật mã (#7), mọi mục có tăng + giảm (#8), top pages 20/chiều đủ Clicks+Pos WoW (#9).
+2b. **Edit-mode bắt buộc**: template đã có khối INLINE EDIT (bấm E, contenteditable + localStorage) — khi clone deck tuần, ĐỔI `EDIT_KEY` thành key riêng (vd `crv-w12-v1`) để các deck không đè bản sửa của nhau. Script deck chỉ dùng ES5 (Safari-safe).
 3. Phần cần HÌNH thay vì bảng — **thang capture** (dừng ở bậc đầu tiên chạy được):
    a. **Looker Studio** (nếu config có `looker.url` — link-view): `npx playwright screenshot --viewport-size=1920,1080 --wait-for-timeout=20000 "<url>" <out.png>` (per-page: dán URL `/page/<id>` nếu có). Widget không render (ô mờ) → bậc dưới.
    b. **Sheet range literal**: `python3 scripts/capture_sheet_range.py --config … --workbook <key> --tab "<tab>" --range A1:N30 --out <png>`.
