@@ -56,3 +56,29 @@ Luật ghi:
 - Nhóm quick-start & rule: README lên 5 lệnh (thêm `ingest`, sửa mô tả `setup client`); SETUP mục 4 trỏ bảng quick-start README; ghi chú standalone bước 7; CLAUDE.md §0 ngoại lệ trivial read-only theo AGENT.md §4.
 - Files touched: CLAUDE.md, README.md, SETUP.md, SYNC.md, MIGRATION.md, index.md, log.md, 00-client-context/README.md, 00-client-context/kpi-commitments.md, 04-structure-ux-cro/README.md, 05-content-plan/README.md, _TEMPLATES/topical-map.md, 02-raw/knowledge/README.md, 02-raw/knowledge/_MANIFEST.md, 02-raw/knowledge/cheat-sheets/ws04-structure.md, 02-raw/knowledge/cheat-sheets/ws05-content-plan.md, 02-raw/knowledge/sop/09-timeline/README.md
 - Công đoạn: — · WS: —
+
+## [2026-07-19] bookkeep | Thêm 10 skill mới đợt 07/2026 — @claude
+
+- Thêm 10 skill vào `skills/` (đồng bộ twin từ root `skills/`, đã đăng ký manifest + chạy sync): **Wave 1 gap quy trình** — seo-logfile-analysis (công đoạn 27, advertools+GoAccess, verify Googlebot reverse-DNS), traffic-plan (công đoạn 9+17, mode Outer-first/FULL +20%, CHỜ DUYỆT Director), keyword-topic-url-mapping (công đoạn 4, SERP-overlap clustering), acc-kickoff-setup (phân tích HĐ + checklist 4 nhóm T1), acc-weekly-sync (sync brief 5 phần + 5 red-flags); **net-new từ gap-audit claude-seo** — seo-drift-tracker (snapshot/diff element sau deploy), hreflang-planner (audit/generate, case vn→vi), programmatic-seo-builder (gate G1-G3, Content Leader duyệt template), local-seo-audit + map-pack-intelligence (cặp local: website-signals + geo-grid SoLV).
+- Ma trận M (§5.2) cập nhật 4 hàng: Context (+acc-kickoff-setup), Audit (+4 skill), Content plan (+3 skill), Client mgmt (+2 skill acc).
+- Nguồn quyết định: đề xuất skills 07/2026 + phân loại DROP/INTEGRATE/CREATE-NEW từ claude-seo (11.7k★) + so sánh DataForSEO vs SerpApi. Grounding: sop/01, sop/04, sop/06-self-checklist/tier-3, sop/09-timeline (bản Account), wiki concepts (wikilinks đã verify tồn tại).
+- Files touched: skills/ (10 folder mới), CLAUDE.md §5.2, log.md
+- Công đoạn: — · WS: —
+
+## [2026-07-19] bookkeep | Skill wave 2 + hệ checklist QC v3 — @claude
+
+- Skill mới: serp-clustering (DATA layer clustering, tách theo quyết định Vincent). Nâng cấp INTEGRATE từ gap-audit claude-seo: technical-seo-audit v1.4 (Health Score 0-100 + sitemap GENERATE + falsifiability field), image-seo-optimize v1.1 (performance layer), seo-research v1.2 (SXO page-type-mismatch), seo-brief v1.1 (word-budget + MANDATORY/RECOMMENDED/DIFFERENTIATOR), competitor-seo-gap-analysis v1.1 (marketplace intel VN), keyword-topic-url-mapping v1.1 + topical-map-creation v2.1 (route serp-clustering). Manifest + sync + twin đã chạy (68 .claude / 31 SEO Production).
+- Hệ checklist QC v3: 20 checklist mới trong wiki sop/06-self-checklist (registry trong README v3) + sop/10-offpage-process.md. Ma trận M §5.2 cập nhật cột Skill chính + Checklist QC cho 8 hàng WS.
+- ⚠ Việc treo: knowledge pack 02-raw/knowledge/ của master CHƯA đóng gói các checklist mới (cần MIGRATION pass + _MANIFEST update trước khi setup client mới dùng được offline).
+- Files touched: skills/ (7 folder), CLAUDE.md §5.2, log.md
+- Công đoạn: — · WS: —
+
+## [2026-07-22] refactor | v2026.07.1 — Nội quy 12 trạm + ORCHESTRATOR + COMMANDS + lớp mẫu examples — @claude
+- 12 cặp CLAUDE.md+AGENTS.md per trạm (persona + vòng tự kiểm + nạp 80/20); ORCHESTRATOR.md (quản đốc) + COMMANDS.md (bảng lệnh); _TEMPLATES/examples/ 6 file mẫu hư cấu vidu.vn.
+- Root: pre-work §3 bước 0b + §4.4 đọc nội quy trạm; MIGRATION/SYNC/README đồng bộ; thống nhất ID FB-<YYYY-MM-DD>.
+- Files touched: 26 file trạm + 2 quản đốc + 6 examples + 6 file root.
+
+## [2026-07-22] bookkeep | Nhận đợt mở rộng workspace 19-20/07 (phiên song song) — @claude
+- Knowledge pack 06-self-checklist 8→30 file (bộ checklist lĩnh vực + sự kiện, KO/MR series); +11 skill mới, 4 skill cập nhật, mirror rebuild.
+- ⚠ tier-1-outline-am.md bị đè bản FULL — chờ Vincent quyết chưng cất lại hay giữ; instance tạm giữ bản chưng cất.
+- Files touched: 02-raw/knowledge/ + skills/ + .claude/skills/ + .agents/skills/

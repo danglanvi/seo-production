@@ -74,6 +74,8 @@ SEO Production/
 | `CLAUDE.md` | Luật vận hành đầy đủ: 4 thao tác, pre-work protocol, ma trận M, QC spec, self-improving |
 | `AGENT.md` | Persona giao tiếp: Tiếng Việt thuần, cách present plan + QC findings |
 | `AGENTS.md` | Entry point cho mọi agent runtime (Claude Code / Codex / Antigravity) |
+| `ORCHESTRATOR.md` | Quản đốc: giao mục tiêu ("chạy công đoạn <n>") → điều phối trạm + skill + gate + fan-out |
+| `COMMANDS.md` | Bảng lệnh chuẩn per trạm cho team |
 | `SETUP.md` | Protocol "setup client <tên>" 9 bước |
 | `SYNC.md` | Git đồng bộ team: nhịp pull/push, phân vùng PIC, xử lý conflict, MIGRATION cho Lead |
 | `MIGRATION.md` | Update master → instance: bảng GHI ĐÈ / GIỮ, master_version |

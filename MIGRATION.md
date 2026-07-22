@@ -1,5 +1,5 @@
 ---
-master_version: v2026.07
+master_version: v2026.07.1
 ---
 
 # MIGRATION — Cập nhật instance lên version master mới
@@ -15,6 +15,19 @@ master_version: v2026.07
 ---
 
 ## 1. Có gì mới
+
+### v2026.07.1 (2026-07-22) — Nội quy trạm + Quản đốc + Lớp mẫu (mindset 4 trụ cột Agentic SEO)
+
+- **12 cặp `CLAUDE.md` + `AGENTS.md` nội quy trạm** (00, 01, 03→12): persona per trạm, bảng ĐƯỢC/KHÔNG ĐƯỢC, **vòng tự kiểm** (tự chấm theo checklist → sửa tới khi đạt → mới submit QC), luật nạp 80/20 riêng trạm. Trạm không lặp luật root — vênh thì root thắng. `02-raw/` + `99-archive/` giữ README-only.
+- **`ORCHESTRATOR.md`** (quản đốc: lệnh cấp mục tiêu → vòng điều phối 6 bước → bảng chốt giám đốc → fan-out ≤4 — "Sub-agent là nhân viên. Orchestrator là quản đốc. Bạn là giám đốc.") + **`COMMANDS.md`** (bảng lệnh chuẩn per trạm).
+- **`_TEMPLATES/examples/`** — lớp mẫu đạt chuẩn (trụ cột 4): 5 mẫu deliverable hư cấu "Công ty Ví Dụ / vidu.vn" (qc-report, audit-findings, gate-offpage KHÔNG-đẩy, báo cáo tháng có báo đỏ, meeting-note) + README luật nạp cùng-loại + quy trình promote mẫu thật.
+- Root cập nhật: CLAUDE.md §3 thêm bước 0b đọc nội quy trạm + câu vòng tự kiểm, §4.4 đọc CLAUDE.md trạm, folder map thêm ORCHESTRATOR/COMMANDS; MIGRATION bảng 2.A thêm 2 file quản đốc + cặp nội quy per trạm; SYNC read-only 9 file root + cặp trạm; README bảng Đọc tiếp; thống nhất ID feedback `FB-<YYYY-MM-DD>-<alias>-<nn>`.
+
+### v2026.07.1 (2026-07-22) — Nhận đợt mở rộng từ workspace (phiên song song 19-20/07)
+
+- Kho gốc `06-self-checklist` mở rộng 8 → 30 file: bộ checklist theo lĩnh vực (tier-1-entity/geo/offpage-backlink/structure-website/ux-ui/cro-conversion/visual-semantic/gbp-local/social-google-stack/traffic-users), checklist sự kiện (khôi phục ranking, mã độc, pháp lý content, intake thẩm định), `checklist-kpi-okrs-planning` (KO-01→22), `monthly-project-review` (MR-01→21), gate-structure-wireframe, runbook tier-3 — knowledge pack đã nhận đủ kèm banner.
+- ⚠ `tier-1-outline-am.md` trong pack bị đè bằng BẢN FULL 649 dòng (kèm evidence/theory — vượt ranh giới chưng cất đã chốt). CHỜ VINCENT QUYẾT: chưng cất lại hay chấp nhận bản full. Instance tạm GIỮ bản chưng cất cũ.
+- Skills: +11 skill mới (acc-kickoff-setup, acc-weekly-sync, hreflang-planner, keyword-topic-url-mapping, local-seo-audit, map-pack-intelligence, programmatic-seo-builder, seo-drift-tracker, seo-logfile-analysis, serp-clustering, traffic-plan) + 4 skill cập nhật (technical-seo-audit, competitor-seo-gap-analysis, image-seo-optimize, topical-map-creation). Mirror .claude/.agents đã rebuild qua sync script.
 
 ### v2026.07 (vá 2026-07-18) — 17 fix từ đợt verification chéo
 
@@ -50,13 +63,13 @@ Bản đầu tiên của hệ SEO Production. Không có instance cũ để migr
 
 | Nhóm | File / folder |
 |---|---|
-| Root luật | `CLAUDE.md` · `AGENT.md` · `AGENTS.md` · `README.md` · `SETUP.md` · `MIGRATION.md` · `SYNC.md` |
+| Root luật | `CLAUDE.md` · `AGENT.md` · `AGENTS.md` · `README.md` · `SETUP.md` · `MIGRATION.md` · `SYNC.md` · `ORCHESTRATOR.md` · `COMMANDS.md` |
 | Git config | `.gitignore` · `.gitattributes` |
 | Templates | `_TEMPLATES/` toàn bộ (kể cả `account/`) |
 | Skills | `skills/` + mirror `.claude/skills/` + `.agents/skills/` |
 | Knowledge pack | `02-raw/knowledge/` toàn bộ |
 | Screenshots infra | `02-raw/screenshots/README.md` (CHỈ README — ảnh là data) |
-| WS infra | `README.md` của MỌI workstream folder (`00-client-context/` → `12-feedback-lessons/`) + `03-audits/qc/README.md` |
+| WS infra | `README.md` + **`CLAUDE.md` + `AGENTS.md` (nội quy trạm)** của MỌI workstream folder (`00-client-context/` → `12-feedback-lessons/`) + `03-audits/qc/README.md` |
 | Config | `config/` (`mcp.json.example`) |
 
 ### B. GIỮ (KHÔNG đụng — data + công sức của dự án)

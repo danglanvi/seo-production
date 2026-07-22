@@ -101,13 +101,14 @@ Không rõ phân loại → hỏi, không đoán. Trích context từ raw → sh
 Đọc theo đúng thứ tự:
 
 0. `AGENT.md` — communication persona.
+0b. **Nội quy trạm** `<folder>/CLAUDE.md` của workstream đang làm (00, 01, 03→12 đều có) — persona, được/không được, vòng tự kiểm của trạm. Khi vênh với file này, file này (root) thắng.
 1. `index.md` — dòng công đoạn liên quan: status hiện tại, PIC, tháng, deliverable, Ghi chú.
 2. `12-feedback-lessons/lessons/lessons-ws<XX>.md` — nếu file tồn tại cho workstream đang làm. Lesson là luật đã trả giá — không lặp lại lỗi cũ.
 3. Cheat-sheet workstream trong `02-raw/knowledge/cheat-sheets/` — nếu WS có cheat-sheet (hiện có ws03→ws08) — vd Work WS06 → `ws06-onpage-il.md`.
 4. Checklist đầy đủ theo ma trận M (§5) — CHỈ khi: (a) Work công đoạn có checklist, hoặc (b) đang chạy QC.
 5. `00-client-context/kpi-commitments.md` — nếu deliverable chạm KPI, cam kết hợp đồng hoặc báo cáo.
 
-Sau khi đọc, **báo cáo 3-5 câu** điều nắm được (status công đoạn, input có gì, giả định, rủi ro) → chờ duyệt → mới thực hiện.
+Sau khi đọc, **báo cáo 3-5 câu** điều nắm được (status công đoạn, input có gì, giả định, rủi ro) → chờ duyệt → mới thực hiện. Làm xong deliverable: chạy **vòng tự kiểm** của trạm (tự chấm theo checklist → sửa tới khi đạt) TRƯỚC khi submit QC hoặc đổi status.
 
 ---
 
@@ -116,6 +117,7 @@ Sau khi đọc, **báo cáo 3-5 câu** điều nắm được (status công đo�
 ```
 SEO Production/                      (instance: PROJECTS/<client-slug>/)
 ├── CLAUDE.md · AGENT.md · AGENTS.md · README.md · SETUP.md · MIGRATION.md · SYNC.md
+├── ORCHESTRATOR.md (quản đốc điều phối theo index) · COMMANDS.md (bảng lệnh chuẩn per trạm)
 ├── index.md                  ← registry: bảng A dự án + B 33 công đoạn + C nhịp quý + D deliverable
 ├── log.md                    ← timeline append-only
 ├── config/                   ← mcp.json.example (MCP cần cho dự án)
@@ -152,7 +154,7 @@ Luật cứng folder:
 1. `02-raw/` chỉ **ADD** — không sửa, không xóa, không đổi tên file đã có. Muốn phiên bản mới → thêm file mới.
 2. `02-raw/knowledge/` **read-only trong instance** — phát hiện checklist sai/thiếu → đề xuất vá ở MASTER (vòng 2, §9), instance nhận bản vá qua `MIGRATION.md`. Không bao giờ sửa tại chỗ.
 3. WS folder (01-11) chứa CẢ `README.md` (infra — bị đè khi migration) LẪN deliverable (của dự án — giữ nguyên). Không trộn vai trò: README không chứa dữ liệu client, deliverable không chứa luật.
-4. Trước khi Work trong một WS folder, đọc `README.md` của folder đó (công đoạn phụ trách, deliverable chuẩn, done-criteria).
+4. Trước khi Work trong một WS folder, đọc **nội quy trạm** `CLAUDE.md` của folder đó (persona, được/không được, vòng tự kiểm) + `README.md` (công đoạn phụ trách, deliverable chuẩn, done-criteria). Folder không có CLAUDE.md (`02-raw/`, `99-archive/`) → chỉ README.
 
 ---
 
@@ -203,16 +205,16 @@ Luật cứng folder:
 
 | WS | Folder | Công đoạn | Skill chính | Checklist QC (02-raw/knowledge/) | Done-criteria |
 |---|---|---|---|---|---|
-| Context | 00-client-context | 1, 3 | — | DoD trong template | 3 file context stable + hop-dong-cam-ket.md đã chưng cất từ HĐ, HĐ trích vào kpi-commitments |
-| Strategy | 01-strategy-okrs | 1, 8, 24(OKRs), 31 | okrs-gtv-tag-framework | DoD template okrs | OKRs được SEO Director duyệt, có backup plan |
-| Audit | 03-audits | 2, 5, 6◇, 7(plan), 22◇, 24, 27, 29 | semantic-content-audit, technical-seo-audit, competitor-seo-gap-analysis, content-refresh | sop/05-audit-checklist.md + sop/06-self-checklist/tier-3-audit-configuration.md + tier-3-technical-advance.md | Audit report + phân loại action full URL + owner/deadline |
-| Structure | 04-structure-ux-cro | 11 | visual-semantic-seo, semantic-html-optimization | sop/07-visual-semantic.md (Bước 0-8 — viết tắt B0-B8 — + RACI) | Wireframe + HTML template semantic được duyệt, ≤15 ngày đầu T2 |
-| Content plan | 05-content-plan | 4, 9, 10, 15, 16, 17, 19 | topical-map-creation, competitor-seo-gap-analysis | sop/01-topical-map.md (DoD 15) + sop/02-content-brief.md + tier-1 outline/writing (QC bài) | Topical map chốt + SCN; plan traffic ≥ cam kết +20%; ma trận content đủ % mốc |
-| Onpage & IL | 06-onpage-internal-link | 7(execute), 13, 18, 23 | seo-onpage, internal-linking, schema-markup-generator, image-seo-optimize | sop/08-onpage-checklist.md (P0→/23→/31→/39) + sop/03-internal-linking.md + sop/04-entity-optimization.md | Batch onpage pass /23 (tier theo kick-off); IL plan thực thi, orphan=0 |
-| Offpage | 07-offpage | 20, 25◇, 26 | backlink-research, backlink-plan, textlink-analyzer | DoD gate-offpage-decision + backlink-campaign template | Gate có verdict; campaign đúng velocity/anchor plan |
-| GEO | 08-geo-ai-visibility | 14, 21, 28 | geo-tracking-prompt-selection, geo-content-optimization | AX1-AX5 (trong sop/08) + DoD geo-baseline | Baseline đo được; đợt FS/AIO có danh sách query + kết quả cite |
+| Context | 00-client-context | 1, 3 | acc-kickoff-setup (phân tích HĐ + checklist 4 nhóm) | DoD trong template | 3 file context stable + hop-dong-cam-ket.md đã chưng cất từ HĐ, HĐ trích vào kpi-commitments |
+| Strategy | 01-strategy-okrs | 1, 8, 24(OKRs), 31 | okrs-gtv-tag-framework | DoD template okrs + sop/06-self-checklist/checklist-kpi-okrs-planning.md (P0 5) | OKRs được SEO Director duyệt, có backup plan |
+| Audit | 03-audits | 2, 5, 6◇, 7(plan), 22◇, 24, 27, 29 | semantic-content-audit, technical-seo-audit, competitor-seo-gap-analysis, content-refresh, seo-logfile-analysis (27), seo-drift-tracker (QA sau deploy), hreflang-planner (đa thị trường), local-seo-audit + map-pack-intelligence (dự án local) | sop/05-audit-checklist.md + sop/06-self-checklist/tier-3-audit-configuration.md + tier-3-technical-advance.md · sự kiện: tier-3-ranking-drop-runbook.md (rớt hạng/update) + checklist-xu-ly-ma-doc.md → checklist-khoi-phuc-seo-ranking.md (hack) · local: tier-1-gbp-local.md | Audit report + phân loại action full URL + owner/deadline |
+| Structure | 04-structure-ux-cro | 11 | visual-semantic-seo, semantic-html-optimization | sop/07-visual-semantic.md (B0-B8 + RACI) + sop/06-self-checklist/tier-1-structure-website.md → gate-structure-wireframe.md (P0 100% trước gửi khách) + tier-1-visual-semantic.md + tier-1-ux-ui.md + tier-1-cro-conversion.md (phần A site-wide) | Wireframe + HTML template semantic được duyệt, ≤15 ngày đầu T2 |
+| Content plan | 05-content-plan | 4, 9, 10, 15, 16, 17, 19 | topical-map-creation, competitor-seo-gap-analysis, keyword-topic-url-mapping (4), serp-clustering (DATA layer clustering), traffic-plan (9, 17), programmatic-seo-builder (tùy dự án — Content Leader duyệt template) | sop/01-topical-map.md (DoD 15) + sop/02-content-brief.md + tier-1 outline/writing (QC bài) + foundation-content-nganh.md (công đoạn 3, P0 trước bài đầu) + quality-content-ai.md / common-ai-errors.md (vận hành AI) | Topical map chốt + SCN; plan traffic ≥ cam kết +20%; ma trận content đủ % mốc |
+| Onpage & IL | 06-onpage-internal-link | 7(execute), 13, 18, 23 | seo-onpage, internal-linking, schema-markup-generator, image-seo-optimize | sop/08-onpage-checklist.md (P0→/23→/31→/39) + sop/03-internal-linking.md + sop/04-entity-optimization.md + tier-1-entity.md (gate T1/T3) + checklist-entity-onsite-web.md (deep onsite) + tier-1-social-google-stack.md | Batch onpage pass /23 (tier theo kick-off); IL plan thực thi, orphan=0 |
+| Offpage | 07-offpage | 20, 25◇, 26 | backlink-research, backlink-plan, textlink-analyzer | sop/10-offpage-process.md (SOP toàn diện) + DoD gate-offpage-decision + backlink-campaign template + tier-1-offpage-backlink.md (per batch, P0 7) + tier-1-traffic-users.md (⚠ Director duyệt) | Gate có verdict; campaign đúng velocity/anchor plan |
+| GEO | 08-geo-ai-visibility | 14, 21, 28 | geo-tracking-prompt-selection, geo-content-optimization | AX1-AX5 (trong sop/08) + DoD geo-baseline + tier-1-geo.md (P0 5, guardrail llms.txt/schema ≠ lever) | Baseline đo được; đợt FS/AIO có danh sách query + kết quả cite |
 | Reporting | 09-reporting | 30◇, 32 | gtv-client-report (⚠ chỉ Claude Code), expert-case-study | DoD bao-cao-thang + _TEMPLATES/account/ | Báo cáo gửi đúng hạn; T cuối: báo cáo kép + BBNT |
-| Client mgmt | 10-client-management | 12, 31 | gtv-client-report | DoD kick-off template | Kick-off done; meeting note có action items + owner |
+| Client mgmt | 10-client-management | 12, 31 | gtv-client-report, acc-kickoff-setup (12), acc-weekly-sync (nhịp tuần) | DoD kick-off template + monthly-project-review.md (Lead tự check TRƯỚC khi trình review tháng, P0 7) | Kick-off done; meeting note có action items + owner |
 | Handover | 11-handover-maintenance | 33 | site-migration-checklist (nếu có migration) | sop/09-timeline/khung-duy-tri.md + handover-checklist | Checklist bàn giao ký nhận, lịch duy trì quý chốt |
 | Feedback | 12-feedback-lessons | xuyên suốt | — | format feedback-entry | Lesson được vá về đúng vòng (dự án/master/wiki) |
 

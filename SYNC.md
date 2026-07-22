@@ -62,10 +62,10 @@ Mô hình nhánh: **main-only**. Team không tạo branch, không tạo PR. Ch�
 
 1. **1 file — 1 PIC.** Mỗi file deliverable có đúng 1 PIC, ghi ở cột PIC trong `index.md`. Chỉ PIC được ghi file đó. Người khác góp ý qua `12-feedback-lessons/feedback-log.md`, không sửa thẳng.
 2. **File cấu trúc/luật là read-only với team** — chỉ Lead đụng, và chỉ qua MIGRATION (mục 6). Danh sách khớp bảng 2.A của `MIGRATION.md`:
-   - 7 file root: `CLAUDE.md`, `AGENT.md`, `AGENTS.md`, `README.md`, `SETUP.md`, `MIGRATION.md`, `SYNC.md`
+   - 9 file root: `CLAUDE.md`, `AGENT.md`, `AGENTS.md`, `README.md`, `SETUP.md`, `MIGRATION.md`, `SYNC.md`, `ORCHESTRATOR.md`, `COMMANDS.md`
    - `.gitignore` · `.gitattributes`
    - `_TEMPLATES/`, `skills/`, `.claude/skills/`, `.agents/skills/`, `02-raw/knowledge/`, `config/`
-   - `README.md` của mọi WS folder (`00-client-context/` → `12-feedback-lessons/`)
+   - `README.md` + `CLAUDE.md` + `AGENTS.md` (nội quy trạm) của mọi WS folder (`00-client-context/` → `12-feedback-lessons/`)
 3. **Ba file dùng chung** — mỗi file một luật riêng:
 
    | File | Cơ chế | Luật ghi |
