@@ -195,7 +195,7 @@ body.editing [contenteditable="true"] { outline:2px dashed rgba(6,147,227,.55); 
 .chrome-btns.show { opacity:1; pointer-events:auto; }
 .chrome-btns button { background:rgba(15,23,42,.84); color:#fff; border:1px solid rgba(255,255,255,.28); border-radius:8px; padding:7px 14px; font-family:inherit; font-size:13px; font-weight:700; letter-spacing:.02em; cursor:pointer; }
 .chrome-btns button:hover { background:rgba(30,41,59,.95); }
-.rail { position:fixed; left:0; top:0; bottom:0; width:178px; background:rgba(10,14,26,.94); z-index:65; overflow-y:auto; padding:56px 12px 14px; display:none; box-shadow:2px 0 14px rgba(0,0,0,.35); }
+.rail { box-sizing:border-box; position:fixed; left:0; top:0; bottom:0; width:178px; background:rgba(10,14,26,.94); z-index:65; overflow-y:auto; padding:56px 12px 14px; display:none; box-shadow:2px 0 14px rgba(0,0,0,.35); }
 body.rail-open .rail { display:block; }
 .rail::-webkit-scrollbar { width:8px; }
 .rail::-webkit-scrollbar-thumb { background:rgba(255,255,255,.18); border-radius:4px; }
@@ -206,7 +206,12 @@ body.rail-open .rail { display:block; }
 .rail .thumb:hover .frame { outline-color:rgba(255,255,255,.4); }
 .rail .thumb.cur .frame { outline-color:#0693E3; }
 .rail .mini { display:block; width:1920px; height:1080px; -webkit-transform:scale(.078125); transform:scale(.078125); -webkit-transform-origin:0 0; transform-origin:0 0; pointer-events:none; }
-@media print { .rail, .chrome-btns, .edit-btn { display:none !important; } }
+.rail-grip { position:fixed; top:0; bottom:0; width:7px; cursor:col-resize; z-index:66; display:none; }
+body.rail-open .rail-grip { display:block; }
+.rail-grip:hover, body.rail-resizing .rail-grip { background:rgba(255,255,255,.22); }
+body.rail-resizing { cursor:col-resize; }
+body.rail-resizing * { -webkit-user-select:none; user-select:none; }
+@media print { .rail, .chrome-btns, .edit-btn, .rail-grip { display:none !important; } }
 </style>
 </head>
 <body>
@@ -587,8 +592,10 @@ window.addEventListener('keydown', function (e) {
 (function () {
   var stage = document.querySelector('.deck-stage');
   function fit() {
-    var s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
-    stage.style.transform = 'translate(' + (window.innerWidth - 1920 * s) / 2 + 'px,' + (window.innerHeight - 1080 * s) / 2 + 'px) scale(' + s + ')';
+    var rw = (document.body.className.indexOf('rail-open') !== -1 && window.__railW) ? window.__railW : 0;
+    var aw = window.innerWidth - rw;
+    var s = Math.min(aw / 1920, window.innerHeight / 1080);
+    stage.style.transform = 'translate(' + (rw + (aw - 1920 * s) / 2) + 'px,' + (window.innerHeight - 1080 * s) / 2 + 'px) scale(' + s + ')';
   }
   window.addEventListener('resize', fit); fit();
 
@@ -602,6 +609,24 @@ window.addEventListener('keydown', function (e) {
 
   /* ==== DECK CHROME (round 4b): rail thumbnail + \u25B6 Present + #hash \u2014 ES5, Safari-safe ==== */
   var railBox = null, railThumbs = [], railBuilt = false, railDirty = false, chromeBox = null, chromeTimer = null;
+  var RAIL_MIN = 140, RAIL_MAX = 440, railWidth = 178, railGrip = null;
+  try { var rw0 = parseInt(localStorage.getItem(EDIT_KEY + '-railw'), 10); if (rw0 >= RAIL_MIN && rw0 <= RAIL_MAX) { railWidth = rw0; } } catch (eA) {}
+  window.__railW = railWidth;
+  function applyRailSize() {
+    window.__railW = railWidth;
+    if (railBox) { railBox.style.width = railWidth + 'px'; }
+    if (railGrip) { railGrip.style.left = (railWidth - 7) + 'px'; }
+    var fw = railWidth - 28;
+    var fh = Math.round(fw * 1080 / 1920);
+    var sc = fw / 1920;
+    for (var z = 0; z < railThumbs.length; z++) {
+      var frz = railThumbs[z].getElementsByClassName('frame')[0];
+      var mnz = railThumbs[z].getElementsByClassName('mini')[0];
+      if (frz) { frz.style.width = fw + 'px'; frz.style.height = fh + 'px'; }
+      if (mnz) { mnz.style.webkitTransform = 'scale(' + sc + ')'; mnz.style.transform = 'scale(' + sc + ')'; }
+    }
+    fit();
+  }
   function railSyncCur() {
     for (var q = 0; q < railThumbs.length; q++) {
       railThumbs[q].className = (q === cur) ? 'thumb cur' : 'thumb';
@@ -636,6 +661,7 @@ window.addEventListener('keydown', function (e) {
       })(r, th);
       railBox.appendChild(th); railThumbs.push(th);
     }
+    applyRailSize();
     railSyncCur();
   }
   function toggleRail(force) {
@@ -644,6 +670,7 @@ window.addEventListener('keydown', function (e) {
     if (want && (!railBuilt || railDirty)) { buildRail(); }
     if (want && !open) { document.body.className += ' rail-open'; }
     if (!want) { document.body.className = document.body.className.replace(/\s*\brail-open\b/g, ''); }
+    fit();
   }
   function goPresent() {
     toggleRail(false);
@@ -653,7 +680,28 @@ window.addEventListener('keydown', function (e) {
   }
   (function () {
     railBox = document.createElement('div'); railBox.className = 'rail';
+    railBox.style.width = railWidth + 'px';
     railBox.addEventListener('click', function (ev) { ev.stopPropagation(); });
+    railGrip = document.createElement('div'); railGrip.className = 'rail-grip';
+    railGrip.style.left = (railWidth - 7) + 'px';
+    railGrip.addEventListener('click', function (ev) { ev.stopPropagation(); });
+    document.body.appendChild(railGrip);
+    var railDrag = false;
+    railGrip.addEventListener('mousedown', function (ev) {
+      railDrag = true; ev.preventDefault(); ev.stopPropagation();
+      document.body.className += ' rail-resizing';
+    });
+    document.addEventListener('mousemove', function (ev) {
+      if (!railDrag) { return; }
+      var w2 = Math.max(RAIL_MIN, Math.min(RAIL_MAX, ev.clientX));
+      if (w2 !== railWidth) { railWidth = w2; applyRailSize(); }
+    });
+    document.addEventListener('mouseup', function () {
+      if (!railDrag) { return; }
+      railDrag = false;
+      document.body.className = document.body.className.replace(/\s*\brail-resizing\b/g, '');
+      try { localStorage.setItem(EDIT_KEY + '-railw', String(railWidth)); } catch (eB) {}
+    });
     chromeBox = document.createElement('div'); chromeBox.className = 'chrome-btns';
     chromeBox.addEventListener('click', function (ev) { ev.stopPropagation(); });
     var bR = document.createElement('button'); bR.type = 'button'; bR.textContent = '\u2630 Slides \u00B7 T';
