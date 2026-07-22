@@ -3,7 +3,7 @@ name: topical-map-creation
 description: "Create topical maps for semantic content networks following Koray's topical authority framework + AI-search era layer (2026). Use when: (1) Consulting clients to gather business/audience information, (2) Building website content architecture, (3) Planning semantic content networks, (4) Identifying entity-attribute pairs for articles, (5) Establishing topical coverage strategy, (6) Creating core vs outer section plans, (7) Prioritizing content based on attribute filtration and RPP scoring, (8) Designing internal link architecture, (9) Planning publication strategy, (10) Determining quality and trending nodes, (11) Optimizing for GEO/AI Search citation, (12) Query fan-out coverage check, (13) Deciding page vs heading vs sentence (QDP/QDH/QDS), (14) Planning off-site corroboration + video nodes. Triggers: 'tạo topical map', 'thiết kế topical map', 'topical authority', 'semantic content network', 'xây dựng cấu trúc content', 'lập bản đồ chủ đề', 'query fan-out', 'QDP'."
 ---
 
-# Topical Map Creation (v2.0)
+# Topical Map Creation (v2.1)
 
 > **v2.0 (Jul 2026):** thêm AI-Search Era Layer (query fan-out, QDP/QDH/QDS, Surround Sound, quality gate, KPI shift) + Layer 1 Lexical module (GTV). Koray KHÔNG sửa pipeline gốc — các bổ sung đánh dấu (v2.0) chèn vào đúng phase. Evidence: wiki `sources/research-2026-07-topical-map-ai-era.md`.
 
@@ -276,6 +276,8 @@ See `references/query-processing.md` for detailed scoring examples.
 
 **Tools**: Keyword Cupid, Key Clusters, Keyword Insights, SEO Utils
 
+Có thể verify cụm bằng skill `serp-clustering` (ma trận SERP-overlap + tier data, ngưỡng khai báo) trước khi chốt cluster (v2.1).
+
 #### Step 10b: Query Fan-Out Coverage Check (v2.0)
 
 AI Mode/AIO tách 1 query thành nhiều synthetic sub-queries (Google công bố kỹ thuật query fan-out tại I/O 05/2025; con số **~8-12 sub-queries/query** từ independent research, không phải công bố chính thức). Chỉ 38% AIO citations đến từ top-10 (Ahrefs 03/2026) → bề mặt retrieval rộng hơn ranking.
@@ -471,10 +473,12 @@ See `references/publication-strategy.md` for detailed frequency patterns.
 - `references/internal-linking-guide.md` - Complete internal linking rules
 - `references/publication-strategy.md` - Publishing frequency and timing patterns
 - Wiki evidence base: `SEO Knowledge/Semantic SEO A - Z/wiki/sources/research-2026-07-topical-map-ai-era.md` (delta list 15 items + debates) · `wiki/concepts/frameworks/QDP-QDH-QDS.md` · `wiki/concepts/frameworks/Surround Sound.md`
+- Phân vai: gom nhóm keyword bằng SERP evidence (overlap matrix, ngưỡng, chain-merge) → skill `serp-clustering` (DATA layer)
 
 ---
 
 ## Changelog
 
+- **v2.1 (2026-07-19):** route gom nhóm keyword bằng SERP evidence → skill `serp-clustering` (dòng Phân vai ở Reference Files + câu verify ở Step 10). Không đổi pipeline.
 - **v2.0 (Jul 2026):** (1) Components & Ratios fix — thêm Root (component thứ 6), ratio Core:Outer = 30-40%:60-70%, Cost of Retrieval làm map-level criterion. (2) Layer 1 Lexical Module (GTV) — 8 lexical relations, merge rule, antonym bridge, cross-lingual. (3) Step 10b Query Fan-Out Coverage Check. (4) Step 10c QDP/QDH/QDS + quality gate publish/merge/skip (chống overclustering). (5) Step 14b Video Nodes + Corroboration Nodes (Surround Sound). (6) AI Mode/AIO layer — KPI shift (LLM citations, Topic Share), GEO brief rules (citations/quotes/stats), micro-semantics pass, map refresh định kỳ. Nguồn: Batch 23 research (wiki).
 - **v1.0:** Koray classic 6-phase / 21-step process + GEO ChatGPT pipeline + case studies.

@@ -1,8 +1,8 @@
 ---
 type: sop
-phase: content-creation
-last_updated: 2026-04-20
-source_file: raw/guidelines/Full Semantic Content Checklist - Verion 2 - update 16.4.2026.xlsx
+phase: full-delivery
+last_updated: 2026-07-19
+source_file: raw/_ingested/guidelines/Full Semantic Content Checklist - Verion 2 - update 16.4.2026.xlsx
 tier_system: [tier-1, tier-2, tier-3]
 related_wiki:
   - "[[Article Methodology]]"
@@ -15,13 +15,9 @@ related_wiki:
 tags: [sop, self-checklist, outline, content-writing, quality-gate]
 ---
 
-> Bản đóng gói cho SEO Production — sync từ `SEO Knowledge/Semantic SEO A - Z/sop/06-self-checklist/README.md` ngày 2026-07-17.
-> Wikilink [[...]] trong file = tri thức nội bộ sâu (wiki Semantic SEO, không đóng gói theo dự án).
-> Gặp wikilink cần đào sâu → hỏi SEO Lead / Vincent, hoặc tra kho gốc trên máy master.
+# GTV Self-Checklist System v3.1 (19.7.2026)
 
-# Semantic Content Self-Checklist v2 (16.4.2026)
-
-> Self-audit checklist cho nhân sự (Writer / SEO EX / Lead) kiểm tra **Outline & AM** và **Content Writing** trước khi onpage. Nguồn gốc: Vincent's internal SOP — `raw/guidelines/Full Semantic Content Checklist - Verion 2 - update 16.4.2026.xlsx`.
+> Hệ self-audit checklist cho nhân sự (Writer / SEO EX / Account / Lead) — khởi nguồn từ bộ **Outline & AM + Content Writing** (v2, 16.4.2026), **mở rộng 19.7.2026 phủ toàn dây chuyền 33 công đoạn**: entity, offpage, CRO, GEO, GBP, cấu trúc, visual, UX, review tháng, runbook sự cố. Nguyên tắc chung không đổi: mỗi checklist có item ID + P0 gate + 3-Level Review — người làm tự lặp đến khi qua gate, **Lead không bao giờ là người review đầu tiên**.
 
 ---
 
@@ -57,7 +53,9 @@ tags: [sop, self-checklist, outline, content-writing, quality-gate]
 
 ---
 
-## 3. File Structure
+## 3. File Structure — Registry toàn hệ (v3, 19.7.2026)
+
+### 3a. Content (bộ gốc v2)
 
 | File | Dùng khi |
 |---|---|
@@ -65,7 +63,45 @@ tags: [sop, self-checklist, outline, content-writing, quality-gate]
 | `tier-1-content-writing.md` | Post-writing — Writer self-check trước khi submit |
 | `tier-2-project-specific.md` | Kickoff — PM/Lead quyết định bật items nào cho dự án |
 | `tier-3-audit-configuration.md` | Senior audit / Content Configuration cho niche cạnh tranh cao |
-| `tracking-schema.md` | Column map cho Tracking Sheet (để setup sheet mới hoặc hiểu sheet cũ) |
+| `tracking-schema.md` | Column map cho Tracking Sheet |
+
+### 3b. Per công đoạn (mở rộng 07/2026 — nhịp per batch/mốc)
+
+| File | Công đoạn · nhịp | P0 |
+|---|---|---|
+| `foundation-content-nganh.md` | (3) T1 — dựng checklist content ngành per dự án, nguồn bật Tier 2 | 5 |
+| `gate-structure-wireframe.md` | (11) — gate TRƯỚC khi gửi khách duyệt cấu trúc, 15 ngày đầu T2 | 100% |
+| `tier-1-structure-website.md` | (11) — full check khi THIẾT KẾ cấu trúc (chạy trước gate) | 6 |
+| `tier-1-visual-semantic.md` | Layout per page/template — operationalize sop/07 B0-B8 | 5 |
+| `tier-1-ux-ui.md` | Duyệt wireframe T2 + CRO landing T8-T10 | 5 |
+| `tier-1-entity.md` | (13) — gate cuối T1 & cuối T3 (⚠ tactic rủi ro gắn gate Lead/Director) | 6 |
+| `checklist-entity-onsite-web.md` | (13) — deep-dive triển khai entity ONSITE per trang | 7 |
+| `tier-1-social-google-stack.md` | Entity offsite — social profiles + Google Stack | 5 |
+| `tier-1-offpage-backlink.md` | (20)(25)(26) — per batch link + content offpage + textlink PR | 7 |
+| `tier-1-traffic-users.md` | T8-T9 — ⚠ risk cao, CHỈ khi SEO Director duyệt (gate 100% phần P0) | 5 |
+| `tier-1-cro-conversion.md` | Site-wide T2-T3 · per landing T8-T10 · conversion path | 3 |
+| `tier-1-geo.md` | Lớp GEO T1-T10 (reuse AX1-AX5, guardrail llms.txt/schema ≠ lever) | 5 |
+| `tier-1-gbp-local.md` | Dự án local — vận hành GBP hằng tháng | 5 |
+| `quality-content-ai.md` | Vận hành content AI 6 phase (pointer về tier-1, không duplicate) | 5 |
+| `common-ai-errors.md` | Error catalog 28 lỗi khi QC/edit bài AI | — |
+
+### 3c. Review & Planning (nhịp tháng/quý + tiền dự án)
+
+| File | Nhịp |
+|---|---|
+| `checklist-project-intake-tham-dinh.md` | Thẩm định TRƯỚC khi nhận dự án — go/no-go gate, Director duyệt (P0: 6 + 6 red-flags từ chối) |
+| `checklist-kpi-okrs-planning.md` | LẬP KPI/OKRs — T1 + đầu quý T3/T6/T9 (P0: 5) |
+| `monthly-project-review.md` | SEO Lead tự check TRƯỚC khi trình review tháng lên Manager/Director (P0: 7) + phần quý |
+| `checklist-phap-ly-content-website.md` | Pháp lý content & website VN — T1 audit + per batch content + khi luật đổi (P0: 7) |
+
+### 3d. Runbook sự kiện
+
+| File | Trigger |
+|---|---|
+| `tier-3-ranking-drop-runbook.md` | Rớt hạng / Google update — triage 15 phút + 10 nhánh phân ngành (102 items) |
+| `checklist-xu-ly-ma-doc.md` | Website bị hack/mã độc — 4 phase (35 items) |
+| `checklist-khoi-phuc-seo-ranking.md` | Phục hồi SAU sự cố đã xác định — gate sạch 5/5 rồi mới chạy (24 items) |
+| `tier-3-technical-advance.md` | Technical audit chuyên sâu (bộ gốc) |
 
 ---
 
@@ -106,10 +142,11 @@ Khi đọc item mà không hiểu thuật ngữ → tra wiki tương ứng:
 
 ## 7. Nguồn gốc & Change History
 
-Source: `raw/guidelines/Full Semantic Content Checklist - Verion 2 - update 16.4.2026.xlsx` (Vincent Do, CEO GTV SEO Agency). Change log chi tiết trong sheet **'Claude Log'** — 7 turns từ 2026-03-16 đến 2026-03-20 ghi lại các lần điều chỉnh schema.
+Source: `raw/_ingested/guidelines/Full Semantic Content Checklist - Verion 2 - update 16.4.2026.xlsx` (Vincent Do, CEO GTV SEO Agency). Change log chi tiết trong sheet **'Claude Log'** — 7 turns từ 2026-03-16 đến 2026-03-20 ghi lại các lần điều chỉnh schema.
 
 Key refactor moments:
 - Turn 2 (2026-03-17): Align Tracking headers với Description sheets (100%).
 - Turn 5 (2026-03-20): Chia vùng header Tracking Content Writing thành nhóm (Semantic 9 / Anti-AI 6 / QA 4 / Depth 1 / Tone 1).
 - Turn 6 (2026-03-20): Xây cơ chế 3-level SCORE & REVIEW (14 cột). Nhúng Game Theory Mixed Strategy NE.
 - Turn 7 (2026-03-20): Thêm 22 notes hover cho nhân sự trong vùng Score & Review.
+- v3.1 (2026-07-19): Thêm 2 checklist treo #6 Batch 36 — `checklist-phap-ly-content-website.md` (PL-01→16, từ docx pháp lý TAG 11/2025) + `checklist-project-intake-tham-dinh.md` (PI-01→14 + red-flags, modernize Thẩm định dự án 10 bước PSP).

@@ -1,6 +1,8 @@
 ---
 name: competitor-seo-gap-analysis
 description: "Analyze competitor SEO gaps across Category, Product/Detail, and Blog pages for multiple website types (Job Sites, E-commerce, Service, Informational). Use when: (1) Analyzing competitor traffic distribution and URL structure, (2) Identifying content gaps in Category/PLP pages, (3) Auditing Product/Detail/Job Posting page performance, (4) Comparing Blog content quality and topical coverage, (5) Creating competitive SEO dashboards for client pitching, (6) Building SEO strategy recommendations from gap analysis, (7) Benchmarking against industry leaders, (8) Planning content scaling priorities. Triggers: 'phân tích đối thủ', 'competitor analysis', 'SEO gap analysis', 'so sánh đối thủ', 'content gap', 'category analysis', 'product page audit', 'blog audit', 'competitive benchmark', 'SEO strategy planning', 'pitching dashboard'."
+metadata:
+  version: "1.1"
 ---
 
 # Competitor SEO Gap Analysis
@@ -222,6 +224,57 @@ Blog Gap Types:
 
 ---
 
+## Marketplace Intelligence Module (Optional — E-commerce Clients Only)
+
+Run this module ONLY when the client is e-commerce (sells products online). Skip for job sites, service, and informational sites.
+
+### 1. Google Shopping Visibility Gap
+
+Identify keywords where competitors appear in Shopping results and the client does not:
+
+```
+Shopping Gap Types:
+├── ABSENT: Competitor has Shopping results, client has none (feed missing/disapproved)
+├── PARTIAL: Client in Shopping for some keywords in group, not others
+└── OUTRANKED: Both present, competitor consistently above client
+```
+
+Feed hygiene quick checklist (for ABSENT/PARTIAL gaps):
+- [ ] **Title**: keyword-bearing, follows `Brand + Product Type + Attributes` pattern
+- [ ] **GTIN**: present and valid (missing GTIN suppresses eligibility)
+- [ ] **Availability**: in stock and synced (stale availability = disapproval)
+
+### 2. Shopping-vs-Organic Keyword Gap
+
+Queries with a Shopping carousel push organic results down → organic CTR drops for that keyword group:
+
+1. Flag keyword groups where Shopping carousel appears in SERP.
+2. Adjust expected organic traffic DOWN for those groups (do not forecast full CTR-by-position).
+3. **Route**: feed the adjusted CTR assumptions per keyword group into the `traffic-plan` skill forecast.
+
+### 3. Marketplace SERP Share
+
+For VN: Shopee, Lazada, TikTok Shop. For US: Amazon (+ Walmart, eBay if relevant).
+
+| Keyword Group | Total Top-10 Slots Sampled | Marketplace Slots | Marketplace % | Recommendation |
+|---------------|---------------------------|-------------------|---------------|----------------|
+| (group A) | (n × 10) | (count) | (%) | BUILD / DON'T BUILD |
+
+```
+Recommendation thresholds:
+├── Marketplace % > 60%: DON'T BUILD competing page — SERP is marketplace-dominated;
+│   consider marketplace presence or long-tail/informational angle instead
+├── Marketplace % 30-60%: BUILD selectively — only where client has brand/price/content edge
+└── Marketplace % < 30%: BUILD — organic page can compete directly
+```
+
+### Data Sources
+
+- **Primary**: DataForSEO MERCHANT/SERP endpoints, or Ahrefs SERP features data.
+- **Fallback**: manual sample searches (incognito, correct market/locale) — document sample size (e.g., 10-20 keywords per group) and note results are a sample, not exhaustive.
+
+---
+
 ## Dashboard Creation Guidelines
 
 ### Visual Elements for Pitching
@@ -338,3 +391,10 @@ See `references/prompt-templates.md` for complete templates with examples.
 - **Topical Map Creation**: Apply Core/Outer section framework to content gaps
 - **Semantic Content Audit**: Use 45-point checklist for blog quality gaps
 - **GTV Proposal Branding**: Apply color scheme for dashboard creation
+- **Traffic Plan**: Feed Shopping-carousel CTR adjustments (Marketplace Intelligence Module §2) into traffic forecast
+
+---
+
+## Changelog
+
+- 2026-07-19 — INTEGRATE từ gap-audit claude-seo: thêm Marketplace Intelligence Module (optional, e-commerce clients only) — Google Shopping visibility gap + feed hygiene checklist (title/GTIN/availability), Shopping-vs-organic CTR adjustment (route sang traffic-plan), marketplace SERP share table (Shopee/Lazada/TikTok Shop VN, Amazon US) với ngưỡng BUILD/DON'T BUILD; data DataForSEO MERCHANT/SERP hoặc Ahrefs SERP features, fallback search tay mẫu. Version 1.1.

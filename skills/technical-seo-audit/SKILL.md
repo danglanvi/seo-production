@@ -2,7 +2,7 @@
 name: technical-seo-audit
 description: "Audit technical SEO tầng SITE theo bộ audit nội bộ GTV/TAG (template xlsx audit toàn diện 3.2025 + docx giải thích The AI Growth): crawl & log file, index coverage, redirect & canonical, sitemap & robots.txt, Core Web Vitals & site speed, JS rendering, HTTPS & mobile — DIAGNOSTIC layer, wrap tools/seo-audit-tool và Ahrefs Site Audit MCP, output báo cáo checklist-status kèm priority fix. Use when: (1) 'audit technical [domain]', 'kiểm tra technical SEO [site]'; (2) 'site không được index / crawl chậm / redirect loạn / index bloat'; (3) 'check Core Web Vitals / crawl budget cho [domain]'. Data priority: Ahrefs/Semrush site-audit MCP (khi có project sẵn) hoặc Screaming Frog CLI headless tự chạy full-crawl + seo-audit-tool --deep → SF export tay → checklist manual chỉ-có-URL; kèm AI-crawler readiness (robots per-bot, log AI hits, TTFB AI gate). KHÔNG dùng cho: onpage semantic per-page (→ seo-onpage), viết schema/JSON-LD (→ schema-markup-generator), sửa HTML semantic structure (→ semantic-html-optimization), backlink audit (→ backlink-research)."
 metadata:
-  version: "1.2"
+  version: "1.4"
 ---
 
 # Technical SEO Audit
@@ -38,6 +38,7 @@ Audit technical SEO **tầng SITE** — chẩn đoán những gì cản Google c
 - `$GSC_DATA` — export/screenshot GSC **Page indexing report** + **Crawl Stats** do user cung cấp.
 - `$LOG_FILE` — server log hoặc export Screaming Frog Log File Analyser.
 - `$CLIENT` — tên client/project để đặt tên file output.
+- `$SITEMAP_MODE` — `validate` (default) | `generate` — generate: sinh XML sitemap chuẩn từ crawl (Bước 4c), chỉ khả dụng Path A/B.
 
 **Path detection** (chi tiết ở [references/data-paths.md](references/data-paths.md)): project Ahrefs/Semrush có sẵn → Path A cho nhanh; cần crawl tươi/sâu toàn site → Path B; không có gì → Path C.
 
@@ -107,7 +108,41 @@ Xếp mọi ❌/⚠️ theo impact (tinh thần case "in ấn catalog" docx §3.
 | **P2 — CWV & speed** | LCP/INP/CLS poor, TTFB >800ms, DOM >1.500 nodes | INP >500ms mobile |
 | **P3 — tối ưu nhỏ** | Brotli, preload, font, ảnh >100KB, minify | HTML chưa minify |
 
-Mỗi fix ghi: lỗi → evidence (URL/số liệu + nguồn) → hành động cụ thể → người làm (dev/SEO/content).
+Mỗi fix ghi: lỗi → evidence (URL/số liệu + nguồn) → hành động cụ thể → người làm (dev/SEO/content) → **Falsifiability**: "làm sao biết nếu khuyến nghị này sai?" + leading indicator theo dõi sau fix (metric + nguồn + khung thời gian — vd 301 prefix cũ → GSC Crawl Stats 404 theo prefix giảm ≥80% trong 4 tuần; không giảm = chẩn đoán sai nguồn 404, xét lại).
+
+### Bước 4b — Whole-site Health Score (0-100)
+
+Điểm tổng hợp cuối audit — để **so sánh giữa các kỳ audit (T1 → T4 → T7)** và nói chuyện với khách. KHÔNG thay checklist-status per item, KHÔNG thay thứ tự fix list.
+
+**Data-tier gate (điều kiện tính):** chỉ tính khi Path A hoặc Path B với crawl đã qua completeness check (Bước 2). Path C hoặc crawl thiếu → KHÔNG tính score, ghi "Health Score: không tính — coverage thấp". Khu vực có >50% items ⬜ THIẾU DATA → loại khỏi score + redistribute trọng số theo tỷ lệ, ghi rõ trong report.
+
+**Công thức:**
+- Điểm khu vực = (✅ + 0,5×⚠️) / (✅ + ⚠️ + ❌) × 100 — item ⬜ loại khỏi mẫu số.
+- Health Score = Σ (trọng số × điểm khu vực) / 100.
+
+**Trọng số baseline GTV** (ghi chú bắt buộc: *baseline GTV, điều chỉnh theo dự án* — report ghi rõ bộ trọng số đã dùng):
+
+| Khu vực | Trọng số |
+|---|---|
+| Index Coverage | 25 |
+| Crawl & Log File | 15 |
+| Redirect & Canonical | 15 |
+| CWV & Site Speed | 15 |
+| Sitemap & Robots.txt | 10 |
+| JS Rendering | 10 |
+| HTTPS & Mobile | 10 |
+| International/hreflang | 0 — site đa ngôn ngữ: hreflang = 10, giảm Index Coverage 25→20 và Crawl 15→10 |
+
+**Luật hiển thị:** còn ❌ P0 chưa fix → score luôn đi kèm cờ, vd `72/100 (⚠️ 2 lỗi P0)` — không để con số cao che P0. So sánh giữa kỳ chỉ hợp lệ khi cùng Path + cùng bộ trọng số + coverage tương đương; đổi 1 trong 3 → ghi "không so sánh trực tiếp với kỳ trước".
+
+### Bước 4c — Sitemap GENERATE (`$SITEMAP_MODE=generate`)
+
+Khu vực 4 mặc định chỉ VALIDATE. Khi user yêu cầu generate → sinh XML sitemap chuẩn từ danh sách URL đã crawl (bắt buộc Path A/B + qua completeness check — crawl thiếu = sitemap thiếu URL; KHÔNG generate từ Path C):
+
+1. **Lọc URL đủ chuẩn** (tiêu chí = chính checklist 4.1–4.3): chỉ giữ URL HTML 200, indexable, self-canonical. LOẠI: noindex · redirect (3xx) · non-canonical · 4xx/5xx · blocked-by-robots · trang noindex-chủ-đích (thank-you, cart, search nội bộ — 3.8).
+2. **Segment theo loại page** khi site lớn (> ~5.000 URL hoặc cấu trúc rõ): sitemap index + file con product/category/blog/static — đồng thời phục vụ trace tỷ lệ index per khu vực (4.5, 2.10). Giới hạn per file: ≤50.000 URL / ≤50MB (Bảng ngưỡng).
+3. **Bảng diff "crawled-vs-sitemap"** (bắt buộc kèm output): (a) URL indexable trong crawl nhưng THIẾU trong sitemap hiện tại; (b) URL trong sitemap hiện tại nhưng FAIL chuẩn (non-200/noindex/non-canonical/redirect) — mỗi dòng kèm lý do loại.
+4. **Deliverable:** file `sitemap*.xml` + bảng diff → giao dev/CMS review rồi mới upload + submit GSC (4.7). Skill KHÔNG tự đẩy file lên server. `<lastmod>` chỉ ghi khi có ngày thật (CMS/crawl) — không bịa; bỏ `changefreq`/`priority` (Google ignore).
 
 ### Bước 5 — Render report & trả file
 
@@ -149,19 +184,20 @@ Mỗi fix ghi: lỗi → evidence (URL/số liệu + nguồn) → hành động 
 
 ## 1. Executive Summary
 - Tình trạng tổng quan (3-5 câu), số lỗi theo priority: P0: n · P1: n · P2: n · P3: n
+- **Health Score: nn/100** (trọng số: baseline GTV / custom — kèm cờ `⚠️ n lỗi P0` nếu còn; hoặc "không tính — coverage thấp" khi không đủ data tier — Bước 4b) · kỳ trước: nn/100 (nếu so sánh hợp lệ)
 - Top 3 việc phải làm ngay (P0)
 
 ## 2. Bảng tổng hợp theo khu vực
-| Khu vực | ✅ | ⚠️ | ❌ | ⬜ | Lỗi nặng nhất |
-|---|---|---|---|---|---|
-| Crawl & Log File | | | | | |
-| Index Coverage | | | | | |
-| Redirect & Canonical | | | | | |
-| Sitemap & Robots.txt | | | | | |
-| CWV & Site Speed | | | | | |
-| JS Rendering | | | | | |
-| HTTPS & Mobile | | | | | |
-| International/hreflang *(nếu áp dụng)* | | | | | |
+| Khu vực | ✅ | ⚠️ | ❌ | ⬜ | Điểm khu vực | Lỗi nặng nhất |
+|---|---|---|---|---|---|---|
+| Crawl & Log File | | | | | | |
+| Index Coverage | | | | | | |
+| Redirect & Canonical | | | | | | |
+| Sitemap & Robots.txt | | | | | | |
+| CWV & Site Speed | | | | | | |
+| JS Rendering | | | | | | |
+| HTTPS & Mobile | | | | | | |
+| International/hreflang *(nếu áp dụng)* | | | | | | |
 
 ## 3. Chi tiết theo khu vực
 ### 3.x <Tên khu vực>
@@ -170,14 +206,17 @@ Mỗi fix ghi: lỗi → evidence (URL/số liệu + nguồn) → hành động 
 **Nhận định:** <2-4 câu diễn giải WHY — link concept wiki nếu liên quan>
 
 ## 4. Fix list ưu tiên
-| # | Priority | Lỗi | Evidence | Hành động | Người làm |
-|---|---|---|---|---|---|
+| # | Priority | Lỗi | Evidence | Hành động | Người làm | Falsifiability — sai thì thấy gì? + leading indicator |
+|---|---|---|---|---|---|---|
 
 ## 5. Data còn thiếu
 - <item ⬜ + hướng dẫn user lấy: GSC Page indexing export, Crawl Stats screenshot, server log…>
 
 ## 6. Nguồn & phạm vi
 - Tool/data đã dùng + ngày · Khu vực loại khỏi scope (backlink, content quality, schema authoring — route skill anh em)
+
+## 7. Sitemap đề xuất *(chỉ khi $SITEMAP_MODE=generate)*
+- Đường dẫn file `sitemap*.xml` đã sinh + cấu trúc segment · Bảng diff crawled-vs-sitemap (thiếu / fail chuẩn + lý do) · Note: dev review trước khi upload + submit GSC
 ```
 
 ## Behavior Gates
@@ -189,6 +228,8 @@ Mỗi fix ghi: lỗi → evidence (URL/số liệu + nguồn) → hành động 
 **#3 Surgical** — Chỉ audit technical site-level. Không chấm content quality, không viết JSON-LD, không audit backlink, không sửa HTML semantic — flag + route theo bảng phân vai. Không tái mô tả check deterministic mà seo-audit-tool Layer 1 đã làm.
 
 **#4 Goal-driven** — Deliverable = **fix list ưu tiên theo impact** (P0 chặn index > P1 crawl waste > P2 CWV > P3 tối ưu nhỏ), không phải bản liệt kê lỗi dàn trải. Mỗi finding trả lời "fix cái này thì site được gì" — nối về [[Cost of Retrieval]] (CoR là denominator của Topical Authority).
+
+**#5 Falsifiable** — Mỗi khuyến nghị trong fix list phải trả lời "**làm sao biết nếu khuyến nghị này sai?**" + 1 leading indicator đo được sau fix (metric + nguồn + khung thời gian, vd "GSC Crawl Stats: 404 theo prefix `/product/` giảm ≥80% trong 4 tuần"). Không viết được điều kiện-sai → khuyến nghị chưa đủ chín, hạ thành giả thuyết cần thêm data, không vào fix list. Bộ leading indicators = khung đo cho re-audit (Bước 5) và Health Score kỳ sau (Bước 4b).
 
 ## Anti-patterns
 
@@ -208,6 +249,9 @@ Mỗi fix ghi: lỗi → evidence (URL/số liệu + nguồn) → hành động 
 - ❌ Kết luận số đếm (orphan, ảnh, duplicate) từ crawl không hoàn chỉnh mà không ghi caveat — check Status 0/Timeout % trước, số từ crawl thiếu là "cận dưới".
 - ❌ Báo động số redirect gộp cả external share links (Zalo/X/FB intent) — lọc external trước khi đếm redirect nội bộ.
 - ❌ Dùng TTFB lab (Lighthouse) đơn lẻ làm nguồn — lab thường thấp ảo; nguồn chuẩn = GSC avg response time + curl ×3–5.
+- ❌ So sánh Health Score giữa 2 kỳ khác Path/coverage/trọng số — score chỉ so sánh được khi cùng điều kiện tính; báo score khi chưa qua data-tier gate.
+- ❌ Generate sitemap từ crawl chưa qua completeness check hoặc từ Path C — sitemap thiếu URL tệ hơn không generate; tự upload sitemap lên server thay vì giao dev review.
+- ❌ Khuyến nghị không falsifiable ("cải thiện chất lượng", "tối ưu thêm") — không có leading indicator đo được thì không vào fix list.
 
 ## References & wiki
 
@@ -227,6 +271,7 @@ Mỗi fix ghi: lỗi → evidence (URL/số liệu + nguồn) → hành động 
 
 ## Changelog
 
+- **v1.4 (2026-07-19):** INTEGRATE từ gap-audit claude-seo (repo 11.7k★, đã phân loại INTEGRATE): (1) **Whole-site Health Score 0-100** (Bước 4b) — điểm khu vực (✅+0,5×⚠️)/(✅+⚠️+❌) × trọng số baseline GTV (điều chỉnh theo dự án), data-tier gate (chỉ Path A/B + completeness check, khu vực >50% ⬜ loại + redistribute), cờ P0 đi kèm score, luật so sánh giữa kỳ T1→T4→T7; (2) **Sitemap GENERATE mode** (`$SITEMAP_MODE=generate`, Bước 4c) — lọc URL theo chuẩn 4.1–4.3 (loại noindex/redirect/non-canonical/4xx-5xx), segment product/category/blog khi site lớn, bảng diff crawled-vs-sitemap bắt buộc, không tự upload; (3) **Falsifiability field** per finding — gate #5 + cột mới trong fix list + leading indicator sau fix. Output skeleton: thêm Health Score (mục 1), cột Điểm khu vực (mục 2), cột Falsifiability (mục 4), mục 7 sitemap. Metadata version đồng bộ lại theo changelog (drift 1.2/1.3 cũ).
 - **v1.3 (2026-07-13, P0 remediation LINT-2026-005):** (1) bỏ blanket claim "AI crawler không render JS" → re-label `observational` (vendor docs không cam kết) ở khu vực 6 + item 6.5; (2) thêm **bot-purpose matrix** search/training/user-triggered (OAI-SearchBot·GPTBot·ChatGPT-User / Claude-SearchBot·ClaudeBot·Claude-User / PerplexityBot·Perplexity-User / Google-Extended) theo crawler docs chính chủ; (3) fix 1.17: Google-Extended không có UA riêng trong log (chỉ là robots token, chặn không ảnh hưởng Google Search) + training-bot hits không phải AI-visibility KPI.
 - **v1.2 (2026-07-10):** đúc kết từ lần chạy thật đầu tiên (chanlongpickleball.com): (1) Path B tốc độ mặc định 2 threads/2–3 URL/s + dấu hiệu server chặn giữa crawl + completeness check bắt buộc (Status 0/Timeout → caveat "cận dưới"); (2) Path **B-file** `--load-crawl` (user crawl GUI, Claude load + export không đụng server — bộ export names verified v23.3); (3) checklist mới: chữ ký PHP session giết cache ở 5.9 (PHPSESSID + Expires 1981 + no-store; nghi phạm YITH/Woo plugins), 404-pattern-theo-prefix = đổi URL structure không 301 ở 1.1, pagination canonical về trang 1 ở 3.6, đọc By Googlebot type + JS/CSS `?ver=` ở 1.6; (4) GSC Crawl Stats qua Google Sheets + gws (strip dòng keyring trước parse) + các phép phân tích chuẩn; (5) PSI có key trong `.agent-secrets/.env`, nuance site-không-CrUX chấm bằng lab ghi rõ nguồn; (6) `tools/gsc/gsc.sh` = Path A+ (pending OAuth consent); (7) anti-patterns mới: số đếm từ crawl thiếu, redirect gộp share links, TTFB lab đơn lẻ.
 - **v1.1 (2026-07-10):** (1) lớp AI-crawler readiness: check 4.13 robots per-bot + 1.17 log AI hits + ngưỡng TTFB AI gate + note 6.5 "AI không render JS" + anti-patterns llms.txt / CWV tie-breaker; (2) khu vực 8 nạp WHY: [[Hreflang PageRank Sharing]] (gate nuance — delay hreflang chủ đích hợp lệ) + 4 nguyên tắc [[syntheses/Multilingual SEO]] (item 8.5); (3) Path B nâng thành SF CLI headless tự động (v23.3 verified trên máy, 🔴 full-crawl mặc định — không giới hạn URL, quyết định Vincent 07/2026), B-manual thành fallback; (4) Semrush Site Audit MCP = Path A-alt; (5) Fonts 5.8 theo heuristic "4 câu bắt 80%" [[Font File Optimization]]; (6) cite [[Core Web Vitals]] + [[HTML Normalization]] (cross-flag Website Functions); (7) ghi chú Playwright optional (cài 1 lần) + fallback Firecrawl MCP cho rendered DOM.

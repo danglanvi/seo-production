@@ -120,6 +120,8 @@ Nguồn khung: sheet1 Sitemap (11 items) + Robots.txt (6 items) + sheet Site map
 | 4.6 | Không có PPC/landing tạm trong sitemap | Review URL list | PPC pages, orphaned pages chủ đích không nằm trong sitemap | xlsx sheet Site maps | P2 |
 | 4.7 | Sitemap khai báo trong robots.txt + submit GSC | Đọc /robots.txt + GSC Sitemaps | Có dòng `Sitemap:`; GSC đã submit, status Success | docx §3; tier-3 mục 8 | P2 |
 
+**GENERATE mode (bổ sung 2026-07-19 — INTEGRATE từ gap-audit claude-seo):** khu vực này mặc định VALIDATE; khi `$SITEMAP_MODE=generate` → sinh XML sitemap từ crawl theo SKILL.md Bước 4c — lọc URL theo chính tiêu chí 4.1–4.3 (loại noindex/redirect/non-canonical/4xx-5xx/blocked), segment theo loại page (4.5), kèm bảng diff crawled-vs-sitemap. Chỉ Path A/B + crawl qua completeness check.
+
 ### Robots.txt
 
 | # | Check | Cách kiểm | Tiêu chí ĐẠT | Nguồn | Priority fail |

@@ -30,6 +30,36 @@ Luật:
 | 16 | 07-visual-semantic.md | Chưng cất — giữ Phần B (process Bước 0-8 — viết tắt B0-B8 — + Output + checkbox), Phần C (RACI), Phần D (trade-offs); LOẠI HOÀN TOÀN Phần A (deep theory bảo mật: patents, leak factors, 4 Pillars, centerpiece dial) | sop/07-visual-semantic.md | WS04 Structure — #11 | 2026-07-17 |
 | 17 | 08-onpage-checklist.md | Chưng cất — giữ nguyên P0-P23 (/23) + T2-P1..8 (/31) + T3-P1..8 (/39) + AX1-AX5 (chấm riêng) + luật scoring + luật "sửa nền trước"; lược evidence inline, cột cross-ref wikilink, bảng reconciliation OP1-OP55 | sop/08-onpage-checklist.md | WS06 Onpage & IL — #7, 13, 18, 23 · WS08 GEO (AX1-AX5) — #14, 21, 28 | 2026-07-17 |
 
+## Bổ sung 19.7.2026 — Hệ checklist v3 (24 hàng, đều Copy nguyên)
+
+Hàng #6 (README.md) đã RE-SYNC 2026-07-19 (bản v3.1 — registry toàn hệ + 2 checklist treo #6 Batch 36). Các file mới:
+
+| # | File nguồn (06-self-checklist/ trừ khi ghi khác) | Đích | Dùng cho WS / công đoạn | Ngày sync |
+|---|---|---|---|---|
+| 18 | foundation-content-nganh.md | sop/06-self-checklist/ | WS00+WS05 — #3 (dựng checklist ngành, nguồn bật Tier 2) | 2026-07-19 |
+| 19 | checklist-kpi-okrs-planning.md | sop/06-self-checklist/ | WS01 — #1, 8 (lập KPI/OKRs, P0 5) | 2026-07-19 |
+| 20 | monthly-project-review.md | sop/06-self-checklist/ | WS10 — Lead tự check trước review tháng (P0 7) + quý T3/T6/T9 | 2026-07-19 |
+| 21 | gate-structure-wireframe.md | sop/06-self-checklist/ | WS04 — #11 gate trước gửi khách (P0 100%) | 2026-07-19 |
+| 22 | tier-1-structure-website.md | sop/06-self-checklist/ | WS04 — #11 full check thiết kế | 2026-07-19 |
+| 23 | tier-1-visual-semantic.md | sop/06-self-checklist/ | WS04 — layout per page (operationalize sop/07 B0-B8) | 2026-07-19 |
+| 24 | tier-1-ux-ui.md | sop/06-self-checklist/ | WS04 — wireframe T2 + CRO landing T8-T10 | 2026-07-19 |
+| 25 | tier-1-cro-conversion.md | sop/06-self-checklist/ | WS04 — site-wide T2-T3 · landing T8-T10 · conversion path | 2026-07-19 |
+| 26 | tier-1-entity.md | sop/06-self-checklist/ | WS06 — #13 gate cuối T1 & T3 (⚠ tactic gated) | 2026-07-19 |
+| 27 | checklist-entity-onsite-web.md | sop/06-self-checklist/ | WS06 — #13 deep-dive onsite per trang | 2026-07-19 |
+| 28 | tier-1-social-google-stack.md | sop/06-self-checklist/ | WS06 — entity offsite: social + Google Stack | 2026-07-19 |
+| 29 | tier-1-offpage-backlink.md | sop/06-self-checklist/ | WS07 — #20, 25◇, 26 per batch (P0 7) | 2026-07-19 |
+| 30 | tier-1-traffic-users.md | sop/06-self-checklist/ | WS07 — T8-T9 ⚠ Director duyệt (kèm baseline thông số 19.7) | 2026-07-19 |
+| 31 | tier-1-geo.md | sop/06-self-checklist/ | WS08 — #14, 21, 28 (guardrail llms.txt/schema ≠ lever) | 2026-07-19 |
+| 32 | tier-1-gbp-local.md | sop/06-self-checklist/ | WS03/WS08 — dự án local, vận hành GBP hằng tháng | 2026-07-19 |
+| 33 | quality-content-ai.md | sop/06-self-checklist/ | WS05 — vận hành content AI 6 phase (pointer về tier-1) | 2026-07-19 |
+| 34 | common-ai-errors.md | sop/06-self-checklist/ | WS05 — error catalog 28 lỗi QC/edit bài AI | 2026-07-19 |
+| 35 | tier-3-ranking-drop-runbook.md | sop/06-self-checklist/ | WS03 — sự kiện rớt hạng/Google update (triage + 10 nhánh) | 2026-07-19 |
+| 36 | checklist-xu-ly-ma-doc.md | sop/06-self-checklist/ | WS03 — sự kiện hack/mã độc (4 phase, 35 items) | 2026-07-19 |
+| 37 | checklist-khoi-phuc-seo-ranking.md | sop/06-self-checklist/ | WS03 — phục hồi SAU sự cố (gate sạch 5/5) | 2026-07-19 |
+| 38 | 10-offpage-process.md (sop/ gốc) | sop/10-offpage-process.md | WS07 — SOP offpage toàn diện (3 layer + method catalog 3 tier) | 2026-07-19 |
+| 39 | checklist-phap-ly-content-website.md | sop/06-self-checklist/ | WS03 Audit T1 + WS05 per batch content — pháp lý content/website VN (PL-01→16, P0 7) | 2026-07-19 |
+| 40 | checklist-project-intake-tham-dinh.md | sop/06-self-checklist/ | Tiền dự án (trước SETUP instance) — go/no-go thẩm định, Director duyệt (PI-01→14 + 6 red-flags, P0 6) | 2026-07-19 |
+
 ## Nhóm KHÔNG copy
 
 | Nguồn | Lý do |
