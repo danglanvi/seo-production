@@ -111,3 +111,7 @@ Luật ghi:
 - Mirror: 2 instance + root đã sync; lint PASS.
 - Files touched: skills/gtv-weekly-report/**, _TEMPLATES/weekly-report-slides/deck-template.html, MIGRATION.md
 - Công đoạn: — · WS: 09
+
+## [2026-07-22] refactor | Round 4 + 4b Vincent → vá canonical gtv-weekly-report + template — @claude
+- slide-map luật #12-15 (DECK CHROME có sẵn · action xuống dòng dạng ul · cấm chạm .data-meta + 3 slide mặc định tách cặp · bảng Blog đủ Clicks/Pos dẫn xuất); template weekly-report-slides: SCOPE căn giữa dọc + khối DECK CHROME (rail thumbnail/T · ▶ Present · #hash + hashchange · tự ẩn khi không rê chuột — không dính PDF export; ES5, test Playwright PASS Chromium + WebKit). MIGRATION.md addendum "Bổ sung 22/07 khuya". Mirror .claude/skills + 2 instance đã đồng bộ.
+- Files touched: skills/gtv-weekly-report/references/slide-map.md · _TEMPLATES/weekly-report-slides/deck-template.html · MIGRATION.md · mirror .claude/skills/

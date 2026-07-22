@@ -189,6 +189,24 @@ body.editing [contenteditable="true"] { outline:2px dashed rgba(6,147,227,.55); 
 .edit-btn { position:fixed; right:18px; bottom:18px; z-index:1200; width:44px; height:44px; border-radius:50%; border:none; background:#0693E3; color:#fff; font-size:20px; cursor:pointer; opacity:.25; transition:opacity .2s; }
 .edit-btn:hover, .edit-btn.active { opacity:1; background:#9900EF; }
 @media print { .edit-btn { display:none !important; } }
+
+/* ==== DECK CHROME: rail thumbnail + Present + #hash (round 4b 22/07 — port từ deck event) ==== */
+.chrome-btns { position:fixed; top:14px; left:14px; z-index:70; display:flex; gap:8px; opacity:0; pointer-events:none; transition:opacity .25s; }
+.chrome-btns.show { opacity:1; pointer-events:auto; }
+.chrome-btns button { background:rgba(15,23,42,.84); color:#fff; border:1px solid rgba(255,255,255,.28); border-radius:8px; padding:7px 14px; font-family:inherit; font-size:13px; font-weight:700; letter-spacing:.02em; cursor:pointer; }
+.chrome-btns button:hover { background:rgba(30,41,59,.95); }
+.rail { position:fixed; left:0; top:0; bottom:0; width:178px; background:rgba(10,14,26,.94); z-index:65; overflow-y:auto; padding:56px 12px 14px; display:none; box-shadow:2px 0 14px rgba(0,0,0,.35); }
+body.rail-open .rail { display:block; }
+.rail::-webkit-scrollbar { width:8px; }
+.rail::-webkit-scrollbar-thumb { background:rgba(255,255,255,.18); border-radius:4px; }
+.rail .thumb { display:block; width:100%; margin:0 0 12px; cursor:pointer; background:none; border:0; padding:0; text-align:left; outline:none; }
+.rail .num { display:block; color:#94a3b8; font-size:11px; font-weight:700; margin:0 0 3px; font-family:inherit; }
+.rail .thumb.cur .num { color:#fff; }
+.rail .frame { display:block; position:relative; width:150px; height:85px; overflow:hidden; border-radius:4px; outline:2px solid rgba(255,255,255,.14); background:#fff; }
+.rail .thumb:hover .frame { outline-color:rgba(255,255,255,.4); }
+.rail .thumb.cur .frame { outline-color:#0693E3; }
+.rail .mini { display:block; width:1920px; height:1080px; -webkit-transform:scale(.078125); transform:scale(.078125); -webkit-transform-origin:0 0; transform-origin:0 0; pointer-events:none; }
+@media print { .rail, .chrome-btns, .edit-btn { display:none !important; } }
 </style>
 </head>
 <body>
@@ -446,9 +464,10 @@ body.editing [contenteditable="true"] { outline:2px dashed rgba(6,147,227,.55); 
         <table class="data">
           <thead><tr><th style="width:30%">SCOPE</th><th>Description — điền trong họp / khi edit (phím E)</th></tr></thead>
           <tbody>
-            <tr style="height:92px"><td class="name" style="vertical-align:top">Technical</td><td class="name" style="vertical-align:top">&nbsp;</td></tr>
-            <tr><td class="name">UX/UI</td><td class="name">&nbsp;</td></tr>
-            <tr><td class="name">Phối hợp triển khai Content</td><td class="name">&nbsp;</td></tr>
+            <!-- Cột nhãn (SCOPE) căn giữa dọc, cột Description căn top để gõ nhiều dòng (feedback Vincent 22/07 round 4) -->
+            <tr style="height:92px"><td class="name" style="vertical-align:middle">Technical</td><td class="name" style="vertical-align:top">&nbsp;</td></tr>
+            <tr style="height:92px"><td class="name" style="vertical-align:middle">UX/UI</td><td class="name" style="vertical-align:top">&nbsp;</td></tr>
+            <tr style="height:92px"><td class="name" style="vertical-align:middle">Phối hợp triển khai Content</td><td class="name" style="vertical-align:top">&nbsp;</td></tr>
           </tbody>
         </table>
       </div>
@@ -580,6 +599,92 @@ window.addEventListener('keydown', function (e) {
     slides.forEach(function (s, j) { s.classList.toggle('active', j === cur); });
   }
   show(cur);
+
+  /* ==== DECK CHROME (round 4b): rail thumbnail + \u25B6 Present + #hash \u2014 ES5, Safari-safe ==== */
+  var railBox = null, railThumbs = [], railBuilt = false, railDirty = false, chromeBox = null, chromeTimer = null;
+  function railSyncCur() {
+    for (var q = 0; q < railThumbs.length; q++) {
+      railThumbs[q].className = (q === cur) ? 'thumb cur' : 'thumb';
+    }
+    var elc = railThumbs[cur];
+    if (elc && elc.scrollIntoView) { try { elc.scrollIntoView({ block: 'nearest' }); } catch (e9) {} }
+  }
+  var _showBase = show;
+  show = function (n) {
+    _showBase(n);
+    try { if (history.replaceState) { history.replaceState(null, '', '#' + (cur + 1)); } } catch (e8) {}
+    railSyncCur();
+  };
+  function buildRail() {
+    railBox.innerHTML = ''; railThumbs = []; railBuilt = true; railDirty = false;
+    for (var r = 0; r < slides.length; r++) {
+      var th = document.createElement('button'); th.type = 'button'; th.className = 'thumb';
+      th.title = 'Slide ' + (r + 1);
+      var num = document.createElement('span'); num.className = 'num'; num.textContent = String(r + 1);
+      var fr = document.createElement('span'); fr.className = 'frame';
+      var mini = document.createElement('span'); mini.className = 'mini';
+      var cl = slides[r].cloneNode(true);
+      cl.className = String(cl.className).replace(/\s*\bactive\b/g, '');
+      cl.removeAttribute('id');
+      cl.style.position = 'relative'; cl.style.visibility = 'visible'; cl.style.opacity = '1';
+      cl.style.pointerEvents = 'none'; cl.style.display = 'block';
+      var eds = cl.querySelectorAll('[contenteditable]');
+      for (var w = 0; w < eds.length; w++) { eds[w].removeAttribute('contenteditable'); }
+      mini.appendChild(cl); fr.appendChild(mini); th.appendChild(num); th.appendChild(fr);
+      (function (idx, btn2) {
+        btn2.addEventListener('click', function (ev) { ev.stopPropagation(); show(idx); });
+      })(r, th);
+      railBox.appendChild(th); railThumbs.push(th);
+    }
+    railSyncCur();
+  }
+  function toggleRail(force) {
+    var open = document.body.className.indexOf('rail-open') !== -1;
+    var want = (force === true) ? true : ((force === false) ? false : !open);
+    if (want && (!railBuilt || railDirty)) { buildRail(); }
+    if (want && !open) { document.body.className += ' rail-open'; }
+    if (!want) { document.body.className = document.body.className.replace(/\s*\brail-open\b/g, ''); }
+  }
+  function goPresent() {
+    toggleRail(false);
+    var elf = document.documentElement;
+    if (elf.requestFullscreen) { elf.requestFullscreen(); }
+    else if (elf.webkitRequestFullscreen) { elf.webkitRequestFullscreen(); }
+  }
+  (function () {
+    railBox = document.createElement('div'); railBox.className = 'rail';
+    railBox.addEventListener('click', function (ev) { ev.stopPropagation(); });
+    chromeBox = document.createElement('div'); chromeBox.className = 'chrome-btns';
+    chromeBox.addEventListener('click', function (ev) { ev.stopPropagation(); });
+    var bR = document.createElement('button'); bR.type = 'button'; bR.textContent = '\u2630 Slides \u00B7 T';
+    var bP = document.createElement('button'); bP.type = 'button'; bP.textContent = '\u25B6 Present';
+    bR.addEventListener('click', function (ev) { ev.stopPropagation(); toggleRail(); });
+    bP.addEventListener('click', function (ev) { ev.stopPropagation(); goPresent(); });
+    chromeBox.appendChild(bR); chromeBox.appendChild(bP);
+    document.body.appendChild(railBox); document.body.appendChild(chromeBox);
+    document.addEventListener('mousemove', function () {
+      if (chromeBox.className.indexOf('show') === -1) { chromeBox.className += ' show'; }
+      if (chromeTimer) { clearTimeout(chromeTimer); }
+      chromeTimer = setTimeout(function () {
+        if (document.body.className.indexOf('rail-open') === -1) {
+          chromeBox.className = chromeBox.className.replace(/\s*\bshow\b/g, '');
+        }
+      }, 2600);
+    });
+    window.addEventListener('keydown', function (e) {
+      if (e.target && e.target.isContentEditable) { return; }
+      if (e.key === 'e' || e.key === 'E') { railDirty = true; return; }
+      if (e.key === 't' || e.key === 'T') { toggleRail(); }
+      if (e.key === 'Escape') { toggleRail(false); }
+    });
+    var mh = String(location.hash || '').match(/^#(\d+)$/);
+    if (mh) { show(parseInt(mh[1], 10) - 1); }
+    window.addEventListener('hashchange', function () {
+      var m2 = String(location.hash || '').match(/^#(\d+)$/);
+      if (m2 && (parseInt(m2[1], 10) - 1) !== cur) { show(parseInt(m2[1], 10) - 1); }
+    });
+  })();
+
   window.addEventListener('keydown', function (e) {
     if (e.target.isContentEditable) return;
     if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') show(cur + 1);
