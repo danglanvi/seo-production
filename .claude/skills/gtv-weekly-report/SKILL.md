@@ -1,0 +1,74 @@
+---
+name: gtv-weekly-report
+description: "Báo cáo tuần SEO client-facing dạng slide (AI-driven, config per client): kéo data từ các workbook Google Sheets client-agreed bằng script batchGet (80/20 — không nạp data lớn vào context), lọc top page bị ảnh hưởng, viết NHẬN XÉT + action theo rubric, phân tích PATTERN từ insights tích lũy các tuần trước, dựng deck HTML 1920×1080 theo template chuẩn frontend-slides rồi export PDF. Use when: (1) 'làm báo cáo tuần [client]', 'weekly report W[n]', 'chạy báo cáo tuần CareerViet'; (2) cron thứ Năm chạy bản DRAFT tuần vừa khép; (3) 'phân tích tuần này có pattern gì' trên data weekly đã fetch. KHÔNG dùng cho: báo cáo THÁNG/QUÝ/NGHIỆM THU render KPI cam kết (→ gtv-client-report + kpi-commitments.md stable), sync brief nội bộ Account↔Lead (→ acc-weekly-sync), điều tra nguyên nhân SEO sâu khi số bất thường (→ skill seo-*; skill này chỉ nhận xét + đề xuất hướng). 🔒 GTV-only, cần config 09-reporting/report-config.yaml trong instance."
+---
+
+# gtv-weekly-report — Báo cáo tuần SEO client-facing (slide)
+
+Báo cáo TUẦN = **báo cáo vận hành**: render số từ workbook Google Sheets **client-agreed** (nguồn ghi rõ trên từng slide). Nó KHÔNG phải báo cáo nghiệm thu — không tuyên "đạt/không đạt KPI cam kết"; việc đó thuộc `gtv-client-report` (tháng/quý) trên `00-client-context/kpi-commitments.md` đã `stable`.
+
+## Dependency check (chạy trước, báo rõ nếu thiếu)
+
+| Cần | Kiểm tra | Thiếu thì |
+|---|---|---|
+| Config instance | `09-reporting/report-config.yaml` tồn tại | DỪNG — copy schema từ `references/report-config-schema.md`, hỏi ID workbook |
+| Service account | file `credentials` trong config tồn tại + được share các workbook | DỪNG — báo Vincent share workbook cho service account |
+| Python google libs | `python3 -c "import yaml, googleapiclient"` | Fallback: đọc tab pivot qua MCP google-sheets (chấp nhận nhiều call, tránh tab URL-level) |
+| Playwright (export PDF + chụp Looker) | `npx playwright --version` | Deck HTML vẫn giao được; PDF đánh dấu "chưa export" |
+| Swift/PDFKit (capture sheet) | `which swift` | Bỏ bậc capture-sheet, dùng bậc khác của thang capture |
+
+## Workflow 5 pha
+
+### Pha 0 — RESOLVE
+1. Đọc config + nội quy trạm `09-reporting/CLAUDE.md` (mục Chế độ TUẦN) + `00-client-context/kpi-commitments.md` (chỉ để biết ranh giới cam kết — KHÔNG render bảng nghiệm thu).
+2. Tuần báo cáo N = tuần vừa **KHÉP** theo `week_anchor` (mặc định của script). Muốn tuần khác: `--week N`.
+
+### Pha 1 — FETCH (script, không đốt context)
+```bash
+python3 skills/gtv-weekly-report/scripts/fetch_weekly_data.py \
+  --config 09-reporting/report-config.yaml [--week N] [--report-id <id>]
+```
+- 1 `values.batchGet`/workbook (quota Sheets 60 reads/phút — KHÔNG gọi lẻ từng range qua MCP).
+- Output: `02-raw/seo-data/weekly/<YYYY>-W<NN>/` (CSV thô + `digest.json` + `digest.md`).
+- Workbook "Report Tuần {N}" tự tìm qua Drive search; không thấy → hỏi URL rồi chạy lại với `--report-id`.
+- Log op `ingest` (data mới vào 02-raw).
+
+### Pha 2 — ANALYZE (Claude — chỉ đọc digest + insights cũ)
+1. Đọc `digest.json` (KHÔNG đọc CSV trừ khi cần soi 1 bảng cụ thể; TUYỆT ĐỐI không đọc tab URL-level qua MCP).
+2. Đọc 4-8 file `09-reporting/analysis/*-insights.md` gần nhất (nếu có) → lớp PATTERN.
+3. Viết `09-reporting/analysis/<YYYY>-W<NN>-insights.md` theo `references/analysis-rubric.md`:
+   - Nhận xét per section (run-rate, per nhóm trang, apply, SOW) — mỗi nhận xét có SỐ + so sánh + nguyên nhân khả dĩ + action đề xuất (owner).
+   - Top pages affected: từ `top_movers_*` trong digest — chỉ top page (đã lọc `min_clicks`).
+   - PATTERN: giảm ≥2 tuần liên tiếp → flag; imp tăng CTR không tăng → cơ hội title/meta; position 6-10 imp cao → push target; đối chiếu Prior Year (cột trong run-rate) để tách seasonal vs decay.
+4. Số bất thường (lệch >20% không giải thích được) → ghi `CANNOT-VERIFY / cần điều tra` + đề xuất skill điều tra (content-refresh, technical-seo-audit…) — KHÔNG bịa nguyên nhân.
+
+### Pha 3 — RENDER
+1. CLONE `09-reporting/weekly-template/deck-template.html` → `09-reporting/weekly/<YYYY>-W<NN>/<CLIENT>_bao-cao-tuan-W<NN>_v1.html` (đã tồn tại → tăng version).
+2. Điền slide theo `references/slide-map.md` — bảng render từ digest (class `pos`/`neg`/`mut`, nhóm KPI `kpi-row`, dòng tuần hiện tại `hl`), NHẬN XÉT lấy từ insights (rút gọn cho slide, giữ số).
+3. Phần cần HÌNH thay vì bảng — **thang capture** (dừng ở bậc đầu tiên chạy được):
+   a. **Looker Studio** (nếu config có `looker.url` — link-view): `npx playwright screenshot --viewport-size=1920,1080 --wait-for-timeout=20000 "<url>" <out.png>` (per-page: dán URL `/page/<id>` nếu có). Widget không render (ô mờ) → bậc dưới.
+   b. **Sheet range literal**: `python3 scripts/capture_sheet_range.py --config … --workbook <key> --tab "<tab>" --range A1:N30 --out <png>`.
+   c. GA4/GSC MCP render bảng/chart từ data (chỉ khi config có property/site).
+   d. `.manual-slot` — đánh dấu chỗ Vincent/team dán tay.
+   Mọi ảnh lưu `02-raw/screenshots/tools/YYYYMMDD_<slug>_w<nn>.png` + log op `capture` (protocol §8 root).
+4. Export PDF: `bash <workspace>/skills/frontend-slides/scripts/export-pdf.sh <deck.html> <deck.pdf>` (instance standalone không có frontend-slides → giao HTML, ghi rõ).
+
+### Pha 4 — CHECK + FILE-BACK (bắt buộc trước khi báo xong)
+1. Vòng tự kiểm trạm Reporter + Chế độ TUẦN (`09-reporting/CLAUDE.md`).
+2. **Spot-check 5 số** ngẫu nhiên trên deck ↔ digest ↔ (1 call MCP đọc đúng ô nguồn nếu nghi ngờ). Lệch = DỪNG, sửa trước khi giao.
+3. Update `index.md` bảng D (dòng deck + insights) + append `log.md` op `report` (kèm `capture`/`ingest` đã ghi ở pha trước).
+4. Chế độ DRAFT (cron): dừng ở file + báo Vincent review — KHÔNG gửi đi đâu.
+
+## Ranh giới & luật
+
+- **Chỉ đọc** các workbook trong config. Không sửa bất kỳ ô nào trên Google Sheets (read-only).
+- Slide OKRs / plan tháng: render bảng từ sheet nếu tab có data; Vincent chỉnh tay sau — deck để nguyên chỗ trống có đánh dấu, không bịa.
+- 3rd-party (Ahrefs…) = minh họa xu hướng, ghi rõ nguồn — không phải số nghiệm thu.
+- Số HĐ 🔒 không xuất hiện trong deck (deck là client-facing nhưng run-rate/KPI theo sheet vận hành là được phép — client cùng vận hành sheet đó).
+- Runtime: cần Claude Code + máy có credentials (Lead/Vincent). Codex/Antigravity: chạy được pha FETCH/RENDER nếu có python+node, nhưng skill phân loại claude-only theo manifest — chạy ngoài Claude Code thì làm DRAFT tay theo template, ghi rõ.
+
+## References (nạp đúng file khi cần — §10 root)
+
+- `references/report-config-schema.md` — schema config + cách setup client mới.
+- `references/slide-map.md` — map slide ↔ section digest ↔ exemplar template (nạp ở Pha 3).
+- `references/analysis-rubric.md` — chuẩn NHẬN XÉT + lớp PATTERN (nạp ở Pha 2).

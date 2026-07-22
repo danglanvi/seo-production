@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GTV x {{CLIENT_NAME}} — SEO Report Weekly (TEMPLATE)</title>
+<!--
+  TEMPLATE deck báo cáo tuần — skill gtv-weekly-report.
+  Cách dùng: CLONE file này thành 09-reporting/weekly/<YYYY>-W<NN>/<CLIENT>_bao-cao-tuan-W<NN>_v1.html
+  rồi thay dữ liệu trong từng .slide theo references/slide-map.md của skill.
+  - Mỗi loại slide có 1 exemplar ở đây; nhân bản slide theo số section thực tế.
+  - MỌI SỐ trong bảng phải trace được về digest.json của tuần (02-raw/seo-data/weekly/).
+  - Ô Δ: class "pos" (tăng, xanh) / "neg" (giảm, đỏ) / "mut" (0/không đáng kể, xám).
+  - Ảnh (logo + capture): khi BUILD deck tuần phải NHÚNG base64 (deck 1 file tự chứa —
+    export server chỉ serve thư mục chứa deck; ảnh gốc vẫn ở 02-raw/screenshots/).
+  - Export PDF: bash skills/frontend-slides/scripts/export-pdf.sh <abs.html> <abs.pdf> (đường dẫn TUYỆT ĐỐI)
+  - House Rules (frontend-slides): stage cố định 1920×1080, không reflow; CSS completeness:
+    mọi class dùng trong markup PHẢI có rule trong <style> này.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ===========================================
+   FIXED 16:9 STAGE: MANDATORY BASE STYLES (viewport-base.css — embed đủ, không cắt)
+   =========================================== */
+html, body { width:100%; height:100%; margin:0; overflow:hidden; background:var(--stage-bg,#000); }
+.deck-viewport { position:fixed; inset:0; overflow:hidden; background:var(--stage-bg,#000); }
+.deck-stage { position:absolute; left:0; top:0; width:1920px; height:1080px; overflow:hidden; transform-origin:0 0; background:var(--slide-bg,#fff); }
+.slide { position:absolute; inset:0; width:1920px; height:1080px; overflow:hidden; display:block; visibility:hidden; opacity:0; pointer-events:none; background:var(--slide-bg,#fff); }
+.slide.active, .slide.visible { visibility:visible; opacity:1; pointer-events:auto; z-index:1; }
+img, video, canvas, svg { max-width:100%; max-height:100%; }
+.deck-controls { position:fixed; left:50%; bottom:22px; transform:translateX(-50%); z-index:1000; }
+@media print {
+  html, body { width:1920px; height:auto; overflow:visible; background:#fff; }
+  .deck-viewport { position:static; overflow:visible; background:#fff; }
+  .deck-stage { position:static; width:auto; height:auto; transform:none !important; background:none; }
+  .slide { position:relative; display:block !important; visibility:visible !important; opacity:1 !important; pointer-events:auto !important; width:1920px; height:1080px; break-after:page; page-break-after:always; }
+  .slide:last-child { break-after:auto; page-break-after:auto; }
+  .deck-controls { display:none !important; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration:.01ms !important; transition-duration:.2s !important; } }
+
+/* ===========================================
+   DESIGN SYSTEM — GTV weekly report
+   =========================================== */
+:root {
+  --stage-bg:#0c0f2a;
+  --slide-bg:#f5f4f1;                 /* nền giấy sáng */
+  --ink:#15195c;                      /* navy chữ chính */
+  --ink-soft:#3a3f66;
+  --blue:#0693E3; --purple:#9900EF; --cyan:#00c6ff;
+  --grad:linear-gradient(95deg,var(--cyan) 0%,var(--blue) 38%,var(--purple) 100%);
+  --pos:#0e8a4d; --pos-bg:#e2f4e9;
+  --neg:#d61f3d; --neg-bg:#fde6ea;
+  --mut:#6b7089; --mut-bg:#eeeef2;
+  --thead:#1b2a6b;                    /* header bảng navy */
+  --row-alt:#eef0f7;
+  --kpi-hl:#fff3cf;                   /* vàng nhạt cột/nhóm thuộc cụm KPI */
+  --card:#ffffff;
+  --border:#d7d9e6;
+  font-family:'Be Vietnam Pro',-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
+}
+.slide { font-family:'Be Vietnam Pro',-apple-system,'Segoe UI',Roboto,Arial,sans-serif; color:var(--ink); }
+
+/* ---- khung chung mỗi slide nội dung ---- */
+.s-pad { position:absolute; inset:0; padding:56px 72px 48px; box-sizing:border-box; display:flex; flex-direction:column; }
+.brandbar { position:absolute; top:34px; left:56px; right:56px; display:flex; justify-content:space-between; align-items:center; pointer-events:none; }
+.brandbar img.logo-client { height:58px; width:auto; }
+.brandbar img.logo-gtv { height:64px; width:auto; }
+.pill { align-self:center; margin:0 auto; background:var(--grad); color:#fff; font-weight:800; font-size:40px; letter-spacing:.5px; padding:16px 56px; border-radius:18px; box-shadow:0 10px 26px rgba(9,20,80,.18); text-transform:uppercase; }
+.pill-wrap { display:flex; flex-direction:column; align-items:center; gap:10px; margin-bottom:22px; }
+.pill-underline { width:340px; height:3px; background:var(--ink); opacity:.65; }
+.slide-sub { text-align:center; font-size:34px; font-weight:800; color:#0d1240; }
+.slide-sub .idx { color:var(--blue); }
+.content { flex:1; display:flex; flex-direction:column; justify-content:center; gap:26px; }
+.src-note { position:absolute; right:72px; bottom:26px; font-size:19px; color:var(--mut); }
+.src-note a { color:var(--blue); text-decoration:underline; }
+
+/* ---- COVER ---- */
+.cover { background:linear-gradient(118deg,#0a6fe8 0%,#0693E3 30%,#4a4fd8 68%,#8b12d8 100%); }
+.cover .brandbar img.logo-client { background:#fff; padding:10px 18px; border-radius:12px; height:64px; box-sizing:content-box; }
+.cover-box { position:absolute; left:110px; top:250px; right:110px; color:#fff; }
+.cover-title { font-size:118px; font-weight:900; letter-spacing:1px; line-height:1.05; margin:0; }
+.cover-outline { font-size:104px; font-weight:900; letter-spacing:2px; color:transparent; -webkit-text-stroke:3px #fff; margin:14px 0 0; line-height:1.08; }
+.cover-week { margin-top:38px; font-size:40px; font-weight:700; opacity:.95; }
+.cover-domain { margin-top:16px; font-size:30px; font-style:italic; opacity:.85; }
+.cover-foot { position:absolute; left:110px; right:110px; bottom:64px; display:flex; justify-content:space-between; align-items:center; border-top:2px solid rgba(255,255,255,.7); padding-top:22px; color:#fff; font-size:28px; font-weight:700; letter-spacing:2px; }
+
+/* ---- AGENDA ---- */
+.agenda-left { position:absolute; left:0; top:0; bottom:0; width:640px; background:#f1efe9; display:flex; align-items:center; justify-content:center; }
+.agenda-word { font-size:96px; font-weight:900; color:#1b1f7a; letter-spacing:3px; -webkit-text-stroke:2px #1b1f7a; }
+.agenda-right { position:absolute; left:640px; top:0; bottom:0; right:0; background:linear-gradient(120deg,#7a10d8 0%,#4a4fd8 42%,#0693E3 100%); border-radius:56px 0 0 56px; display:flex; flex-direction:column; justify-content:center; gap:52px; padding:0 96px; }
+.agenda-item { color:#fff; font-size:44px; font-weight:800; letter-spacing:.5px; }
+
+/* ---- CARD RUN-RATE ---- */
+.rr-cards { display:flex; gap:26px; }
+.rr-card { flex:1; background:var(--card); border:1px solid var(--border); border-radius:16px; padding:20px 26px; box-shadow:0 6px 18px rgba(20,25,90,.07); }
+.rr-card h4 { margin:0 0 12px; font-size:24px; color:var(--ink-soft); font-weight:700; text-transform:uppercase; letter-spacing:.5px; }
+.rr-vals { display:flex; gap:34px; align-items:baseline; flex-wrap:wrap; }
+.rr-num { font-size:44px; font-weight:900; color:var(--ink); }
+.rr-lbl { font-size:20px; color:var(--mut); display:block; margin-top:2px; font-weight:600; }
+.rr-pct-good { color:var(--pos); font-size:44px; font-weight:900; }
+.rr-pct-bad { color:var(--neg); font-size:44px; font-weight:900; }
+
+/* ---- BẢNG DATA ---- */
+.tbl-wrap { background:var(--card); border:1.5px solid #10143c; border-radius:14px; padding:10px 12px; box-shadow:0 10px 26px rgba(9,15,60,.10); overflow:hidden; }
+table.data { border-collapse:collapse; width:100%; font-size:22px; }
+table.data thead th { background:var(--thead); color:#fff; font-weight:700; padding:10px 12px; border:1px solid #2c3a80; text-align:center; font-size:21px; line-height:1.25; }
+table.data td { padding:8px 12px; border:1px solid #dcdfeb; color:var(--ink); }
+table.data tbody tr:nth-child(even) td { background:var(--row-alt); }
+table.data td.name { text-align:left; font-weight:600; }
+table.data td.num { text-align:right; font-variant-numeric:tabular-nums; }
+table.data td.ctr { text-align:center; }
+table.data td.pos { color:var(--pos); background:var(--pos-bg); font-weight:700; text-align:right; }
+table.data td.neg { color:var(--neg); background:var(--neg-bg); font-weight:700; text-align:right; }
+table.data td.mut { color:var(--mut); background:var(--mut-bg); text-align:right; }
+table.data tr.kpi-row td.name { background:var(--kpi-hl); }
+table.data tr.total td { font-weight:800; background:#e7eaf6; border-top:2px solid var(--thead); }
+table.data tr.hl td { outline:3px solid var(--neg); outline-offset:-3px; }
+table.data.compact { font-size:19px; }
+table.data.compact td, table.data.compact thead th { padding:6px 9px; }
+
+/* ---- NHẬN XÉT ---- */
+.split { display:flex; gap:36px; align-items:flex-start; }
+.split .col-l { flex:1.35; min-width:0; }
+.split .col-r { flex:1; min-width:0; }
+.nx { margin-top:4px; }
+.nx h3 { font-size:38px; font-weight:900; color:#0d1240; letter-spacing:1px; margin:0 0 14px; }
+.nx ul { margin:0; padding-left:30px; font-size:26px; line-height:1.55; color:var(--ink-soft); }
+.nx ul ul { font-size:25px; margin-top:6px; }
+.nx li { margin-bottom:8px; }
+.nx b { color:var(--ink); }
+.up { color:var(--pos); font-weight:800; }
+.down { color:var(--neg); font-weight:800; }
+.flat { color:var(--mut); font-weight:700; }
+.action { background:#fff; border-left:8px solid var(--blue); border-radius:10px; padding:14px 20px; margin-top:16px; font-size:24px; color:var(--ink); box-shadow:0 4px 14px rgba(9,15,60,.08); }
+.action b { color:var(--purple); }
+
+/* ---- SOW / STATUS ---- */
+.chips { display:flex; gap:22px; margin-bottom:8px; }
+.chip { flex:1; text-align:center; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px 8px; }
+.chip .n { font-size:52px; font-weight:900; display:block; }
+.chip .t { font-size:21px; color:var(--mut); font-weight:700; }
+.chip.done .n { color:var(--pos); } .chip.doing .n { color:var(--blue); }
+.chip.notyet .n { color:var(--mut); } .chip.late .n { color:var(--neg); } .chip.paused .n { color:#b58900; }
+
+/* ---- CAPTURE (ảnh Looker / sheet / tool) ---- */
+.shot-frame { background:#fff; border:2px solid #10143c; border-radius:14px; padding:10px; box-shadow:0 10px 26px rgba(9,15,60,.12); display:flex; align-items:center; justify-content:center; }
+.shot-frame img { border-radius:8px; width:100%; height:auto; max-height:760px; object-fit:contain; }
+.shot-caption { font-size:22px; color:var(--mut); text-align:center; margin-top:10px; }
+.manual-slot { border:3px dashed var(--mut); border-radius:14px; min-height:520px; display:flex; align-items:center; justify-content:center; color:var(--mut); font-size:30px; font-weight:700; background:#fbfbfd; }
+
+/* ---- LINE CHART (SVG tự vẽ — không lib ngoài) ---- */
+.chart-card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px 22px; box-shadow:0 6px 18px rgba(20,25,90,.07); }
+.chart-title { font-size:26px; font-weight:800; text-align:center; margin:0 0 8px; color:var(--ink); }
+.legend { display:flex; gap:26px; justify-content:center; font-size:20px; color:var(--ink-soft); margin-top:6px; flex-wrap:wrap; }
+.legend .key { display:inline-block; width:26px; height:6px; border-radius:3px; margin-right:8px; vertical-align:middle; }
+svg.line-chart { width:100%; height:auto; }
+svg.line-chart .axis { stroke:#c3c6d6; stroke-width:1; }
+svg.line-chart .gridline { stroke:#e7e8f0; stroke-width:1; }
+svg.line-chart .tick { font-size:17px; fill:var(--mut); font-family:inherit; }
+svg.line-chart polyline { fill:none; stroke-width:4; stroke-linejoin:round; stroke-linecap:round; }
+.st-client { stroke:#0693E3; } .st-c1 { stroke:#d61f3d; } .st-c2 { stroke:#0e8a4d; } .st-c3 { stroke:#7a3fd8; }
+.bg-client { background:#0693E3; } .bg-c1 { background:#d61f3d; } .bg-c2 { background:#0e8a4d; } .bg-c3 { background:#7a3fd8; }
+
+/* ---- SUPPORT TABLE / Q&A / THANK YOU ---- */
+.support-note { font-size:24px; color:var(--mut); text-align:center; margin-top:14px; }
+.qna { background:linear-gradient(118deg,#0a6fe8 0%,#4a4fd8 55%,#8b12d8 100%); }
+.qna-title { position:absolute; left:110px; top:120px; color:#fff; font-size:84px; font-weight:900; letter-spacing:1px; border-bottom:4px solid #fff; padding-bottom:18px; }
+.qna-big { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:320px; font-weight:900; color:rgba(255,255,255,.22); letter-spacing:10px; }
+.thanks { background:#f3f1ec; }
+.thanks-logos { position:absolute; top:130px; left:0; right:0; display:flex; gap:44px; align-items:center; justify-content:center; }
+.thanks-logos img { height:74px; }
+.thanks-x { font-size:40px; color:var(--ink-soft); font-weight:700; }
+.thanks-word { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:200px; font-weight:900; color:#101335; font-style:italic; letter-spacing:2px; }
+.thanks-foot { position:absolute; bottom:90px; left:0; right:0; text-align:center; font-size:30px; font-weight:800; letter-spacing:3px; color:var(--ink); }
+
+/* ---- ghi chú nguồn dữ liệu bắt buộc (luật Reporter) ---- */
+.data-meta { position:absolute; left:72px; bottom:26px; font-size:19px; color:var(--mut); }
+</style>
+</head>
+<body>
+<div class="deck-viewport"><div class="deck-stage">
+
+<!-- ============ 1. COVER ============ -->
+<section class="slide cover active">
+  <div class="brandbar">
+    <img class="logo-client" src="assets/logo-client.png" alt="{{CLIENT_NAME}}">
+    <img class="logo-gtv" src="assets/logo-gtv.png" alt="GTV SEO">
+  </div>
+  <div class="cover-box">
+    <h1 class="cover-title">GTV x {{CLIENT_UPPER}}</h1>
+    <p class="cover-outline">SEO Report (Weekly)</p>
+    <div class="cover-week">Tuần {{WEEK_NO}} · {{WEEK_RANGE}}</div>
+    <div class="cover-domain">https://{{CLIENT_DOMAIN}}/</div>
+  </div>
+  <div class="cover-foot"><span></span><span>PRESENTED BY GTV SEO</span></div>
+</section>
+
+<!-- ============ 2. AGENDA ============ -->
+<section class="slide">
+  <div class="agenda-left"><div class="agenda-word">AGENDA</div></div>
+  <div class="agenda-right">
+    <div class="agenda-item">1. OVERVIEW KPI</div>
+    <div class="agenda-item">2. WEEKLY &amp; MONTHLY RUN RATE</div>
+    <div class="agenda-item">3. SOW: STATUS UPDATE</div>
+    <div class="agenda-item">4. ACTION ITEMS / NEXT WEEK PLAN</div>
+  </div>
+  <div class="brandbar">
+    <img class="logo-client" src="assets/logo-client.png" alt="{{CLIENT_NAME}}">
+    <img class="logo-gtv" src="assets/logo-gtv.png" alt="GTV SEO">
+  </div>
+</section>
+
+<!-- ============ 3. OVERVIEW KPI — RUN-RATE TUẦN ============ -->
+<section class="slide">
+  <div class="s-pad">
+    <div class="pill-wrap"><div class="pill">Overview KPI</div><div class="pill-underline"></div></div>
+    <div class="slide-sub">TIẾN ĐỘ TUẦN THỨ {{WEEK_NO}}</div>
+    <div class="content">
+      <div class="rr-cards">
+        <div class="rr-card">
+          <h4>Organic Pageview — lũy kế năm</h4>
+          <div class="rr-vals">
+            <span><span class="rr-num">{{PV_LK}}</span><span class="rr-lbl">Lũy kế / KH năm {{PV_KH_NAM}}</span></span>
+            <span><span class="rr-pct-good">{{PV_RUNRATE}}</span><span class="rr-lbl">Run-rate LK (time {{PV_TIME}})</span></span>
+          </div>
+        </div>
+        <div class="rr-card">
+          <h4>Apply CV — lũy kế năm</h4>
+          <div class="rr-vals">
+            <span><span class="rr-num">{{AP_LK}}</span><span class="rr-lbl">Lũy kế / KH năm {{AP_KH_NAM}}</span></span>
+            <span><span class="rr-pct-good">{{AP_RUNRATE}}</span><span class="rr-lbl">Run-rate LK (time {{AP_TIME}})</span></span>
+          </div>
+        </div>
+      </div>
+      <div class="tbl-wrap">
+        <table class="data compact">
+          <thead>
+            <tr><th>Tuần</th><th>Kỳ (ngày)</th><th>Tháng</th><th>PV Prior Year</th><th>PV KPI tuần</th><th>PV Thực tế</th><th>%HT</th><th>Run-rate LK</th><th>Apply Prior Year</th><th>Apply KPI tuần</th><th>Apply Thực tế</th><th>%HT</th><th>Run-rate LK</th><th>CR</th></tr>
+          </thead>
+          <tbody>
+            <!-- lặp dòng tuần từ digest.sections.runrate_tuan.weeks — tuần hiện tại thêm class="hl" -->
+            <tr><td class="ctr">W10</td><td class="ctr">02/07–08/07/2026</td><td class="ctr">T7/26</td><td class="num">1,522,366</td><td class="num">1,101,320</td><td class="num">1,218,428</td><td class="pos">111%</td><td class="pos">117%</td><td class="num">37,192</td><td class="num">17,216</td><td class="num">18,803</td><td class="pos">109%</td><td class="pos">110%</td><td class="ctr">1.5%</td></tr>
+            <tr class="hl"><td class="ctr">W11</td><td class="ctr">09/07–15/07/2026</td><td class="ctr">T7/26</td><td class="num">1,556,438</td><td class="num">1,101,320</td><td class="num">1,138,213</td><td class="pos">103%</td><td class="pos">116%</td><td class="num">37,259</td><td class="num">17,216</td><td class="num">17,073</td><td class="neg">99%</td><td class="pos">109%</td><td class="ctr">1.5%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="brandbar">
+    <img class="logo-client" src="assets/logo-client.png" alt="{{CLIENT_NAME}}">
+    <img class="logo-gtv" src="assets/logo-gtv.png" alt="GTV SEO">
+  </div>
+  <div class="data-meta">Nguồn: GA4 (tổng hợp theo tuần) — sheet «Run-rate tuần», Kế hoạch tổng SEO · Kỳ dữ liệu: {{WEEK_RANGE}}</div>
+</section>
+
+<!-- ============ 4. BẢNG WoW + NHẬN XÉT (layout 2 cột) ============ -->
+<section class="slide">
+  <div class="s-pad">
+    <div class="pill-wrap"><div class="pill">1. KPI Organic Pageview</div><div class="pill-underline"></div></div>
+    <div class="slide-sub">Organic pageview so với 7 ngày trước ở các nhóm trang</div>
+    <div class="content">
+      <div class="split">
+        <div class="col-l">
+          <div class="tbl-wrap">
+            <table class="data">
+              <thead><tr><th>Nhóm trang / URL</th><th>Thuộc cụm KPI?</th><th>PV tuần này</th><th>PV tuần trước</th><th>Δ PV</th><th>% thay đổi</th></tr></thead>
+              <tbody>
+                <!-- lặp từ digest.sections.bang1_overview_wow.rows — nhóm KPI thêm class="kpi-row" -->
+                <tr class="kpi-row"><td class="name">Job Detail (/tim-viec-lam/)</td><td class="ctr">Có</td><td class="num">640,373</td><td class="num">694,373</td><td class="neg">-54,000</td><td class="neg">-7.78%</td></tr>
+                <tr><td class="name">Homepage</td><td class="ctr">Không</td><td class="num">62,193</td><td class="num">61,403</td><td class="pos">790</td><td class="pos">1.29%</td></tr>
+                <tr class="total"><td class="name">TỔNG CỤM KPI</td><td class="ctr"></td><td class="num">1,196,180</td><td class="num">1,243,883</td><td class="neg">-47,703</td><td class="neg">-3.84%</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="col-r">
+          <div class="nx">
+            <h3>NHẬN XÉT</h3>
+            <ul>
+              <li><b>Tổng PV cụm KPI cam kết</b> <span class="down">-3.84%</span> so với tuần trước.</li>
+              <li>Job Detail <span class="down">-7.78%</span> — kéo cả cụm giảm.</li>
+            </ul>
+          </div>
+          <div class="action"><b>Action:</b> {{ACTION_1_CÂU_CÓ_OWNER}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="brandbar">
+    <img class="logo-client" src="assets/logo-client.png" alt="{{CLIENT_NAME}}">
+    <img class="logo-gtv" src="assets/logo-gtv.png" alt="GTV SEO">
+  </div>
+  <div class="data-meta">Nguồn: GA4 — workbook «Report Tuần {{WEEK_NO}}», tab 1. Overview Data WoW · Kỳ: {{WEEK_RANGE}} vs {{PREV_RANGE}}</div>
+  <div class="src-note">Data phân tích: <a href="{{LINK_DATA}}">file data</a></div>
+</section>
+
+<!-- ============ 5. BẢNG FULL-WIDTH + NHẬN XÉT DƯỚI (intent / ngành / khu vực) ============ -->
+<section class="slide">
+  <div class="s-pad">
+    <div class="pill-wrap"><div class="pill">Organic Pageview</div><div class="pill-underline"></div></div>
+    <div class="slide-sub"><span class="idx">1.</span> Nhóm Joblisting (theo Intent)</div>
+    <div class="content">
+      <div class="tbl-wrap">
+        <table class="data compact">
+          <thead><tr><th>Intent Type</th><th>Số URL</th><th>PV tuần này</th><th>PV tuần trước</th><th>Δ PV</th><th>Clicks tuần này</th><th>Clicks tuần trước</th><th>Δ Clicks</th><th>Imp tuần này</th><th>Imp tuần trước</th><th>Δ Imp</th><th>CTR</th><th>Δ Pos</th></tr></thead>
+          <tbody>
+            <tr><td class="name">Job x Title x Location</td><td class="num">28,699</td><td class="num">128,605</td><td class="num">150,394</td><td class="neg">-21,789</td><td class="num">7,433</td><td class="num">8,094</td><td class="neg">-661</td><td class="num">117,757</td><td class="num">125,366</td><td class="neg">-7,609</td><td class="ctr">9.35%</td><td class="mut">-0.1</td></tr>
+            <tr class="total"><td class="name">Grand Total</td><td class="num">58,431</td><td class="num">416,593</td><td class="num">455,551</td><td class="neg">-38,958</td><td class="num">52,657</td><td class="num">55,470</td><td class="neg">-2,813</td><td class="num">1,234,942</td><td class="num">1,249,070</td><td class="neg">-14,128</td><td class="ctr">8.59%</td><td class="mut">0.0</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="split">
+        <div class="col-l nx">
+          <h3>NHẬN XÉT</h3>
+          <ul><li>{{NHẬN_XÉT_THEO_RUBRIC}}</li></ul>
+        </div>
+        <div class="col-r nx">
+          <h3>&nbsp;</h3>
+          <ul><li><b>Yếu tố thay đổi:</b> {{IMP_CLICK_CTR_POS}}</li></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="brandbar">
+    <img class="logo-client" src="assets/logo-client.png" alt="{{CLIENT_NAME}}">
+    <img class="logo-gtv" src="assets/logo-gtv.png" alt="GTV SEO">
+  </div>
+  <div class="data-meta">Nguồn: {{NGUỒN_TAB}} · Kỳ: {{WEEK_RANGE}} vs {{PREV_RANGE}}</div>
+  <div class="src-note"><a href="{{LINK_DATA}}">Data phân tích</a></div>
+</section>
+
+<!-- ============ 6. TOP PAGES BỊ ẢNH HƯỞNG (bảng movers do AI lọc) ============ -->
+<section class="slide">
+  <div class="s-pad">
+    <div class="pill-wrap"><div class="pill">Top pages bị ảnh hưởng</div><div class="pill-underline"></div></div>
+    <div class="slide-sub">Top tăng / giảm theo Clicks (GSC) — chỉ page thuộc nhóm top</div>
+    <div class="content">
+      <div class="split">
+        <div class="col-l">
+          <div class="tbl-wrap">
+            <table class="data compact">
+              <thead><tr><th>URL giảm mạnh</th><th>Clicks</th><th>Δ</th><th>%</th></tr></thead>
+              <tbody>
+                <tr><td class="name">/viec-lam/ho-chi-minh-l8-vi.html</td><td class="num">2,003</td><td class="neg">-284</td><td class="neg">-12.4%</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="col-r">
+          <div class="tbl-wrap">
+            <table class="data compact">
+              <thead><tr><th>URL tăng mạnh</th><th>Clicks</th><th>Δ</th><th>%</th></tr></thead>
+              <tbody>
+                <tr><td class="name">/viec-lam/shopee-k-vi.html</td><td class="num">124</td><td class="pos">+97</td><td class="pos">+359%</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="action"><b>Đề xuất:</b> {{ACTION_TOP_PAGES}}</div>
+    </div>
+  </div>
+  <div class="brandbar">
+    <img class="logo-client" src="assets/logo-client.png" alt="{{CLIENT_NAME}}">
+    <img class="logo-gtv" src="assets/logo-gtv.png" alt="GTV SEO">
+  </div>
+  <div class="data-meta">Nguồn: GSC — tab data GSC (lag {{GSC_LAG}} ngày) · lọc max(clicks 2 kỳ) ≥ {{MIN_CLICKS}}</div>
+</section>
+
+<!-- ============ 7. CAPTURE (Looker / sheet / tool UI) ============ -->
+<section class="slide">
+  <div class="s-pad">
+    <div class="pill-wrap"><div class="pill">{{SECTION}}</div><div class="pill-underline"></div></div>
+    <div class="slide-sub">{{TIÊU_ĐỀ_PHỤ}}</div>
+    <div class="content">
+      <div class="split">
+        <div class="col-l">
+          <div class="shot-frame"><img src="{{REL_PATH_02RAW_SCREENSHOT}}" alt="{{MÔ_TẢ_ẢNH}}"></div>
+          <div class="shot-caption">{{CHÚ_THÍCH + NGÀY CHỤP}}</div>
+        </div>
+        <div class="col-r nx">
+          <h3>NHẬN XÉT</h3>
+          <ul><li>{{NHẬN_XÉT}}</li></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="brandbar">
+    <img class="logo-client" src="assets/logo-client.png" alt="{{CLIENT_NAME}}">
+    <img class="logo-gtv" src="assets/logo-gtv.png" alt="GTV SEO">
+  </div>
+  <div class="data-meta">Ảnh: ../../02-raw/screenshots/tools/ (protocol §8) — không chụp được → dùng <span class="flat">khối manual-slot</span></div>
+</section>
+
+<!-- ============ 8. SOW STATUS ============ -->
+<section class="slide">
+  <div class="s-pad">
+    <div class="pill-wrap"><div class="pill">SOW: Status Update</div><div class="pill-underline"></div></div>
+    <div class="slide-sub">{{PLAN_THÁNG_LABEL}}</div>
+    <div class="content">
+      <div class="chips">
+        <div class="chip done"><span class="n">{{N_DONE}}</span><span class="t">Hoàn thành</span></div>
+        <div class="chip doing"><span class="n">{{N_DOING}}</span><span class="t">Đang làm</span></div>
+        <div class="chip notyet"><span class="n">{{N_NOTYET}}</span><span class="t">Chưa bắt đầu</span></div>
+        <div class="chip paused"><span class="n">{{N_PAUSED}}</span><span class="t">Tạm ngưng</span></div>
+        <div class="chip late"><span class="n">{{N_LATE}}</span><span class="t">Trễ hạn</span></div>
+      </div>
+      <div class="tbl-wrap">
+        <table class="data compact">
+          <thead><tr><th>Tuần</th><th>Hạng mục / Task</th><th>Status</th><th>Trễ / dời</th></tr></thead>
+          <tbody>
+            <tr><td class="ctr">{{TUẦN}}</td><td class="name">{{TASK}}</td><td class="ctr">{{STATUS}}</td><td class="name">{{GHI_CHÚ_TRỄ}}</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="brandbar">
+    <img class="logo-client" src="assets/logo-client.png" alt="{{CLIENT_NAME}}">
+    <img class="logo-gtv" src="assets/logo-gtv.png" alt="GTV SEO">
+  </div>
+  <div class="data-meta">Nguồn: sheet «[Mới] Report tuần» — Kế hoạch tổng SEO</div>
+  <div class="src-note"><a href="{{LINK_PLAN}}">File plan tuần</a></div>
+</section>
+
+<!-- ============ 9. HẠNG MỤC CẦN CLIENT HỖ TRỢ (điền trong họp) ============ -->
+<section class="slide">
+  <div class="s-pad">
+    <div class="pill-wrap"><div class="pill">Các hạng mục cần {{CLIENT_SHORT}} hỗ trợ</div><div class="pill-underline"></div></div>
+    <div class="content">
+      <div class="tbl-wrap">
+        <table class="data">
+          <thead><tr><th style="width:34%">SCOPE</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td class="name">Technical</td><td class="name">&nbsp;</td></tr>
+            <tr><td class="name">UX/UI</td><td class="name">&nbsp;</td></tr>
+            <tr><td class="name">Phối hợp triển khai Content</td><td class="name">&nbsp;</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="support-note">Điền trực tiếp trong buổi họp — mục có sẵn từ «tab việc cần phối hợp của workbook client» đã điền trước ở dạng đề xuất.</div>
+    </div>
+  </div>
+  <div class="brandbar">
+    <img class="logo-client" src="assets/logo-client.png" alt="{{CLIENT_NAME}}">
+    <img class="logo-gtv" src="assets/logo-gtv.png" alt="GTV SEO">
+  </div>
+</section>
+
+<!-- ============ 10. 3RD PARTY VIEW — bảng + line chart SVG ============ -->
+<section class="slide">
+  <div class="s-pad">
+    <div class="pill-wrap"><div class="pill">3rd Party View — Monthly</div><div class="pill-underline"></div></div>
+    <div class="slide-sub">{{NHÓM_URL}} — Organic traffic theo tháng (nguồn 3rd-party, minh họa xu hướng)</div>
+    <div class="content">
+      <div class="split">
+        <div class="col-l">
+          <div class="tbl-wrap">
+            <table class="data compact">
+              <thead><tr><th>Tháng</th><th>{{CLIENT_NAME}}</th><th>{{Đối_thủ_1}}</th><th>{{Đối_thủ_2}}</th><th>{{Đối_thủ_3}}</th><th>Tổng nhóm</th><th>{{CLIENT_SHORT}} SOV</th></tr></thead>
+              <tbody>
+                <tr><td class="ctr">2026-07</td><td class="num">1,080,685</td><td class="num">2,823,372</td><td class="num">852,827</td><td class="num">1,112,531</td><td class="num">5,869,415</td><td class="ctr">18.4%</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="col-r">
+          <div class="chart-card">
+            <p class="chart-title">{{NHÓM_URL}} — Organic traffic theo tháng</p>
+            <svg class="line-chart" viewBox="0 0 760 420" role="img" aria-label="Line chart">
+              <line class="axis" x1="60" y1="20" x2="60" y2="370"></line>
+              <line class="axis" x1="60" y1="370" x2="740" y2="370"></line>
+              <line class="gridline" x1="60" y1="245" x2="740" y2="245"></line>
+              <line class="gridline" x1="60" y1="120" x2="740" y2="120"></line>
+              <text class="tick" x="8" y="375">0</text>
+              <text class="tick" x="8" y="250">{{Y_MID}}</text>
+              <text class="tick" x="8" y="125">{{Y_HI}}</text>
+              <!-- generator: points="x,y ..." scale tuyến tính; x chia đều theo tháng -->
+              <polyline class="st-client" points="60,300 160,310 260,305 360,290 460,270 560,300 660,320 740,318"></polyline>
+              <polyline class="st-c1" points="60,120 160,130 260,140 360,150 460,135 560,128 660,140 740,142"></polyline>
+            </svg>
+            <div class="legend">
+              <span><span class="key bg-client"></span>{{CLIENT_NAME}}</span>
+              <span><span class="key bg-c1"></span>{{Đối_thủ_1}}</span>
+              <span><span class="key bg-c2"></span>{{Đối_thủ_2}}</span>
+              <span><span class="key bg-c3"></span>{{Đối_thủ_3}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="brandbar">
+    <img class="logo-client" src="assets/logo-client.png" alt="{{CLIENT_NAME}}">
+    <img class="logo-gtv" src="assets/logo-gtv.png" alt="GTV SEO">
+  </div>
+  <div class="data-meta">Nguồn: {{TAB_3RDPARTY hoặc Ahrefs MCP}} — chỉ minh họa xu hướng, KHÔNG phải số nghiệm thu</div>
+</section>
+
+<!-- ============ 11. Q&A ============ -->
+<section class="slide qna">
+  <div class="qna-big">Q&amp;A</div>
+  <div class="qna-title">HỎI ĐÁP &amp; THẢO LUẬN</div>
+  <div class="brandbar">
+    <img class="logo-client" src="assets/logo-client.png" alt="{{CLIENT_NAME}}" style="background:#fff;padding:8px 14px;border-radius:10px;box-sizing:content-box;">
+    <img class="logo-gtv" src="assets/logo-gtv.png" alt="GTV SEO">
+  </div>
+</section>
+
+<!-- ============ 12. THANK YOU ============ -->
+<section class="slide thanks">
+  <div class="thanks-logos">
+    <img src="assets/logo-client.png" alt="{{CLIENT_NAME}}">
+    <span class="thanks-x">×</span>
+    <img src="assets/logo-gtv.png" alt="GTV SEO">
+  </div>
+  <div class="thanks-word">Thank You</div>
+  <div class="thanks-foot">PRESENTED BY GTV SEO</div>
+</section>
+
+</div></div>
+
+<div class="deck-controls"></div>
+
+<script>
+/* Stage scale + điều hướng — chuẩn frontend-slides */
+(function () {
+  var stage = document.querySelector('.deck-stage');
+  function fit() {
+    var s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+    stage.style.transform = 'translate(' + (window.innerWidth - 1920 * s) / 2 + 'px,' + (window.innerHeight - 1080 * s) / 2 + 'px) scale(' + s + ')';
+  }
+  window.addEventListener('resize', fit); fit();
+
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var cur = Math.max(0, slides.findIndex(function (s) { return s.classList.contains('active'); }));
+  function show(i) {
+    cur = Math.max(0, Math.min(slides.length - 1, i));
+    slides.forEach(function (s, j) { s.classList.toggle('active', j === cur); });
+  }
+  show(cur);
+  window.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') show(cur + 1);
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') show(cur - 1);
+    if (e.key === 'Home') show(0);
+    if (e.key === 'End') show(slides.length - 1);
+  });
+  window.addEventListener('click', function (e) {
+    if (e.clientX > window.innerWidth / 2) show(cur + 1); else show(cur - 1);
+  });
+})();
+</script>
+</body>
+</html>

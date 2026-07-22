@@ -82,3 +82,11 @@ Luật ghi:
 - Knowledge pack 06-self-checklist 8→30 file (bộ checklist lĩnh vực + sự kiện, KO/MR series); +11 skill mới, 4 skill cập nhật, mirror rebuild.
 - ⚠ tier-1-outline-am.md bị đè bản FULL — chờ Vincent quyết chưng cất lại hay giữ; instance tạm giữ bản chưng cất.
 - Files touched: 02-raw/knowledge/ + skills/ + .claude/skills/ + .agents/skills/
+
+## [2026-07-22] refactor | v2026.07.2 — Chế độ TUẦN: skill gtv-weekly-report + template slide tuần — @claude
+- Skill `gtv-weekly-report` (claude-only): fetch batchGet → digest → analyze theo rubric (pattern 4-8 tuần) → render deck 1920×1080 → check. Scripts: fetch_weekly_data.py · capture_sheet_range.py · pdf2png.swift.
+- `_TEMPLATES/weekly-report-slides/` (12 exemplar client-neutral) + patch `09-reporting/CLAUDE.md` (mục Chế độ TUẦN + luật nạp + giới hạn runtime).
+- Manifest: đăng ký skill + shared_exclude; sync 32 skill (2 claude-only không vào .agents); lint PASS.
+- File PDF mẫu tuần W11 CareerViet (197MB) Vincent drop vào 09-reporting master → move về instance careerviet/09-reporting/samples/ (master client-neutral).
+- Files touched: skills/gtv-weekly-report/**, _TEMPLATES/weekly-report-slides/**, 09-reporting/CLAUDE.md, MIGRATION.md, .claude/skills/gtv-weekly-report/**
+- Công đoạn: — · WS: 09

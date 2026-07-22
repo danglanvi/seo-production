@@ -16,6 +16,14 @@ master_version: v2026.07.1
 
 ## 1. Có gì mới
 
+### v2026.07.2 (2026-07-22) — Chế độ TUẦN: skill `gtv-weekly-report` + template slide tuần
+
+- **Skill `gtv-weekly-report`** (claude-only, KHÔNG vào `.agents/skills`): báo cáo tuần client-facing dạng slide, config-driven per client (`09-reporting/report-config.yaml` trong instance). Workflow 5 pha: RESOLVE tuần → FETCH bằng `scripts/fetch_weekly_data.py` (service account + `values.batchGet`, 1 call/workbook, output CSV + `digest.json` vào `02-raw/seo-data/weekly/` — LLM không nạp data lớn) → ANALYZE theo `references/analysis-rubric.md` (nhận xét 4 phần + lớp PATTERN so 4-8 tuần, file-back `09-reporting/analysis/`) → RENDER deck 1920×1080 theo `references/slide-map.md` → CHECK (spot-check 5 số + log). Kèm thang capture: Looker (Playwright) → sheet range (`scripts/capture_sheet_range.py` + `pdf2png.swift`) → GA4/GSC render → manual-slot.
+- **`_TEMPLATES/weekly-report-slides/`** — skeleton deck client-neutral (12 loại slide exemplar, design system GTV, viewport-base frontend-slides, CSS completeness đã audit) + README. Instance customize tại `09-reporting/weekly-template/` (logo client).
+- **`09-reporting/CLAUDE.md`** — thêm mục "Chế độ TUẦN (vận hành)": nguồn số = workbook client-agreed; deck tuần không render verdict nghiệm thu; ngoại lệ có chủ đích của Vòng tự kiểm bước 1 (chỉ áp cho tuần); tự kiểm bổ sung. Cập nhật luật nạp + Giới hạn runtime.
+- Manifest workspace: đăng ký `gtv-weekly-report` (source = `SEO Production/skills/`, class claude-only) + thêm vào `shared_exclude`.
+- GHI ĐÈ khi migration: 2 file trạm 09 + `_TEMPLATES/weekly-report-slides/` + `skills/gtv-weekly-report/` + mirror `.claude/skills/gtv-weekly-report/`. GIỮ: `09-reporting/report-config.yaml`, `weekly-template/`, `weekly/`, `analysis/`, `samples/` (dữ liệu instance).
+
 ### v2026.07.1 (2026-07-22) — Nội quy trạm + Quản đốc + Lớp mẫu (mindset 4 trụ cột Agentic SEO)
 
 - **12 cặp `CLAUDE.md` + `AGENTS.md` nội quy trạm** (00, 01, 03→12): persona per trạm, bảng ĐƯỢC/KHÔNG ĐƯỢC, **vòng tự kiểm** (tự chấm theo checklist → sửa tới khi đạt → mới submit QC), luật nạp 80/20 riêng trạm. Trạm không lặp luật root — vênh thì root thắng. `02-raw/` + `99-archive/` giữ README-only.

@@ -56,9 +56,19 @@ Tự chấm role `self` đạt hết mới được báo xong — chuẩn chấm
 
 ---
 
+## Chế độ TUẦN (vận hành) — skill `gtv-weekly-report`
+
+Báo cáo TUẦN cho client là **báo cáo vận hành dạng slide**, đứng NGOÀI bảng KPI nghiệm thu:
+
+- Nguồn số DUY NHẤT của deck tuần: các workbook client-agreed khai trong `report-config.yaml` (folder này) + digest do fetch script sinh trong `../02-raw/seo-data/weekly/<YYYY>-W<NN>/`. Mỗi slide data ghi nguồn + kỳ dữ liệu (khối `.data-meta`).
+- Deck tuần KHÔNG render verdict "đạt KPI cam kết" và không thay `kpi-commitments.md`. Run-rate/KPI tuần theo sheet vận hành được phép render kể cả khi `kpi-commitments.md` còn `draft` — đây là **ngoại lệ có chủ đích của Vòng tự kiểm bước 1, CHỈ áp cho chế độ tuần**; báo cáo tháng/quý/nghiệm thu vẫn DỪNG như luật.
+- Output: deck `weekly/<YYYY>-W<NN>/<CLIENT>_bao-cao-tuan-W<NN>_v<N>.html/.pdf` + insights `analysis/<YYYY>-W<NN>-insights.md` (bộ nhớ pattern các tuần — file-back bắt buộc).
+- 3rd-party data (Ahrefs…) chỉ minh họa xu hướng — không phải số nghiệm thu.
+- Tự kiểm bổ sung trước khi giao deck: spot-check 5 số deck ↔ digest; `grep '{{'` trong deck = 0; mọi slide data có `.data-meta`; chế độ DRAFT (cron) dừng ở file + báo review, không gửi.
+
 ## ⚠ Giới hạn runtime
 
-Skill `gtv-client-report` **chỉ có trên Claude Code**. Chạy ở Codex / Antigravity → làm DRAFT bằng tay theo `../_TEMPLATES/bao-cao-thang.md` + bộ `../_TEMPLATES/account/`, ghi rõ đầu file "draft — chưa qua gtv-client-report", rồi chuyển SEO Lead chạy bản chuẩn trên Claude Code. Không giả lập output của skill, không gửi draft thẳng cho khách.
+Skill `gtv-client-report` **chỉ có trên Claude Code**. Chạy ở Codex / Antigravity → làm DRAFT bằng tay theo `../_TEMPLATES/bao-cao-thang.md` + bộ `../_TEMPLATES/account/`, ghi rõ đầu file "draft — chưa qua gtv-client-report", rồi chuyển SEO Lead chạy bản chuẩn trên Claude Code. Không giả lập output của skill, không gửi draft thẳng cho khách. `gtv-weekly-report` cũng phân loại claude-only (cần máy có credentials service account); runtime khác → draft tay theo `../_TEMPLATES/weekly-report-slides/`, ghi rõ.
 
 ---
 
@@ -70,6 +80,7 @@ Skill `gtv-client-report` **chỉ có trên Claude Code**. Chạy ở Codex / An
 | `../_TEMPLATES/bao-cao-thang.md` | Khi làm báo cáo tháng / quý / nghiệm thu |
 | Bộ `../_TEMPLATES/account/` | Nạp đúng file theo việc (tra `account/README.md`): BBNT khi nghiệm thu · email khi gửi báo cáo / nhắc · SOW-KPI naming khi soát tên hạng mục |
 | `../skills/gtv-client-report/` | Render báo cáo — chỉ trên Claude Code (xem Giới hạn runtime) |
+| `report-config.yaml` (folder này) + `../skills/gtv-weekly-report/` | Khi làm báo cáo TUẦN (xem mục Chế độ TUẦN) |
 | `../skills/expert-case-study/` | Chỉ khi làm case study #32 |
 
 WS này không có checklist riêng trong `../02-raw/knowledge/` — chuẩn chấm là Done-criteria template + chuẩn bộ account (Vòng tự kiểm). Không quét cả folder account, nạp đúng file theo việc (§10 root).
