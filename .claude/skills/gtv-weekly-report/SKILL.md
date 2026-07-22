@@ -32,6 +32,9 @@ python3 skills/gtv-weekly-report/scripts/fetch_weekly_data.py \
 - Output: `02-raw/seo-data/weekly/<YYYY>-W<NN>/` (CSV thô + `digest.json` + `digest.md`).
 - Workbook "Report Tuần {N}" tự tìm qua Drive search; không thấy → hỏi URL rồi chạy lại với `--report-id` (tìm được ID mới → append vào `known_ids` trong config).
 - Re-fetch CÙNG tuần ghi đè folder tuần đó = bản kéo mới nhất (digest có `generated_at`); cần giữ bản cũ → rename folder trước khi chạy lại. Đây là ngoại lệ vận hành duy nhất của 02-raw, chỉ áp cho `seo-data/weekly/`.
+- **Top page movers theo CHUẨN TEAM (ΔPV — không phải clicks):** với từng entry trong `config.pv_movers`, chạy:
+  `python3 scripts/pv_movers.py --config … --workbook <wb> --tab "<tab>" --min-dpv <n> --out <weekdir>/movers_pv_<key>.json --save-csv <weekdir>/csv/…`
+  (resolve tab theo TÊN — gid trong URL người gửi có thể trỏ tab khác). Đây là nguồn DUY NHẤT cho slide top pages; GSC clicks chỉ là cột phụ.
 - Log op `ingest` (data mới vào 02-raw).
 
 ### Pha 2 — ANALYZE (Claude — chỉ đọc digest + insights cũ)

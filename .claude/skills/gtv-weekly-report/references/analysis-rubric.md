@@ -80,6 +80,8 @@ Load frontmatter `summary` của 4-8 insights gần nhất rồi kiểm tuần t
 | Cannibalization nghi vấn | URL A giảm đúng nhịp URL B cùng cụm tăng | Đề xuất serp-clustering verify |
 | Momentum | Nhóm tăng ≥2 tuần liên tiếp | Đề xuất nhân rộng pattern (content/IL tương tự) |
 | Run-rate lệch time | Run-rate LK tháng < time run-rate quá 10 điểm | Cảnh báo sớm nguy cơ hụt KPI tháng — nêu ở đầu insights |
+| **URL swap / redirect** | 1 URL rớt ~100% ĐỒNG THỜI URL cùng chủ đề tăng đột biến tương đương (vd sale-online-k -2.779 ↔ online-k +3.261) | KHÔNG kết luận decay — nghi redirect/đổi URL/merge, hỏi team xác nhận trước; nếu đúng swap thì cộng gộp 2 URL khi đánh giá xu hướng |
+| **Scope vênh** | Số tổng bảng top-page (PV≥5) ngược chiều số tổng toàn nhóm ở BẢNG 1 | KHÔNG phân tích số tổng bảng top-page; chỉ dùng bảng đó cho CƠ CẤU nhóm. Ghi scope-note trên slide |
 
 Mỗi pattern bắn ra ≤1 dòng trong `summary.flags` để tuần sau đọc rẻ.
 

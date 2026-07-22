@@ -98,3 +98,10 @@ Luật ghi:
 - Nguồn: FB-2026-07-22-tranphong-01/02 (instance careerviet). Mirror sync + lint PASS.
 - Files touched: skills/gtv-weekly-report/**, .claude/skills/gtv-weekly-report/**
 - Công đoạn: — · WS: 09
+
+## [2026-07-22] refactor | Round 2 feedback SEO Lead → pv_movers.py + 5 luật trình bày deck — @claude
+- Script mới `scripts/pv_movers.py`: tải tab URL-level về CSV qua export URL (1 request, không tốn quota values) → lọc top page theo ΔPV (chuẩn team, clicks chỉ là cột phụ); resolve tab theo TÊN.
+- slide-map: scope-note bảng top-page, cấm phân tích số tổng bảng scope 58K, Δ Pos bắt buộc 1.2/1.3, movers từ pv_movers, Blog chẩn đoán riêng + action nối content strategy SOW, slide Apply OVERVIEW theo page group trước Intent, 5 luật trình bày (đánh số slide, breadcrumb, 3 tăng/3 giảm + chẩn đoán mỗi chiều, chẩn đoán per nhóm BẢNG 1, action cụ thể).
+- rubric: pattern "URL swap/redirect" + "Scope vênh". Template (+instance): CSS .crumb/.page-no/.scope-note.
+- Files touched: skills/gtv-weekly-report/**, _TEMPLATES/weekly-report-slides/deck-template.html, .claude/skills/gtv-weekly-report/**
+- Công đoạn: — · WS: 09
