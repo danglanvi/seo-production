@@ -18,7 +18,7 @@
 | 9 | 2. Job Detail theo nhóm ngành | bảng full-width | `danh_gia_jobdetail` (khối Δ PV + ngành ưu tiên) hoặc `jobdetail_nhom_nganh` (workbook Data phân tích) | |
 | 10 | 3. Blog (SEO / non-SEO) | bảng full-width | `danh_gia_blog_tab` hoặc `danh_gia_blog` + **`movers_pv_blog.json`** | Tách rõ subtotal SEO vs non-SEO. **Blog phải có CHẨN ĐOÁN RIÊNG** (không mượn chẩn đoán JL): drill movers PV Blog + ma trận tín hiệu; action nối với content strategy blog hàng tuần/tháng đang chạy trong SOW (nếu có task tương ứng — nêu đích danh) |
 | 11 | 4. Homepage + NTD (ngoài cam kết) | bảng WoW 2 cột | dòng Homepage/NTD trong bang1 + `danh_gia_ntd` | Homepage PV lớn nhưng SEO không tác động — vẫn đưa vào theo lệ các tuần (feedback 22/07); ghi rõ "ngoài cam kết" |
-| 12 | **Apply OVERVIEW theo page group** | bảng WoW 2 cột | `apply_thanks_pivot` (khối Page Group: Job Listing / Job Detail / Internal / Homepage / Recruiter / Other / Featured Jobs / Blog + Grand Total) | **ĐỨNG TRƯỚC slide Apply theo Intent** (feedback 22/07) — cho bức tranh toàn bộ nhóm page trước khi drill JL |
+| 12 | **Apply OVERVIEW theo page group** | bảng WoW 2 cột | **`apply_groups.json` (scripts/apply_groups.py — tải FULL tab «Data Apply thanks» rồi gộp theo Page Group)** | **ĐỨNG TRƯỚC slide Apply theo Intent** (feedback 22/07). KHÔNG cộng nhóm từ section `apply_thanks_pivot` trong digest — range config chỉ lấy ~80 dòng đầu nên thiếu (đã dính: 3,895 vs GT thật 12,417). Đối chiếu Grand Total với pivot Intent trên sheet |
 | 13+ | Apply (Applythanks) theo Intent / khu vực / ngành | bảng WoW 2 cột (+full-width khi cần) | `danh_gia_apply` + `joblisting_intent_apply` + `apply_khuvuc` + `apply_nganh` | NHẬN XÉT bắt buộc trả lời "VÌ SAO tăng/giảm" per nhóm biến động lớn (rubric mục Apply) — nối với PV/clicks landing nhóm đó |
 | 13 | SOW: **Plan Tuần** | SOW | `plan_tuan_truoc` (template mới) hoặc `sow_status.weeks[<tuần hiện hành>]` | Tiêu đề "SOW: Plan Tuần — <marker tuần>" (KHÔNG ghi Plan tháng); bảng show **ĐỦ task của tuần** kèm status, không chỉ dòng trễ; chips đếm theo tuần đó |
 | 14 | Next week plan | SOW (bảng) | `plan_tuan_ke` hoặc `sow_status.weeks[<tuần kế>]` | Đủ task tuần kế; chưa có data → khung + đánh dấu Vincent/Lead điền |
@@ -34,6 +34,7 @@
 3. **Nhận xét bảng nhóm — format chuẩn "3 tăng / 3 giảm"**: liệt kê top 3 nhóm tăng mạnh + top 3 nhóm giảm mạnh THEO THỨ TỰ, rồi **chẩn đoán chung cho CHIỀU TĂNG và CHIỀU GIẢM** (không chỉ chẩn đoán 1 nhóm lớn nhất); không cần đối chiếu % tổng của bảng scope top-page.
 4. **Chẩn đoán per nhóm giảm ở BẢNG 1**: mỗi nhóm trang giảm (JD, Blog, NTD…) có 1 dòng chẩn đoán riêng theo ma trận — không mượn chẩn đoán của nhóm khác.
 5. **Action phải cụ thể**: {làm gì × trên nhóm/URL nào × nối task SOW đang chạy (đích danh) × owner}. Cấm action mơ hồ kiểu "cơ hội title/meta" không kèm danh sách nhóm/URL.
+6. **Text nhiều → TÁCH SLIDE, không nén font** (feedback Vincent 22/07): slide có bảng lớn + nhận xét/chẩn đoán dài thì tách thành 2 slide — slide bảng (+ 1-2 bullet tóm tắt, trỏ "chẩn đoán ở slide kế tiếp") và slide "Chẩn đoán & Action" chữ cỡ chuẩn. Đã áp cho BẢNG 1 (4→4+5), 1.2 ngành (7→7+8), Blog (12→12+13) ở deck W11 v3. Chữ không được nhỏ hơn ~21px; chữ tràn/đè `.data-meta` = FAIL tự kiểm — soi bằng render thử vài trang PDF ra PNG trước khi giao.
 
 ## Luật render bảng
 

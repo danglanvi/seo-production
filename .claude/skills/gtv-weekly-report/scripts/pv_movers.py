@@ -147,12 +147,16 @@ def main():
         items.append(it)
 
     items.sort(key=lambda x: x["d_pv"])
+    # losers/gainers tách theo DẤU — không để dòng ΔPV âm lọt vào gainers khi
+    # số URL tăng đủ ngưỡng ít hơn --top (bug phát hiện 22/07 trên Data_Blog)
+    losers = [it for it in items if it["d_pv"] < 0]
+    gainers = [it for it in items if it["d_pv"] > 0]
     out = {
         "source": {"spreadsheet": sid, "gid": gid, "tab": args.tab},
         "rule": f"|ΔPV| ≥ {args.min_dpv} (chuẩn team: ưu tiên PV; clicks/pos là cột phụ)",
         "rows_qualified": len(items),
-        "losers": items[:args.top],
-        "gainers": list(reversed(items[-args.top:])) if items else [],
+        "losers": losers[:args.top],
+        "gainers": list(reversed(gainers[-args.top:])),
     }
     text = json.dumps(out, ensure_ascii=False, indent=1)
     if args.out:

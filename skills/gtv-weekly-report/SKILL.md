@@ -34,7 +34,10 @@ python3 skills/gtv-weekly-report/scripts/fetch_weekly_data.py \
 - Re-fetch CÙNG tuần ghi đè folder tuần đó = bản kéo mới nhất (digest có `generated_at`); cần giữ bản cũ → rename folder trước khi chạy lại. Đây là ngoại lệ vận hành duy nhất của 02-raw, chỉ áp cho `seo-data/weekly/`.
 - **Top page movers theo CHUẨN TEAM (ΔPV — không phải clicks):** với từng entry trong `config.pv_movers`, chạy:
   `python3 scripts/pv_movers.py --config … --workbook <wb> --tab "<tab>" --min-dpv <n> --out <weekdir>/movers_pv_<key>.json --save-csv <weekdir>/csv/…`
-  (resolve tab theo TÊN — gid trong URL người gửi có thể trỏ tab khác). Đây là nguồn DUY NHẤT cho slide top pages; GSC clicks chỉ là cột phụ.
+  (resolve tab theo TÊN — gid trong URL người gửi có thể trỏ tab khác). Đây là nguồn DUY NHẤT cho slide top pages; GSC clicks chỉ là cột phụ. Script tự tách losers (ΔPV<0) / gainers (ΔPV>0) — không bao giờ trộn dấu.
+- **Apply theo Page Group (slide Apply Overview):** nếu config có `apply_groups`, chạy:
+  `python3 scripts/apply_groups.py --config … --workbook <wb> --tab "<tab>" --out <weekdir>/apply_groups.json --save-csv <weekdir>/csv/…`
+  Range trong config chỉ lấy ~80 dòng đầu tab pivot nên cộng nhóm sẽ THIẾU — script tải NGUYÊN tab rồi aggregate local; đối chiếu Grand Total với pivot Intent trên sheet trước khi render.
 - Log op `ingest` (data mới vào 02-raw).
 
 ### Pha 2 — ANALYZE (Claude — chỉ đọc digest + insights cũ)
