@@ -249,10 +249,11 @@ def parse_gsc_movers(rows, min_clicks, top_n):
 
 
 def parse_status_counts(rows):
-    """Đếm giá trị cột Status trong tab task ([Mới] Report tuần) + gom dòng trễ."""
+    """Tab task ([Mới] Report tuần): gom task THEO TUẦN KẾ HOẠCH (marker 'Tuần X/... (dd/m - dd/m)'
+    hoặc 'Tuần N'), đếm Status per tuần + toàn cục, gom dòng trễ. Slide SOW cần ĐỦ task của tuần."""
     h = find_header_row(rows, ["hạng mục", "status"])
     if h is None:
-        return {"note": "không thấy header task", "counts": {}, "late": []}
+        return {"note": "không thấy header task", "counts": {}, "late": [], "weeks": {}}
     header = [str(c).strip().lower() for c in rows[h]]
 
     def col(name_parts):
@@ -263,23 +264,36 @@ def parse_status_counts(rows):
 
     i_status, i_task = col(["status"]), col(["nội dung"])
     i_late = col(["trễ"])
-    i_week = col(["tuần"])
     counts, late = {}, []
+    weeks, order = {}, []
+    cur = None
     for r in rows[h + 1:]:
         if not r or not any(str(c).strip() for c in r):
             continue
+        c0 = str(r[0]).strip()
+        task = str(r[i_task]).strip() if i_task is not None and i_task < len(r) else ""
         sv = str(r[i_status]).strip() if i_status is not None and i_status < len(r) else ""
+        lv = str(r[i_late]).strip() if i_late is not None and i_late < len(r) else ""
+        if c0.startswith("Plan tháng"):
+            cur = None
+            continue
+        if re.match(r"^Tuần\b", c0) and c0.lower() != "tuần":
+            cur = c0
+            if cur not in weeks:
+                weeks[cur] = {"tasks": [], "counts": {}}
+                order.append(cur)
+            continue
+        if not task:
+            continue
         if sv:
             counts[sv] = counts.get(sv, 0) + 1
-        lv = str(r[i_late]).strip() if i_late is not None and i_late < len(r) else ""
+        if cur:
+            weeks[cur]["tasks"].append({"task": task[:200], "status": sv, "note": lv[:120]})
+            if sv:
+                weeks[cur]["counts"][sv] = weeks[cur]["counts"].get(sv, 0) + 1
         if lv:
-            late.append({
-                "tuần": str(r[i_week]).strip() if i_week is not None and i_week < len(r) else "",
-                "task": (str(r[i_task]).strip()[:160]) if i_task is not None and i_task < len(r) else "",
-                "trễ": lv[:120],
-                "status": sv,
-            })
-    return {"counts": counts, "late": late[:25]}
+            late.append({"tuần": cur or c0, "task": task[:160], "trễ": lv[:120], "status": sv})
+    return {"counts": counts, "late": late[:25], "week_order": order, "weeks": weeks}
 
 
 def small_table(rows, max_rows=40):
@@ -366,11 +380,17 @@ def main():
             digest["errors"]["report_tuan"] = errs
         for key, rows in data.items():
             save_csv(outdir, "report_tuan", key, rows)
-            if key == "overview_wow":
-                digest["sections"]["bang1_overview_wow"] = parse_wow_table(rows)
+            if key.startswith("overview_wow"):
+                parsed = parse_wow_table(rows)
+                if parsed.get("rows") or "bang1_overview_wow" not in digest["sections"]:
+                    digest["sections"]["bang1_overview_wow"] = parsed
             elif key.startswith("gsc_"):
                 digest["sections"][f"top_movers_{key}"] = parse_gsc_movers(rows, min_clicks, top_n)
                 digest["sections"][f"top_movers_{key}"]["source_tab"] = rt_cfg["ranges"][key]
+            elif key.startswith("plan_tuan"):
+                digest["sections"][key] = parse_status_counts(rows)
+            elif key.startswith("danh_gia"):
+                digest["sections"][key] = small_table(rows, 65)
             else:
                 digest["sections"][key] = small_table(rows)
     else:

@@ -1,34 +1,36 @@
 # slide-map.md — map slide ↔ nguồn digest ↔ exemplar template (nạp ở Pha 3 RENDER)
 
-Cấu trúc deck chuẩn (theo format weekly report GTV — mẫu gốc: deck CareerViet W11, 23 slide). Số slide co giãn theo section thực có data tuần đó; thứ tự GIỮ NGUYÊN. Exemplar = slide mẫu trong `deck-template.html` (12 loại).
+> **LUỒNG PHÂN TÍCH CHUẨN (feedback SEO Lead 22/07/2026 — không tự đảo thứ tự):**
+> Overview KPI → **1. PV Joblisting (JL)** → **2. PV Job Detail** → **3. PV Blog (SEO/non-SEO)** → **4. PV Homepage (+ Nhà tuyển dụng, ngoài cam kết)** → **Apply** → SOW Plan Tuần → Next week → Cần client hỗ trợ → Q&A.
+> Trong đó cụm JL bắt buộc break 4 slide nhỏ: **1.1 theo Intent → 1.2 theo ngành nghề → 1.3 theo khu vực → 1.4 top pages JL**.
+> Viết tắt: **JL = Job Listing** · JD = Job Detail · NTD = Nhà tuyển dụng.
 
-| Thứ tự | Slide | Exemplar | Nguồn data (digest.json `sections.*`) | Ghi chú render |
+| Thứ tự | Slide | Exemplar | Nguồn data (digest `sections.*`) | Ghi chú render |
 |---|---|---|---|---|
-| 1 | Cover | cover | meta (week, range_display) | Điền `{{WEEK_NO}}`, `{{WEEK_RANGE}}` |
+| 1 | Cover | cover | meta | |
 | 2 | Agenda | agenda | — | 4 mục cố định |
-| 3 | Overview KPI — run-rate tuần | runrate | `runrate_tuan.summary` (2 card) + `runrate_tuan.weeks` (bảng, dòng W hiện tại class `hl`) | Run-rate <100% dùng `rr-pct-bad`; nguồn + kỳ ở `.data-meta` |
-| 4 | BẢNG 1 — PV per nhóm trang WoW | bảng WoW 2 cột | `bang1_overview_wow.rows` | Nhóm thuộc cụm KPI → `kpi-row` (tra `page_groups` config); dòng tổng → `total`; NHẬN XÉT phải: cụm KPI trước, toàn site sau |
-| 5 | Joblisting theo Intent | bảng full-width | `joblisting_intent_apply` (Apply per intent) + bảng intent PV nếu team có trong workbook tuần | Nếu tuần này digest không có bảng intent-PV → bỏ slide, KHÔNG bịa |
-| 6 | Joblisting theo ngành nghề | bảng full-width | `apply_nganh` / bảng ngành PV | như trên |
-| 7 | Joblisting theo khu vực | bảng full-width | `apply_khuvuc` / bảng khu vực PV | như trên |
-| 8 | Ranking distribution (SpySERP/RankTracker) | capture | ảnh — thang capture (Looker/sheet) | Không có → `.manual-slot` |
-| 9 | Job Detail theo nhóm ngành | bảng full-width | `jobdetail_nhom_nganh` | top tăng/giảm bôi bằng `pos`/`neg` |
-| 10 | Blog SEO/non-SEO | bảng full-width | `danh_gia_blog` | gộp theo SEO/non-SEO như tab |
-| 11 | Homepage | capture hoặc bảng | Looker page / GA4-direct (nếu có quyền) / số từ bang1 | ít data → gộp vào slide 4 note |
-| 12 | Top pages bị ảnh hưởng (JLP) | top movers | `top_movers_gsc_jlp` (gainers/losers) | Đây là slide "top page affected" Vincent yêu cầu — luôn có |
-| 13 | Top pages Blog | top movers | `top_movers_gsc_blog` | có data mới render |
-| 14 | Applythanks per page group + intent/khu vực/ngành | bảng WoW 2 cột (+full-width nếu cần 2 slide) | `apply_thanks_pivot` + `joblisting_intent_apply` + `apply_khuvuc` + `apply_nganh` | NHẬN XÉT: apply cụm cam kết trước |
-| 15 | SOW status update | SOW | `sow_status.counts` (chips — lọc key rác không phải status) + `.late` (bảng) | Label plan tháng lấy từ tab; chips: Done/Đang làm/Chưa bắt đầu/Tạm ngưng/Trễ hạn |
-| 16 | Next week plan | SOW (bảng) | `sow_status.late` + task tuần kế từ CSV `report_tuan_tasks` (đọc lát nhỏ khi cần) | Vincent chỉnh tay sau — đổ khung + việc P0/P1 |
-| 17 | Hạng mục cần client hỗ trợ | support | `viec_phoi_hop` (đề xuất sẵn các mục đang chờ client) | để trống phần Description cho buổi họp |
-| 18-21 | 3rd Party View — Tổng site / Job Listing / Blog / Recruiter | 3rd party | tab 3rd-party trong workbook (nếu team duy trì) HOẶC Ahrefs MCP `site-explorer-metrics-history` 4 domain | SVG polyline: scale tuyến tính, x chia đều; ghi rõ nguồn minh họa |
-| 22 | Q&A | qna | — | |
-| 23 | Thank You | thanks | — | |
+| 3 | Overview KPI — run-rate tuần | runrate | `runrate_tuan.summary` + `.weeks` (dòng tuần hiện tại class `hl`) | KHÔNG thêm slide dashboard/Looker lặp thông tin này — 2 slide trùng 1 nội dung là lỗi (feedback 22/07) |
+| 4 | 1. KPI Organic PV per nhóm trang (BẢNG 1) | bảng WoW 2 cột | `bang1_overview_wow.rows` | **RENDER ĐỦ MỌI DÒNG** của tab: khối TOÀN SITE (JL, JD, Blog toàn bộ, NTD, Tool, Homepage, tổng) + khối CAM KẾT SEO (JL, JD, Blog CV/Lương, Tool, tổng). Nếu tab không có dòng "Blog còn lại (non-SEO)" → TỰ DẪN XUẤT = Blog toàn bộ − Blog CV/Lương, đánh dấu (dẫn xuất). Thiếu dòng nhóm nào so với tab = FAIL tự kiểm |
+| 5 | 1.1 JL theo Intent | bảng full-width | `danh_gia_joblisting` (bảng "1. Pageview theo Intent") | Đủ cột PV/Clicks/Imp/CTR/Pos WoW + Grand Total |
+| 6 | 1.2 JL theo ngành nghề | bảng full-width | `danh_gia_joblisting` (bảng "2. Pageview theo ngành nghề") | ⚠ Kiểm tra header kỳ dữ liệu của bảng — nếu cột "tuần trước" giữ kỳ cũ (team chưa refresh) → ghi đúng kỳ theo header vào `.data-meta` + flag trong insights, KHÔNG im lặng |
+| 7 | 1.3 JL theo khu vực | bảng full-width | `danh_gia_joblisting` (bảng "3. Pageview theo khu vực") | Top 10-12 khu vực theo PV + ghi chú như slide 6 |
+| 8 | 1.4 Top pages JL bị ảnh hưởng | top movers | `top_movers_gsc_jlp` | Nằm TRONG cụm JL (không tách ra sau) — feedback 22/07 |
+| 9 | 2. Job Detail theo nhóm ngành | bảng full-width | `danh_gia_jobdetail` (khối Δ PV + ngành ưu tiên) hoặc `jobdetail_nhom_nganh` (workbook Data phân tích) | |
+| 10 | 3. Blog (SEO / non-SEO) | bảng full-width | `danh_gia_blog_tab` hoặc `danh_gia_blog` | Tách rõ subtotal SEO vs non-SEO |
+| 11 | 4. Homepage + NTD (ngoài cam kết) | bảng WoW 2 cột | dòng Homepage/NTD trong bang1 + `danh_gia_ntd` | Homepage PV lớn nhưng SEO không tác động — vẫn đưa vào theo lệ các tuần (feedback 22/07); ghi rõ "ngoài cam kết" |
+| 12+ | Apply (Applythanks) theo Intent / khu vực / ngành | bảng WoW 2 cột (+full-width khi cần) | `danh_gia_apply` + `joblisting_intent_apply` + `apply_khuvuc` + `apply_nganh` + `apply_thanks_pivot` | NHẬN XÉT bắt buộc trả lời "VÌ SAO tăng/giảm" per nhóm biến động lớn (rubric mục Apply) — nối với PV/clicks landing nhóm đó |
+| 13 | SOW: **Plan Tuần** | SOW | `plan_tuan_truoc` (template mới) hoặc `sow_status.weeks[<tuần hiện hành>]` | Tiêu đề "SOW: Plan Tuần — <marker tuần>" (KHÔNG ghi Plan tháng); bảng show **ĐỦ task của tuần** kèm status, không chỉ dòng trễ; chips đếm theo tuần đó |
+| 14 | Next week plan | SOW (bảng) | `plan_tuan_ke` hoặc `sow_status.weeks[<tuần kế>]` | Đủ task tuần kế; chưa có data → khung + đánh dấu Vincent/Lead điền |
+| 15 | Hạng mục cần client hỗ trợ | support | `viec_phoi_hop` | Trống Description — điền trong họp |
+| 16-19 | 3rd Party View monthly (tùy tuần có data) | 3rd party | tab 3rd-party khi xác định được / Ahrefs MCP (minh họa) | |
+| 20 | Q&A | qna | — | |
+| 21 | Thank You | thanks | — | |
 
 ## Luật render bảng
 
-1. Mỗi giá trị lấy NGUYÊN VĂN từ digest (đã là FORMATTED_VALUE của sheet — giữ dấu phẩy nghìn, %). Không tự làm tròn lại.
-2. Δ dương → `pos`, âm → `neg`, 0/rỗng → `mut`. %/số giữ đúng dấu như nguồn.
-3. Bảng dài hơn slide → cắt theo TOP |Δ| + dòng tổng, ghi chú "top N theo biến động — bảng đủ trong file data" + link.
-4. Mọi slide data có `.data-meta` (nguồn + kỳ) — thiếu là FAIL vòng tự kiểm.
-5. Placeholder `{{...}}` không được sót lại trong deck final — grep trước khi export.
+1. Mỗi giá trị lấy NGUYÊN VĂN từ digest (FORMATTED_VALUE của sheet). Không tự làm tròn lại.
+2. Δ dương → `pos`, âm → `neg`, 0/rỗng → `mut`. Nhóm thuộc cụm KPI → `kpi-row`; dòng tổng → `total`.
+3. Bảng dài hơn slide → cắt theo TOP |Δ| + dòng tổng + ghi "top N theo biến động — bảng đủ trong file data". NGOẠI LỆ: BẢNG 1 (slide 4) và bảng task Plan Tuần (slide 13) phải ĐỦ dòng.
+4. Mọi slide data có `.data-meta` (nguồn + kỳ dữ liệu ĐÚNG theo header bảng nguồn) — thiếu là FAIL tự kiểm.
+5. Ảnh (nếu dùng thang capture) nhúng base64; ảnh gốc ở `02-raw/screenshots/`.
+6. `grep '{{'` deck final = 0.

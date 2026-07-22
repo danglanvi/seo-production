@@ -90,3 +90,11 @@ Luật ghi:
 - File PDF mẫu tuần W11 CareerViet (197MB) Vincent drop vào 09-reporting master → move về instance careerviet/09-reporting/samples/ (master client-neutral).
 - Files touched: skills/gtv-weekly-report/**, _TEMPLATES/weekly-report-slides/**, 09-reporting/CLAUDE.md, MIGRATION.md, .claude/skills/gtv-weekly-report/**
 - Công đoạn: — · WS: 09
+
+## [2026-07-22] refactor | Vá skill gtv-weekly-report theo feedback SEO Lead CareerViet (scope system) — @claude
+- slide-map.md: luồng phân tích chuẩn JL→Job Detail→Blog→Homepage, JL break 4 slide (Intent/ngành/khu vực/top pages), BẢNG 1 render đủ mọi dòng (+Blog còn lại dẫn xuất), SOW = "Plan Tuần" đủ task, không slide dashboard trùng Overview KPI; JL = Job Listing.
+- analysis-rubric.md: nhận xét 4 lớp (số → phân rã driver → chẩn đoán theo ma trận tín hiệu PV/Clicks/Imp/CTR/Pos + độ chắc → action); khung Apply "vì sao tăng/giảm" nối PV/clicks landing per nhóm.
+- fetch_weekly_data.py: parse tasklist theo tuần kế hoạch (marker "Tuần X/..."), digest sow_status.weeks; xử lý overview_wow_alt + plan_tuan_* + danh_gia_*.
+- Nguồn: FB-2026-07-22-tranphong-01/02 (instance careerviet). Mirror sync + lint PASS.
+- Files touched: skills/gtv-weekly-report/**, .claude/skills/gtv-weekly-report/**
+- Công đoạn: — · WS: 09

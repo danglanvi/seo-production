@@ -30,7 +30,8 @@ python3 skills/gtv-weekly-report/scripts/fetch_weekly_data.py \
 ```
 - 1 `values.batchGet`/workbook (quota Sheets 60 reads/phút — KHÔNG gọi lẻ từng range qua MCP).
 - Output: `02-raw/seo-data/weekly/<YYYY>-W<NN>/` (CSV thô + `digest.json` + `digest.md`).
-- Workbook "Report Tuần {N}" tự tìm qua Drive search; không thấy → hỏi URL rồi chạy lại với `--report-id`.
+- Workbook "Report Tuần {N}" tự tìm qua Drive search; không thấy → hỏi URL rồi chạy lại với `--report-id` (tìm được ID mới → append vào `known_ids` trong config).
+- Re-fetch CÙNG tuần ghi đè folder tuần đó = bản kéo mới nhất (digest có `generated_at`); cần giữ bản cũ → rename folder trước khi chạy lại. Đây là ngoại lệ vận hành duy nhất của 02-raw, chỉ áp cho `seo-data/weekly/`.
 - Log op `ingest` (data mới vào 02-raw).
 
 ### Pha 2 — ANALYZE (Claude — chỉ đọc digest + insights cũ)
@@ -51,7 +52,8 @@ python3 skills/gtv-weekly-report/scripts/fetch_weekly_data.py \
    c. GA4/GSC MCP render bảng/chart từ data (chỉ khi config có property/site).
    d. `.manual-slot` — đánh dấu chỗ Vincent/team dán tay.
    Mọi ảnh lưu `02-raw/screenshots/tools/YYYYMMDD_<slug>_w<nn>.png` + log op `capture` (protocol §8 root).
-4. Export PDF: `bash <workspace>/skills/frontend-slides/scripts/export-pdf.sh <deck.html> <deck.pdf>` (instance standalone không có frontend-slides → giao HTML, ghi rõ).
+4. **Nhúng ảnh base64** vào deck (logo từ `weekly-template/assets/` + capture từ `02-raw/screenshots/`): deck phải là 1 file TỰ CHỨA — export server chỉ serve thư mục chứa deck nên relative path `../../` sẽ đứt; ảnh GỐC vẫn sống ở `02-raw/screenshots/` (protocol §8), deck chỉ nhúng bản render.
+5. Export PDF: `bash <workspace>/skills/frontend-slides/scripts/export-pdf.sh <deck.html> <out.pdf>` — **cả 2 đường dẫn phải TUYỆT ĐỐI** (script `cd` vào temp dir, path tương đối sẽ lạc). Instance standalone không có frontend-slides → giao HTML, ghi rõ.
 
 ### Pha 4 — CHECK + FILE-BACK (bắt buộc trước khi báo xong)
 1. Vòng tự kiểm trạm Reporter + Chế độ TUẦN (`09-reporting/CLAUDE.md`).

@@ -32,12 +32,35 @@ summary:            # KHỐI MÁY-ĐỌC — tuần sau load 4-8 file chỉ cầ
 ## 6. SOW & phối hợp
 ```
 
-## Chuẩn MỘT nhận xét (bắt buộc đủ 4 phần — cấm nhận xét suông)
+## Chuẩn MỘT nhận xét (bắt buộc đủ 4 lớp — cấm nhận xét suông; chuẩn hóa theo feedback SEO Lead 22/07/2026)
 
-`[SỐ + so sánh] → [nguyên nhân khả dĩ, đánh dấu độ chắc] → [ý nghĩa với KPI] → [action + owner đề xuất]`
+`[1. SỐ + so sánh] → [2. PHÂN RÃ driver] → [3. CHẨN ĐOÁN nguyên nhân + độ chắc] → [4. Ý nghĩa KPI + action + owner]`
+
+Lớp 2 — PHÂN RÃ driver (bắt buộc với mọi section có bảng con): chỉ ra nhóm nào đóng góp bao nhiêu vào Δ tổng (số tuyệt đối + % đóng góp), nhóm nào ngược chiều. Ví dụ: "Cụm KPI -47.703; riêng Job Detail -54.000 (đóng góp -113% của Δ), JL +9.003 bù lại +19%".
+
+Lớp 3 — CHẨN ĐOÁN bằng ma trận tín hiệu (đối chiếu ≥2 tín hiệu trước khi nêu nguyên nhân; Pos tăng SỐ HỌC = tụt hạng):
+
+| Tín hiệu quan sát | Chẩn đoán khả dĩ |
+|---|---|
+| PV↓ · Pos đứng yên · Imp đi ngang · CTR↓ | CTR-side: SERP feature/AIO chen, title kém hấp dẫn, hoặc demand chất lượng đổi |
+| PV↓ · Imp↓ · Pos đứng yên | Demand giảm (mùa vụ/tin đăng ít) — đối chiếu Prior Year + số tin đăng client |
+| PV↓ · Pos tăng số học (tụt hạng) | Ranking-side — đề xuất soi drift/audit, đối chiếu đợt deploy (SOW) |
+| PV↓ · số URL nhóm giảm | Inventory-side: URL bị gỡ/hết hạn tin — hỏi client trước khi kết luận SEO |
+| Imp↑ mạnh · Clicks đi ngang | Hiển thị mở rộng nhưng chưa thắng click → cơ hội title/meta/FS |
+| PV↑ đột biến 1 nhóm | Đối chiếu content/onpage vừa triển khai trong SOW tuần trước → ghi nhận what-worked |
+
+Luôn ghi **độ chắc (thấp/trung bình/cao)** + tín hiệu còn thiếu để nâng độ chắc. Dữ liệu 2 bảng nguồn lệch kỳ (header chưa refresh) → nêu thẳng, không cộng trừ chéo kỳ.
 
 - ✅ "Job Detail **-54.000 PV (-7,78% WoW)**, giảm tập trung nhóm Bán hàng/Kế toán/Hành chính; Imp -8.6k và CTR -0,56 điểm trong khi Position gần như đứng yên → khả năng **demand giảm theo mùa** (Prior Year cùng kỳ cũng chững) hơn là mất hạng [độ chắc: trung bình — cần xem thêm 1 tuần]. Cụm KPI phụ thuộc 53% vào Job Detail → run-rate tháng 7 đang 54% vs time 50%, chưa nguy hiểm. **Action:** theo dõi thêm W12; nếu giảm tuần thứ 3 liên tiếp → chạy content-refresh cụm ngành giảm sâu nhất (owner: SEO Lead)."
 - ❌ "Traffic giảm nhẹ, cần theo dõi thêm." (không số, không nguyên nhân, không action)
+
+### Riêng section APPLY (feedback SEO Lead 22/07: phải trả lời "vì sao tăng / vì sao giảm")
+
+Mỗi nhóm (Intent / khu vực / ngành) có |Δ| đáng kể phải có 1 câu nguyên nhân NỐI VỚI DỮ LIỆU PV/CLICKS của nhóm landing tương ứng, theo khung: `Apply nhóm X ±N% ← PV/Clicks landing nhóm X ±M% (cùng chiều? CR đổi?) → nguyên nhân khả dĩ + độ chắc`. Ba trường hợp chuẩn:
+- **Cùng chiều** (PV↓ Apply↓): vấn đề ở traffic đầu vào — dẫn về chẩn đoán PV của nhóm đó.
+- **Ngược chiều** (PV↓ Apply↑): CR tăng — chất lượng traffic/intent tốt lên hoặc job inventory khớp nhu cầu; ghi nhận pattern để nhân rộng.
+- **Apply↓ dù PV giữ**: CR giảm — nghi UX form/số tin phù hợp giảm → câu hỏi cho client, không đoán bừa.
+Không đủ tín hiệu → ghi rõ "cần drill URL/nhóm tin tuần tới", không bịa lý do.
 
 Luật evidence (thừa hưởng trạm Reporter):
 - Số lấy từ digest, giữ nguyên định dạng nguồn. Không truy được nguồn → không viết.
