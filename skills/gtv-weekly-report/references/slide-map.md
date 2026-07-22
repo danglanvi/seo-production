@@ -1,5 +1,10 @@
 # slide-map.md — map slide ↔ nguồn digest ↔ exemplar template (nạp ở Pha 3 RENDER)
 
+> **Từ W12: render bằng `scripts/build_deck.py` + `content.yaml`** (schema ở `references/content-schema.md`) —
+> slide-map là **LUẬT nội dung cho người viết yaml** (thứ tự slide, luật trình bày #1-15, luật render bảng),
+> không còn là hướng dẫn viết HTML tay. Builder đã tự lo: class pos/neg/mut, kpi-row/total/hl, breadcrumb,
+> pill, brandbar, page-no, data-meta, action dạng ul ①②③, ô GSC thiếu «—».
+
 > **LUỒNG PHÂN TÍCH CHUẨN (feedback SEO Lead 22/07/2026 — không tự đảo thứ tự):**
 > Overview KPI → **1. PV Joblisting (JL)** → **2. PV Job Detail** → **3. PV Blog (SEO/non-SEO)** → **4. PV Homepage (+ Nhà tuyển dụng, ngoài cam kết)** → **Apply** → SOW Plan Tuần → Next week → Cần client hỗ trợ → Q&A.
 > Trong đó cụm JL bắt buộc break 4 slide nhỏ: **1.1 theo Intent → 1.2 theo ngành nghề → 1.3 theo khu vực → 1.4 top pages JL**.

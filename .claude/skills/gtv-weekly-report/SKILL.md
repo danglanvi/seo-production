@@ -38,6 +38,7 @@ python3 skills/gtv-weekly-report/scripts/fetch_weekly_data.py \
 - **Apply theo Page Group (slide Apply Overview):** nếu config có `apply_groups`, chạy:
   `python3 scripts/apply_groups.py --config … --workbook <wb> --tab "<tab>" --out <weekdir>/apply_groups.json --save-csv <weekdir>/csv/…`
   Range trong config chỉ lấy ~80 dòng đầu tab pivot nên cộng nhóm sẽ THIẾU — script tải NGUYÊN tab rồi aggregate local; đối chiếu Grand Total với pivot Intent trên sheet trước khi render.
+- **Nhóm chủ đề Blog (slide 3. Blog):** chạy `python3 scripts/blog_groups.py` trên weekdir (offline — đọc CSV pivot «Đánh giá Blog» + `data_phan_tich__blog_urllevel.csv` đã fetch) → `<weekdir>/blog_groups.json` (Clicks nguyên văn pivot, Pos dẫn xuất trọng số Imp — luật #15). Đây là input bắt buộc cho slide `blog_groups` của builder.
 - Log op `ingest` (data mới vào 02-raw).
 
 ### Pha 2 — ANALYZE (Claude — chỉ đọc digest + insights cũ)
@@ -49,10 +50,13 @@ python3 skills/gtv-weekly-report/scripts/fetch_weekly_data.py \
    - PATTERN: giảm ≥2 tuần liên tiếp → flag; imp tăng CTR không tăng → cơ hội title/meta; position 6-10 imp cao → push target; đối chiếu Prior Year (cột trong run-rate) để tách seasonal vs decay.
 4. Số bất thường (lệch >20% không giải thích được) → ghi `CANNOT-VERIFY / cần điều tra` + đề xuất skill điều tra (content-refresh, technical-seo-audit…) — KHÔNG bịa nguyên nhân.
 
-### Pha 3 — RENDER
-1. CLONE `09-reporting/weekly-template/deck-template.html` → `09-reporting/weekly/<YYYY>-W<NN>/<CLIENT>_bao-cao-tuan-W<NN>_v1.html` (đã tồn tại → tăng version).
-2. Điền slide theo `references/slide-map.md` — bảng render từ digest (class `pos`/`neg`/`mut`, nhóm KPI `kpi-row`, dòng tuần hiện tại `hl`), NHẬN XÉT lấy từ insights (rút gọn cho slide, giữ số). Tuân 11 luật trình bày trong slide-map — đặc biệt: ngôn ngữ senior-SEO không mật mã (#7), mọi mục có tăng + giảm (#8), top pages 20/chiều đủ Clicks+Pos WoW (#9).
-2b. **Edit-mode bắt buộc**: template đã có khối INLINE EDIT (bấm E, contenteditable + localStorage) — khi clone deck tuần, ĐỔI `EDIT_KEY` thành key riêng (vd `crv-w12-v1`) để các deck không đè bản sửa của nhau. Script deck chỉ dùng ES5 (Safari-safe).
+### Pha 3 — RENDER (từ W12: BUILDER tự động — không viết HTML tay)
+1. **Viết `content.yaml`** theo `references/content-schema.md` — AI chỉ viết nhận xét/action + khai báo data-ref; số liệu do builder đổ từ weekdir. Copy `content-w<nn-1>.yaml` tuần trước làm khung (exemplar chuẩn: `weekly/2026-W11/content-w11.yaml`). Nội dung nhận xét vẫn tuân toàn bộ luật trình bày trong `references/slide-map.md` (#3, #7, #8, #13…).
+2. **Build deck**:
+   `python3 skills/gtv-weekly-report/scripts/build_deck.py --content <content.yaml> --skeleton 09-reporting/weekly-template/deck-skeleton.html --datadir <weekdir> --out 09-reporting/weekly/<YYYY>-W<NN>/<CLIENT>_bao-cao-tuan-W<NN>_v1.html`
+   Builder tự: ráp slide theo type, class `pos`/`neg`/`mut`, `kpi-row`/`total`/`hl`, breadcrumb + pill + brandbar (logo nhúng 1 lần — deck ~200KB), page-no n/N, validate (đủ slide, không còn `{{`, data-meta đủ) — FAIL thì exit non-zero, sửa yaml rồi build lại.
+   CHỈ sửa HTML tay khi builder chưa cover loại slide → dùng `type: manual` + ghi feedback để nâng builder (không sửa trực tiếp file build ra).
+2b. **Edit-mode**: skeleton đã có INLINE EDIT + DECK CHROME (ES5) — builder thay `EDIT_KEY` bằng `meta.edit_key` trong yaml; mỗi deck tuần đặt key riêng (vd `crv-w12-v1`) để không đè bản sửa của nhau.
 3. Phần cần HÌNH thay vì bảng — **thang capture** (dừng ở bậc đầu tiên chạy được):
    a. **Looker Studio** (nếu config có `looker.url` — link-view): `npx playwright screenshot --viewport-size=1920,1080 --wait-for-timeout=20000 "<url>" <out.png>` (per-page: dán URL `/page/<id>` nếu có). Widget không render (ô mờ) → bậc dưới.
    b. **Sheet range literal**: `python3 scripts/capture_sheet_range.py --config … --workbook <key> --tab "<tab>" --range A1:N30 --out <png>`.
@@ -79,5 +83,6 @@ python3 skills/gtv-weekly-report/scripts/fetch_weekly_data.py \
 ## References (nạp đúng file khi cần — §10 root)
 
 - `references/report-config-schema.md` — schema config + cách setup client mới.
-- `references/slide-map.md` — map slide ↔ section digest ↔ exemplar template (nạp ở Pha 3).
+- `references/slide-map.md` — LUẬT nội dung slide (thứ tự, luật trình bày, luật bảng) — nạp ở Pha 3 khi viết content.yaml.
+- `references/content-schema.md` — schema `content.yaml` + data-ref syntax + checklist 6 bước mỗi tuần (nạp ở Pha 3).
 - `references/analysis-rubric.md` — chuẩn NHẬN XÉT + lớp PATTERN (nạp ở Pha 2).
