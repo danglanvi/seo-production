@@ -127,3 +127,7 @@ Luật ghi:
 ## [2026-07-23] refactor | gtv-weekly-report: đóng gói export-pdf.sh vào skill (standalone-ready) — @claude
 - scripts/export-pdf.sh (copy từ frontend-slides) + SKILL.md sửa ghi chú standalone: instance clone chạy được export không cần workspace. Sync đủ mirror.
 - Files touched: skills/gtv-weekly-report/scripts/export-pdf.sh · SKILL.md · mirror
+
+## [2026-07-23] refactor | gtv-weekly-report: drive_folder_id + quy định Drive cho agency nhiều client — @claude
+- fetch_weekly_data.py: Drive search khoanh theo report_tuan.drive_folder_id (share folder 1 lần → file kế thừa quyền) + warning khi trùng tên nhiều file; report-config-schema.md ghi field mới; _TEMPLATES WEEKLY-DATA-CHECKLIST.md thêm mục 0 quy định folder/tên file + phân nhánh SpySERP (ảnh manual) vs Looker (link unlisted). Sync đủ 6 mirror.
+- Files touched: skills/gtv-weekly-report/scripts/fetch_weekly_data.py · references/report-config-schema.md · _TEMPLATES/weekly-report-slides/WEEKLY-DATA-CHECKLIST.md · MIGRATION.md · mirror

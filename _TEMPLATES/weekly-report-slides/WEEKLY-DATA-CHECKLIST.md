@@ -3,17 +3,25 @@
 > Người làm: SEO Lead / Executive phụ trách data. Deadline: **thứ Tư trước 17:00** (cron AI chạy thứ Năm 08:03 ra bản DRAFT).
 > Nguyên tắc: AI đọc data bằng script theo TÊN TAB + HEADER cột. Giữ đúng format bên dưới thì AI chạy 1 phát ăn ngay (~20% token so với làm tay); đổi tên tab/header mà không báo = deck sai hoặc phải chạy lại.
 
+## 0. Quy định folder & tên file trên Drive (agency nhiều dự án — robot tìm file theo 2 điều kiện này)
+
+1. **Mỗi client 1 folder Drive cố định** cho báo cáo tuần, vd `{{CLIENT_NAME}} — SEO Weekly Report/`. Share folder này **1 LẦN** (quyền Viewer) cho email robot `{{SERVICE_ACCOUNT_EMAIL}}` → mọi workbook tạo TRONG folder tự kế thừa quyền, **không phải share từng file mỗi tuần nữa**.
+2. Lấy **ID folder** (đoạn ký tự sau `folders/` trên URL folder) đưa cho AI kèm câu «cập nhật drive_folder_id» — AI ghi vào `report-config.yaml → report_tuan.drive_folder_id`. Từ đó robot CHỈ tìm trong folder này, không dính nhầm workbook trùng tên của dự án khác.
+3. **Tên workbook tuần đúng cú pháp `name_pattern`** trong config (mặc định `Report Tuần {N}`, N = số tuần dự án) — không thêm tiền tố/hậu tố. Sai tên hoặc để ngoài folder → robot báo «không thấy» và deck ra bản SLIM.
+4. **Các workbook cố định** (Kế hoạch tổng · Báo Cáo Kết Quả · Data phân tích) **GIỮ NGUYÊN URL** — chỉ cập nhật số bên trong, không tạo bản sao mới, không đổi tên.
+
 ## 1. Việc phải làm mỗi tuần (tick ✅ trước 17:00 thứ Tư)
 
 | ☐ | Việc | Vì sao |
 |---|---|---|
-| ☐ | Tạo workbook **«Report Tuần {N}»** (đúng format tên, N = tuần dự án) và **share Viewer** cho `{{SERVICE_ACCOUNT_EMAIL}}` | Script tự tìm workbook theo tên qua Drive search |
+| ☐ | Tạo workbook **«Report Tuần {N}»** TRONG folder client (quy định mục 0) — đúng cú pháp tên. File tạo ngoài folder thì phải share Viewer thủ công cho `{{SERVICE_ACCOUNT_EMAIL}}` | Script tự tìm workbook theo tên trong đúng folder qua Drive search |
 | ☐ | Refresh **CẢ HAI cột kỳ** (tuần này + tuần trước) ở mọi bảng trong tab «Đánh giá Joblisting» (Intent / ngành nghề / khu vực) | Đã dính thực tế: bảng ngành & khu vực còn giữ kỳ cũ 25/06–01/07 → Δ so lệch 1 kỳ, deck phải flag |
 | ☐ | Tab **Data_Blog**: URL chuẩn hóa **chữ thường toàn bộ** | Đã dính thực tế: URL trùng hoa/thường bị đếm thành 2 dòng |
 | ☐ | Website có **redirect / đổi URL** trong tuần → ghi cặp URL cũ→mới vào tab ghi chú (hoặc báo Account) | AI đang phải "nghi URL swap" (ví dụ W11 CareerViet) mà không có nguồn xác nhận |
 | ☐ | Sheet «[Mới] Report tuần» (workbook Kế hoạch tổng): section **Tuần hiện hành đủ task + status**, và **đã tạo section tuần KẾ TIẾP** (dù mới có task khung) | Slide SOW + Next week plan đọc thẳng từ đây; thiếu section = slide trống |
 | ☐ | Tab **«1. VIỆC CẦN PHỐI HỢP»** (workbook 5. Báo Cáo Kết Quả): thêm mục mới cần {{CLIENT_SHORT}} hỗ trợ (nếu có) | Đổ vào slide «Cần {{CLIENT_SHORT}} hỗ trợ»; không có mục mới thì thôi |
-| ☐ | Dữ liệu cần dạng HÌNH (SpySERP ranking distribution…): xuất được **bảng số dạng ô** thì dán thành tab/bảng | AI không đọc được ảnh dán trong sheet — chỉ có ảnh thì slide đó để khung điền tay |
+| ☐ | Dữ liệu cần dạng HÌNH — tool đòi đăng nhập (SpySERP…, robot không tự vào được): ưu tiên xuất **bảng số dạng ô** dán thành tab; chỉ có ảnh thì lưu PNG vào `02-raw/screenshots/manual/` tên `YYYYMMDD_<tool>_w{N}.png` (chắc ăn nhất) hoặc dán vào workbook «Report Tuần {N}» | Ảnh file AI nhúng thẳng vào slide; ảnh dán trong sheet có thể bị cắt khi robot chụp |
+| — | **Looker Studio: KHÔNG tải ảnh tay** — giữ link ở chế độ «bất kỳ ai có đường liên kết – Viewer», AI tự vào chụp qua trình duyệt ẩn (link trong `report-config.yaml → looker.url`) | Robot chụp bản mới nhất mỗi lần chạy; share riêng cho email robot KHÔNG thay được chế độ link vì robot không đăng nhập giao diện web như người |
 
 ## 2. Luật format KHÔNG được phá (script phụ thuộc)
 

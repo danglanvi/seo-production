@@ -32,7 +32,11 @@ spreadsheets:                  # workbook CỐ ĐỊNH (id không đổi theo tu
   #   còn lại           → lưu nguyên bảng nhỏ vào digest (cắt 40-45 dòng đầu)
 
 report_tuan:                   # workbook thay đổi THEO TUẦN
-  name_pattern: "Report Tuần {week}"   # tên để Drive search
+  name_pattern: "Report Tuần {week}"   # tên để Drive search — team đặt tên ĐÚNG cú pháp này
+  drive_folder_id: "<folder-id>"       # KHUYẾN NGHỊ (agency nhiều client): ID folder Drive cố định
+                                       # của client; share folder 1 lần cho service account → file mới
+                                       # tự kế thừa quyền; search chỉ khoanh trong folder, không dính
+                                       # workbook trùng tên của dự án khác. Trống = search toàn Drive.
   known_ids: {"11": "<id>"}            # cache id đã biết (append dần)
   ranges:
     overview_wow: "'<tab bảng 1>'!A1:N45"   # → parse bang1_overview_wow

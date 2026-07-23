@@ -139,21 +139,34 @@ def batch_get(svc, sid, ranges, label):
 
 
 def find_report_workbook(drive, cfg, n):
-    known = {str(k): v for k, v in (cfg.get("report_tuan", {}).get("known_ids") or {}).items()}
+    rt = cfg.get("report_tuan", {}) or {}
+    known = {str(k): v for k, v in (rt.get("known_ids") or {}).items()}
     if str(n) in known:
         return known[str(n)], "known_ids"
-    pattern = cfg.get("report_tuan", {}).get("name_pattern", "Report Tuần {week}")
+    pattern = rt.get("name_pattern", "Report Tuần {week}")
     name = pattern.replace("{week}", str(n))
+    # Agency nhiều project: khoanh vùng theo folder Drive của client (drive_folder_id
+    # trong config) để không dính workbook trùng tên của dự án khác.
+    folder = str(rt.get("drive_folder_id") or "").strip()
+    q = f"name contains '{name}' and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false"
+    if folder:
+        q += f" and '{folder}' in parents"
     API_CALLS["drive"] += 1
     resp = drive.files().list(
-        q=f"name contains '{name}' and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false",
+        q=q,
         fields="files(id,name,modifiedTime)", pageSize=10,
         supportsAllDrives=True, includeItemsFromAllDrives=True,
     ).execute()
     files = resp.get("files", [])
     if not files:
-        return None, f"Drive search không thấy '{name}' — cần share workbook cho service account hoặc truyền --report-id"
+        scope = f" trong folder {folder}" if folder else ""
+        return None, (f"Drive search không thấy '{name}'{scope} — kiểm tra: file nằm đúng folder client, "
+                      f"đặt tên đúng cú pháp, folder/file đã share cho service account; hoặc truyền --report-id")
     files.sort(key=lambda f: f.get("modifiedTime", ""), reverse=True)
+    if len(files) > 1:
+        others = ", ".join(f["name"] for f in files[1:3])
+        log(f"⚠ Drive search ra {len(files)} file khớp '{name}' — lấy bản sửa gần nhất "
+            f"'{files[0]['name']}', bỏ qua: {others}. Nếu sai, truyền --report-id hoặc set drive_folder_id.")
     return files[0]["id"], f"drive_search:{files[0]['name']}"
 
 
