@@ -119,3 +119,7 @@ Luật ghi:
 ## [2026-07-23] refactor | gtv-weekly-report v2: render bằng build_deck.py + content.yaml (80/20) — @claude
 - Thêm scripts/build_deck.py + scripts/blog_groups.py + references/content-schema.md + _TEMPLATES/weekly-report-slides/deck-skeleton.html + WEEKLY-DATA-CHECKLIST.md (neutral); SKILL.md Pha 1 + Pha 3 viết lại; slide-map ghi chú «từ W12 render bằng builder». Nghiệm thu trên instance CareerViet: tái dựng W11 từ YAML tương đương bản tay.
 - Files touched: skills/gtv-weekly-report/* · _TEMPLATES/weekly-report-slides/* · MIGRATION.md
+
+## [2026-07-23] refactor | Skin chuẩn deck tuần = frontend-slides (v5) — @claude
+- _TEMPLATES/weekly-report-slides/deck-skeleton.html đổi sang skin v5; bản cũ = deck-skeleton-classic.html; SKILL.md 2a + content-schema.md cập nhật. Nghiệm thu trên CareerViet W11 (v7 build 28/28, WebKit smoke PASS).
+- Files touched: _TEMPLATES/weekly-report-slides/deck-skeleton*.html · skills/gtv-weekly-report/SKILL.md + references/content-schema.md · mirror

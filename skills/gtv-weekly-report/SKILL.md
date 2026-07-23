@@ -56,6 +56,7 @@ python3 skills/gtv-weekly-report/scripts/fetch_weekly_data.py \
    `python3 skills/gtv-weekly-report/scripts/build_deck.py --content <content.yaml> --skeleton 09-reporting/weekly-template/deck-skeleton.html --datadir <weekdir> --out 09-reporting/weekly/<YYYY>-W<NN>/<CLIENT>_bao-cao-tuan-W<NN>_v1.html`
    Builder tự: ráp slide theo type, class `pos`/`neg`/`mut`, `kpi-row`/`total`/`hl`, breadcrumb + pill + brandbar (logo nhúng 1 lần — deck ~200KB), page-no n/N, validate (đủ slide, không còn `{{`, data-meta đủ) — FAIL thì exit non-zero, sửa yaml rồi build lại.
    CHỈ sửa HTML tay khi builder chưa cover loại slide → dùng `type: manual` + ghi feedback để nâng builder (không sửa trực tiếp file build ra).
+2a. **Skin chuẩn = frontend-slides (bản v5 W11 — Vincent chốt 23/07)**: `deck-skeleton.html` mang skin này (Bricolage Grotesque/IBM Plex Mono/Fraunces, cover gradient #0693E3→#9900EF). Bản giao diện cũ giữ ở `deck-skeleton-classic.html` — chỉ dùng khi được yêu cầu.
 2b. **Edit-mode**: skeleton đã có INLINE EDIT + DECK CHROME (ES5) — builder thay `EDIT_KEY` bằng `meta.edit_key` trong yaml; mỗi deck tuần đặt key riêng (vd `crv-w12-v1`) để không đè bản sửa của nhau.
 3. Phần cần HÌNH thay vì bảng — **thang capture** (dừng ở bậc đầu tiên chạy được):
    a. **Looker Studio** (nếu config có `looker.url` — link-view): `npx playwright screenshot --viewport-size=1920,1080 --wait-for-timeout=20000 "<url>" <out.png>` (per-page: dán URL `/page/<id>` nếu có). Widget không render (ô mờ) → bậc dưới.

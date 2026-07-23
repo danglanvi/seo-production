@@ -14,6 +14,7 @@ python3 skills/gtv-weekly-report/scripts/build_deck.py \
   --out      09-reporting/weekly/<YYYY>-W<NN>/<CLIENT>_bao-cao-tuan-W<NN>_v1.html
 ```
 
+- Skeleton mặc định = **skin frontend-slides (bản v5 W11, Vincent chốt 23/07)**; bản cũ: `deck-skeleton-classic.html`.
 - Logo: skeleton nhúng 1 lần qua `var LOGOS = {client, gtv}` (deck nhẹ ~200KB thay vì ~2.6MB).
   Nếu skeleton còn placeholder `{{LOGO_*_B64}}`, script tự lấy PNG trong `assets/` cạnh skeleton
   (`logo-client.png` / `logo-careerviet.png` / `logo-gtv.png`) hoặc nhận `--logo-client/--logo-gtv`.
