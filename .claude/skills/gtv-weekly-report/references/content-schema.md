@@ -81,6 +81,9 @@ Slide KHÔNG cần `data_meta`: `cover, agenda, qna, thanks, support, manual`.
   bullets: [ ... ]              # optional
 ```
 Dòng tuần = `meta.week_label` tự có class `hl` + in đậm 3 ô. %HT/run-rate ≥100% → `pos`, <100% → `neg`.
+⚠ **Giới hạn chống tràn (dính W12):** slide runrate đã có 2 thẻ cards + bảng — bullets chỉ được
+tối đa **2 bullet / ~4 dòng text** khi bảng ≥4 tuần (nhiều hơn → chữ đè `.data-meta` = FAIL).
+Nội dung dài đẩy sang slide riêng. LUÔN soi PNG trang này sau build.
 
 ### `table_side` — bảng trái + NHẬN XÉT phải
 ```yaml
