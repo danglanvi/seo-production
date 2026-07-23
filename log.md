@@ -123,3 +123,7 @@ Luật ghi:
 ## [2026-07-23] refactor | Skin chuẩn deck tuần = frontend-slides (v5) — @claude
 - _TEMPLATES/weekly-report-slides/deck-skeleton.html đổi sang skin v5; bản cũ = deck-skeleton-classic.html; SKILL.md 2a + content-schema.md cập nhật. Nghiệm thu trên CareerViet W11 (v7 build 28/28, WebKit smoke PASS).
 - Files touched: _TEMPLATES/weekly-report-slides/deck-skeleton*.html · skills/gtv-weekly-report/SKILL.md + references/content-schema.md · mirror
+
+## [2026-07-23] refactor | gtv-weekly-report: đóng gói export-pdf.sh vào skill (standalone-ready) — @claude
+- scripts/export-pdf.sh (copy từ frontend-slides) + SKILL.md sửa ghi chú standalone: instance clone chạy được export không cần workspace. Sync đủ mirror.
+- Files touched: skills/gtv-weekly-report/scripts/export-pdf.sh · SKILL.md · mirror
