@@ -161,3 +161,8 @@ Luật ghi:
 ## [2026-07-30] bookkeep | Deck hướng dẫn ghi rõ 3 runtime + RECAP-HANDOFF cho review chéo — @claude
 - Deck cài đặt: cover + slide 7 ghi đủ Claude Code / GPT Codex / Antigravity (trước chỉ ghi Codex). RECAP-HANDOFF-2026-07-30.md đặt tại Deliverables/GTV-SEO-Production-handoff/ — đề bài 7 mục cho Codex/Antigravity review chéo gói bàn giao.
 - Files touched: GTV_SEO-Production_huong-dan-cai-dat_v1.html, log.md
+
+## [2026-07-30] refactor | Vá findings review chéo Codex (M4-01, M4-02) + checklist template HTML-only — @claude
+- Review chéo GPT Codex (đề bài mục 4 RECAP-HANDOFF) trả 4 findings CẦN-SỬA; 2 thuộc master: deck hướng dẫn trỏ path checklist tuần chỉ đúng cho gói CareerViet (master phải trỏ _TEMPLATES/weekly-report-slides/) + câu «Đọc BAN-GIAO-TEAM.md» chưa ghi rõ là file của gói CareerViet. Đã vá cả 2 trong deck (rebuild 18 slide, QA PNG slide 3 + 16 sạch).
+- _TEMPLATES/weekly-report-slides/WEEKLY-DATA-CHECKLIST.md mục «AI tự lo»: bỏ «export PDF» → «tự chụp từng slide soi lỗi trình bày» (khớp luật HTML-only 23/07).
+- Files touched: GTV_SEO-Production_huong-dan-cai-dat_v1.html, _TEMPLATES/weekly-report-slides/WEEKLY-DATA-CHECKLIST.md, MIGRATION.md, log.md

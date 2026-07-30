@@ -33,7 +33,7 @@
 
 ## 3. AI tự lo (team KHÔNG cần làm)
 
-- Kéo data 4 workbook (1 API call/workbook), lọc top movers theo ΔPV chuẩn team, gộp Apply theo Page Group, tính Pos dẫn xuất cho nhóm Blog, viết nhận xét/action theo rubric, dựng deck (render bằng script từ file nội dung YAML), export PDF, tự soi từng trang chống lỗi trình bày.
+- Kéo data 4 workbook (1 API call/workbook), lọc top movers theo ΔPV chuẩn team, gộp Apply theo Page Group, tính Pos dẫn xuất cho nhóm Blog, viết nhận xét/action theo rubric, dựng deck HTML (render bằng script từ file nội dung YAML), tự chụp từng slide soi lỗi trình bày (output CHỈ HTML — không xuất PDF, luật 23/07/2026).
 - Cron thứ Năm 08:03 ra bản **DRAFT** để Vincent/Lead review — AI không tự gửi đi đâu.
 
 ## 4. Khi nào phải báo AI chạy lại

@@ -22,6 +22,7 @@ master_version: v2026.07.1
 - **`GTV_SEO-Production_huong-dan-cai-dat_v1.html` (MỚI, root)**: deck 18 slide hướng dẫn cài đặt & sử dụng cho team — 2 track Claude Code/GPT Codex, MCP, chìa khóa robot, ngày đầu tiên, luật lõi, skill 3 tầng, SETUP 9 bước, vận hành báo cáo tuần/tháng CareerViet, 3 điều cấm. Copy kèm trong mọi gói phân phối.
 - **`README.md`**: sửa drift "20 skill" → 32; thêm mục «Ngày đầu tiên» trỏ deck hướng dẫn. **`_TEMPLATES/README.md` (MỚI)**: index 21 template + 3 subfolder. **`.gitignore`**: thêm pattern file nặng (`*.zip`, `*.mp4`, PDF hợp đồng/samples).
 - Kênh phân phối chốt (Vincent 30/07): **zip → Google Drive** (git local giữ trong gói, remote để trống — GitHub tính sau).
+- **Vòng review chéo GPT Codex (30/07, findings M4-01→M4-04 — verdict CẦN-SỬA, đã vá cùng ngày)**: deck hướng dẫn ghi rõ path checklist tuần THEO GÓI (CareerViet `09-reporting/WEEKLY-DATA-CHECKLIST.md` · master `_TEMPLATES/weekly-report-slides/`) + ghi rõ `BAN-GIAO-TEAM.md` là file trong gói CareerViet; `_TEMPLATES/weekly-report-slides/WEEKLY-DATA-CHECKLIST.md` mục «AI tự lo» bỏ «export PDF» → «tự chụp từng slide soi lỗi» (luật HTML-only 23/07). Findings gốc: `Deliverables/GTV-SEO-Production-handoff/review-codex-2026-07-30.md` (workspace Vincent).
 
 
 ### v2026.07.5 (2026-07-27) — metadata `visual-semantic-seo` hợp lệ đa runtime
