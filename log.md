@@ -157,3 +157,7 @@ Luật ghi:
 - tools/sync-skills.sh (bash, standalone sync mirror + parity check) + luật vào AGENTS.md; README sửa 20→32 skill + mục «Ngày đầu tiên»; _TEMPLATES/README.md mới; .gitignore thêm pattern file nặng; deck GTV_SEO-Production_huong-dan-cai-dat_v1.html (18 slide, QA PNG 18/18) đặt ở root.
 - Chuẩn bị đóng zip phân phối qua Google Drive (quyết định Vincent 30/07). Chi tiết: MIGRATION.md v2026.07.6.
 - Files touched: tools/, AGENTS.md, README.md, _TEMPLATES/README.md, .gitignore, GTV_SEO-Production_huong-dan-cai-dat_v1.html, MIGRATION.md
+
+## [2026-07-30] bookkeep | Deck hướng dẫn ghi rõ 3 runtime + RECAP-HANDOFF cho review chéo — @claude
+- Deck cài đặt: cover + slide 7 ghi đủ Claude Code / GPT Codex / Antigravity (trước chỉ ghi Codex). RECAP-HANDOFF-2026-07-30.md đặt tại Deliverables/GTV-SEO-Production-handoff/ — đề bài 7 mục cho Codex/Antigravity review chéo gói bàn giao.
+- Files touched: GTV_SEO-Production_huong-dan-cai-dat_v1.html, log.md
