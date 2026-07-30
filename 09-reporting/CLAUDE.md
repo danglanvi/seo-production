@@ -62,7 +62,9 @@ Báo cáo TUẦN cho client là **báo cáo vận hành dạng slide**, đứng 
 
 - Nguồn số DUY NHẤT của deck tuần: các workbook client-agreed khai trong `report-config.yaml` (folder này) + digest do fetch script sinh trong `../02-raw/seo-data/weekly/<YYYY>-W<NN>/`. Mỗi slide data ghi nguồn + kỳ dữ liệu (khối `.data-meta`).
 - Deck tuần KHÔNG render verdict "đạt KPI cam kết" và không thay `kpi-commitments.md`. Run-rate/KPI tuần theo sheet vận hành được phép render kể cả khi `kpi-commitments.md` còn `draft` — đây là **ngoại lệ có chủ đích của Vòng tự kiểm bước 1, CHỈ áp cho chế độ tuần**; báo cáo tháng/quý/nghiệm thu vẫn DỪNG như luật.
-- Output: deck `weekly/<YYYY>-W<NN>/<CLIENT>_bao-cao-tuan-W<NN>_v<N>.html/.pdf` + insights `analysis/<YYYY>-W<NN>-insights.md` (bộ nhớ pattern các tuần — file-back bắt buộc).
+- Output: deck `weekly/<YYYY>-W<NN>/<CLIENT>_…_v<N>.html` — **CHỈ HTML, không export PDF trừ khi Vincent yêu cầu rõ** (luật 23/07/2026) + insights `analysis/<YYYY>-W<NN>-insights.md` (bộ nhớ pattern các tuần — file-back bắt buộc).
+- **Hai format (23/07/2026):** TUẦN = deck LEAN ~11 slide theo agenda catchup của client (run-rate/KPI → what works → what fails+solution → task done → task next → blockers → new initiatives from GTV) · THÁNG = deck đầy đủ ~26 slide (+MoM, tiến độ OKRs quý, pattern 4 tuần) build khi khép tháng. Map chi tiết: `../skills/gtv-weekly-report/references/weekly-catchup-format.md`.
+- **Rule carry-over (23/07/2026):** task chưa done ở timeline OKRs/sheet tuần tự động vào plan tuần kế (status «Chuyển tiếp») trừ khi Vincent điều chỉnh — slide Task next week build theo rule này, kèm PIC từng task.
 - 3rd-party data (Ahrefs…) chỉ minh họa xu hướng — không phải số nghiệm thu.
 - Tự kiểm bổ sung trước khi giao deck: spot-check 5 số deck ↔ digest; `grep '{{'` trong deck = 0; mọi slide data có `.data-meta`; chế độ DRAFT (cron) dừng ở file + báo review, không gửi.
 

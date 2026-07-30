@@ -131,3 +131,29 @@ Luật ghi:
 ## [2026-07-23] refactor | gtv-weekly-report: drive_folder_id + quy định Drive cho agency nhiều client — @claude
 - fetch_weekly_data.py: Drive search khoanh theo report_tuan.drive_folder_id (share folder 1 lần → file kế thừa quyền) + warning khi trùng tên nhiều file; report-config-schema.md ghi field mới; _TEMPLATES WEEKLY-DATA-CHECKLIST.md thêm mục 0 quy định folder/tên file + phân nhánh SpySERP (ảnh manual) vs Looker (link unlisted). Sync đủ 6 mirror.
 - Files touched: skills/gtv-weekly-report/scripts/fetch_weekly_data.py · references/report-config-schema.md · _TEMPLATES/weekly-report-slides/WEEKLY-DATA-CHECKLIST.md · MIGRATION.md · mirror
+
+## [2026-07-23] refactor | gtv-weekly-report v2026.07.3 — 2 format TUẦN/THÁNG + rule carry-over + HTML-only — @claude
+- SKILL.md: mục «Hai format deck» (tuần LEAN ~11 slide theo agenda catchup client / tháng ~26 slide + lớp MoM-OKRs-pattern); Pha 3: KHÔNG export PDF (HTML-only, PDF chỉ khi Vincent yêu cầu rõ).
+- references/weekly-catchup-format.md (MỚI): map slide 2 format + RULE CARRY-OVER (task chưa done tự chuyển tuần kế «Chuyển tiếp», Vincent chốt 23/07).
+- 09-reporting/CLAUDE.md (Chế độ TUẦN): cập nhật output HTML-only + 2 format + carry-over.
+- Đồng bộ mirror .claude/skills/ (master + instance CareerViet). Chi tiết: MIGRATION.md v2026.07.3. Chưa commit git — chờ Vincent gọi.
+- Files touched: skills/gtv-weekly-report/{SKILL.md, references/weekly-catchup-format.md}, 09-reporting/CLAUDE.md, MIGRATION.md, mirrors
+
+## [2026-07-23] refactor | build_deck.py — bảng công việc 5 cột (Hạng mục/Task/PIC/Deadline/Tiến độ) — @claude
+- render sow/next_week nhận rows {hangmuc, task, pic, deadline, status} → bảng 5 cột, Hạng mục gộp rowspan; fallback 2 cột cho deck cũ. Spec bổ sung vào references/weekly-catchup-format.md; đồng bộ đủ mirror master + CareerViet + MTM. MIGRATION v2026.07.3 đã cập nhật.
+- Files touched: skills/gtv-weekly-report/{scripts/build_deck.py, references/weekly-catchup-format.md}, MIGRATION.md, mirrors
+
+## [2026-07-24] refactor | Tương thích cây PROJECTS với Codex/Antigravity — @codex
+- AGENTS root repo dùng cơ chế ancestor thay cho đường dẫn `../AGENTS.md` cố định; ghi đúng hai skill reporting chỉ có ở Claude Code. Workspace thêm routing PROJECTS và đưa hai instance đang hoạt động vào root sync/lint.
+- Files touched: AGENTS.md · MIGRATION.md · ../PROJECTS/{AGENTS.md,CLAUDE.md} · ../skills/manifest.yaml · ../tools/{sync-agent-skills.rb,lint-agent-setup.rb}
+- Công đoạn: — · WS: —
+
+## [2026-07-27] refactor | visual-semantic-seo đạt chuẩn metadata đa runtime — @codex
+- Sửa YAML frontmatter, description 829 ký tự và cô đọng reference routing; SKILL.md còn 483 dòng. Mirror Claude/Codex/Antigravity được dựng lại từ source.
+- Files touched: skills/visual-semantic-seo/SKILL.md · MIGRATION.md · .claude/skills/visual-semantic-seo/ · .agents/skills/visual-semantic-seo/
+- Công đoạn: — · WS: 04
+
+## [2026-07-30] refactor | v2026.07.6 — gói bàn giao team (tooling standalone + deck hướng dẫn + doc fixes) — @claude
+- tools/sync-skills.sh (bash, standalone sync mirror + parity check) + luật vào AGENTS.md; README sửa 20→32 skill + mục «Ngày đầu tiên»; _TEMPLATES/README.md mới; .gitignore thêm pattern file nặng; deck GTV_SEO-Production_huong-dan-cai-dat_v1.html (18 slide, QA PNG 18/18) đặt ở root.
+- Chuẩn bị đóng zip phân phối qua Google Drive (quyết định Vincent 30/07). Chi tiết: MIGRATION.md v2026.07.6.
+- Files touched: tools/, AGENTS.md, README.md, _TEMPLATES/README.md, .gitignore, GTV_SEO-Production_huong-dan-cai-dat_v1.html, MIGRATION.md

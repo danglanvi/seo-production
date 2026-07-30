@@ -16,6 +16,36 @@ master_version: v2026.07.1
 
 ## 1. Có gì mới
 
+### v2026.07.6 (2026-07-30) — Gói bàn giao team: tooling standalone + deck hướng dẫn + doc fixes
+
+- **`tools/sync-skills.sh` (MỚI)**: đồng bộ `skills/` → 2 mirror bằng bash thuần cho bản STANDALONE (rsync + parity check; tự loại 2 skill claude-only khỏi `.agents/`). Luật ghi vào `AGENTS.md`: standalone chạy script này; trong workspace Vincent vẫn dùng `tools/sync-agent-skills.rb` root.
+- **`GTV_SEO-Production_huong-dan-cai-dat_v1.html` (MỚI, root)**: deck 18 slide hướng dẫn cài đặt & sử dụng cho team — 2 track Claude Code/GPT Codex, MCP, chìa khóa robot, ngày đầu tiên, luật lõi, skill 3 tầng, SETUP 9 bước, vận hành báo cáo tuần/tháng CareerViet, 3 điều cấm. Copy kèm trong mọi gói phân phối.
+- **`README.md`**: sửa drift "20 skill" → 32; thêm mục «Ngày đầu tiên» trỏ deck hướng dẫn. **`_TEMPLATES/README.md` (MỚI)**: index 21 template + 3 subfolder. **`.gitignore`**: thêm pattern file nặng (`*.zip`, `*.mp4`, PDF hợp đồng/samples).
+- Kênh phân phối chốt (Vincent 30/07): **zip → Google Drive** (git local giữ trong gói, remote để trống — GitHub tính sau).
+
+
+### v2026.07.5 (2026-07-27) — metadata `visual-semantic-seo` hợp lệ đa runtime
+
+- `skills/visual-semantic-seo/SKILL.md`: sửa frontmatter YAML, rút description còn 829 ký tự và cô đọng bảng định tuyến reference; nội dung phương pháp, checklist E1–E12 và changelog không đổi.
+- File chính còn 483 dòng, đạt gate dưới 500 dòng; root sync dựng lại mirror cho Claude Code và `.agents/skills` dùng chung bởi Codex/Antigravity.
+- Instance đang hoạt động nhận đúng bản metadata này; không đụng client data, deliverable, registry hoặc checklist dự án.
+
+### v2026.07.4 (2026-07-24) — tương thích cây PROJECTS với Codex/Antigravity
+
+- **`AGENTS.md`**: bỏ giả định root workspace luôn nằm ở `../AGENTS.md`; runtime phải áp chuỗi `AGENTS.md` của ancestor. Cách này dùng được cho cả master `SEO Production/`, instance `PROJECTS/<client>/` và repo standalone.
+- Khai báo đúng cả hai skill reporting chỉ có ở Claude Code: `gtv-client-report` và `gtv-weekly-report`. Codex/Antigravity chỉ làm draft thủ công theo template + luật trạm `09-reporting`, không giả lập skill và không gửi thẳng cho khách.
+- Workspace root thêm lớp định tuyến `PROJECTS/AGENTS.md` + adapter `PROJECTS/CLAUDE.md`; đăng ký hai instance đang hoạt động (`careerviet`, `minh-tuan-mobile`) vào root skill manifest để sync/lint kiểm tra mirror riêng.
+- Không thay đổi client data, deliverable, index hoặc cấu trúc workstream của instance.
+
+### v2026.07.3 (2026-07-23) — gtv-weekly-report: 2 format TUẦN/THÁNG + rule carry-over + HTML-only
+
+- **`skills/gtv-weekly-report/SKILL.md`**: thêm mục «Hai format deck — TUẦN vs THÁNG» (tuần = LEAN ~11 slide theo agenda catchup client: run-rate/KPI → what works → what fails+solution → task done → task next → blockers aging → new initiatives from GTV; tháng = đầy đủ ~26 slide + lớp MoM/OKRs quý/pattern 4 tuần, build khi khép tháng). Pha 3 bước 5 đổi: **KHÔNG export PDF** — HTML tự chứa là bản final, PDF chỉ khi Vincent yêu cầu rõ.
+- **`skills/gtv-weekly-report/references/weekly-catchup-format.md` (MỚI)**: map 11 slide format tuần ↔ type builder ↔ nguồn data, lớp tháng cho format 26 slide, và **RULE CARRY-OVER** (Vincent 23/07/2026): task chưa done ở timeline OKRs/sheet tuần tự động chuyển plan tuần kế status «Chuyển tiếp» trừ khi Vincent điều chỉnh — build slide Task next week theo rule, kèm PIC in đậm, trình chốt cả danh sách không hỏi từng dòng.
+- **`09-reporting/CLAUDE.md`** (Chế độ TUẦN): output CHỈ HTML; ghi 2 format + rule carry-over, trỏ về reference mới.
+- **`scripts/build_deck.py`**: render `sow`/`next_week` hỗ trợ **bảng công việc 5 cột** (Hạng mục rowspan | Task cụ thể | PIC | Deadline | Tiến độ) khi rows có `hangmuc/pic/deadline`; fallback 2 cột giữ nguyên cho deck cũ. Spec trong `references/weekly-catchup-format.md`.
+- Bối cảnh: client CareerViet yêu cầu weekly catchup meeting agenda 5 mục (23/07); bản deep 26 slide chuyển thành nhịp tháng. Áp cho mọi client dùng skill này.
+
+
 ### v2026.07.2 (2026-07-22) — Chế độ TUẦN: skill `gtv-weekly-report` + template slide tuần
 
 > **Bổ sung 22/07 tối (round 3 Vincent):** slide-map luật #7-11 (ngôn ngữ senior-SEO không mật mã · mọi mục có TĂNG+GIẢM · top pages 20/chiều đủ Clicks/Pos WoW · blog 3 bài tiêu biểu/nhóm · deck editable); template `weekly-report-slides` nhúng khối INLINE EDIT (bấm E, localStorage, guard nav — đổi `EDIT_KEY` per deck) + ô Description bảng điền-tay 92px; `pv_movers.py` trả thêm cột intent/ngành/chủ đề/location; SKILL.md bước 2b.

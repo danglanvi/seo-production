@@ -7,6 +7,18 @@ description: "Báo cáo tuần SEO client-facing dạng slide (AI-driven, config
 
 Báo cáo TUẦN = **báo cáo vận hành**: render số từ workbook Google Sheets **client-agreed** (nguồn ghi rõ trên từng slide). Nó KHÔNG phải báo cáo nghiệm thu — không tuyên "đạt/không đạt KPI cam kết"; việc đó thuộc `gtv-client-report` (tháng/quý) trên `00-client-context/kpi-commitments.md` đã `stable`.
 
+## Hai format deck — TUẦN vs THÁNG (Vincent chốt 23/07/2026)
+
+| | TUẦN — weekly catchup | THÁNG — deep dive |
+|---|---|---|
+| Mục đích | Họp catchup ~15 phút theo agenda client | Review sâu khi khép tháng + đối chiếu OKRs quý |
+| Độ dài | ~11 slide LEAN (run-rate/KPI → what works → what fails+solution → task done → task next → blockers aging → new initiatives from GTV) | ~26 slide đầy đủ (slide-map: movers, intent, ngành, blog groups, apply…) + lớp tháng: MoM, tiến độ OKRs quý, run-rate lũy kế, pattern 4 tuần |
+| Nhịp build | Hằng tuần — pipeline FETCH/ANALYZE giữ nguyên 100%, chỉ content.yaml là bản lean | Ngày 2–4 tháng kế, khi data tháng khép |
+
+Map slide chi tiết + rule build từng format: `references/weekly-catchup-format.md` (nạp ở Pha 0 để chọn format và Pha 3 để render).
+
+**Rule carry-over (Vincent 23/07/2026):** task chưa done ở timeline OKRs/sheet tuần TỰ ĐỘNG chuyển sang plan tuần kế với status «Chuyển tiếp», trừ khi Vincent điều chỉnh/feedback. Slide «Task to do next week»: carry-over trước, task mới (action insights + mốc OKR) sau, mỗi task kèm PIC in đậm — trình Vincent chốt cả danh sách, không hỏi từng dòng.
+
 ## Dependency check (chạy trước, báo rõ nếu thiếu)
 
 | Cần | Kiểm tra | Thiếu thì |
@@ -65,7 +77,7 @@ python3 skills/gtv-weekly-report/scripts/fetch_weekly_data.py \
    d. `.manual-slot` — đánh dấu chỗ Vincent/team dán tay.
    Mọi ảnh lưu `02-raw/screenshots/tools/YYYYMMDD_<slug>_w<nn>.png` + log op `capture` (protocol §8 root).
 4. **Nhúng ảnh base64** vào deck (logo từ `weekly-template/assets/` + capture từ `02-raw/screenshots/`): deck phải là 1 file TỰ CHỨA — export server chỉ serve thư mục chứa deck nên relative path `../../` sẽ đứt; ảnh GỐC vẫn sống ở `02-raw/screenshots/` (protocol §8), deck chỉ nhúng bản render.
-5. Export PDF: `bash <workspace>/skills/frontend-slides/scripts/export-pdf.sh <deck.html> <out.pdf>` — **cả 2 đường dẫn phải TUYỆT ĐỐI** (script `cd` vào temp dir, path tương đối sẽ lạc). Bản copy export-pdf.sh đã đóng gói sẵn trong `scripts/` của skill này — instance standalone dùng bản đó (không cần workspace frontend-slides).
+5. **KHÔNG export PDF** — bản final là file HTML tự chứa (luật HTML-only, Vincent siết 23/07/2026 — áp cả report định kỳ). PDF chỉ khi Vincent yêu cầu rõ trong phiên; khi đó dùng bản `scripts/export-pdf.sh` đóng gói sẵn trong skill với **cả 2 đường dẫn TUYỆT ĐỐI** (script `cd` vào temp dir, path tương đối sẽ lạc).
 
 ### Pha 4 — CHECK + FILE-BACK (bắt buộc trước khi báo xong)
 1. Vòng tự kiểm trạm Reporter + Chế độ TUẦN (`09-reporting/CLAUDE.md`).

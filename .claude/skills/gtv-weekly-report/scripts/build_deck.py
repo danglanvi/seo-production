@@ -705,15 +705,22 @@ def render_sow(slide, meta, ctx):
         rows = [{"task": t.get("task", ""), "status": t.get("status", "")} for t in data.get("tasks", [])]
     if rows is None:
         die("sow thiếu «rows» hoặc «data»")
+    # Chuẩn Vincent 23/07/2026: bảng công việc 5 cột — Hạng mục (nhóm, rowspan) | Task cụ thể | PIC | Deadline | Tiến độ.
+    # Row có hangmuc/pic/deadline → render 5 cột; row chỉ task/status → fallback 2 cột (deck cũ).
+    ext = any(isinstance(r, dict) and (r.get("hangmuc") or r.get("pic") or r.get("deadline")) for r in rows)
     norm = []
     for r in rows:
         if isinstance(r, dict):
-            norm.append((r.get("task", ""), (r.get("status") or "").strip()))
+            norm.append({"hangmuc": (r.get("hangmuc") or "").strip(), "task": r.get("task", ""),
+                         "pic": (r.get("pic") or "").strip(), "deadline": (str(r.get("deadline") or "")).strip(),
+                         "status": (r.get("status") or "").strip()})
         else:
-            norm.append((r[0], (r[1] if len(r) > 1 else "").strip()))
+            norm.append({"hangmuc": "", "task": r[0], "pic": "", "deadline": "",
+                         "status": (r[1] if len(r) > 1 else "").strip()})
     counts = {}
-    for _, st in norm:
-        counts[st or "—"] = counts.get(st or "—", 0) + 1
+    for r in norm:
+        st = r["status"] or "—"
+        counts[st] = counts.get(st, 0) + 1
     chips = slide.get("chips")
     if chips is None:
         chips = []
@@ -725,13 +732,36 @@ def render_sow(slide, meta, ctx):
             chips.append({"n": blank, "cls": "notyet", "label": "Chưa cập nhật status"})
     chip_html = "\n".join('        <div class="chip %s"><span class="n">%s</span><span class="t">%s</span></div>'
                           % (c.get("cls", ""), c.get("n", ""), c.get("label", "")) for c in chips)
-    trs = "\n".join('            <tr><td class="name">%s</td><td class="ctr">%s</td></tr>'
-                    % (markup(t), st or "—") for t, st in norm)
+    if ext:
+        tr_list = []
+        i = 0
+        while i < len(norm):
+            span = 1
+            while i + span < len(norm) and norm[i + span]["hangmuc"] == norm[i]["hangmuc"]:
+                span += 1
+            for j in range(i, i + span):
+                r = norm[j]
+                cells = []
+                if j == i:
+                    cells.append('<td class="name" rowspan="%d" style="font-weight:700;vertical-align:middle;">%s</td>'
+                                 % (span, markup(r["hangmuc"] or "—")))
+                cells.append('<td class="name">%s</td>' % markup(r["task"]))
+                cells.append('<td class="ctr">%s</td>' % markup(r["pic"] or "—"))
+                cells.append('<td class="ctr">%s</td>' % (r["deadline"] or "—"))
+                cells.append('<td class="ctr">%s</td>' % (r["status"] or "—"))
+                tr_list.append("            <tr>" + "".join(cells) + "</tr>")
+            i += span
+        trs = "\n".join(tr_list)
+        thead = '          <thead><tr><th style="width:13%">Hạng mục</th><th style="width:40%">Task cụ thể</th><th style="width:15%">PIC</th><th style="width:13%">Deadline</th><th>Tiến độ</th></tr></thead>\n'
+    else:
+        trs = "\n".join('            <tr><td class="name">%s</td><td class="ctr">%s</td></tr>'
+                        % (markup(r["task"]), r["status"] or "—") for r in norm)
+        thead = '          <thead><tr><th style="width:72%">Task</th><th>Status</th></tr></thead>\n'
     body = ('    <div class="content">\n'
             + '      <div class="chips">\n' + chip_html + "\n      </div>\n"
             + '      <div class="tbl-wrap">\n'
             + '        <table class="data compact">\n'
-            + '          <thead><tr><th style="width:72%">Task</th><th>Status</th></tr></thead>\n'
+            + thead
             + "          <tbody>\n" + trs + "\n          </tbody>\n"
             + "        </table>\n      </div>\n    </div>\n")
     return content_slide(slide, meta, ctx, body)

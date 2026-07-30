@@ -2,7 +2,7 @@
 name: keyword-topic-url-mapping
 description: "Gom bộ keyword CAM KẾT hợp đồng thành topic → xác định URL SEO tương ứng — công đoạn (4) T1 của quy trình 10 tháng GTV, MAPPING layer đứng trước topical map và traffic plan. Phương pháp: gọi skill serp-clustering (DATA layer) lấy bảng cụm SERP-overlap → skill này CONSUME bảng cụm rồi quyết định; fallback semantic/intent grouping thủ công theo Central Search Intent khi không chạy được serp-clustering. Từ topic → 1 URL SEO chính (chống cannibalization), phân loại Core/Outer, intent I/N/C/T, page type đề xuất, % keyword + % search volume per topic. Use when: (1) 'nhóm keyword cam kết thành topic cho [client]', 'mapping keyword → URL SEO', 'công đoạn 4 T1'; (2) có bộ từ khóa hợp đồng (kpi-commitments.md hoặc paste) cần chuyển thành cấu trúc topic/URL trước khi làm topical map; (3) cần bảng keyword ↔ topic ↔ URL ↔ intent ↔ Core/Outer ↔ % làm input cho topical-map-creation + traffic-plan. Data priority: Ahrefs MCP (serp-overview) → DataForSEO SERP → grouping thủ công theo intent. KHÔNG dùng cho: xây SCN/topical map đầy đủ toàn site (→ topical-map-creation — skill này CHỈ mapping bộ keyword cam kết), research 1 bài/1 SERP sâu (→ seo-research), forecast traffic (→ traffic-plan)."
 metadata:
-  version: "1.1"
+  version: "1.2"
 ---
 
 # Keyword → Topic → URL SEO Mapping
@@ -69,6 +69,7 @@ Thực thi công đoạn (4) T1 quy trình 10 tháng: **"Nhóm keyword cam kết
 
 Per topic:
 1. **1 topic = 1 URL chính** — chống cannibalization từ khâu plan. Keyword phụ trong topic = biến thể/secondary keyword của cùng URL.
+1b. **QDP Gate (v1.2)** — trước khi chốt "topic này xứng 1 URL": chấm 4 tiêu chí `references/qdp-gate.md` (CANONICAL — high demand / different entities / low similarity WEIGHTED / pattern; ≥3/4 → URL riêng). Không đạt → topic hạ cấp thành **QDH** (heading trong URL cha) / **QDS** (sentence) / **component** (table/calculator/filter) — ghi vào mục 3 output "Keyword chưa xếp được / cần quyết định" kèm URL cha đề xuất. Tiêu chí #3 low-similarity dùng chính SERP-overlap của serp-clustering làm proxy (cụm GỘP = similarity cao). Đặc biệt bắt buộc với topic [service]+[location] (local) và mọi đề xuất mở URL NEW.
 2. Phân loại **Core / Outer Section**: topic mang monetization + gần Central Search Intent → [[Core Section]]; topic bổ trợ/informational nuôi [[Historical Data]] → [[Outer Section]] (chuẩn phân loại theo `sop/01-topical-map.md` Bước 5-6).
 3. Intent chủ đạo của topic (I/N/C/T) — topic hybrid ghi chú theo [[Mixed Intent]] (default tách, exception khi SERP ≥7/10 hybrid).
 4. **Page type đề xuất**: category / product / blog / landing (theo intent + SERP top-10 đang rank page type gì — [[Page Types]]).

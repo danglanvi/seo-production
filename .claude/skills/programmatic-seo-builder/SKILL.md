@@ -62,6 +62,8 @@ Chấm 3 tiêu chí, mỗi tiêu chí PASS/FAIL kèm evidence:
 
 **Bất kỳ tiêu chí nào FAIL → route content thường** (pipeline `seo-content-pipeline` / `semantic-content-writing`) và ghi rõ lý do. Không "cố cho qua gate" — programmatic fail gate chính là nguồn thin content.
 
+**G1 chấm bằng QDP Gate (v1.1 — 07/2026):** per biến thể pattern, chạy rubric 4 tiêu chí `keyword-topic-url-mapping/references/qdp-gate.md` (canonical) — biến thể/tổ hợp fail gate KHÔNG sinh trang, hạ thành section/component trên trang cấp trên (evidence scale: Doktorsitesi 4M trang không index → xóa = +600K clicks; Ucuzabilet route "NYC to Erzurum" ~50 search/năm; yacht [model]+[city]+[district] → prune = +248% clicks — `wiki/cases/local-seo-sel-cases-2026.md`). Đặc biệt: tổ hợp [service]+[location] cấp district/phường hầu hết fail similarity WEIGHTED (term location quá nhẹ).
+
 ### Bước 2 — Thiết kế template
 
 Spec per page type (output = TEMPLATE SPEC, không phải content):

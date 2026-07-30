@@ -291,6 +291,8 @@ AI Mode/AIO tách 1 query thành nhiều synthetic sub-queries (Google công b�
 
 Mỗi gap/cluster → quyết định mức: **Page / Heading / Sentence**. 4 tiêu chí: (1) different entities, (2) high search demand, (3) recognizable query pattern, (4) low similarity to existing queries. **≥3/4 → Page riêng** (Google sẽ construct index mới theo index size + vocabulary uniformity + PageRank). 2/4 → Heading (giữ query template + L0 answer để thăng cấp sau). ≤1/4 → Sentence (implied attribute).
 
+> **Rubric CANONICAL (v2.1 — 07/2026):** `keyword-topic-url-mapping/references/qdp-gate.md` — bản đầy đủ có cách chấm operational per tiêu chí (similarity = WEIGHTED theo term nặng, proxy SERP-overlap; pattern gần như luôn pass — đừng để nó một mình quyết), mức 4 mới **Component** (table/calculator/filter — 1 component trả cả query family), và nhánh document-cluster (vocabulary uniformity). Nguồn public: bài SEL local 22/07/2026 (`wiki/sources/local-seo-topical-authority-sel-koray.md`).
+
 **Quality gate per node (v2.0)**: output RPP không còn là "publish list" mà là **publish / merge / skip** + breadth cap — overclustering vào tangential topics gây core-update loss (case HubSpot — Kevin Indig); hòa với nguyên tắc Koray "no search demand → incorporate vào brief existing".
 
 #### Step 11: Consider Vastness - Depth - Momentum

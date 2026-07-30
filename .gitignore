@@ -26,3 +26,11 @@ __pycache__/
 # .claude/skills/   — mirror committed, bắt buộc có trong repo
 # .agents/skills/   — mirror committed, bắt buộc có trong repo
 # .gitattributes    — luật merge=union
+
+# ── File nặng dự phòng (bản gốc >20MB → Drive, không commit — luật SYNC.md) ──
+*.zip
+*.mp4
+*.mov
+02-raw/contracts-proposals/*.pdf
+02-raw/seo-data/**/*.xlsx
+09-reporting/samples/*.pdf

@@ -13,6 +13,8 @@ Chuyển research data thành **kế hoạch backlink hành động được**: 
 
 DATA `backlink-research` → **DECISION ✅ skill này** → EXECUTION `textlink-analyzer` (format textlink PR) / outreach team (guest post, digital PR, niche edit).
 
+> **📌 Backlog (24/07/2026, Vincent duyệt): module "External Topical Map"** — lớp off-page KHÁC link thường: bài trên site bên thứ ba (ưu tiên locale news) target query template pass QDP, pass tín hiệu quality/click/historical qua NavBoost + build claims/co-occurrences consensus cho GBP + AI answers (bảng attribute/predicate/contextual-phrase/measurement-unit; Gibberish guard). CHƯA build — chờ Koray ra bài anchor text patent US10210256B2. Nền lý thuyết: `wiki/concepts/frameworks/Surround Sound.md` mục External Topical Map + `wiki/sources/local-seo-topical-authority-sel-koray.md` L378-553.
+
 ## Input
 
 **Required:**

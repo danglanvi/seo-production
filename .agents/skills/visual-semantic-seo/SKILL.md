@@ -1,9 +1,9 @@
 ---
 name: visual-semantic-seo
-description: Visual Semantic SEO theo framework Koray (4 Pillars) + verified Google patents (visual gaps, LAMPRET, sitelinks, image classifier) + Content Warehouse leak (goldmine* factors, ImageData, clutterScore). Use whenever working on page layout, visual hierarchy, centerpiece, above-the-fold, entity card skeletons, image-level semantics (OCR, entity-in-image, alt chain), FAQ/tab structure, templated sections, trust stacking, pricing visual, hybrid pages, website functions, marketplace PDP patterns (buy-box card, variant self-priced, UGC aspect chips), service page playbook (quote-box, service spec table, calculator/quote tool, aspect-chip testimonials) — OR when designing/building any page layout (HTML mockup, wireframe, Figma spec); this skill drives the agent's design output. Triggers — "visual semantic", "centerpiece", "page layout SEO", "block chunking", "homepage architecture", "hybrid page", "trust signals", "Goldmine", "RankLab", "thiết kế layout", "design page", "mockup", "wireframe", "PDP", "buy box", "service page", "trang dịch vụ", "landing dịch vụ", "build eval", "eval checklist", "review ladder", "cart page", "thank-you page", "onsite search".
+description: Thiết kế, audit và so sánh Visual Semantic SEO cho page layout, visual hierarchy, centerpiece, above-the-fold, component mapping, entity cards, image semantics, FAQ/tabs, trust/pricing blocks, website functions, marketplace PDP, service page và local entity page. Dùng khi tạo hoặc review HTML mockup, Figma spec hay annotated wireframe ở các mode BUILD, ANALYZE, COMPARE; khi ánh xạ Query Augmentation Map sang component và kiểm QDP; hoặc khi user nhắc visual semantic, page layout SEO, wireframe, centerpiece, hybrid page, PDP/buy box, service/landing page, store/branch page, local landing, query augmentation, review ladder, cart, thank-you hay onsite search. Skill định hướng output thiết kế theo framework 4 Pillars, Google patents đã kiểm chứng và Content Warehouse signals; không thay thế factual hoặc claim verification.
 ---
 
-# Visual Semantic SEO (v3.6)
+# Visual Semantic SEO (v3.7)
 
 Optimize content layout, visual hierarchy, website functions, image-level semantics, and patterned visual elements following Koray Tuğberk's framework, verified Google patents, and Content Warehouse API leak insights.
 
@@ -57,17 +57,17 @@ For **hybrid pages**, multiple centerpieces may stack with supporting blocks bet
 
 ---
 
-## PROCESS — 8 bước triển khai (v3.6)
+## PROCESS — 8 bước triển khai (v3.7)
 
-> Bản đầy đủ có RACI + training: `SEO Knowledge/Semantic SEO A - Z/sop/07-visual-semantic.md` (v2.0 — đã renumber 8 bước) + deep-dive trực quan: `sop/07-visual-semantic-deep-dive.html`. 2 chế độ: **Design-in** (trang mới, Bước 0-8) / **Audit-fix** (trang có sẵn — vào Bước 8, quay lại bước fail). Vị trí pipeline: giữa Layer 2 Outline AM và Layer 4 Onpage (Koray: topical map → document architecture → mockup → Figma). v3.6 thêm Bước 1 + nâng Bước 3.
+> Bản đầy đủ có RACI + training: `SEO Knowledge/Semantic SEO A - Z/sop/07-visual-semantic.md` (v2.0 — đã renumber 8 bước) + deep-dive trực quan: `sop/07-visual-semantic-deep-dive.html`. 2 chế độ: **Design-in** (trang mới, Bước 0-8) / **Audit-fix** (trang có sẵn — vào Bước 8, quay lại bước fail). Vị trí pipeline: giữa Layer 2 Outline AM và Layer 4 Onpage (Koray: topical map → document architecture → mockup → Figma). v3.6 thêm Bước 1 + nâng Bước 3; v3.7 nâng Bước 1 thành QDP Gate + output Query Augmentation Map.
 
 | Bước | Việc | Output |
 |---|---|---|
 | **0. Input Gate** | Nhận từ Topical Map + Outline AM: entity-attribute, page type, funnel, persona, CSI, kết quả QDP/QDH/QDS. Không có Outline AM → không vào | — |
-| **1. Query Augmentation Classification** *(NEW v3.6)* | Liệt kê biến thể **augmented** của query gốc (experience / local / price / instructional / so sánh…) — soi PAA + `search_model_queries` (ChatGPT DevTools) khi có; map mỗi biến thể → page type + layout + function (experience→forum, local→directory, price→hybrid, instructional→guide); quyết **prune/merge** biến thể thừa (CoR ↓, PageRank cô đặc). Grounding: US9916366B1 + Stateful Chat + Query Fan-Out | Bảng variation → page type/layout/function + quyết định prune/merge |
-| **2. Page Function & Centerpiece** | Chốt function (info/commercial/transactional/mixed); Centerpiece spec 1 câu; mixed intent → liệt kê CẢ 2 bộ elements above-fold; chọn Centerpiece Dial (bảng dưới); **định nghĩa ~400 ký tự đầu sau H1 sẽ nói gì** | Function Statement + Centerpiece spec + above-fold element list |
+| **1. Query Augmentation & QDP Gate** *(nâng cấp v3.7)* | (a) Liệt kê biến thể **augmented** của query gốc (experience / local / price / instructional / so sánh…) — soi PAA + `search_model_queries` (ChatGPT DevTools) khi có. (b) **QDP Gate 4 tiêu chí** cho từng biến thể: high demand · different entities · low similarity (WEIGHTED — theo term nặng, không phải string) · has pattern; **≥3/4 → page riêng**, không đạt → QDH (heading) / QDS (sentence) / **component** (table/list/form/calculator/filter). Rubric canonical: `keyword-topic-url-mapping/references/qdp-gate.md`. (c) Map biến thể giữ lại → page type + layout + function (experience→forum subdomain, local→directory/info cards, price→FS paragraph+cards, instructional→guide); prune/merge phần thừa (CoR ↓, PageRank cô đặc). (d) **Weighted-term rule**: term nặng nhất của query = subject của triples + vocabulary chính của heading/annotations (Bendersky/Najork). Grounding: US9916366B1 + Stateful Chat + Query Fan-Out + US6658423B1 | **Query Augmentation Map 4 cột** (augmented queries → visual component → triples S-P-O → named entities) + verdict QDP/QDH/QDS/component per biến thể — template: `references/query-augmentation-map.md` |
+| **2. Page Function & Centerpiece** | Chốt function (info/commercial/transactional/mixed); Centerpiece spec 1 câu; mixed intent → liệt kê CẢ 2 bộ elements above-fold; chọn Centerpiece Dial (bảng dưới); **định nghĩa ~400 ký tự đầu sau H1 sẽ nói gì**. *Local (v3.7):* location-service pair quan trọng nhất target từ HOMEPAGE (PageRank + crawl cao nhất); homepage phải có contextual bridges → quality nodes | Function Statement + Centerpiece spec + above-fold element list |
 | **3. SERP & Attribute Benchmark** *(nâng cấp v3.6)* | Chụp above-fold top 5-10; ghi block/thứ tự/trust/functions/format thắng; **đọc NGƯỢC SERP features → attribute nào được ưu tiên cho entity type** (US10445328B2: property→map/chart/timeline/gallery) + **category nào thắng SERP** (listicle/PLP/video — US8498984B1); xác định design archetype vertical → match trước, differentiate sau | Bảng benchmark + attribute-priority + archetype notes |
-| **4. Block Architecture** | Mỗi attribute = 1 HTML section (hotel-card); thiết kế **entity card skeleton** instantiate ≥3 lần; mỗi block 5 slots (heading + L0 40-75 từ + body + visual + function); zone weights (Centerpiece 100 / Supporting 60-80 / Supplementary 40 / Boilerplate 5-10) + RQ border; **conversion layer** spec (bảng dưới); data-heavy → bảng Attribute\|Value; list >50-100 items → Tiered Prominence | **Block map** (text-level mockup) + component library note |
+| **4. Block Architecture** | Mỗi attribute = 1 HTML section (hotel-card); thiết kế **entity card skeleton** instantiate ≥3 lần; mỗi block 5 slots (heading + L0 40-75 từ + body + visual + function); zone weights (Centerpiece 100 / Supporting 60-80 / Supplementary 40 / Boilerplate 5-10) + RQ border; **conversion layer** spec (bảng dưới); data-heavy → bảng Attribute\|Value; list >50-100 items → Tiered Prominence | **Block map** (text-level mockup) — hoặc **annotated wireframe HTML** khi user cần bản trình bày/phân tích (Wireframe Mode, `references/wireframe-spec.md`) + component library note |
 | **5. Visual Asset Layer** | Mỗi key block 1 visual cạnh text; ảnh độc bản chứa đúng entity, OCR-legible (chữ trong ảnh ≥30px, contrast đủ — benchmark tham khảo); chain Image URL ≤3 từ → Alt = verbalized expansion; featured image alt = short H1; ImageObject + primaryImageOfPage; video companion cho core topics | Visual spec per block |
 | **6. Design Implementation** | Typography theo LAMPRET (H1 36px+, size giảm theo cấp); **DOM order = visual order**; caption/nhãn KỀ ảnh/số liệu (block local connections); above-fold identity; semantic HTML thật; không giấu critical info trong tabs; mobile giữ identity | Figma/build khớp block map |
 | **7. Technical Verification** | **HTML <2MB** · CLS (dimensions set — WRS không fetch ảnh khi có width/height) · TTFB <2s · **JS bundle tách stable/changing** · metadata (title/canonical/schema) trong initial HTML, nhất quán pre/post-render · clutter check (`clutterScore`) · featured image indexed (`src:`) · JSON-LD đúng page type · mobile = desktop identity | Checklist pass/fail |
@@ -110,6 +110,7 @@ Choose the right pattern based on page intent and complexity:
 | Encyclopedia / A-Z list | Reference content, comprehensive listings | `informational-page-visual-semantic.md` |
 | How-To / Tutorial | Step-by-step instructional | `informational-page-visual-semantic.md` |
 | **Hybrid (e-com + info + service)** | **Homepage hub, multi-intent landing** | **`hybrid-page-pattern.md` (NEW v2.0)** |
+| **Local Entity Pages (NEW v3.7)** | **Store/office location page, specialist person page, city/service local landing** | **`local-entity-page-patterns.md`** |
 
 ---
 
@@ -189,6 +190,8 @@ Khi domain nghi bị đè bởi historical/domain-level signals (không được
 
 ### Pattern 8: Content Type Distribution (NEW v3.6)
 Phân phối loại content theo query augmented — 2 trục **factual/opinionated × structured/unstructured** (factual→expertise, opinionated→experience, structured→attributes, unstructured→definitions/processes), thao tác bằng 4 kỹ thuật khớp 4 Pillars: Visualization · Commercialization · Contextualization · Verbalization. 3 component đã thấy chạy thật: **Q&A opinion block** (đổi nền màu tách factual/opinion) · **preceding-question component** (reframe câu hỏi, chuyển dần factual→opinion) · **horizontal tab phân phối internal links** tới related headings (content sẵn trong DOM).
+
+**Forum subdomain route (v3.7):** khi factual/how-to guides "can't exceed thresholds" cho **opinionated/experience query-terms** ("How do I fix…", "What do I do for error code X?") → route sang **forum subdomain + forum structured data** (forum pages index dễ hơn cho opinionated formats). Routing đầy đủ theo query type: experience→forum subdomain · near-me→structured info cards · price→FS-catching paragraph + cards · how-to→informational page; chọn 1-2 template bind nhau theo demand + query network — KHÔNG mở đủ 4 loại cho mọi city/occupation (case Central Europe, SEL local 07/2026).
 
 ---
 
@@ -298,6 +301,20 @@ Khi được yêu cầu thiết kế/build layout (HTML mockup, wireframe, landi
 
 ---
 
+## Wireframe Mode — annotated wireframe 3 chế độ (NEW v3.7)
+
+Khi user cần **wireframe annotation** (dạng "PAGE LAYOUT SEMANTICS" — canvas tối, rail Macro/Micro Context trái, block page giữa, callout đánh số phải, legend màu theo zone) thay vì block map text hoặc HTML thật. Spec đầy đủ + template: `references/wireframe-spec.md`. Ba chế độ:
+
+| Mode | Input | Output |
+|---|---|---|
+| **BUILD** | Query Augmentation Map (Bước 1) + block architecture (Bước 4) | Wireframe HTML mới: mỗi dòng của Map = 1 block + 1 callout giải thích chức năng semantic (component, augmented queries phục vụ, triples, entities) |
+| **ANALYZE** | URL / screenshot / HTML của trang CÓ SẴN (mình hoặc đối thủ) | Reverse-engineer thành wireframe + annotate: zone weights, centerpiece, function inventory, augmented query mỗi block đang trả lời, gap (block thiếu / query chưa có component) |
+| **COMPARE** | 2 trang cùng page type | Diff matrix theo dimension (hub architecture / H1 naming / spatial proof / NAP / commerce / review / conversion…): verdict **A≠B** (chiến lược khác) / **A=B** (skeleton chung) / **A!** / **B!** (chỉ 1 bên có) + **Convergence Verdict** cuối |
+
+Rules chung: đặt placeholder `{Brand}`, `{Doctor Name}`… cho mọi tên thật (trừ khi user yêu cầu đích danh); footer ghi "illustrative example content"; mỗi wireframe ≤12 block + ≤12 callout (vượt → tách trang); màu zone cố định theo legend trong spec (Macro=teal, Micro=vàng, Transaction/Closure=tím, Evidence=vàng nhạt, Neutral=xám). Wireframe là **artifact phân tích/thuyết trình** — không thay thế HTML build thật (Design Mode).
+
+---
+
 ## Quick Checklist
 
 ### Visual Hierarchy
@@ -390,59 +407,23 @@ Khi được yêu cầu thiết kế/build layout (HTML mockup, wireframe, landi
 
 > ⚠️ **v3.0 blanket caveat:** các file trong `references/` viết ở v1.0-v2.1 và CHƯA được fact-fix từng dòng — một số còn cite US8949242B1/US10565267B1/US8868565B1/US20150234930A1/"vboostFactor"/"Google WebFormer" theo cách cũ. Khi mâu thuẫn với SKILL.md: **SKILL.md (v3.0, verified) là nguồn đúng**; bảng patent chuẩn ở section "Related Google Patents (verified 2026-07-02)". Backlog: fact-fix từng reference file.
 
-### Foundation Files (v1.0)
-| Topic | File | When to Read |
-|-------|------|--------------|
-| Centerpiece basics | `references/centerpiece-annotation.md` | Single centerpiece pages |
-| Service pages | `references/service-page-visual-template.md` | Service/lead-gen pages |
-| E-commerce pages | `references/ecommerce-page-visual-semantic.md` | PLP/PDP layouts |
-| Informational pages | `references/informational-page-visual-semantic.md` | Encyclopedia/Tutorial |
-| Service page functions | `references/website-function-seo.md` | CTA + form patterns |
-| E-commerce functions | `references/ecommerce-website-functions.md` | Filter/cart/reviews |
-| Informational functions | `references/informational-website-functions.md` | Search/bookmark/compare |
+Chỉ đọc reference đúng với task hiện tại:
 
-### Advanced Pattern Files (NEW v2.0)
-| Topic | File | When to Read |
-|-------|------|--------------|
-| **Hybrid Page Pattern** | `references/hybrid-page-pattern.md` | Homepage hubs, multi-intent landings (morethanpanel.com worked example) |
-| **Multi-Layer Centerpiece** | `references/multi-layer-centerpiece.md` | When 1 centerpiece is insufficient |
-| **Templated Visual Elements** | `references/templated-visual-elements.md` | Multi-entity sections (services, categories, modules) |
-| **Block Chunk Design** | `references/block-chunk-design.md` | Layout-aware Document Understanding optimization |
-| **Dual-Audience Macro-context** | `references/dual-audience-macro-context.md` | 2+ persona sites with intent overlap |
-| **Decorative-Semantic Heading** | `references/decorative-semantic-heading.md` | FAQ, Resources, tab navigation sections |
-| **Search Journey Compression** | `references/search-journey-compression.md` | 1 URL multi-intent strategy decision |
-| **Real-Time Function Validators** | `references/real-time-function-validators.md` | Live tickers, counters, calculators |
-| **Trust Stacking Hierarchy** | `references/trust-stacking-hierarchy.md` | 7-layer trust positioning |
-| **Multi-Tier Pricing Pattern** | `references/multi-tier-pricing-pattern.md` | Pricing card visual semantic |
-| **Goldmine Title Factors** | `references/ranklab-factors.md` | Title/snippet selection factors detail (đọc kèm fact-fix v3.0 — file còn dùng tên field cũ) |
-
-### Page-Level Architecture Files (NEW v2.1)
-| Topic | File | When to Read |
-|-------|------|--------------|
-| **Hub-Spoke Visual Differentiation** | `references/hub-spoke-visual-differentiation.md` | Site has hub + spoke pages — distinguish visual signal intensity by tier |
-| **Funnel Position Visual Mapping** | `references/funnel-position-visual-mapping.md` | Match visual emphasis to TOFU/MOFU/BOFU/Hybrid funnel position |
-| **Persona Zone Visual Treatment** | `references/persona-zone-visual-treatment.md` | Hybrid pages with 2-3+ buyer personas — distinct visual zones per persona |
-
-### Quick Lookup
-| Task | Read |
-|------|------|
-| Service page layout/CTA | `service-page-visual-template.md` + `website-function-seo.md` |
-| Category page (PLP) | `ecommerce-page-visual-semantic.md` |
-| Product page (PDP) | `ecommerce-page-visual-semantic.md` |
-| Filters/cart/reviews | `ecommerce-website-functions.md` |
-| Encyclopedia/A-Z list | `informational-page-visual-semantic.md` |
-| How-to/Tutorial | `informational-page-visual-semantic.md` |
-| Search/bookmark/compare | `informational-website-functions.md` |
-| **Homepage hub / multi-intent landing** | **`hybrid-page-pattern.md` + `multi-layer-centerpiece.md` + `templated-visual-elements.md`** |
-| **2+ buyer personas in 1 URL** | **`dual-audience-macro-context.md`** |
-| **FAQ / Tabs / Resource sections** | **`decorative-semantic-heading.md`** |
-| **Layout-aware optimization** | **`block-chunk-design.md`** |
-| **Pricing tiers visual** | **`multi-tier-pricing-pattern.md`** |
-| **Trust signals positioning** | **`trust-stacking-hierarchy.md`** |
-| **Goldmine title/snippet factors** | **`ranklab-factors.md`** (kèm fact-fix v3.0) |
-| **Hub vs spoke visual differentiation** | **`hub-spoke-visual-differentiation.md`** |
-| **TOFU/MOFU/BOFU funnel visual mapping** | **`funnel-position-visual-mapping.md`** |
-| **Multi-persona zones in hybrid pages** | **`persona-zone-visual-treatment.md`** |
+| Nhu cầu | Reference |
+|---|---|
+| Centerpiece một trang | `references/centerpiece-annotation.md` |
+| Service layout + CTA/form | `references/service-page-visual-template.md` + `references/website-function-seo.md` |
+| PLP/PDP + filter/cart/review | `references/ecommerce-page-visual-semantic.md` + `references/ecommerce-website-functions.md` |
+| Encyclopedia/tutorial + search/bookmark/compare | `references/informational-page-visual-semantic.md` + `references/informational-website-functions.md` |
+| Homepage hub hoặc multi-intent | `references/hybrid-page-pattern.md` + `references/multi-layer-centerpiece.md` + `references/templated-visual-elements.md` |
+| Layout-aware chunks, đa persona, FAQ/tabs | `references/block-chunk-design.md` + `references/dual-audience-macro-context.md` + `references/decorative-semantic-heading.md` |
+| Nén search journey, live function | `references/search-journey-compression.md` + `references/real-time-function-validators.md` |
+| Trust, pricing, title/snippet factors | `references/trust-stacking-hierarchy.md` + `references/multi-tier-pricing-pattern.md` + `references/ranklab-factors.md` |
+| Hub/spoke, funnel, persona zones | `references/hub-spoke-visual-differentiation.md` + `references/funnel-position-visual-mapping.md` + `references/persona-zone-visual-treatment.md` |
+| Query → component/triples | `references/query-augmentation-map.md` |
+| Wireframe BUILD/ANALYZE/COMPARE | `references/wireframe-spec.md` |
+| Store/office/specialist/local | `references/local-entity-page-patterns.md` |
+| QDP chưa có verdict | `keyword-topic-url-mapping/references/qdp-gate.md` của skill `keyword-topic-url-mapping` |
 
 ---
 
@@ -452,6 +433,8 @@ This skill integrates with:
 - **`semantic-outline-methodology`** — Outline AM should specify visual semantic per heading (centerpiece position, block chunk elements, templated section identification, live function spec)
 - **`semantic-content-writing`** — Content writing must follow Goldmine factors (readability, salient terms, brand mention)
 - **`topical-map-creation`** — Topical map planning should account for hybrid vs split URL strategy (search journey compression + QDP/QDH/QDS decision)
+- **`keyword-topic-url-mapping`** — QDP Gate rubric canonical tại `references/qdp-gate.md` của skill đó; Bước 1 skill này CONSUME verdict (hoặc tự chấm khi chưa có)
+- **`local-seo-audit` / `map-pack-intelligence`** — local entity pages build theo `local-entity-page-patterns.md`; 2 skill kia audit/đo, skill này thiết kế
 - **`sop/07-visual-semantic.md`** (SEO Knowledge wiki) — bản training đầy đủ của PROCESS 7 bước, kèm RACI + trade-offs
 - **Wiki evidence base** — `wiki/sources/research-2026-07-visual-semantics-verification.md` (patent verdicts v3.0) + `wiki/sources/research-2026-07-sel-visual-semantics-verification.md` (12 verdicts Batch 32) + `wiki/cases/koray-visual-semantics-showcase-2026.md` (teardown 4 trang) + `wiki/cases/visual-semantics-sel-cases-2026.md` (5 case SEL)
 - **Deep-dive trực quan** — `SEO Knowledge/Semantic SEO A - Z/sop/07-visual-semantic-deep-dive.html`: giải thích cơ chế + PROCESS 8 bước + block map template + checklist 24 eval tương tác
@@ -485,6 +468,7 @@ Checklist ĐẠT/KHÔNG-ĐẠT khi build hoặc review PLP · PDP · Home · Sea
 
 ## Changelog
 
+- **v3.7 (24/07/2026):** Batch 37 (bài Koray SEL "How semantics and topical authority improve local SEO" 22/07 + 7 wireframe style-reference). (1) Bước 1 nâng thành **Query Augmentation & QDP Gate**: 4 tiêu chí ≥3/4 (demand/entities/similarity-WEIGHTED/pattern) → page, không đạt → QDH/QDS/component (table/form/calculator/filter); weighted-term rule (term nặng nhất = subject của triples — Bendersky/Najork); output đổi thành **Query Augmentation Map 4 cột** (queries→component→triples→entities). (2) **Wireframe Mode** 3 chế độ BUILD/ANALYZE/COMPARE + `references/wireframe-spec.md` (format PAGE LAYOUT SEMANTICS: rail macro/micro, callout đánh số, legend zone, diff matrix A≠B/A=B/A!/B!). (3) Archetype mới **Local Entity Pages** + `references/local-entity-page-patterns.md` (geo utility bar, NAP GBP field parity, landmark grounding, breadcrumb sibling switcher, 2 transaction modes, review acquisition loop, anti-doorway localization, store-entity skeleton). (4) Pattern 8 + forum subdomain route cho opinionated/experience queries + routing 4 query types. (5) Bước 2 thêm rule local: homepage target location-service pair #1 + contextual bridges → quality nodes. (6) `references/query-augmentation-map.md` (worked example rehab 12 dòng). Cross-skill: QDP gate canonical ở `keyword-topic-url-mapping/references/qdp-gate.md`. Evidence: wiki Batch 37 ([[sources/local-seo-topical-authority-sel-koray]] + [[Local SEO]] + [[cases/local-seo-sel-cases-2026]] + [[QDP-QDH-QDS]] →stable).
 - **v3.6 (16/07/2026):** Batch 32 (bài Koray SEL "Visual semantics" + 15 nguồn full-text, fact-check 3 vòng — 12 verdicts). (1) Core Principle + Formula v3 `((HD×TC)÷CoR) × Right Visual Annotations` + decision-tree gate (Nayak top ~20-30 đính chính). (2) PROCESS 7→8 bước: Bước 1 mới Query Augmentation Classification (map biến thể → page type/layout/function + prune/merge); Bước 3 nâng thành SERP & Attribute Benchmark (đọc ngược feature→attribute US10445328B2 + category thắng SERP US8498984B1); Bước 7 thêm HTML 2MB + image dimensions + JS bundle; Bước 8 thêm extraction test 400 ký tự. (3) Centerpiece Dial thêm hygiene flow liền mạch (Goodoc Flow/FlowThread + DOJ example; 400 chars label single-source) + case converter +30.5%. (4) Pattern 7 Subdomain Testing (3 lớp grounding) + Pattern 8 Content Type Distribution (2×2 + 4 kỹ thuật + 3 component). (5) Website Functions có consequence: misleading functionality spam policy + US12536233B1 "no product filter" trigger. (6) Bảng patents +4 granted (US9069855B2, US10445328B2, US9916366B1, US12536233B1), US8498984B1 nâng STRONG, bảng riêng patent APPLICATIONS (WO2020033805A1 CEASED, US20240289407A1 PENDING — design intent); fact-notes: LAMPRET không chứa "cards", WebRef ≠ WebFormer. (7) Quick Checklist +6 items; pointer deep-dive `sop/07-visual-semantic-deep-dive.html` (checklist 24 eval). Evidence: wiki Batch 32 (16 source pages + case page + verification page).
 - **v3.5 (12/07/2026):** Thêm module E-commerce Build Evals — 12 eval ĐẠT/KHÔNG-ĐẠT (E1-E12) đúc từ 3 vòng build + feedback IndochinaLight: PLP fold budget + không banner hero, sticky=mission tools, card 7 lớp + tag/metafield sync (pattern Rowabi verify 12/07), đơn vị dia. cho US, link placement (informational→blog), review ladder 0/1-14/≥15, sale display Save + counter app-bound, sticky mirror state (không inner-scroll), section heading=entity + sub-line, trust placement (press mid-page, payment logo chính chủ), cart honesty (progress freeship thật + bundle nudge), thank-you timeline made-to-order. Evidence: Build v3 6 trang (home/category/PDP/search/cart/thank-you) trong Deliverables/IndochinaLight/.
 - **v3.4 (10/07/2026):** Thêm module Service Page Application Playbook — bảng dịch 14 pattern (S1-S14) từ 3 bộ benchmark sang trang dịch vụ (MTM case Thu Cũ + Koray Benchmark #5 · Koray live-sites v3.2 · Amazon v3.3): quote-box + response-time promise, gói per-tier capacity thật, bảng thông số dịch vụ, review-proof trên H1, definition-first blockquote, quy trình ol markup thật, micro-template per service, numeric range đậm, variant enumeration, công cụ sống ≤5 bước tạm-tính-sớm, freebie spoke, use-case tabs theo user attribute, aspect-chip testimonials, recency tĩnh. Kèm khung 14 block thay khung 5 block khi cần bản đầy đủ + counter-signals service (heading adjective, quy trình trong ảnh, số không case, form-only, heading bloat, trust rải ngẫu nhiên). Addendum pointer trong `references/service-page-visual-template.md`. Evidence: Deliverables/MTM-iPhone-PLP-Review/ + wiki/syntheses/koray-live-site-patterns-2026.md + indochinalight_PDP-Review_v2.html mục 8.

@@ -64,8 +64,16 @@ SEO Production/
 │   ├── knowledge/                   knowledge pack (sop/ + cheat-sheets/ + _MANIFEST.md)
 │   └── screenshots/                 own-site/ · competitors/ · serp-ai/ · tools/
 ├── 12-feedback-lessons/          ← feedback-log.md + lessons/ + retro/
-├── 99-archive/ · _TEMPLATES/ (21 template + account/) · skills/ (20 skill delivery)
+├── 99-archive/ · _TEMPLATES/ (21 template + account/ + examples/ + weekly-report-slides/)
+├── skills/ (32 skill delivery — canonical) · .claude/skills/ (mirror Claude) · .agents/skills/ (mirror Codex)
+└── tools/sync-skills.sh              ← đồng bộ skills/ → 2 mirror khi chạy standalone
 ```
+
+## Ngày đầu tiên (team mới nhận folder)
+
+1. Mở deck **`GTV_SEO-Production_huong-dan-cai-dat_v1.html`** (root folder này) — hướng dẫn cài đặt Claude Code / Codex, MCP, chìa khóa robot và cách dùng từng bước.
+2. Mở Claude Code (hoặc Codex) tại folder → nói: *«đọc CLAUDE.md và README.md rồi tóm tắt cho tôi»*.
+3. Thử 2 lệnh đầu trong `COMMANDS.md`. Xong — bạn đã vận hành được hệ.
 
 ## Đọc tiếp
 
