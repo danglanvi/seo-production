@@ -125,11 +125,37 @@ def pct_cls(val, threshold=100.0):
     return "pos" if v >= threshold else "neg"
 
 
+# Registry nguồn dữ liệu (key → {label, url}) — nạp từ --sources, dùng cho token [[key]].
+SOURCES = {}
+MISSING_SRC = []
+
+
+def _link(url, label):
+    return ('<a class="src-link" href="%s" target="_blank" rel="noopener">%s</a>'
+            % (url, label))
+
+
+def resolve_src(m):
+    """[[key]] hoặc [[key|nhãn hiển thị]] → thẻ <a> tới đúng tab nguồn."""
+    raw = m.group(1)
+    key, _, label = raw.partition("|")
+    key = key.strip()
+    entry = SOURCES.get(key)
+    if not entry:
+        MISSING_SRC.append(key)
+        return label.strip() or key
+    return _link(entry["url"], (label.strip() or entry.get("label") or key))
+
+
 def markup(text):
-    """Mini-markup: **đậm** → <b>, {pos}/{neg}/{flat} → span màu, {i} → <i>."""
+    """Mini-markup: **đậm** → <b>, {pos}/{neg}/{flat} → span màu, {i} → <i>,
+    [nhãn](url) → link, [[key]] / [[key|nhãn]] → link tra từ registry nguồn."""
     if text is None:
         return ""
     t = str(text)
+    t = re.sub(r"\[\[([^\[\]]+?)\]\]", resolve_src, t)
+    t = re.sub(r"\[([^\[\]]+?)\]\((https?://[^\s)]+)\)",
+               lambda m: _link(m.group(2), m.group(1)), t)
     t = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", t, flags=re.S)
     t = (t.replace("{pos}", '<span class="up">').replace("{/pos}", "</span>")
           .replace("{neg}", '<span class="down">').replace("{/neg}", "</span>")
@@ -324,9 +350,16 @@ def scope_note(slide):
 # ---------------------------------------------------------------- bảng literal
 def cell_html(value, kind):
     cls = None
+    # cell viết dạng chuỗi JSON ('{"t":…,"class":…}') — YAML quote nhầm vẫn phải render đúng
+    if isinstance(value, str) and value.lstrip().startswith('{"'):
+        try:
+            value = json.loads(value)
+        except ValueError:
+            pass
     if isinstance(value, dict):
-        cls = value.get("c")
-        value = value.get("v", "")
+        # schema chuẩn {v, c}; chấp nhận alias {t, class} vì content YAML đã dùng rộng rãi
+        cls = value.get("c", value.get("class"))
+        value = value.get("v", value.get("t", ""))
     v = "" if value is None else str(value)
     # override class bằng hậu tố "…|cls"
     m = re.match(r"^(.*)\|(pos|neg|mut|num|ctr|name)$", v)
@@ -347,7 +380,7 @@ def cell_html(value, kind):
             cls = ""
     extra = ""
     attr = (' class="%s"' % cls) if cls else ""
-    return "<td%s%s>%s</td>" % (attr, extra, markup(v) if kind == "name" else v)
+    return "<td%s%s>%s</td>" % (attr, extra, markup(v))
 
 
 def table_html(tbl, resolver=None):
@@ -437,18 +470,22 @@ def render_runrate(slide, meta, ctx):
         r = list(row)
         good1 = "rr-pct-good" if (num_of(r[3]) or 0) >= (num_of(r[4]) or 0) else "rr-pct-bad"
         good2 = "rr-pct-good" if (num_of(r[7]) or 0) >= (num_of(r[8]) or 0) else "rr-pct-bad"
+        # Layout 2 hàng (feedback Trần Phong 24/07): hàng trên = mức NĂM, hàng dưới = mức THÁNG
+        # (ô «Lũy kế tháng / KPI» nằm cạnh «Run-rate tháng», không nằm lẫn hàng năm).
         cards.append(
             '        <div class="rr-card">\n'
-            "          <h4>%s</h4>\n" % r[0]
+            "          <h4>%s</h4>\n" % re.sub(r"(?i)^apply\s*cv$", "APPLYTHANKS", str(r[0]))
             + '          <div class="rr-vals">\n'
             + '            <span><span class="rr-num">%s</span><span class="rr-lbl">Lũy kế năm / KH %s</span></span>\n' % (r[2], r[1])
             + '            <span><span class="%s">%s</span><span class="rr-lbl">Run-rate LK (time %s)</span></span>\n' % (good1, r[3], r[4])
+            + "          </div>\n"
+            + '          <div class="rr-vals" style="margin-top:14px;">\n'
             + '            <span><span class="rr-num">%s</span><span class="rr-lbl">Lũy kế %s / KPI %s</span></span>\n' % (r[6], month, r[5])
             + '            <span><span class="%s">%s</span><span class="rr-lbl">Run-rate %s (time %s)</span></span>\n' % (good2, r[7], month, r[8])
             + "          </div>\n        </div>"
         )
     headers = ["Tuần", "Kỳ (ngày)", "Tháng", "PV Prior Year", "PV KPI tuần", "PV Thực tế", "%HT",
-               "Run-rate LK", "Apply Prior Year", "Apply KPI tuần", "Apply Thực tế", "%HT", "Run-rate LK", "CR"]
+               "Run-rate LK", "Applythanks Prior Year", "Applythanks KPI tuần", "Applythanks Thực tế", "%HT", "Run-rate LK", "CR"]
     limit = int(slide.get("weeks_limit", 8))
     body_rows = [w for w in weeks if len(w) >= 14 and str(w[5]).strip()]
     body_rows = body_rows[-limit:]
@@ -508,7 +545,7 @@ def resolve_special_rows(slide, ctx):
                                    {"v": fmt_signed(gt["d"], minus="-"), "c": delta_cls(gt["d"])},
                                    {"v": fmt_pct_signed(gt["pct"], minus="-", decimals=2), "c": delta_cls(gt["pct"])}]})
         return {"headers": slide.get("table", {}).get("headers") or
-                           ["Page Group", "Apply tuần này", "Apply tuần trước", "Δ", "%"],
+                           ["Page Group", "Applythanks tuần này", "Applythanks tuần trước", "Δ", "%"],
                 "col_kinds": ["name", "num", "num", "delta", "delta"],
                 "rows": rows,
                 "class": slide.get("table", {}).get("class", "data"),
@@ -693,6 +730,7 @@ def render_blog_groups(slide, meta, ctx):
 SOW_STATUS_MAP = [
     ("Done", "done", "Done"),
     ("Đang làm", "doing", "Đang làm"),
+    ("Chưa bắt đầu", "notyet", "Chưa bắt đầu"),
     ("Trễ hạn", "late", "Trễ hạn"),
     ("Tạm ngưng", "paused", "Tạm ngưng"),
 ]
@@ -712,11 +750,14 @@ def render_sow(slide, meta, ctx):
     for r in rows:
         if isinstance(r, dict):
             norm.append({"hangmuc": (r.get("hangmuc") or "").strip(), "task": r.get("task", ""),
+                         "uu": (str(r.get("uu_tien") or r.get("uu") or "")).strip(),
                          "pic": (r.get("pic") or "").strip(), "deadline": (str(r.get("deadline") or "")).strip(),
                          "status": (r.get("status") or "").strip()})
         else:
-            norm.append({"hangmuc": "", "task": r[0], "pic": "", "deadline": "",
+            norm.append({"hangmuc": "", "task": r[0], "uu": "", "pic": "", "deadline": "",
                          "status": (r[1] if len(r) > 1 else "").strip()})
+    has_uu = any(r["uu"] for r in norm)
+    UU_COLOR = {"P0": "#d21f3c", "P1": "#c77400", "P2": "#5b6b8c", "P3": "#5b6b8c"}
     counts = {}
     for r in norm:
         st = r["status"] or "—"
@@ -746,13 +787,23 @@ def render_sow(slide, meta, ctx):
                     cells.append('<td class="name" rowspan="%d" style="font-weight:700;vertical-align:middle;">%s</td>'
                                  % (span, markup(r["hangmuc"] or "—")))
                 cells.append('<td class="name">%s</td>' % markup(r["task"]))
+                if has_uu:
+                    uu = r["uu"] or "—"
+                    ust = 'font-weight:800;color:%s;' % UU_COLOR.get(uu.upper(), "#5b6b8c") if r["uu"] else ""
+                    cells.append('<td class="ctr" style="%s">%s</td>' % (ust, uu))
                 cells.append('<td class="ctr">%s</td>' % markup(r["pic"] or "—"))
                 cells.append('<td class="ctr">%s</td>' % (r["deadline"] or "—"))
                 cells.append('<td class="ctr">%s</td>' % (r["status"] or "—"))
                 tr_list.append("            <tr>" + "".join(cells) + "</tr>")
             i += span
         trs = "\n".join(tr_list)
-        thead = '          <thead><tr><th style="width:13%">Hạng mục</th><th style="width:40%">Task cụ thể</th><th style="width:15%">PIC</th><th style="width:13%">Deadline</th><th>Tiến độ</th></tr></thead>\n'
+        # Nhãn cột việc: mặc định "Task cụ thể" (chuẩn tuần 23/07); deck kỳ tháng/quý
+        # có thể đổi bằng `col_task` trong slide yaml (Vincent chỉnh bản T7+Q1 04/08).
+        col_task = slide.get("col_task") or "Task cụ thể"
+        if has_uu:
+            thead = ('          <thead><tr><th style="width:13%%">Hạng mục</th><th style="width:36%%">%s</th><th style="width:8%%">Ưu tiên</th><th style="width:13%%">PIC</th><th style="width:11%%">Deadline</th><th>Tiến độ</th></tr></thead>\n' % col_task)
+        else:
+            thead = ('          <thead><tr><th style="width:13%%">Hạng mục</th><th style="width:40%%">%s</th><th style="width:15%%">PIC</th><th style="width:13%%">Deadline</th><th>Tiến độ</th></tr></thead>\n' % col_task)
     else:
         trs = "\n".join('            <tr><td class="name">%s</td><td class="ctr">%s</td></tr>'
                         % (markup(r["task"]), r["status"] or "—") for r in norm)
@@ -776,9 +827,75 @@ def render_next_week(slide, meta, ctx):
     return content_slide(slide, meta, ctx, body)
 
 
+def render_image(slide, meta, ctx):
+    """Slide evidence ảnh (feedback Vincent 24/07): 1-2 ảnh base64 nhúng thẳng + bullets tùy chọn.
+    YAML: image: <path> hoặc images: [{src, label}, …] — path tương đối từ project root."""
+    imgs = slide.get("images")
+    if not imgs and slide.get("image"):
+        imgs = [{"src": slide["image"], "label": slide.get("label", "")}]
+    if not imgs:
+        die("slide image thiếu «image» hoặc «images»")
+    figs = []
+    maxh = int(slide.get("img_maxh", 560 if slide.get("bullets") else 660))
+    for im in imgs:
+        src = im["src"] if isinstance(im, dict) else im
+        label = (im.get("label", "") if isinstance(im, dict) else "")
+        if not os.path.exists(src):
+            die("không tìm thấy ảnh: %s" % src)
+        ext = os.path.splitext(src)[1].lower().lstrip(".")
+        mime = {"jpg": "jpeg", "jpeg": "jpeg", "png": "png", "webp": "webp"}.get(ext)
+        if not mime:
+            die("định dạng ảnh không hỗ trợ: %s" % src)
+        with open(src, "rb") as f:
+            b64 = base64.b64encode(f.read()).decode("ascii")
+        cap = ('<figcaption style="margin-top:8px;font-family:var(--mono);font-size:16px;color:var(--mut);text-align:center;">%s</figcaption>' % markup(label)) if label else ""
+        figs.append(
+            '          <figure style="flex:1;min-width:0;margin:0;display:flex;flex-direction:column;align-items:center;">'
+            '<img src="data:image/%s;base64,%s" style="max-width:100%%;max-height:%dpx;object-fit:contain;'
+            'border:1px solid var(--border);border-radius:12px;background:#fff;'
+            'box-shadow:0 18px 44px -24px rgba(11,18,38,.22);"/>%s</figure>' % (mime, b64, maxh, cap)
+        )
+    body = '    <div class="content">\n'
+    if slide.get("bullets"):
+        body += '      <div class="nx">\n' + bullets_html(slide["bullets"], slide.get("bullets_style", "")) + "\n      </div>\n"
+    body += ('      <div style="display:flex;gap:26px;align-items:flex-start;justify-content:center;margin-top:18px;">\n'
+             + "\n".join(figs) + "\n      </div>\n    </div>\n")
+    return content_slide(slide, meta, ctx, body)
+
+
 def render_support(slide, meta, ctx):
+    rows = slide.get("rows") or []
+    # Format blocker mở rộng (feedback Vincent 24/07, mẫu hình đính kèm): Blocker | Ngày chờ |
+    # Chặn KPI nào | Chi phí trì hoãn | Người quyết (CRV) | Hạn phản hồi — cho khách thấy
+    # việc pending ảnh hưởng gì và cần đẩy nhanh ra sao.
+    if any(isinstance(r, dict) and r.get("blocker") for r in rows):
+        td = 'style="vertical-align:top;text-align:left;padding:14px 16px;"'
+        tdc = 'style="vertical-align:top;text-align:center;padding:14px 10px;"'
+        trs = []
+        for r in rows:
+            trs.append(
+                "            <tr>"
+                '<td %s><b>%s</b></td>' % (td, markup(r.get("blocker", "")))
+                + "<td %s>%s</td>" % (tdc, markup(r.get("cho", "") or "—"))
+                + "<td %s>%s</td>" % (td, markup(r.get("chan_kpi", "") or "—"))
+                + "<td %s>%s</td>" % (td, markup(r.get("chi_phi", "") or "—"))
+                + "<td %s>%s</td>" % (tdc, markup(r.get("nguoi_quyet", "") or "—"))
+                + '<td %s><b>%s</b></td>' % (tdc, markup(r.get("han", "") or "—"))
+                + "</tr>")
+        body = ('    <div class="content">\n'
+                + '      <div class="tbl-wrap">\n'
+                + '        <table class="data compact" style="table-layout:fixed;width:100%;">\n'
+                + '          <thead><tr><th style="width:16%">Blocker</th><th style="width:8%">Ngày chờ</th>'
+                + '<th style="width:24%">Chặn KPI nào</th><th style="width:31%">Chi phí trì hoãn</th>'
+                + '<th style="width:11%">Người quyết (CRV)</th><th>Hạn phản hồi</th></tr></thead>\n'
+                + "          <tbody>\n" + "\n".join(trs) + "\n          </tbody>\n"
+                + "        </table>\n      </div>\n")
+        if slide.get("note"):
+            body += '      <div class="support-note">%s</div>\n' % markup(slide["note"])
+        body += "    </div>\n"
+        return content_slide(slide, meta, ctx, body)
     trs = []
-    for r in slide.get("rows") or []:
+    for r in rows:
         label = r.get("scope") if isinstance(r, dict) else r
         desc = (r.get("description") if isinstance(r, dict) else "") or "&nbsp;"
         trs.append('            <tr><td class="name">%s</td><td class="desc">%s</td></tr>' % (markup(label), desc))
@@ -830,6 +947,142 @@ def render_thanks(slide, meta, ctx):
             + "%PAGENO%\n</section>")
 
 
+def _fmt_val(v, fmt):
+    if v is None:
+        return "—"
+    if fmt in ("pct1", "pct2"):
+        s = ("%%.%df" % (1 if fmt == "pct1" else 2)) % v
+        return s.replace(".", ",") + "%"
+    n = int(round(v))
+    return "{:,}".format(n).replace(",", ".")
+
+
+def render_chart(slide, meta, ctx):
+    """Biểu đồ xu hướng bằng SVG nội tuyến — không dùng thư viện ngoài vì deck phải tự
+    chứa (mọi request ra ngoài đều bị chặn khi mở file offline).
+
+    YAML:
+      chart:
+        kind: bar | line
+        categories: [T5/2026, T6/2026, T7/2026]
+        series: [{name: Thực tế, values: [...], color: "#…"}, …]
+        fmt: int | pct1 | pct2
+    """
+    ch = slide.get("chart") or die("slide chart thiếu khối «chart»")
+    cats = ch.get("categories") or die("chart thiếu «categories»")
+    series = ch.get("series") or die("chart thiếu «series»")
+    kind = ch.get("kind", "bar")
+    fmt = ch.get("fmt", "int")
+
+    W, H = 1000, 400
+    ML, MR, MT, MB = 96, 26, 26, 66
+    pw, ph = W - ML - MR, H - MT - MB
+    vals = [v for s in series for v in s["values"] if v is not None]
+    vmax = max(vals) * 1.16 if vals else 1
+    vmin = 0.0
+    if kind == "line" and vals:                      # đường: co trục cho thấy rõ biến thiên
+        lo, hi = min(vals), max(vals)
+        pad = (hi - lo) * 0.45 or hi * 0.1 or 1
+        vmin, vmax = max(0, lo - pad), hi + pad
+
+    # Bo trục về mốc chẵn. Chia đều biên thô cho ra nhãn kiểu «6.702.814» — đúng về toán
+    # nhưng đọc rất xấu trên slide gửi khách; làm tròn bước lên mốc 1/2/2,5/5 ×10ⁿ.
+    def nice_step(raw):
+        if raw <= 0:
+            return 1
+        import math as _m
+        mag = 10 ** _m.floor(_m.log10(raw))
+        for m in (1, 2, 2.5, 5, 10):
+            if raw <= m * mag:
+                return m * mag
+        return 10 * mag
+
+    # Trục tự động ép vmin về bội của step → luôn tụt về 0 khi dữ liệu nằm cao (vd 4 đường
+    # trong khoảng 20-65 vẫn vẽ trục 0-100), làm các đường bị nén và nhãn cuối chồng nhau.
+    # Cho phép khai ymin/ymax/ygrid để tự đặt trục khi biết rõ vùng giá trị.
+    ngrid = int(ch.get("ygrid", 5))
+    if ch.get("ymin") is not None and ch.get("ymax") is not None:
+        vmin, vmax = float(ch["ymin"]), float(ch["ymax"])
+        step = (vmax - vmin) / (ngrid - 1)
+    else:
+        step = nice_step((vmax - vmin) / 4.0)
+        vmin = step * int(vmin / step) if vmin else 0.0
+        while vmin + step * 4 < max(vals or [0]):
+            step = nice_step(step * 1.01)
+        vmax = vmin + step * 4
+        ngrid = 5
+    span = (vmax - vmin) or 1
+
+    def Y(v):
+        return MT + ph - (v - vmin) / span * ph
+
+    p = ['<svg viewBox="0 0 %d %d" style="width:100%%;height:auto;max-height:430px;" '
+         'role="img" aria-label="%s">' % (W, H, markup(ch.get("alt", "biểu đồ xu hướng")))]
+    for k in range(ngrid):                           # lưới ngang + nhãn trục
+        gv = vmin + step * k
+        y = Y(gv)
+        p.append('<line x1="%d" y1="%.1f" x2="%d" y2="%.1f" stroke="var(--border)" '
+                 'stroke-width="1" opacity=".55"/>' % (ML, y, W - MR, y))
+        p.append('<text x="%d" y="%.1f" text-anchor="end" font-size="15" fill="var(--mut)" '
+                 'font-family="var(--mono)">%s</text>' % (ML - 12, y + 5, _fmt_val(gv, fmt)))
+
+    gw = pw / len(cats)
+    for i, c in enumerate(cats):                     # nhãn trục ngang
+        p.append('<text x="%.1f" y="%d" text-anchor="middle" font-size="17" fill="var(--ink)" '
+                 'font-weight="600">%s</text>' % (ML + gw * (i + .5), MT + ph + 32, markup(str(c))))
+
+    # labels: all (mặc định) | last (chỉ điểm cuối — cho chart nhiều kỳ/nhiều đường) | none
+    labels = ch.get("labels", "all")
+    if kind == "line":
+        for s in series:
+            col = s.get("color", "#1f4fd8")
+            pts = [(ML + gw * (i + .5), Y(v)) for i, v in enumerate(s["values"]) if v is not None]
+            p.append('<polyline fill="none" stroke="%s" stroke-width="3.5" stroke-linejoin="round" '
+                     'points="%s"/>' % (col, " ".join("%.1f,%.1f" % xy for xy in pts)))
+            vlist = [v for v in s["values"] if v is not None]
+            for j, ((x, y), v) in enumerate(zip(pts, vlist)):
+                p.append('<circle cx="%.1f" cy="%.1f" r="%d" fill="%s"/>'
+                         % (x, y, 6 if labels == "all" else 5, col))
+                if labels == "none" or (labels == "last" and j < len(vlist) - 1):
+                    continue
+                p.append('<text x="%.1f" y="%.1f" text-anchor="middle" font-size="16" '
+                         'font-weight="700" fill="%s" font-family="var(--mono)">%s</text>'
+                         % (x, y - 16, col, _fmt_val(v, fmt)))
+    else:
+        n = len(series)
+        bw = gw * .68 / n
+        for si, s in enumerate(series):
+            col = s.get("color", "#1f4fd8")
+            for i, v in enumerate(s["values"]):
+                if v is None:
+                    continue
+                x = ML + gw * i + gw * .16 + bw * si
+                y = Y(v)
+                p.append('<rect x="%.1f" y="%.1f" width="%.1f" height="%.1f" rx="4" fill="%s"/>'
+                         % (x, y, bw - 5, MT + ph - y, col))
+                p.append('<text x="%.1f" y="%.1f" text-anchor="middle" font-size="15" '
+                         'font-weight="700" fill="var(--ink)" font-family="var(--mono)">%s</text>'
+                         % (x + (bw - 5) / 2, y - 9, _fmt_val(v, fmt)))
+    p.append('<line x1="%d" y1="%.1f" x2="%d" y2="%.1f" stroke="var(--ink)" stroke-width="1.5"/>'
+             % (ML, MT + ph, W - MR, MT + ph))
+    p.append("</svg>")
+
+    legend = "".join(
+        '<span style="display:inline-flex;align-items:center;gap:9px;margin-right:26px;">'
+        '<span style="width:16px;height:16px;border-radius:4px;background:%s;display:inline-block;"></span>'
+        '<span style="font-size:17px;color:var(--ink);">%s</span></span>'
+        % (s.get("color", "#1f4fd8"), markup(s["name"])) for s in series)
+
+    body = ('    <div class="content">\n'
+            '      <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">%s</div>\n'
+            '      <div style="width:100%%;">%s</div>\n' % (legend, "".join(p)))
+    if slide.get("note"):
+        body += ('      <div style="margin-top:14px;font-size:18px;line-height:1.55;color:var(--ink);">%s</div>\n'
+                 % markup(slide["note"]))
+    body += "    </div>\n"
+    return content_slide(slide, meta, ctx, body)
+
+
 def render_manual(slide, meta, ctx):
     html = slide.get("html") or die("slide manual thiếu «html»")
     if "%PAGENO%" not in html:
@@ -847,6 +1100,11 @@ def content_slide(slide, meta, ctx, body):
     if slide.get("sub"):
         idx = ('<span class="idx">%s</span> ' % slide["idx"]) if slide.get("idx") else ""
         parts.append('    <div class="slide-sub">%s%s</div>' % (idx, markup(slide["sub"])))
+    if slide.get("scope"):
+        parts.append('    <div class="scope-chip" style="display:inline-block;margin:2px 0 12px;padding:7px 14px;'
+                     'border:1px solid var(--border);border-radius:999px;background:rgba(210,31,60,.06);'
+                     'font-size:15px;line-height:1.45;color:var(--ink);max-width:100%;">'
+                     '⚠ %s</div>' % markup(slide["scope"]))
     parts.append(body.rstrip("\n"))
     parts.append("  </div>")
     parts.append(brandbar(meta).rstrip("\n"))
@@ -870,6 +1128,8 @@ RENDERERS = {
     "sow": render_sow,
     "next_week": render_next_week,
     "support": render_support,
+    "image": render_image,
+    "chart": render_chart,
     "qna": render_qna,
     "thanks": render_thanks,
     "manual": render_manual,
@@ -884,7 +1144,17 @@ def main():
     ap.add_argument("--out", required=True)
     ap.add_argument("--logo-client", help="PNG logo client (khi skeleton còn placeholder)")
     ap.add_argument("--logo-gtv", help="PNG logo GTV (khi skeleton còn placeholder)")
+    ap.add_argument("--sources", help="YAML registry nguồn dữ liệu (token [[key]] trong text)")
     args = ap.parse_args()
+
+    if args.sources:
+        with io.open(args.sources, encoding="utf-8") as f:
+            sdoc = yaml.safe_load(f) or {}
+        for k, v in (sdoc.get("sources") or {}).items():
+            if not v.get("url"):
+                continue
+            SOURCES[k] = v
+        print("  sources: nạp %d nguồn từ %s" % (len(SOURCES), args.sources))
 
     with io.open(args.content, encoding="utf-8") as f:
         doc = yaml.safe_load(f)
@@ -960,6 +1230,22 @@ def main():
     for i, slide in enumerate(slides):
         if slide.get("type") not in NO_DATA_META and 'class="data-meta"' not in final_slides[i]:
             fails.append("slide %d thiếu .data-meta trong HTML render" % (i + 1))
+    # gate hồi quy 03/08: cell JSON in nguyên văn + markdown ** không render — đã lọt ra deck v1
+    for needle, label in (('{"t":', "cell JSON thô '{\"t\":' chưa được render"),
+                          ("{&quot;t&quot;:", "cell JSON thô (đã escape) chưa được render"),
+                          ("**", "markdown '**' chưa thành <b>")):
+        for i, sh in enumerate(final_slides):
+            if needle in sh:
+                pos = sh.find(needle)
+                fails.append("slide %d: %s (…%s…)" % (i + 1, label, sh[max(0, pos - 20):pos + 30].replace("\n", " ")))
+                break  # 1 ví dụ mỗi loại là đủ để fail
+    # gate 04/08: token nguồn [[key]] không tra được registry → link chết trên deck client
+    if MISSING_SRC:
+        fails.append("token nguồn không có trong registry --sources: %s"
+                     % ", ".join(sorted(set(MISSING_SRC))))
+    if "[[" in out_html:
+        pos = out_html.find("[[")
+        fails.append("còn token '[[' chưa resolve (…%s…)" % out_html[pos:pos + 40])
     if fails:
         for e in fails:
             sys.stderr.write("FAIL validate: %s\n" % e)
@@ -976,7 +1262,7 @@ def main():
     print("  slides: %d/%d · page-no 1/%d…%d/%d · edit_key=%s" % (n, len(slides), n, n, n, meta.get("edit_key", "deck-edit")))
     print("  types: " + ", ".join("%s×%d" % (k, v) for k, v in sorted(types.items())))
     print("  size: %.1f KB" % (len(out_html.encode('utf-8')) / 1024.0))
-    print("  validate: PASS (đủ slide, không còn {{, data-meta đủ, slide 1 active)")
+    print("  validate: PASS (đủ slide, không còn {{, data-meta đủ, slide 1 active, không cell JSON thô / '**' sót)")
 
 
 if __name__ == "__main__":

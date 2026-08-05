@@ -166,3 +166,11 @@ Luật ghi:
 - Review chéo GPT Codex (đề bài mục 4 RECAP-HANDOFF) trả 4 findings CẦN-SỬA; 2 thuộc master: deck hướng dẫn trỏ path checklist tuần chỉ đúng cho gói CareerViet (master phải trỏ _TEMPLATES/weekly-report-slides/) + câu «Đọc BAN-GIAO-TEAM.md» chưa ghi rõ là file của gói CareerViet. Đã vá cả 2 trong deck (rebuild 18 slide, QA PNG slide 3 + 16 sạch).
 - _TEMPLATES/weekly-report-slides/WEEKLY-DATA-CHECKLIST.md mục «AI tự lo»: bỏ «export PDF» → «tự chụp từng slide soi lỗi trình bày» (khớp luật HTML-only 23/07).
 - Files touched: GTV_SEO-Production_huong-dan-cai-dat_v1.html, _TEMPLATES/weekly-report-slides/WEEKLY-DATA-CHECKLIST.md, MIGRATION.md, log.md
+
+## [2026-08-05] refactor | v2026.08.1 — promote hệ báo cáo KỲ (tháng/quý) + OKRs quý lên master — @claude
+- `skills/gtv-weekly-report/` 14 → 24 file: +8 script kỳ (fetch_period_data · period_analyze · bang1_parser · reconcile_totals · okrs_score · url_yoy_forensics · build_pptx · build_source_links) + 2 references (period-report-format · scripts-map) + SKILL.md/build_deck.py/export-pdf.sh bản mới. Nguồn: instance CareerViet (chạy thật W11-W13 + kỳ T7/Quý 1), đã kiểm tính client-neutral qua instance Minh Tuấn Mobile (e-commerce).
+- `skills/gtv-project-okrs/` MỚI (3 file) — đối chiếu OKRs sheet team vs bản .md canonical, 6 lăng kính review, script chỉ đọc sheet. Master 32 → 33 skill.
+- Neutral hóa khi promote: rename `joblisting_yoy_forensics.py` → `url_yoy_forensics.py` (+ cross-ref SKILL.md/scripts-map/period-report-format/docstring); `okrs_score.py` lấy tên client từ config; `build_pptx.py` header "Người quyết (khách)"; `okrs_sheet_diff.py` bỏ default CRV-shaped → `--range-key`/`--workbook` required.
+- `_TEMPLATES/weekly-report-slides/`: +PERIOD-DATA-CHECKLIST.md, +RUNBOOK-bao-cao-ky.md, WEEKLY-DATA-CHECKLIST.md thêm §5 «Kích hoạt hệ» (9 việc setup 1 lần). `_TEMPLATES/BAN-GIAO-TEAM.md` MỚI (template cấp root, client-neutral). `_TEMPLATES/README.md` cập nhật index.
+- MIGRATION.md: mục v2026.08.1 + bảng 2.A thêm nhóm `tools/`.
+- Files touched: skills/gtv-weekly-report/** (24), skills/gtv-project-okrs/** (3), _TEMPLATES/{BAN-GIAO-TEAM.md,README.md,weekly-report-slides/{PERIOD-DATA-CHECKLIST.md,RUNBOOK-bao-cao-ky.md,WEEKLY-DATA-CHECKLIST.md}}, MIGRATION.md, log.md, .claude/skills/** + .agents/skills/** (regen)

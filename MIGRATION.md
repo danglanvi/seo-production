@@ -16,6 +16,19 @@ master_version: v2026.07.1
 
 ## 1. Có gì mới
 
+### v2026.08.1 (2026-08-05) — Hệ báo cáo KỲ (tháng/quý) + OKRs quý lên master
+
+Nguồn: hạ tầng chín ở instance CareerViet (07-08/2026), chạy thật qua báo cáo tuần W11-W13 + kỳ T7/Quý 1, rồi port sang instance Minh Tuấn Mobile (e-commerce) để kiểm tính client-neutral. Nay promote về master.
+
+- **`skills/gtv-weekly-report/` 14 → 24 file.** Thêm 8 script: `fetch_period_data.py` (kéo số kỳ tháng/quý) · `period_analyze.py` (URL-level + độ phủ so BẢNG 1) · `bang1_parser.py` + `reconcile_totals.py` (2 trong 3 cổng kiểm số trước khi viết chữ) · `okrs_score.py` (chấm điểm OKRs khép quý) · `url_yoy_forensics.py` (truy nguyên URL sụt sâu so cùng kỳ — 4 nhóm A/B/C/D) · `build_pptx.py` (YAML → PowerPoint native: text box/bảng/chart/hyperlink thật) · `build_source_links.py` (registry link nguồn, resolve `gid` qua API, build FAIL nếu còn token `[[key]]` chưa resolve). Thêm 2 references: `period-report-format.md` (spec deck kỳ 8 section + 4 luật + 3 cổng) · `scripts-map.md` (bảng 15 script). `SKILL.md` + `build_deck.py` + `export-pdf.sh` lên bản mới.
+- **`skills/gtv-project-okrs/` (MỚI, 3 file).** Giải bài "OKRs sống ở hai nơi" (Google Sheet team vs bản `.md` canonical trong instance): quy trình 5 bước, `references/okrs-review-lenses.md` (6 lăng kính review + luật merge KR + format HTML 5 màu), `scripts/okrs_sheet_diff.py` (chỉ ĐỌC sheet, không bao giờ ghi ngược). Master: 32 → **33 skill**.
+- **Neutral hóa khi promote:** `joblisting_yoy_forensics.py` → **`url_yoy_forensics.py`** (cơ chế vốn generic theo `--source`, tên cũ mang tính lịch sử job site — đã cập nhật cross-ref ở SKILL.md, scripts-map, period-report-format); `okrs_score.py` lấy tên client từ `client_name` trong config thay vì hard-code; `build_pptx.py` header bảng blocker → "Người quyết (khách)"; `okrs_sheet_diff.py` bỏ default `--range-key`/`--workbook` (chuyển **required** — tab OKRs đổi giữa các kỳ và giữa client, bắt khai tường minh).
+- **`_TEMPLATES/weekly-report-slides/` nhận 2 file mới + 1 bổ sung:** `PERIOD-DATA-CHECKLIST.md` (data team phải chuẩn bị cho kỳ tháng/quý — song sinh với checklist tuần) · `RUNBOOK-bao-cao-ky.md` (12 mục: 4 thứ phải có → kéo số → phân tích → 3 cổng kiểm → insights → registry nguồn → dựng deck → QA chống tràn → PowerPoint → spot-check → file-back → back-port khi client sửa tay → sự cố hay gặp) · `WEEKLY-DATA-CHECKLIST.md` thêm **§5 «Kích hoạt hệ»** (bảng 9 việc setup 1 lần cho instance mới: dựng workbook → dán ID → folder Drive → quyền GA4/GSC → chốt scope KPI → verify dry-run).
+- **`_TEMPLATES/BAN-GIAO-TEAM.md` (MỚI, template cấp root).** Trước đây chỉ tồn tại dưới dạng file riêng của gói CareerViet; nay là template client-neutral: chuẩn bị máy, phân biệt email robot vs file chìa khóa, bảng ai-làm-gì (SEO Lead / Executive data / Account / Content), câu lệnh 3 nhịp báo cáo, luật sửa deck. `_TEMPLATES/README.md` cập nhật index.
+- **Bảng GHI ĐÈ (mục 2.A) thêm nhóm `tools/`** — `sync-skills.sh` là infra, instance nhận qua migration.
+
+**Instance nhận bản này cần biết:** `report-config.yaml` của instance phải khai khối `periods:` (cột `cur_col`/`prev_col` **tường minh**, không autodetect) trước khi chạy báo cáo kỳ đầu tiên; chưa có workbook thì làm `WEEKLY-DATA-CHECKLIST.md` §5 trước. Instance đang chạy script cũ tên `joblisting_yoy_forensics.py` → đổi lệnh sang `url_yoy_forensics.py` (CareerViet chưa nhận bản này, còn tên cũ cho tới lần migration kế).
+
 ### v2026.07.6 (2026-07-30) — Gói bàn giao team: tooling standalone + deck hướng dẫn + doc fixes
 
 - **`tools/sync-skills.sh` (MỚI)**: đồng bộ `skills/` → 2 mirror bằng bash thuần cho bản STANDALONE (rsync + parity check; tự loại 2 skill claude-only khỏi `.agents/`). Luật ghi vào `AGENTS.md`: standalone chạy script này; trong workspace Vincent vẫn dùng `tools/sync-agent-skills.rb` root.
@@ -118,6 +131,7 @@ Bản đầu tiên của hệ SEO Production. Không có instance cũ để migr
 | Screenshots infra | `02-raw/screenshots/README.md` (CHỈ README — ảnh là data) |
 | WS infra | `README.md` + **`CLAUDE.md` + `AGENTS.md` (nội quy trạm)** của MỌI workstream folder (`00-client-context/` → `12-feedback-lessons/`) + `03-audits/qc/README.md` |
 | Config | `config/` (`mcp.json.example`) |
+| Tooling | `tools/` (`sync-skills.sh` — dựng lại mirror skill khi chạy standalone) |
 
 ### B. GIỮ (KHÔNG đụng — data + công sức của dự án)
 

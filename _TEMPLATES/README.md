@@ -19,6 +19,12 @@ Mỗi deliverable của 12 workstream có template chuẩn ở đây. Naming khi
 |---|---|
 | `account/` | Bộ mẫu Account: BBNT, email templates, SOW-KPI naming standard, tư vấn hệ thống báo cáo, dashboard demo, 2 file Excel quản lý dự án/danh mục — đọc `account/README.md` |
 | `examples/` | 5 bản điền MẪU (audit findings, báo cáo tháng, gate offpage, meeting note, QC report) — để xem "điền đúng trông thế nào", không dùng làm template |
-| `weekly-report-slides/` | Skeleton deck báo cáo tuần (skin v5 + deck chrome) + WEEKLY-DATA-CHECKLIST — dùng bởi skill `gtv-weekly-report` |
+| `weekly-report-slides/` | Skeleton deck báo cáo tuần (skin v5 + deck chrome) + bộ vận hành hệ báo cáo: `WEEKLY-DATA-CHECKLIST.md` (nhịp tuần, §5 = kích hoạt hệ 1 lần) · `PERIOD-DATA-CHECKLIST.md` (nhịp tháng/quý) · `RUNBOOK-bao-cao-ky.md` (câu lệnh tuần tự kéo số → 3 cổng kiểm → dựng deck → QA) — dùng bởi skill `gtv-weekly-report` |
+
+## Template cấp ROOT (copy ra gốc instance, không vào WS folder)
+
+| Template | Dùng khi |
+|---|---|
+| `BAN-GIAO-TEAM.md` | Bàn giao instance cho team: chuẩn bị máy, chìa khóa robot, câu lệnh chạy báo cáo tuần/tháng/quý, bảng ai-làm-gì. Copy ra root instance rồi thay `{{CLIENT}}` |
 
 Luật nạp 80/20: chỉ mở đúng template cần cho deliverable đang làm (CLAUDE.md §10).

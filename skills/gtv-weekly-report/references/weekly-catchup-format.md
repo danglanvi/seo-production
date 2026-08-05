@@ -20,8 +20,8 @@
 | 3 | Run-rate / KPI snapshot | `runrate` | `digest:runrate_tuan` |
 | 4 | What works — 2-3 điểm sáng, MỖI ĐIỂM KÈM SỐ | `nhanxet_2col` | insights (KPI chính / chất lượng traffic) |
 | 5 | What fails → next solution — mỗi fail: số → nguyên nhân khả dĩ → giải pháp → **người làm + deadline** | `diagnose` | insights (rubric chẩn đoán) |
-| 6 | Task done this week | `sow` | sheet «[Mới] Report tuần» section tuần hiện hành |
-| 7 | Task to do next week | `next_week` (rows) | RULE CARRY-OVER (dưới) |
+| 6 | Task done this week | `sow` | tab «4.1 REPORT TUẦN» workbook «5. Báo Cáo Kết Quả» — section tuần hiện hành (FILE CHÍNH từ 23/07/2026; nguồn cũ: sheet «[Mới] Report tuần») |
+| 7 | Task to do next week | `next_week` (rows) | tab «4.1 REPORT TUẦN» section tuần kế + RULE CARRY-OVER (dưới) |
 | 8 | Blockers — need support, kèm SỐ NGÀY CHỜ (aging) | `support` | task Trễ hạn/Tạm ngưng PIC=KH/Dev + tab việc phối hợp |
 | 9 | New initiatives from GTV — slot cố định mỗi tuần | `nhanxet_2col` | OKRs quý (sáng kiến ngoài SOW thường nhật) |
 | 10-11 | Q&A + Thanks | `qna`/`thanks` | cố định |
@@ -32,7 +32,7 @@
 
 `build_deck.py` (render `sow`/`next_week`) nhận rows dạng `{hangmuc, task, pic, deadline, status}` → tự render bảng 5 cột: **Hạng mục** (nhóm việc liên quan, gộp ô rowspan) | **Task cụ thể** | **PIC** (tên người GTV hoặc «CRV»/«Dev CRV» khi việc thuộc khách) | **Deadline** | **Tiến độ**. Row chỉ có `{task, status}` → fallback bảng 2 cột (deck cũ không vỡ).
 
-- Hạng mục lấy đúng cột «Hạng mục» của sheet «[Mới] Report tuần»; xếp các row cùng hạng mục LIỀN NHAU để rowspan gộp được.
+- Hạng mục lấy đúng cột «Hạng mục» của tab «4.1 REPORT TUẦN» (file chính); xếp các row cùng hạng mục LIỀN NHAU để rowspan gộp được.
 - Task text giữ 1 dòng trên slide (≤~70 ký tự) — dài quá thì rút gọn, chi tiết để trong sheet; quá nhiều row thì tách slide (luật chống đè `.data-meta`).
 - Tiến độ dùng đúng vocabulary sheet (Done / Đang làm / Trễ hạn / Tạm ngưng — chips tự đếm) hoặc nhãn plan (Chuyển tiếp / Mới / Điều chỉnh target).
 
@@ -43,7 +43,8 @@ Task chưa done ở timeline OKRs / sheet tuần **TỰ ĐỘNG chuyển sang pl
 1. Lấy mọi task status ≠ Done của tuần hiện hành + task Trễ hạn/Tạm ngưng còn hiệu lực → status **«Chuyển tiếp»**.
 2. Thêm task mới từ action insights + mốc OKR sắp đến hạn → status **«Mới»**; Vincent đổi target thì ghi **«Điều chỉnh target»**.
 3. Mỗi task kèm **PIC in đậm** ngay trong text. Trình Vincent chốt cả danh sách — KHÔNG hỏi từng dòng.
-4. Sau khi chốt: team dán section tuần mới vào sheet «[Mới] Report tuần»; lần render kế AI đổ lại từ sheet (sheet là nguồn chính thức).
+4. Sau khi chốt: team cập nhật section tuần mới vào tab «4.1 REPORT TUẦN» (file chính); lần render kế AI đổ lại từ sheet (sheet là nguồn chính thức).
+5. Tuần nhiều task (>12 row) → tách slide theo owner (GTV thực thi / phối hợp CRV·Dev) thay vì nhồi 1 bảng — giữ luật chống đè `.data-meta`. Ô status trống trên sheet render «—» + chip «Chưa cập nhật status», không tự đoán tiến độ.
 
 ## Format THÁNG — khung 26 slide + lớp tháng
 
@@ -53,6 +54,10 @@ Dùng nguyên khung slide-map đầy đủ (`references/slide-map.md`: movers, i
 2. **Tiến độ OKRs quý**: bảng Objectives/KR + status (Done/Đang làm/Trễ) từ sheet «OKRs Quý» — tháng cuối quý thì kèm chấm điểm KR + danh sách carry-over sang quý mới.
 3. **Run-rate lũy kế** vs kế hoạch năm.
 4. **Pattern 4 tuần**: tổng hợp từ các file insights tuần trong tháng (flags mở/đóng, nhóm giảm liên tiếp, action đã làm → kết quả).
+
+## Thuật ngữ client (Vincent chốt 24/07/2026)
+
+- Chỉ số ứng tuyển hiển thị trên MỌI slide là **«Applythanks»** (tên metric client-agreed — trang apply-thanks GA4), KHÔNG ghi «Apply» trần: card run-rate «APPLYTHANKS», header bảng «Applythanks Thực tế/KPI tuần/Prior Year», text nhận xét «Δ Applythanks». `build_deck.py` đã đổi header + tự map nhãn «Apply CV» từ sheet → «APPLYTHANKS»; content.yaml các tuần sau viết thẳng «Applythanks».
 
 ## Luật output (cả 2 format)
 

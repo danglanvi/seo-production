@@ -40,3 +40,19 @@
 
 - Sửa số liệu trên sheet SAU 08:03 thứ Năm → nhắn «chạy lại báo cáo tuần N» (script re-fetch ghi đè folder tuần đó).
 - Muốn tuần khác: «làm báo cáo tuần N».
+
+## 5. KÍCH HOẠT HỆ — làm MỘT LẦN trước tuần báo cáo đầu tiên
+
+> Instance mới chưa có workbook thì hệ chưa chạy được. Bảng này là việc setup 1 lần; xong thì xóa banner "chưa kích hoạt" ở đầu file.
+
+| ☐ | Việc | Ai | Ghi kết quả vào |
+|---|---|---|---|
+| ☐ | Thiết kế + duyệt format tab/cột workbook với team data (họp 30') — viết ra `09-reporting/<CLIENT>_workbook-schema_v1.md`, chốt thì khóa tên tab | SEO Lead + team data | File schema, `status: stable` |
+| ☐ | Dựng bộ workbook cố định của dự án (kế hoạch tổng · báo cáo kết quả · data phân tích) theo schema | Team data | Dán ID vào `spreadsheets.*.id` trong `report-config.yaml` |
+| ☐ | Tạo folder Drive cố định cho báo cáo tuần + share Viewer 1 lần cho service account | SEO Lead | `report_tuan.drive_folder_id` |
+| ☐ | Dựng template «Report Tuần {N}» tuần đầu đủ tab → chốt tên tab nguyên văn | Team data | Sửa `report_tuan.ranges` khớp nguyên văn |
+| ☐ | Điền tên tab URL-level vào `pv_movers` | SEO Lead | `report-config.yaml` |
+| ☐ | Xin khách cấp quyền **GA4 + GSC** (Viewer) cho service account | Account | `ga4_property_id` + `gsc_site` |
+| ☐ | Chốt **scope KPI** (danh sách URL/pattern thuộc KPI cam kết) với khách — mốc setup baseline | SEO Lead + khách | Tab scope trong workbook + `page_groups` |
+| ☐ | Verify: `fetch_weekly_data.py --dry-run` → fetch thật 1 tuần có ground truth → so số tay → `build_source_links.py --check` → sinh `data-sources.yaml` | AI + SEO Lead | `RUNBOOK-bao-cao-ky.md` §0 |
+| ☐ | Báo AI ghi `log.md` op `setup` «kích hoạt hệ báo cáo tuần» | SEO Lead | `log.md` |

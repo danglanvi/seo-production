@@ -54,6 +54,14 @@ kpi_targets:                   # mục tiêu NĂM theo sheet vận hành client-
 page_groups:                   # nhóm trang + cờ thuộc cụm KPI (render kpi-row trong deck)
   - {name: "<nhóm>", kpi: true|false}
 
+source_links:                  # link mở thẳng tab nguồn cho khối .data-meta của deck
+  # ── tab Google Sheets: khai workbook + tab, script tự lấy gid qua Sheets API ──
+  <key>: {workbook: <key trong spreadsheets>, tab: "<tên tab NGUYÊN VĂN>", label: "<chữ hiện trên slide>"}
+  # ── nguồn ngoài Sheets (Looker, dashboard…) khai url thẳng ──
+  <key>: {url: "https://…", label: "<chữ hiện trên slide>"}
+  # ── nguồn CHƯA có link: khai `can:` mô tả thứ còn thiếu, script in ra danh sách đi hỏi ──
+  <key>: {label: "<tên nguồn>", can: "<còn thiếu gì>"}
+
 output:
   weekly_dir: "09-reporting/weekly"
   analysis_dir: "09-reporting/analysis"
@@ -68,6 +76,19 @@ output:
 3. Share các workbook (kể cả workbook "Report Tuần" mỗi tuần) cho service account — email trong file credentials.
 4. Chạy `fetch_weekly_data.py --dry-run` xem tuần resolve đúng chưa → chạy thật 1 tuần cũ có ground truth để đối chiếu.
 5. Ghi log op `setup`.
+
+## Registry link nguồn (`source_links:` → `data-sources.yaml`)
+
+```bash
+python3 skills/gtv-weekly-report/scripts/build_source_links.py \
+    --config 09-reporting/report-config.yaml --out 09-reporting/data-sources.yaml   # [--check]
+```
+
+- **gid KHÔNG khai tay trong config.** Script gọi `spreadsheets.get` (1 call/workbook, chỉ metadata) lấy `sheetId` thật. Lý do: gid đổi khi team nhân bản workbook theo kỳ — sinh lại registry rẻ hơn sửa link trên mấy chục slide.
+- Tên tab chép **nguyên văn** kể cả space thừa cuối / dấu chấm cuối; script tự thử bản `.strip()` nếu không khớp.
+- `data-sources.yaml` là file **sinh tự động** — không sửa tay. Sửa `source_links:` rồi chạy lại.
+- Dùng trong `content.yaml`: token `[[key]]` hoặc `[[key|nhãn riêng]]`; truyền `--sources` cho `build_deck.py` và `build_pptx.py`. Token không tra được → **build FAIL**.
+- `--check` chỉ đối chiếu (exit≠0 nếu tab không tồn tại) — dùng để kiểm quyền share sau khi team tạo workbook kỳ mới.
 
 ## Lưu ý quota & bảo mật
 

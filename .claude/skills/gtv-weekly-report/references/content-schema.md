@@ -56,6 +56,12 @@ Slide KHÔNG cần `data_meta`: `cover, agenda, qna, thanks, support, manual`.
 | `{neg}−54,000{/neg}` | `<span class="down">` (đỏ) |
 | `{flat}0{/flat}` | `<span class="flat">` (xám) |
 | `{i}…{/i}` hoặc `<i>…</i>` | in nghiêng — HTML thô được pass-through |
+| `[nhãn](https://…)` | link mở tab mới (`<a class="src-link">`) |
+| `[[key]]` · `[[key\|nhãn riêng]]` | **link nguồn tra từ registry** — key khai ở `source_links:` trong `report-config.yaml`, registry sinh bằng `build_source_links.py`, truyền vào builder bằng `--sources`. Không tra được → **build FAIL** (không im lặng in ra chữ trần) |
+
+Mini-markup chạy ở MỌI chỗ có chữ: `sub`, `data_meta`, bullets, action, note, **và mọi ô bảng** (không riêng cột `name`).
+
+**Vì sao dùng `[[key]]` thay vì dán thẳng URL:** gid của tab đổi khi team nhân bản workbook theo kỳ. Sinh lại registry một lần rẻ hơn sửa link trên 48 slide.
 
 ## Các type slide
 
@@ -155,6 +161,7 @@ chung 1 box, mỗi ý 1 `<li>` (luật #13); action không có ①②③ sẵn t
     - {task: "…", status: Done}          # Done / Đang làm / Trễ hạn / Tạm ngưng / "" (→ «—»)
   # HOẶC data: "digest:sow:Tuần 2/7 - ( 13/7 - 19/7 )"  (tên task NGUYÊN VĂN sheet — thường xấu, ưu tiên rows)
   # chips tự đếm từ status; muốn ghi đè: chips: [{n, cls: done|doing|notyet|late|paused, label}]
+  # col_task: "Công việc"     # đổi nhãn cột việc (mặc định «Task cụ thể» — chuẩn tuần 23/07)
 ```
 
 ### `next_week` — khung dashed (hoặc bảng nếu có rows như sow)
@@ -187,6 +194,10 @@ table:
   style: "font-size:17px;"      # optional
   wrap_style: "padding:6px 10px;"
   headers: ["Nhóm", "Số URL", "PV tuần này", "PV tuần trước", "Δ PV", "%"]
+  # header cũng nhận dạng dict để ép độ rộng cột (cả HTML lẫn PPTX đều tôn trọng):
+  #   headers: [{label: "Workbook", style: "width:25%"}, {label: "Tab"}, "Slide"]
+  # dòng chia nhóm gộp hết chiều ngang:
+  #   rows: [..., {class: divider, divider: "▼ NHÓM CHƯA XỬ LÝ"}, ...]  (divider-neg = nền đỏ)
   col_kinds: [name, ctr, num, num, delta, delta]
   rows:
     - ["Job Listing", "Có", "537,447", "528,444", "+9,003", "+1.70%"]        # list trần

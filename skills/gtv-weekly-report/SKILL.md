@@ -1,21 +1,23 @@
 ---
 name: gtv-weekly-report
-description: "Báo cáo tuần SEO client-facing dạng slide (AI-driven, config per client): kéo data từ các workbook Google Sheets client-agreed bằng script batchGet (80/20 — không nạp data lớn vào context), lọc top page bị ảnh hưởng, viết NHẬN XÉT + action theo rubric, phân tích PATTERN từ insights tích lũy các tuần trước, dựng deck HTML 1920×1080 theo template chuẩn frontend-slides rồi export PDF. Use when: (1) 'làm báo cáo tuần [client]', 'weekly report W[n]', 'chạy báo cáo tuần CareerViet'; (2) cron thứ Năm chạy bản DRAFT tuần vừa khép; (3) 'phân tích tuần này có pattern gì' trên data weekly đã fetch. KHÔNG dùng cho: báo cáo THÁNG/QUÝ/NGHIỆM THU render KPI cam kết (→ gtv-client-report + kpi-commitments.md stable), sync brief nội bộ Account↔Lead (→ acc-weekly-sync), điều tra nguyên nhân SEO sâu khi số bất thường (→ skill seo-*; skill này chỉ nhận xét + đề xuất hướng). 🔒 GTV-only, cần config 09-reporting/report-config.yaml trong instance."
+description: "Báo cáo tuần SEO client-facing dạng slide (AI-driven, config per client): kéo data từ các workbook Google Sheets client-agreed bằng script batchGet (80/20 — không nạp data lớn vào context), lọc top page bị ảnh hưởng, viết NHẬN XÉT + action theo rubric, phân tích PATTERN từ insights tích lũy các tuần trước, dựng deck HTML 1920×1080 tự chứa theo template chuẩn frontend-slides (kèm bản PowerPoint gốc khi client cần tự sửa, và link mở thẳng tab nguồn trên mỗi slide). Chạy được cả ba nhịp: TUẦN ~11 slide · THÁNG ~26 slide · QUÝ ~45-50 slide (deck kép tháng + tổng kết quý, kèm chấm điểm OKRs). Use when: (1) 'làm báo cáo tuần [client]', 'weekly report W[n]', 'chạy báo cáo tuần CareerViet'; (2) 'làm báo cáo tháng/quý [client]', 'tổng kết quý [n] dự án'; (3) cron thứ Năm chạy bản DRAFT tuần vừa khép; (4) 'phân tích tuần này có pattern gì' trên data weekly đã fetch. KHÔNG dùng cho: báo cáo NGHIỆM THU tuyên bố % đạt KPI cam kết (→ gtv-client-report trên kpi-commitments.md đã stable — skill này render số theo sheet vận hành, không phán đạt/không đạt), sync brief nội bộ Account↔Lead (→ acc-weekly-sync), điều tra nguyên nhân SEO sâu khi số bất thường (→ skill seo-*; skill này chỉ nhận xét + đề xuất hướng). 🔒 GTV-only, cần config 09-reporting/report-config.yaml trong instance."
 ---
 
 # gtv-weekly-report — Báo cáo tuần SEO client-facing (slide)
 
 Báo cáo TUẦN = **báo cáo vận hành**: render số từ workbook Google Sheets **client-agreed** (nguồn ghi rõ trên từng slide). Nó KHÔNG phải báo cáo nghiệm thu — không tuyên "đạt/không đạt KPI cam kết"; việc đó thuộc `gtv-client-report` (tháng/quý) trên `00-client-context/kpi-commitments.md` đã `stable`.
 
-## Hai format deck — TUẦN vs THÁNG (Vincent chốt 23/07/2026)
+## Ba format deck — TUẦN · THÁNG · QUÝ
 
-| | TUẦN — weekly catchup | THÁNG — deep dive |
-|---|---|---|
-| Mục đích | Họp catchup ~15 phút theo agenda client | Review sâu khi khép tháng + đối chiếu OKRs quý |
-| Độ dài | ~11 slide LEAN (run-rate/KPI → what works → what fails+solution → task done → task next → blockers aging → new initiatives from GTV) | ~26 slide đầy đủ (slide-map: movers, intent, ngành, blog groups, apply…) + lớp tháng: MoM, tiến độ OKRs quý, run-rate lũy kế, pattern 4 tuần |
-| Nhịp build | Hằng tuần — pipeline FETCH/ANALYZE giữ nguyên 100%, chỉ content.yaml là bản lean | Ngày 2–4 tháng kế, khi data tháng khép |
+| | TUẦN — weekly catchup | THÁNG — deep dive | QUÝ — deck kép |
+|---|---|---|---|
+| Mục đích | Họp catchup ~15 phút theo agenda client | Review sâu khi khép tháng + đối chiếu OKRs quý | Tổng kết kỳ + nền để chốt OKRs kỳ kế |
+| Độ dài | **~11 slide LEAN** (run-rate/KPI → what works → what fails+solution → task done → task next → blockers aging → new initiatives from GTV) | **~26 slide** (slide-map: movers, intent, ngành, blog groups, apply…) + lớp tháng: MoM, tiến độ OKRs quý, run-rate lũy kế, pattern 4 tuần | **~45–50 slide** — 8 section, mỗi section chạy lớp THÁNG rồi lớp QUÝ so cùng kỳ, + phụ lục (đối chiếu nguồn, những gì đã sửa, **nguồn dữ liệu + link**) |
+| Nhịp build | Hằng tuần — pipeline FETCH/ANALYZE giữ nguyên 100%, chỉ content.yaml là bản lean | Ngày 2–4 tháng kế, khi data tháng khép | Ngày 2–5 tháng kế của tháng khép quý |
 
-Map slide chi tiết + rule build từng format: `references/weekly-catchup-format.md` (nạp ở Pha 0 để chọn format và Pha 3 để render).
+Map slide + luật từng format: `references/weekly-catchup-format.md` (TUẦN + THÁNG) · `references/period-report-format.md` (THÁNG + QUÝ — luật hai lớp, forensics, nền so sánh, quy công). Nạp ở Pha 0 để chọn format và Pha 3 để render.
+
+**Quý dự án ≠ quý dương lịch** — tính theo tháng dự án (CareerViet: T1 = 05/2026 → Quý 1 khép 31/07/2026). Ghi rõ dải ngày trên cover + mọi `data_meta`.
 
 **Rule carry-over (Vincent 23/07/2026):** task chưa done ở timeline OKRs/sheet tuần TỰ ĐỘNG chuyển sang plan tuần kế với status «Chuyển tiếp», trừ khi Vincent điều chỉnh/feedback. Slide «Task to do next week»: carry-over trước, task mới (action insights + mốc OKR) sau, mỗi task kèm PIC in đậm — trình Vincent chốt cả danh sách, không hỏi từng dòng.
 
@@ -33,13 +35,22 @@ Map slide chi tiết + rule build từng format: `references/weekly-catchup-form
 
 ### Pha 0 — RESOLVE
 1. Đọc config + nội quy trạm `09-reporting/CLAUDE.md` (mục Chế độ TUẦN) + `00-client-context/kpi-commitments.md` (chỉ để biết ranh giới cam kết — KHÔNG render bảng nghiệm thu).
-2. Tuần báo cáo N = tuần vừa **KHÉP** theo `week_anchor` (mặc định của script). Muốn tuần khác: `--week N`.
+2. Chọn nhịp:
+   - **TUẦN** — tuần báo cáo N = tuần vừa **KHÉP** theo `week_anchor` (mặc định của script). Muốn tuần khác: `--week N`.
+   - **THÁNG / QUÝ** — kỳ phải có trong khối `periods:` của config (`--period 2026-07` / `2026-Q1`). Nạp thêm `references/period-report-format.md`. Kỳ quý = **deck kép** tháng + quý; kiểm lại dải ngày quý dự án trước khi viết chữ.
+3. Kỳ THÁNG/QUÝ chạy theo `09-reporting/RUNBOOK-bao-cao-ky.md` (câu lệnh tuần tự) — checklist data phía team ở `09-reporting/PERIOD-DATA-CHECKLIST.md`.
 
 ### Pha 1 — FETCH (script, không đốt context)
 ```bash
+# nhịp TUẦN
 python3 skills/gtv-weekly-report/scripts/fetch_weekly_data.py \
   --config 09-reporting/report-config.yaml [--week N] [--report-id <id>]
+
+# nhịp THÁNG / QUÝ (khối periods: trong config)
+python3 skills/gtv-weekly-report/scripts/fetch_period_data.py \
+  --config 09-reporting/report-config.yaml --period 2026-07
 ```
+Bảng đầy đủ 15 script (fetch · analyze · kiểm · render), input/output từng cái: `references/scripts-map.md`.
 - 1 `values.batchGet`/workbook (quota Sheets 60 reads/phút — KHÔNG gọi lẻ từng range qua MCP).
 - Output: `02-raw/seo-data/weekly/<YYYY>-W<NN>/` (CSV thô + `digest.json` + `digest.md`).
 - Workbook "Report Tuần {N}" tự tìm qua Drive search; không thấy → hỏi URL rồi chạy lại với `--report-id` (tìm được ID mới → append vào `known_ids` trong config).
@@ -52,6 +63,19 @@ python3 skills/gtv-weekly-report/scripts/fetch_weekly_data.py \
   Range trong config chỉ lấy ~80 dòng đầu tab pivot nên cộng nhóm sẽ THIẾU — script tải NGUYÊN tab rồi aggregate local; đối chiếu Grand Total với pivot Intent trên sheet trước khi render.
 - **Nhóm chủ đề Blog (slide 3. Blog):** chạy `python3 scripts/blog_groups.py` trên weekdir (offline — đọc CSV pivot «Đánh giá Blog» + `data_phan_tich__blog_urllevel.csv` đã fetch) → `<weekdir>/blog_groups.json` (Clicks nguyên văn pivot, Pos dẫn xuất trọng số Imp — luật #15). Đây là input bắt buộc cho slide `blog_groups` của builder.
 - Log op `ingest` (data mới vào 02-raw).
+
+### Pha 2b — ANALYZE kỳ THÁNG/QUÝ (thêm, không thay Pha 2)
+
+```bash
+python3 .../period_analyze.py --config … --period 2026-07 --source jl --save-csv   # mover + rollup + độ phủ
+python3 .../url_yoy_forensics.py --config … --period 2026-Q1 --source jl    # nhóm giảm sâu (kỳ quý)
+python3 .../okrs_score.py --config … --period 2026-Q1 --md <đường dẫn>             # chấm OKRs kỳ khép
+```
+
+**BA CỔNG KIỂM chạy TRƯỚC khi viết chữ** — không có ngoại lệ:
+`bang1_parser.py` (tự tính lại Δ/% từ 2 cột gốc, đối chiếu ô công thức sheet) · `reconcile_totals.py` (các nguồn cùng nói về tổng kỳ lệch nhau bao nhiêu, vì sao) · validator trong `build_deck.py` (tự chạy ở Pha 3).
+
+Luật riêng khi viết nhận xét kỳ: hai lớp (tháng + quý) · forensics cho nhóm giảm sâu · **đối chiếu định nghĩa event giữa hai năm trước mọi số YoY** · chỉ quy công cho hạng mục đã thực sự live. Chi tiết `references/period-report-format.md` §3.
 
 ### Pha 2 — ANALYZE (Claude — chỉ đọc digest + insights cũ)
 1. Đọc `digest.json` (KHÔNG đọc CSV trừ khi cần soi 1 bảng cụ thể; TUYỆT ĐỐI không đọc tab URL-level qua MCP).
@@ -70,6 +94,8 @@ python3 skills/gtv-weekly-report/scripts/fetch_weekly_data.py \
    CHỈ sửa HTML tay khi builder chưa cover loại slide → dùng `type: manual` + ghi feedback để nâng builder (không sửa trực tiếp file build ra).
 2a. **Skin chuẩn = frontend-slides (bản v5 W11 — Vincent chốt 23/07)**: `deck-skeleton.html` mang skin này (Bricolage Grotesque/IBM Plex Mono/Fraunces, cover gradient #0693E3→#9900EF). Bản giao diện cũ giữ ở `deck-skeleton-classic.html` — chỉ dùng khi được yêu cầu.
 2b. **Edit-mode**: skeleton đã có INLINE EDIT + DECK CHROME (ES5) — builder thay `EDIT_KEY` bằng `meta.edit_key` trong yaml; mỗi deck tuần đặt key riêng (vd `crv-w12-v1`) để không đè bản sửa của nhau.
+2c. **Link nguồn trên slide (từ 04/08/2026):** khai `source_links:` trong `report-config.yaml` → chạy `build_source_links.py` → dùng token `[[key]]` / `[[key|nhãn]]` trong `data_meta` và ô bảng → truyền `--sources 09-reporting/data-sources.yaml` cho builder. Build FAIL nếu còn token không tra được. Deck kỳ THÁNG/QUÝ **bắt buộc có slide phụ lục «Nguồn dữ liệu»** (bảng workbook × tab-link × slide + khối nguồn chưa có link).
+2d. **Bản PowerPoint** (chỉ khi client cần tự sửa): `build_pptx.py --content <yaml> --out <pptx> --base . --sources 09-reporting/data-sources.yaml` — text box/bảng/chart/hyperlink đều là đối tượng PowerPoint thật. Không thay cho bản HTML: HTML vẫn là bản giao chính thức.
 3. Phần cần HÌNH thay vì bảng — **thang capture** (dừng ở bậc đầu tiên chạy được):
    a. **Looker Studio** (nếu config có `looker.url` — link-view): `npx playwright screenshot --viewport-size=1920,1080 --wait-for-timeout=20000 "<url>" <out.png>` (per-page: dán URL `/page/<id>` nếu có). Widget không render (ô mờ) → bậc dưới.
    b. **Sheet range literal**: `python3 scripts/capture_sheet_range.py --config … --workbook <key> --tab "<tab>" --range A1:N30 --out <png>`.
@@ -99,3 +125,13 @@ python3 skills/gtv-weekly-report/scripts/fetch_weekly_data.py \
 - `references/slide-map.md` — LUẬT nội dung slide (thứ tự, luật trình bày, luật bảng) — nạp ở Pha 3 khi viết content.yaml.
 - `references/content-schema.md` — schema `content.yaml` + data-ref syntax + checklist 6 bước mỗi tuần (nạp ở Pha 3).
 - `references/analysis-rubric.md` — chuẩn NHẬN XÉT + lớp PATTERN (nạp ở Pha 2).
+- `references/period-report-format.md` — khung 8 section + 4 luật riêng của deck kỳ THÁNG/QUÝ + back-port khi client sửa thẳng HTML (nạp ở Pha 0 và Pha 3 của nhịp kỳ).
+- `references/scripts-map.md` — 15 script: dùng cái nào lúc nào, input/output, thứ tự chạy một kỳ (nạp khi chọn script hoặc bàn giao người mới).
+
+## File vận hành trong instance (không thuộc skill, nhưng phải biết)
+
+| File | Dùng khi |
+|---|---|
+| `09-reporting/RUNBOOK-bao-cao-ky.md` | Chạy lại báo cáo tháng/quý từ đầu — câu lệnh tuần tự + QA + file-back |
+| `09-reporting/PERIOD-DATA-CHECKLIST.md` | Nhắc team chuẩn bị data kỳ (song sinh với `WEEKLY-DATA-CHECKLIST.md`) |
+| `09-reporting/data-sources.yaml` | Registry link nguồn — **sinh tự động**, sửa ở `source_links:` trong config rồi chạy lại script |
