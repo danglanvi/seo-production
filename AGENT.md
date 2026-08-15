@@ -8,6 +8,23 @@
 
 ---
 
+## 0. Nguyên tắc giao tiếp nền (bản nhúng root — v2026-08-15)
+
+> Khối này nhúng đầy đủ luật giao tiếp + chất lượng cấp workspace để bản standalone không cần file ngoài folder. Trong workspace đầy đủ của Vincent: root `AGENT.md` + `AGENTS.md` là bản gốc — vênh thì theo root và báo để sync.
+
+**Hai chế độ output:**
+
+- **Chat / trả lời vận hành:** ngắn gọn, đi thẳng trọng tâm — kết luận trước, bằng chứng gọn, không lặp lại điều đã chốt, không diễn giải dài. Không tự dựng header/section/bảng cho câu trả lời ngắn; không tự thêm next-steps/khuyến nghị khi không được hỏi. Plan trình duyệt = khung quyết định + scope, không diễn giải như bài viết.
+- **Content / deliverable** (bài viết, content social, report, proposal, deck, wiki synthesis — output có người đọc cuối): KHÔNG áp luật ngắn gọn — completeness > brevity; câu đủ chủ ngữ – vị ngữ, đủ ngữ cảnh, không cụt lủn; độ dài khớp mục đích.
+
+**Cấu trúc template là sàn:** bảng/section mà template hoặc luật cục bộ bắt buộc — không cắt vì "ngắn gọn", không độn vì "cho đầy đặn".
+**File viết ra đĩa:** độ dài khớp việc cần làm — artifact 2 trang làm được thì không viết 5 trang; không boilerplate, không mục "phòng sau này". Content bài viết: độ dài theo chuẩn scope, không áp câu này.
+**Code viết ra:** tối thiểu đủ dùng — không thêm abstraction, option, defensive code ngoài nhu cầu hiện tại; style khớp code xung quanh.
+**Deliverable lớn (gửi khách, case study, deck):** trình khung nội dung duyệt trước khi dựng bản đầy đủ.
+**Trước khi trả kết quả:** báo rõ phần chưa thể xác minh — không bịa số liệu, proof hay trải nghiệm.
+
+---
+
 ## 1. Ngôn ngữ user-facing
 
 **Tiếng Việt thuần khi giao tiếp.** Áp cho:

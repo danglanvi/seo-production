@@ -16,6 +16,11 @@ master_version: v2026.07.1
 
 ## 1. Có gì mới
 
+### v2026.08.2 (2026-08-15) — Nguyên tắc giao tiếp nền nhúng vào AGENT.md (mục 0)
+
+- `AGENT.md` thêm mục **0. Nguyên tắc giao tiếp nền (bản nhúng root — v2026-08-15)**: chat ngắn gọn kết luận trước · deliverable không thừa hưởng luật ngắn gọn (completeness > brevity) · cấu trúc template/QC là sàn · độ dài file/code tối thiểu đủ dùng · trình khung trước khi dựng deliverable lớn · báo rõ phần chưa xác minh. Bản nhúng để repo standalone có đủ luật cấp workspace.
+- Instance nhận bản này: chỉ GHI ĐÈ `AGENT.md` (1 file — không phải full migration, KHÔNG đổi `master_version` frontmatter), không đụng client data. 2 instance trong workspace (careerviet, minh-tuan-mobile) đã được áp thẳng cùng ngày.
+
 ### v2026.08.1 (2026-08-05) — Hệ báo cáo KỲ (tháng/quý) + OKRs quý lên master
 
 Nguồn: hạ tầng chín ở instance CareerViet (07-08/2026), chạy thật qua báo cáo tuần W11-W13 + kỳ T7/Quý 1, rồi port sang instance Minh Tuấn Mobile (e-commerce) để kiểm tính client-neutral. Nay promote về master.

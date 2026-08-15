@@ -174,3 +174,8 @@ Luật ghi:
 - `_TEMPLATES/weekly-report-slides/`: +PERIOD-DATA-CHECKLIST.md, +RUNBOOK-bao-cao-ky.md, WEEKLY-DATA-CHECKLIST.md thêm §5 «Kích hoạt hệ» (9 việc setup 1 lần). `_TEMPLATES/BAN-GIAO-TEAM.md` MỚI (template cấp root, client-neutral). `_TEMPLATES/README.md` cập nhật index.
 - MIGRATION.md: mục v2026.08.1 + bảng 2.A thêm nhóm `tools/`.
 - Files touched: skills/gtv-weekly-report/** (24), skills/gtv-project-okrs/** (3), _TEMPLATES/{BAN-GIAO-TEAM.md,README.md,weekly-report-slides/{PERIOD-DATA-CHECKLIST.md,RUNBOOK-bao-cao-ky.md,WEEKLY-DATA-CHECKLIST.md}}, MIGRATION.md, log.md, .claude/skills/** + .agents/skills/** (regen)
+
+## [2026-08-15] refactor | v2026.08.2 — Nguyên tắc giao tiếp nền nhúng vào AGENT.md (mục 0) — @claude
+- AGENT.md thêm mục 0 bản nhúng luật giao tiếp + chất lượng cấp workspace (chat ngắn gọn / deliverable completeness > brevity) để repo standalone tự chứa.
+- Áp thẳng cùng file cho 2 instance careerviet + minh-tuan-mobile (1 file, không đổi master_version).
+- Files touched: AGENT.md, MIGRATION.md, log.md
