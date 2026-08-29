@@ -5,8 +5,10 @@
 .claude/.env
 
 # ===== Cấu hình máy cá nhân =====
+# Sinh bởi _SETUP/setup_credential.py — credential riêng của từng máy, không bao giờ commit.
 .claude/settings.local.json
 .mcp.json
+config/local.yaml
 
 # ===== OS noise =====
 .DS_Store

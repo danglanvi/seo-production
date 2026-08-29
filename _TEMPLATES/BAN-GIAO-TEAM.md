@@ -27,23 +27,33 @@ Lệnh chuẩn per trạm: `COMMANDS.md`. Luật từng trạm: `CLAUDE.md` tron
 
 ## 2. Chuẩn bị máy (làm 1 lần)
 
+**Cách nhanh nhất:** mở folder này bằng Claude Code rồi nói *"cài đặt giúp tôi repo này"*. AI đọc
+`_SETUP/SETUP-MAY.md` và dẫn bạn đi hết, kể cả phần tạo chìa khóa Google.
+
+Muốn tự làm tay thì đây là 4 thứ cần:
+
 | # | Cần | Cách có |
 |---|---|---|
 | 1 | Mac + **Claude Code** | Cài từ https://claude.com/claude-code — đăng nhập tài khoản được cấp |
-| 2 | **Python 3** + thư viện Google | `pip3 install google-api-python-client google-auth pyyaml python-pptx pillow` |
+| 2 | **Python 3** + thư viện | `python3 -m pip install -r requirements.txt` |
 | 3 | **Node + Playwright** (tự soi lỗi slide) | `npx playwright install chromium` (lần đầu tự tải) |
-| 4 | **File chìa khóa robot** `claude-sheets-credentials.json` | Nhận riêng từ Vincent/SEO Lead (KHÔNG có trong folder — bảo mật). Đặt đúng chỗ: `~/.config/gcp/claude-sheets-credentials.json` |
+| 4 | **Chìa khóa robot của riêng bạn** | `_SETUP/HUONG-DAN-GOOGLE-CREDENTIAL.md` → xong chạy `python3 _SETUP/setup_credential.py register <file>.json` |
 
-Robot đọc Sheets qua email service account của agency — workbook nào robot cần đọc thì share **Viewer** cho email đó (địa chỉ ghi trong `09-reporting/report-config.yaml`).
+Khám lại bất cứ lúc nào: `python3 _SETUP/setup_doctor.py` — nó chỉ đúng chỗ còn thiếu và lệnh sửa.
 
 **Email robot ≠ file chìa khóa:**
 - **Email robot** = «địa chỉ» của robot. Dùng để SHARE sheet/folder. Không phải bí mật.
-- **File chìa khóa** `.json` = chứng minh máy này đúng là robot đó. File bí mật: giao tay qua kênh riêng (AirDrop/USB/password manager — KHÔNG gửi email, KHÔNG bỏ vào Drive share chung, KHÔNG commit vào folder), mỗi máy giữ 1 bản ở `~/.config/gcp/`.
-- Playwright KHÔNG có sẵn trong Claude Code — chưa cài thì AI vẫn dựng được deck HTML nhưng không tự soi lỗi từng slide được.
+- **File chìa khóa** `.json` = chứng minh máy này đúng là robot đó. File bí mật: KHÔNG gửi email,
+  KHÔNG bỏ vào Drive share chung, KHÔNG commit vào folder. Mỗi máy giữ 1 bản ở `~/.config/gcp/`.
+- **Mỗi người một robot riêng.** Bạn tự tạo trong Google Cloud của mình, rồi xin Lead share các file
+  Drive cho địa chỉ robot đó (`python3 _SETUP/setup_credential.py share` in sẵn danh sách + đoạn tin
+  nhắn để copy). Nghỉ việc thì xóa đúng robot của mình, không ảnh hưởng ai.
+- Quyền share: xin **Editor** làm mặc định — `_SETUP/CHIA-QUYEN-DRIVE.md` giải thích vì sao và nêu
+  các ngoại lệ cố ý để Viewer.
+- Playwright KHÔNG có sẵn trong Claude Code — chưa cài thì AI vẫn dựng được deck HTML nhưng không tự
+  soi lỗi từng slide được.
 
 **Dùng GPT Codex / Antigravity (tùy chọn):** mở folder này trong Codex hoặc Antigravity thì `AGENTS.md` tự dẫn toàn bộ luật — làm được phân tích, audit, plan, QC. **Giới hạn:** không chạy được báo cáo tuần/tháng (2 skill `gtv-weekly-report`, `gtv-client-report` chỉ có trên Claude Code); chỉ làm draft thủ công theo template và ghi rõ giới hạn, không gửi khách.
-
-**Cách tạo chìa khóa RIÊNG cho mỗi máy team (khuyến nghị):** console.cloud.google.com → IAM & Admin → Service Accounts → chọn service account của agency → tab **Keys** → Add key → Create new key → JSON. Key mới vẫn là CÙNG robot (không phải share lại sheet nào); nhân sự nghỉ thì xóa đúng key của máy đó, máy khác không ảnh hưởng.
 
 ## 3. Chạy báo cáo tuần — 1 câu lệnh (sau khi kích hoạt hệ)
 

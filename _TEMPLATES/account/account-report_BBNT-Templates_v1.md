@@ -36,7 +36,7 @@ Mã số thuế: [MST]
 
 Và:
 BÊN B     : CÔNG TY TNHH THƯƠNG MẠI DỊCH VỤ GTV SEO
-Địa chỉ   : Số 91 Đường số 6, Khu dân cư CityLand Park Hills, Phường Gò Vấp, TP. HCM
+Địa chỉ   : Số 128 Đường số 7, Khu dân cư Cityland Center Hills, Phường Hạnh Thông, TP. HCM
 Mã số thuế: 0314135897
 Đại diện  : Ông ĐỖ ANH VIỆT        Chức vụ: Giám Đốc
 
@@ -154,7 +154,7 @@ Biên bản lập thành hai (02) bản có giá trị như nhau, mỗi Bên gi�
 
 ```
 CÔNG TY TNHH THƯƠNG MẠI DỊCH VỤ GTV SEO
-Địa chỉ: Số 91 Đường số 6, Khu dân cư CityLand Park Hills, Phường Gò Vấp, TP.HCM
+Địa chỉ: Số 128 Đường số 7, Khu dân cư Cityland Center Hills, Phường Hạnh Thông, TP.HCM
 Mã số thuế: 0314135897
 
                     PHIẾU ĐỀ NGHỊ THANH TOÁN

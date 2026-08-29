@@ -1,0 +1,13 @@
+# Thư viện Python cho skills/ của SEO Production (và mọi instance PROJECTS/<client>/).
+# Cài:  python3 -m pip install -r requirements.txt   (hoặc: python3 _SETUP/setup_doctor.py --fix)
+#
+# Ngoài Python còn 2 thứ tùy chọn cho hệ báo cáo:
+#   Node + Playwright — tự soi lỗi từng slide, xuất PDF:  npm install playwright && npx playwright install chromium
+#   uv/uvx            — chạy MCP ga4 / gsc / google-sheets:  brew install uv
+# Thiếu cả hai vẫn dựng được deck HTML, skill sẽ ghi rõ giới hạn dữ liệu.
+
+google-api-python-client>=2.100,<3   # kéo data workbook: fetch_weekly_data, bang1_parser, okrs_sheet_diff...
+google-auth>=2.23,<3                 # xác thực bằng service account
+PyYAML>=6.0,<7                       # report-config.yaml và toàn bộ config skill
+python-pptx>=0.6.23,<2               # build_pptx.py — xuất bản PowerPoint khi khách cần tự sửa
+Pillow>=10.0,<12                     # xử lý ảnh capture sheet, ảnh chèn deck

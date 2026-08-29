@@ -24,6 +24,7 @@ master_version: v2026.07.1
 - CLAUDE.md root: §5.2 hàng WS06 · §5.4 · §11 (+ interface kit). Trạm 06: README + CLAUDE.md.
 - File chỉ ở master (không cần port sang instance đang chạy): `06-onpage-internal-link/WP-PUBLISH-KIT_upgrade-spec_v1.md` (spec nâng cấp gửi team kit).
 - Instance nhận qua nhóm A GHI ĐÈ như thường lệ (root luật + knowledge pack + skills + WS infra). Instance muốn đăng WP: clone kit theo docs của kit + tạo Google Sheet đăng bài từ template kit.
+- **Cùng đợt (28/08 — setup máy standalone):** `_SETUP/` MỚI (SETUP-MAY.md · setup_doctor.py · setup_credential.py · HUONG-DAN-GOOGLE-CREDENTIAL.md · CHIA-QUYEN-DRIVE.md · sync-skills.sh) + mục BOOTSTRAP đầu `CLAUDE.md` + `requirements.txt` + skill `setup-may` + helper `_cred.py` cho script sheet (credential per-user qua `config/local.yaml`, đã gitignore) + đổi tên công đoạn GEO theo G0-G5 trong §5.1/§5.2. Nhóm A GHI ĐÈ thêm `_SETUP/` + `requirements.txt`.
 
 ### v2026.08.2 (2026-08-15) — Nguyên tắc giao tiếp nền nhúng vào AGENT.md (mục 0)
 

@@ -23,6 +23,7 @@ Chỉ ĐỌC metadata sheet (spreadsheets.get, fields=sheets.properties) — 1 c
 import argparse
 import io
 import os
+import _cred  # resolver credential dùng chung
 import sys
 
 try:
@@ -44,9 +45,7 @@ def load_tabs(cfg, wb_keys):
     from google.oauth2 import service_account
     from googleapiclient.discovery import build
 
-    cred = os.path.expanduser(cfg["credentials"])
-    if not os.path.exists(cred):
-        die("không thấy credentials: %s" % cred)
+    cred = _cred.path(cfg)
     creds = service_account.Credentials.from_service_account_file(
         cred, scopes=["https://www.googleapis.com/auth/spreadsheets.readonly"])
     svc = build("sheets", "v4", credentials=creds, cache_discovery=False)

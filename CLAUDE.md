@@ -8,6 +8,18 @@
 >
 > **Tự chứa.** Mọi luật, checklist, template, skill cần để chạy dự án đều nằm TRONG folder này. Interface ra ngoài workspace (§11) chỉ áp dụng khi chạy trong workspace Vincent; bản clone standalone bỏ qua, không lỗi.
 
+## BOOTSTRAP — máy chưa cài xong thì làm việc này TRƯỚC
+
+Người dùng vừa clone repo, hỏi "cần cài gì để chạy được", hoặc gặp lỗi thiếu thư viện / thiếu
+credential Google / 403 khi đọc sheet → **dừng việc đang làm, đọc `_SETUP/SETUP-MAY.md` và làm theo**.
+
+- Chẩn đoán bằng `python3 _SETUP/setup_doctor.py --json` — không đoán máy thiếu gì.
+- Sửa từ tầng thấp lên: A nền → B thư viện → C chìa khóa → D quyền Drive.
+- Credential là service account **của riêng từng người**; repo không giữ credential của ai. Không tạo
+  hộ người dùng, không nhận file key qua chat.
+
+Chỉ bắt đầu việc nội dung khi doctor trả `ok: true`.
+
 ---
 
 ## §0. Execution Rule
@@ -178,22 +190,22 @@ Luật cứng folder:
 | 10 | Topical Map + outer ước tính → SCN | 05 |
 | 11 | Cấu trúc site + wireframe UX/UI (≤15 ngày đầu T2) | 04 |
 | 12 | Kick-off dự án với khách hàng | 10 |
-| 13 | Entity onsite/offsite + Content Entity (cuối T1 → ≤15ng T3) | 06 |
-| 14 | GEO: baseline + Technical (T1→T3) | 08 |
+| 13 | Entity onsite/offsite + Content Entity + GEO G2 source-of-truth (cuối T1 → ≤15ng T3) — gate G-ENT | 06 |
+| 14 | GEO G0 Readiness & Baseline + G1 Retrieval hygiene (T1→T3) — gate G-T1 | 08 |
 | 15 | Content URL SEO (T2 → hết T3) | 05 |
 | 16 | Content Core Section 50-60% → 100% | 05 |
 | 17 | Plan traffic FULL + Content Strategy (T3 → giữa T4) | 05 |
 | 18 | Internal link semantic | 06 |
 | 19 | Content non-URL SEO (T4 → hết T7) | 05 |
 | 20 | Backlink nền + guest post phantom (T4-T5) | 07 |
-| 21 | GEO: FS & AIO đợt 1 + llm.txt + consensus | 08 |
+| 21 | GEO G3 audit đợt 1 (T4-T5) + G4 off-site consensus (T4→T7) | 08 |
 | 22 | ◇ Initial ranking như kỳ vọng? (decision, T4-T6) | 03 |
 | 23 | Điều chỉnh content & onpage | 06 |
-| 24 | T6 · Audit định kỳ + OKRs Q3 + đo AI visibility | 03 + 01 |
+| 24 | T6 · Audit định kỳ + OKRs Q3 + GEO G5 đo giữa kỳ | 03 + 01 |
 | 25 | ◇ Gate Offpage — đẩy mạnh link? (decision → Lưu đồ B) | 07 |
 | 26 | Backlink đẩy mạnh + textlink PR (đỉnh T6-T7) | 07 |
-| 27 | Logfile + FULL audit toàn diện (T7) | 03 |
-| 28 | GEO: FS & AIO đợt 2 + research fan-out | 08 |
+| 27 | Logfile + FULL audit toàn diện (T7) + GEO G1 verify crawler access | 03 |
+| 28 | GEO G3 audit đợt 2 + research fan-out theo cluster (T7→T8) | 08 |
 | 29 | Giữa T8-T9: audit & tactic nâng cao | 03 |
 | — | Traffic users ⚠ (optional, T8→T9, CHỈ khi SEO Director duyệt — không đánh số) | — |
 | 30 | ◇ Đạt KPI cam kết? (decision, OKRs T9) | 09 |
@@ -212,7 +224,7 @@ Luật cứng folder:
 | Content plan | 05-content-plan | 4, 9, 10, 15, 16, 17, 19 | topical-map-creation, competitor-seo-gap-analysis, keyword-topic-url-mapping (4), serp-clustering (DATA layer clustering), traffic-plan (9, 17), programmatic-seo-builder (tùy dự án — Content Leader duyệt template) | sop/01-topical-map.md (DoD 15) + sop/02-content-brief.md + tier-1 outline/writing (QC bài) + foundation-content-nganh.md (công đoạn 3, P0 trước bài đầu) + quality-content-ai.md / common-ai-errors.md (vận hành AI) | Topical map chốt + SCN; plan traffic ≥ cam kết +20%; ma trận content đủ % mốc |
 | Onpage & IL | 06-onpage-internal-link | 7(execute), 13, 18, 23 + khâu đăng/sửa bài WordPress (15/16/19 phần publish) | seo-onpage, internal-linking, schema-markup-generator, image-seo-optimize + `wp-publish-workflow-kit` (repo ngoài — §11) | sop/08-onpage-checklist.md (P0→/23→/31→/39) + sop/03-internal-linking.md + sop/04-entity-optimization.md + tier-1-entity.md (gate T1/T3) + checklist-entity-onsite-web.md (deep onsite) + tier-1-social-google-stack.md + **sop/11-publish-wp.md** (khi đăng/sửa bài WP) | Batch onpage pass /23 (tier theo kick-off); IL plan thực thi, orphan=0; bài đăng có verify kép WP+Sheet |
 | Offpage | 07-offpage | 20, 25◇, 26 | backlink-research, backlink-plan, textlink-analyzer | sop/10-offpage-process.md (SOP toàn diện) + DoD gate-offpage-decision + backlink-campaign template + tier-1-offpage-backlink.md (per batch, P0 7) + tier-1-traffic-users.md (⚠ Director duyệt) | Gate có verdict; campaign đúng velocity/anchor plan |
-| GEO | 08-geo-ai-visibility | 14, 21, 28 | geo-tracking-prompt-selection, geo-content-optimization | AX1-AX5 (trong sop/08) + DoD geo-baseline + tier-1-geo.md (P0 5, guardrail llms.txt/schema ≠ lever) | Baseline đo được; đợt FS/AIO có danh sách query + kết quả cite |
+| GEO | 08-geo-ai-visibility | 13(G2), 14(G0+G1), 21(G3 đợt 1+G4), 24(G5 giữa kỳ), 27(G1 verify), 28(G3 đợt 2), 32/33(G5 báo cáo+handover) | geo-tracking-prompt-selection, geo-content-optimization | **AX1-AX6** (trong sop/08) + DoD geo-baseline + **tier-1-geo.md v2.0 (GE-01…GE-37, 4 bộ chấm theo nhịp, 4 gate)** + guideline 6 điểm chạm `sop/09-project-timeline/lop-geo-v2.md` | Gate G-T1 có verdict (chưa rank = dừng lớp GEO); Readiness scorecard Tối thiểu/Chuẩn hoá ghi vào proposal; gate G-ENT pass trước khi mở đợt G3; mỗi bài qua G-BÀI; mọi deliverable qua G-KH |
 | Reporting | 09-reporting | 30◇, 32 | gtv-client-report (⚠ chỉ Claude Code), expert-case-study | DoD bao-cao-thang + _TEMPLATES/account/ | Báo cáo gửi đúng hạn; T cuối: báo cáo kép + BBNT |
 | Client mgmt | 10-client-management | 12, 31 | gtv-client-report, acc-kickoff-setup (12), acc-weekly-sync (nhịp tuần) | DoD kick-off template + monthly-project-review.md (Lead tự check TRƯỚC khi trình review tháng, P0 7) | Kick-off done; meeting note có action items + owner |
 | Handover | 11-handover-maintenance | 33 | site-migration-checklist (nếu có migration) | sop/09-timeline/khung-duy-tri.md + handover-checklist | Checklist bàn giao ký nhận, lịch duy trì quý chốt |
@@ -236,6 +248,8 @@ Phần **VIẾT BÀI** của công đoạn 13, 15, 16, 19 chạy ở fork `Conte
 
 Không viết prose bài content trong folder này. Không copy bài từ fork về đây — chỉ link.
 
+**Khâu ĐĂNG LÊN WEBSITE thuộc WS06 (bạn SEO), KHÔNG thuộc fork content** (chốt 2026-08-29): fork trả bài dạng Google Doc; link Doc đính vào Google Sheet đăng bài; bạn SEO gate pre-publish rồi đăng qua `wp-publish-workflow-kit` theo `02-raw/knowledge/sop/11-publish-wp.md`. Dự án bạn SEO kiêm content có thể viết + đăng thẳng (flow B của SOP 11) — vẫn qua đủ gate content, không bỏ gate vì gộp vai.
+
 ---
 
 ## §6. Index & Log Update Rule
@@ -248,8 +262,6 @@ Cập nhật sau MỖI thao tác (§2):
 - **Bảng D** — deliverable registry: `path | WS | công đoạn | ngày | status | QC report`. Mỗi deliverable mới tạo phải có dòng ở đây.
 
 **Status flow:** `todo → in-progress → qc → done`. Ba trạng thái phụ:
-**Khâu ĐĂNG LÊN WEBSITE thuộc WS06 (bạn SEO), KHÔNG thuộc fork content** (chốt 2026-08-29): fork trả bài dạng Google Doc; link Doc đính vào Google Sheet đăng bài; bạn SEO gate pre-publish rồi đăng qua `wp-publish-workflow-kit` theo `02-raw/knowledge/sop/11-publish-wp.md`. Dự án bạn SEO kiêm content có thể viết + đăng thẳng (flow B của SOP 11) — vẫn qua đủ gate content, không bỏ gate vì gộp vai.
-
 
 | Status | Nghĩa |
 |---|---|
@@ -418,6 +430,7 @@ Nạp đúng thứ cần, đúng lúc cần. Context là tài nguyên — không
 | `Content Production - <client>/` | Content pipeline — viết bài công đoạn 13/15/16/19. Nhận plan từ `05-content-plan/`, trả bài + QC verdict về tracking bên này | Fork tồn tại cạnh instance (tạo ở `SETUP.md` bước 7) |
 | `GTV Ops/` | Client meta (`wiki/entities/clients/<slug>.md`) lúc setup + bookkeeping link chéo + vòng 3 self-improving | CHỈ khi chạy trong workspace Vincent |
 | `Deliverables/` | Kho legacy tham khảo mẫu cũ. Deliverable dự án mới sống TRONG instance — không trả về đây | CHỈ khi chạy trong workspace Vincent |
+| `wp-publish-workflow-kit` (repo GitHub riêng: `github.com/LongDZ1204/wp-publish-workflow-kit`) | Executor đăng/sửa bài WordPress cho WS06 (NEW draft + AUDIT update, approval hash, verify kép). Luật vận hành GTV chạy trên kit: `02-raw/knowledge/sop/11-publish-wp.md` — **không chạy bước strong-to-b** (policy `<strong>`) | Clone riêng theo docs của kit — dùng được cả standalone (repo public); KHÔNG vendor code kit vào master |
 
 **Luật standalone:** bản clone của team chỉ có folder này — các interface trên không tồn tại. Gặp reference tới chúng → **bỏ qua, không lỗi, không hỏi lại**; thiếu data thì hỏi thẳng người vận hành (vd setup client standalone → hỏi thông tin client thay vì tìm GTV Ops).
 
@@ -430,7 +443,6 @@ Nạp đúng thứ cần, đúng lúc cần. Context là tài nguyên — không
 | Tạo instance client mới | `SETUP.md` | Protocol "setup client <tên>" 9 bước: duplicate → drop raw → fill context + index → chọn gói 8/10/12 tháng → advisory routing → bật Tier 2 → fork content → bookkeeping → verify |
 | Git + đồng bộ | `SYNC.md` | Tạo repo, quy ước commit, đồng bộ master ↔ instance |
 | Nhận bản master mới | `MIGRATION.md` | Mô hình 2 bước (đè master → Claude port sang instance) + bảng GHI ĐÈ / GIỮ + mục "Có gì mới" theo version |
-| `wp-publish-workflow-kit` (repo GitHub riêng: `github.com/LongDZ1204/wp-publish-workflow-kit`) | Executor đăng/sửa bài WordPress cho WS06 (NEW draft + AUDIT update, approval hash, verify kép). Luật vận hành GTV chạy trên kit: `02-raw/knowledge/sop/11-publish-wp.md` — **không chạy bước strong-to-b** (policy `<strong>`) | Clone riêng theo docs của kit — dùng được cả standalone (repo public); KHÔNG vendor code kit vào master |
 
 Rule cứng: mọi thay đổi infra (file thuộc bảng GHI ĐÈ của `MIGRATION.md`) → ghi `MIGRATION.md` + append log op `refactor`/`setup`/`bookkeep`. Không có thay đổi infra im lặng.
 

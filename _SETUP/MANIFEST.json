@@ -1,0 +1,49 @@
+{
+  "kit": "gtv-setup-kit",
+  "version": "2026.08.28",
+  "generated_at": "2026-08-28T21:14:07",
+  "source": "_Shared/setup-kit",
+  "file_count": 8,
+  "files": {
+    "_SETUP/CHIA-QUYEN-DRIVE.md": {
+      "sha256": "a0b70ba69dff6c0f4040718433d5bfd05e3e8d878b3b55f06f57d25f085cc9ce",
+      "bytes": 4107,
+      "text": true
+    },
+    "_SETUP/HUONG-DAN-GOOGLE-CREDENTIAL.md": {
+      "sha256": "39ebb93a05fc1d432d175ec62f757a5d8c4a89990fd3923ec6b621ab147ed9ad",
+      "bytes": 4200,
+      "text": true
+    },
+    "_SETUP/README.md": {
+      "sha256": "58916df17d6c32cb155e03b086e3b230a5289a8f41b6d8e57b8a9e9d6d9fa9af",
+      "bytes": 2744,
+      "text": true
+    },
+    "_SETUP/SETUP-MAY.md": {
+      "sha256": "41c79b76487e694985c83eb24abac4756be5c7b6def6f6e17c12dac0d9dd34ea",
+      "bytes": 7407,
+      "text": true
+    },
+    "_SETUP/setup_credential.py": {
+      "sha256": "cace9adb8bd4af48cbfb0a06b97cf8ada06ab1d37fc56b373b8f487462937aa7",
+      "bytes": 24159,
+      "text": true
+    },
+    "_SETUP/setup_doctor.py": {
+      "sha256": "e4029977621ff44391bb6f1526ae4fee735a31924cfd8c07e9cd7519a6b8443c",
+      "bytes": 16054,
+      "text": true
+    },
+    "_SETUP/sync-skills.sh": {
+      "sha256": "049eb0f69b8cca50259683c8981b713500079691a70339b766edc272f1ab1b1b",
+      "bytes": 2514,
+      "text": true
+    },
+    "skills/setup-may/SKILL.md": {
+      "sha256": "613d4defd8e31277e200352613c2ffca97ca774374cb739ce621a5dd5eb06cec",
+      "bytes": 2017,
+      "text": true
+    }
+  }
+}

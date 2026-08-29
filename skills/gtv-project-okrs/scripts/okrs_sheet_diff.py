@@ -33,6 +33,7 @@ import argparse
 import csv
 import difflib
 import os
+import _cred  # resolver credential dùng chung
 import re
 import sys
 
@@ -110,9 +111,7 @@ def fetch_sheet(cfg, range_key, workbook_key="ke_hoach_tong"):
     from google.oauth2 import service_account
     from googleapiclient.discovery import build
 
-    cred = os.path.expanduser(cfg["credentials"])
-    if not os.path.exists(cred):
-        die("không thấy credentials: %s" % cred)
+    cred = _cred.path(cfg)
     wb = (cfg.get("spreadsheets") or {}).get(workbook_key)
     if not wb:
         die("workbook «%s» không có trong config.spreadsheets" % workbook_key)

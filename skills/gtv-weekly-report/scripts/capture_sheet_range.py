@@ -17,6 +17,7 @@ Cách chạy:
 """
 import argparse
 import os
+import _cred  # resolver credential dùng chung
 import subprocess
 import sys
 import tempfile
@@ -54,7 +55,7 @@ def main():
     if cfg.get("spreadsheets", {}).get(args.workbook):
         sid = cfg["spreadsheets"][args.workbook]["id"]
 
-    cred_path = os.path.expanduser(os.environ.get("GOOGLE_APPLICATION_CREDENTIALS") or cfg["credentials"])
+    cred_path = _cred.path(cfg)
     creds = service_account.Credentials.from_service_account_file(cred_path, scopes=SCOPES)
     creds.refresh(Request())
 

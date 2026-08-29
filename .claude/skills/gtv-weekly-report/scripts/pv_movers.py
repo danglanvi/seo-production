@@ -20,6 +20,7 @@ import csv
 import io
 import json
 import os
+import _cred  # resolver credential dùng chung
 import re
 import sys
 import urllib.parse
@@ -73,7 +74,7 @@ def main():
         if not sid:
             sys.exit("LỖI: report_tuan chưa có known_ids — truyền spreadsheetId trực tiếp")
 
-    cred_path = os.path.expanduser(os.environ.get("GOOGLE_APPLICATION_CREDENTIALS") or cfg["credentials"])
+    cred_path = _cred.path(cfg)
     creds = service_account.Credentials.from_service_account_file(cred_path, scopes=SCOPES)
     creds.refresh(Request())
 

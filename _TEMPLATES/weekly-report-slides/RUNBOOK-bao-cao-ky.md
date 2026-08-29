@@ -13,8 +13,8 @@
 | Cần | Kiểm bằng | Thiếu thì |
 |---|---|---|
 | Python + thư viện | `python3 -c "import yaml, googleapiclient, pptx, PIL"` | `pip3 install pyyaml google-api-python-client google-auth python-pptx pillow` |
-| Credentials service account | `ls ~/.config/gcp/claude-sheets-credentials.json` | Xin Vincent — không có thì không kéo được số |
-| Workbook kỳ đã share cho service account | `python3 skills/gtv-weekly-report/scripts/build_source_links.py --config 09-reporting/report-config.yaml --out /dev/null --check` | Share Viewer cho `claude-mcp@n8n-selfhost-457611.iam.gserviceaccount.com` |
+| Credentials service account | `ls ~/.config/gcp/<key-cua-ban>.json` | Chạy `python3 _SETUP/setup_credential.py detect` |
+| Workbook kỳ đã share cho service account | `python3 skills/gtv-weekly-report/scripts/build_source_links.py --config 09-reporting/report-config.yaml --out /dev/null --check` | Share Viewer cho `<robot-cua-ban>@<project>.iam.gserviceaccount.com` |
 | Playwright (QA chống tràn) | `npx playwright --version` | `npm i playwright && npx playwright install chromium` |
 
 Kỳ mới (vd `2026-08`, `2026-Q1`) phải được **khai trong khối `periods:`** của `report-config.yaml` trước — khai cột tường minh, không autodetect (lý do ghi ngay trong file config). Quý dự án tính theo T1 của hợp đồng, KHÔNG theo quý dương lịch — tra bảng A `index.md`.

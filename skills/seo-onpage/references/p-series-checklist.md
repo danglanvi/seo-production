@@ -11,7 +11,7 @@
 - **Tier 1 = P1-P23, chấm /23** — mọi trang publish mới. **P0 = gate, không tính điểm.**
 - **Tier 2 = T2-P1..8, +8 → /31** — bật theo loại dự án tại Kickoff (YMYL, e-commerce, SCN, UX…).
 - **Tier 3 = T3-P1..8, +8 → /39** — Quality Node / Root-Seed / cạnh tranh cao / senior.
-- **AX Extension (AX1-AX5)** — AI-search/GEO, chấm RIÊNG không tính vào /39.
+- **AX Extension (AX1-AX6)** — AI-search/GEO, chấm RIÊNG không tính vào /39.
 - Audit trang cũ: chạy Tier 1→3, dừng ở tier có ≥3 item FAIL — **sửa nền trước, tối ưu sau**.
 - Review 3 tầng: Self 100% → SEO EX verify → Lead random 25-30% (gap dương lớn = cờ đỏ).
 
@@ -90,3 +90,4 @@ Content phải **V-Pass 9 hạng mục chất lượng content** (self-checklist
 - **AX3 AIO counter-positioning** — so content vs AI Overview hiện tại: claim AIO miss → cover sâu; format AIO prefer (definition đầu, structured list, E-A-V) → align. **Tinh chỉnh theo engine mục tiêu**: ChatGPT ưu tiên Early Query Confirmation + Intent Alignment + Section Connectivity · AI Mode: General→Specific + Early Query Answer · AIO/Perplexity: rộng đều. Mục tiêu: thành **Core Source** (nguồn được cite lặp lại; Fact Coverage Ratio là biến quyết định; "DR does not matter much").
 - **AX4 Canonical & index hygiene** — canonical tự trỏ, không noindex ngoài ý muốn, ĐÃ INDEX (điều kiện vào retrieval pool), featured image indexed.
 - **AX5 Blur Test** — screenshot blur 50% vẫn nhận ra topic + function của trang.
+- **AX6 Passage-level citation match — linkify 2 pha (bổ sung 08/2026, patent verified 21/08/2026)** — Citation của AIO/AI Mode chạy 2 pha theo patent Google (US11769017B1 + continuation US11886828B1 "Generative summaries for search results" → AIO; US20240289407A1 "Search with stateful chat" → AI Mode; họ độc lập nhưng chung spec linkify/verification): **Pha 1** LLM generate summary GROUNDED trên content các Search Result Documents (SRDs) được chọn; **Pha 2** mỗi portion của summary được verify bằng embedding distance với candidate document — candidate có thể đến từ một search MỚI chạy trên chính portion đó — chỉ linkify (cite) khi distance đủ gần threshold. Hệ quả: **document nuôi summary ≠ document được cite** — bài của bạn có thể nuôi summary nhưng link về bài khác vừa rank tốt vừa gần statement hơn trong embedding space. Check: mỗi passage trả lời trực tiếp 1 sub-query có TỰ ĐỨNG được không (self-contained — đi cùng AX1) + dùng đúng vocabulary của câu trả lời kỳ vọng (match statement ở passage-level, không chỉ rank tốt)?

@@ -495,10 +495,10 @@ body.rail-resizing * { -webkit-user-select:none; user-select:none; }
   <div class="term-grid reveal d3">
     <div class="term-card"><div class="term-head"><div class="term-ico">📧</div><div class="term-name">Email robot</div></div>
       <div class="term-vi">«Địa chỉ» của robot — KHÔNG phải bí mật</div>
-      <div class="term-real"><code>claude-mcp@n8n-selfhost-457611.iam.gserviceaccount.com</code><br>Workbook/folder Drive nào robot cần đọc → share <b>Viewer</b> cho email này (1 lần).</div></div>
+      <div class="term-real"><code><robot-cua-ban>@<project>.iam.gserviceaccount.com</code><br>Workbook/folder Drive nào robot cần đọc → share <b>Viewer</b> cho email này (1 lần).</div></div>
     <div class="term-card"><div class="term-head"><div class="term-ico">🔑</div><div class="term-name">File chìa khóa</div></div>
       <div class="term-vi">«Chìa khóa» chứng minh máy bạn là robot — BÍ MẬT</div>
-      <div class="term-real">Nhận riêng từ Vincent/Lead qua <b>AirDrop / USB / password manager</b> — cấm email, cấm Drive chung, cấm commit. Đặt đúng chỗ: <code>~/.config/gcp/claude-sheets-credentials.json</code></div></div>
+      <div class="term-real">Bạn tự tạo trong Google Cloud của mình — xem <code>_SETUP/HUONG-DAN-GOOGLE-CREDENTIAL.md</code>. Cấm email, cấm Drive chung, cấm commit. Đặt đúng chỗ: <code>~/.config/gcp/<key-cua-ban>.json</code></div></div>
   </div>
   <div class="big-note reveal d4">Khuyến nghị: mỗi máy 1 key riêng (GCP Console → Service Accounts → Keys → Add key) — <span class="hl">nhân sự nghỉ thì thu hồi key máy đó</span>, các máy khác không ảnh hưởng.</div>
 </div>

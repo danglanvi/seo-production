@@ -189,3 +189,8 @@ Luật ghi:
 - Mirror skills đồng bộ bằng `tools/sync-skills.sh` (34/34, parity 0 lệch).
 - Files touched: CLAUDE.md, 02-raw/knowledge/{sop/08-onpage-checklist.md,sop/11-publish-wp.md,_MANIFEST.md,README.md}, 06-onpage-internal-link/{README.md,CLAUDE.md,WP-PUBLISH-KIT_upgrade-spec_v1.md}, skills/seo-onpage/references/p-series-checklist.md (+2 mirror), MIGRATION.md, log.md · kho gốc wiki: Semantic Emphasis.md, sop/08, sop/11 (mới), index.md, log.md
 - Công đoạn: — (infra master) · WS: 06
+
+## [2026-08-29] setup | Gom đợt setup máy standalone 28/08 lên master + push GitHub — @claude
+- Commit phần dang dở từ 28/08: `_SETUP/` (doctor + credential per-user + hướng dẫn Drive), BOOTSTRAP trong CLAUDE.md, `requirements.txt`, skill `setup-may`, `_cred.py` cho script sheet, GEO G0-G5 trong §5.1/§5.2, mirror skills. Soát secret: không có key trong tree; `config/local.yaml` đã gitignore.
+- Push `origin/main` → github.com/GTV-SEO-Agency/seo-production (v2026.08.3).
+- Files touched: MIGRATION.md, log.md + toàn bộ file đợt 28/08

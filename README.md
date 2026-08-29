@@ -1,5 +1,7 @@
 # SEO Production — Hệ vận hành dự án SEO client (GTV)
 
+> 🔧 **Máy mới clone repo?** Mở repo bằng Claude Code rồi nói *"cài đặt giúp tôi repo này"* — hoặc đọc [`_SETUP/SETUP-MAY.md`](_SETUP/SETUP-MAY.md). Cần Python 3, Node và một Google service account **của riêng bạn** ([`_SETUP/HUONG-DAN-GOOGLE-CREDENTIAL.md`](_SETUP/HUONG-DAN-GOOGLE-CREDENTIAL.md)).
+
 Master template cho một dự án SEO delivery trọn gói: 33 công đoạn, 12 workstream, 5 pha, QC theo checklist, self-improving qua feedback → lessons. Folder này là **master client-neutral** — mỗi client nhân bản thành instance tại `PROJECTS/<client-slug>/` (hoặc team clone repo `seo-<client>` riêng). Không điền dữ liệu client vào master.
 
 ## Sơ đồ 5 pha (gói chuẩn 10 tháng)

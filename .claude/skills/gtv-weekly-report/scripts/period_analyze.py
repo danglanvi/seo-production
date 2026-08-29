@@ -28,6 +28,7 @@ import csv
 import io
 import json
 import os
+import _cred  # resolver credential dùng chung
 import re
 import sys
 import urllib.parse
@@ -74,7 +75,7 @@ def to_num(v):
 
 
 def get_creds(cfg):
-    p = os.path.expanduser(os.environ.get("GOOGLE_APPLICATION_CREDENTIALS") or cfg["credentials"])
+    p = _cred.path(cfg)
     if not os.path.isfile(p):
         sys.exit(f"LỖI: không thấy credentials {p}")
     creds = service_account.Credentials.from_service_account_file(p, scopes=SCOPES)

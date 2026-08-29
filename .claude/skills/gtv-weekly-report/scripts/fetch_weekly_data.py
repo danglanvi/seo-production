@@ -20,6 +20,7 @@ import csv
 import datetime as dt
 import json
 import os
+import _cred  # resolver credential dùng chung
 import re
 import sys
 import time
@@ -52,10 +53,7 @@ def load_config(path):
 
 
 def resolve_credentials(cfg):
-    cand = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS") or cfg.get("credentials")
-    cand = os.path.expanduser(cand)
-    if not os.path.isfile(cand):
-        sys.exit(f"LỖI: không thấy file credentials: {cand}")
+    cand = _cred.path(cfg)
     return service_account.Credentials.from_service_account_file(cand, scopes=SCOPES)
 
 
