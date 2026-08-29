@@ -16,6 +16,15 @@ master_version: v2026.07.1
 
 ## 1. Có gì mới
 
+### v2026.08.3 (2026-08-29) — Tích hợp wp-publish-workflow-kit + policy `<strong>` + SOP 11 đăng bài WP
+
+- **Phân vai chốt (Vincent):** khâu đăng/sửa bài WordPress thuộc **WS06 (bạn SEO)** — team content dừng ở Google Doc (fork Content Production giữ nguyên Phase 7 gdoc). Executor: kit `wp-publish-workflow-kit` (repo GitHub riêng của team, KHÔNG vendor vào master — xem §11 CLAUDE.md).
+- **Policy `<strong>`:** mọi bold trong content = thẻ `<strong>`, `<b>` = 0. Vá P14 trong `02-raw/knowledge/sop/08-onpage-checklist.md` + `skills/seo-onpage/references/p-series-checklist.md`. Khi đăng WP: KHÔNG chạy bước strong-to-b của kit.
+- **SOP MỚI** `02-raw/knowledge/sop/11-publish-wp.md`: 2 flow input (bài từ content qua Google Doc + link trong Google Sheet đăng bài 11 cột / SEO kiêm content đăng thẳng), gate pre-publish (P0 content + pháp lý, meta P1-P5, strong policy, ảnh P19-P20 + tier, IL SOP 03, block đặc biệt), verify kép WP+Sheet, bảng giới hạn kit + cách bù. Đăng ký ở `_MANIFEST.md` + `knowledge/README.md`.
+- CLAUDE.md root: §5.2 hàng WS06 · §5.4 · §11 (+ interface kit). Trạm 06: README + CLAUDE.md.
+- File chỉ ở master (không cần port sang instance đang chạy): `06-onpage-internal-link/WP-PUBLISH-KIT_upgrade-spec_v1.md` (spec nâng cấp gửi team kit).
+- Instance nhận qua nhóm A GHI ĐÈ như thường lệ (root luật + knowledge pack + skills + WS infra). Instance muốn đăng WP: clone kit theo docs của kit + tạo Google Sheet đăng bài từ template kit.
+
 ### v2026.08.2 (2026-08-15) — Nguyên tắc giao tiếp nền nhúng vào AGENT.md (mục 0)
 
 - `AGENT.md` thêm mục **0. Nguyên tắc giao tiếp nền (bản nhúng root — v2026-08-15)**: chat ngắn gọn kết luận trước · deliverable không thừa hưởng luật ngắn gọn (completeness > brevity) · cấu trúc template/QC là sàn · độ dài file/code tối thiểu đủ dùng · trình khung trước khi dựng deliverable lớn · báo rõ phần chưa xác minh. Bản nhúng để repo standalone có đủ luật cấp workspace.

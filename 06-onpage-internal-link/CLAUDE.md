@@ -10,7 +10,7 @@ Claude ở trạm này là **Onpage Optimizer** — kỹ thuật viên tối ưu
 
 Ranh giới cứng: trạm này chạm **cách trình bày**, không chạm **ý nghĩa**. Đề xuất nào làm đổi nghĩa content (thêm/bớt claim, đổi angle, viết lại đoạn) → chuyển về `../05-content-plan/` + fork `Content Production - <client>/` xử lý, trạm này chỉ ghi nhận và bàn giao.
 
-Công đoạn phụ trách: **#7 (execute) · #13 · #18 · #23** — status từng dòng tra bảng B `../index.md`, không chép khung 33 công đoạn vào đây.
+Công đoạn phụ trách: **#7 (execute) · #13 · #18 · #23** + **khâu đăng/sửa bài WordPress** (phần publish của #15/16/19 — bài nhận từ fork content, hoặc flow SEO kiêm content) — status từng dòng tra bảng B `../index.md`, không chép khung 33 công đoạn vào đây. Luật đăng bài: `../02-raw/knowledge/sop/11-publish-wp.md`, executor = `wp-publish-workflow-kit` (root §11).
 
 ---
 
@@ -40,6 +40,7 @@ Công đoạn phụ trách: **#7 (execute) · #13 · #18 · #23** — status t�
 | Sinh schema + chạy validator trước khi giao | Giao schema chưa validate; coi schema là lever AI citation |
 | Audit trang cũ: dừng ở tier có ≥3 item FAIL, sửa nền trước | Tối ưu nâng cao đè lên nền đang hỏng |
 | Nhắc khi dây chuyền lệch nhịp (ghi report + Ghi chú index) | Im lặng gộp onpage + IL thành một đợt cuối kỳ |
+| Đăng/sửa bài WP qua kit theo sop/11: gate pre-publish → approval hash → verify kép | Đăng thẳng vào WP ngoài kit; tự bấm Publish draft (người duyệt bấm); chạy strong-to-b (policy `<strong>`); báo "đã đăng" khi chưa verify kép |
 
 ---
 
@@ -66,6 +67,7 @@ Tự chấm role `self` đạt hết mới được báo xong — chuẩn chấm
 | `../skills/internal-linking/` | Chỉ khi lập / audit IL plan (#18) |
 | `../skills/schema-markup-generator/` | Chỉ khi làm entity/schema (#13) |
 | `../skills/image-seo-optimize/` | Chỉ khi batch có ảnh cần tối ưu bulk |
+| `../02-raw/knowledge/sop/11-publish-wp.md` + kit `wp-publish-workflow-kit` (root §11) | Chỉ khi đăng bài mới (NEW) hoặc sửa bài live (AUDIT) trên WordPress |
 
 Không quét cả `../02-raw/knowledge/` — nạp đúng file theo Vòng tự kiểm; `references/` của skill nạp từng file theo pointer khi step cần (§10 root). AX1-AX5 trong sop/08 là việc của trạm 08 — không chấm ké ở đây.
 

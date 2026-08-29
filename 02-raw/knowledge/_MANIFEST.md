@@ -28,7 +28,8 @@ Luật:
 | 14 | 06-self-checklist/tier-1-content-writing.md | Chưng cất — giữ W1-W21 + Depth/Tone /23; lược evidence/ví dụ dài | sop/06-self-checklist/tier-1-content-writing.md | WS05 — QC bài viết | 2026-07-17 |
 | 15 | 06-self-checklist/tier-3-technical-advance.md | Chưng cất — bỏ cột Data/Evidence, giữ item + ngưỡng | sop/06-self-checklist/tier-3-technical-advance.md | WS03 Audit — #27, 29 | 2026-07-17 |
 | 16 | 07-visual-semantic.md | Chưng cất — giữ Phần B (process Bước 0-8 — viết tắt B0-B8 — + Output + checkbox), Phần C (RACI), Phần D (trade-offs); LOẠI HOÀN TOÀN Phần A (deep theory bảo mật: patents, leak factors, 4 Pillars, centerpiece dial) | sop/07-visual-semantic.md | WS04 Structure — #11 | 2026-07-17 |
-| 17 | 08-onpage-checklist.md | Chưng cất — giữ nguyên P0-P23 (/23) + T2-P1..8 (/31) + T3-P1..8 (/39) + AX1-AX5 (chấm riêng) + luật scoring + luật "sửa nền trước"; lược evidence inline, cột cross-ref wikilink, bảng reconciliation OP1-OP55 | sop/08-onpage-checklist.md | WS06 Onpage & IL — #7, 13, 18, 23 · WS08 GEO (AX1-AX5) — #14, 21, 28 | 2026-07-17 |
+| 17 | 08-onpage-checklist.md | Chưng cất — giữ nguyên P0-P23 (/23) + T2-P1..8 (/31) + T3-P1..8 (/39) + AX1-AX5 (chấm riêng) + luật scoring + luật "sửa nền trước"; lược evidence inline, cột cross-ref wikilink, bảng reconciliation OP1-OP55 | sop/08-onpage-checklist.md | WS06 Onpage & IL — #7, 13, 18, 23 · WS08 GEO (AX1-AX5) — #14, 21, 28 | 2026-08-29 (vá P14 strong-policy) |
+| 18 | 11-publish-wp.md | Copy nguyên — SOP đăng bài WordPress (2 flow input, gate pre-publish, kit wp-publish-workflow-kit, giới hạn kit) | sop/11-publish-wp.md | WS06 Onpage & IL — khâu publish #7, 13, 15, 16, 19, 23 | 2026-08-29 |
 
 ## Bổ sung 19.7.2026 — Hệ checklist v3 (24 hàng, đều Copy nguyên)
 

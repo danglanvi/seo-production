@@ -11,7 +11,7 @@ Bản đóng gói READ-ONLY từ kho `SEO Knowledge/Semantic SEO A - Z/sop/`. Ng
 | Audit | 03-audits | sop/05-audit-checklist.md · sop/06-self-checklist/tier-3-audit-configuration.md · sop/06-self-checklist/tier-3-technical-advance.md | |
 | Structure | 04-structure-ux-cro | sop/07-visual-semantic.md (Bước 0-8 — viết tắt B0-B8 — + RACI) | Bản chưng cất — deep theory ở kho gốc |
 | Content plan | 05-content-plan | sop/01-topical-map.md (DoD 15) · sop/02-content-brief.md · sop/06-self-checklist/tier-1-outline-am.md · sop/06-self-checklist/tier-1-content-writing.md (QC bài) | Bài viết chạy ở fork `Content Production - <client>/` |
-| Onpage & IL | 06-onpage-internal-link | sop/08-onpage-checklist.md (P0 → /23 → /31 → /39) · sop/03-internal-linking.md · sop/04-entity-optimization.md | |
+| Onpage & IL | 06-onpage-internal-link | sop/08-onpage-checklist.md (P0 → /23 → /31 → /39) · sop/03-internal-linking.md · sop/04-entity-optimization.md · sop/11-publish-wp.md (đăng/sửa bài WordPress) | Publish qua kit `wp-publish-workflow-kit` (repo riêng — CLAUDE.md §11) |
 | Offpage | 07-offpage | — (DoD gate-offpage-decision + backlink-campaign trong `_TEMPLATES/`) | |
 | GEO | 08-geo-ai-visibility | AX1-AX5 trong sop/08-onpage-checklist.md · DoD geo-baseline (`_TEMPLATES/`) | |
 | Reporting | 09-reporting | — (DoD bao-cao-thang + `_TEMPLATES/account/`) | |

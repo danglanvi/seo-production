@@ -42,7 +42,7 @@ Content phải **V-Pass 9 hạng mục chất lượng content** (self-checklist
 - **P11 Word Relationships** — đủ 5 loại: Synonyms (≥3-4, rải xuyên suốt) / Hypernym-Hyponym / Meronym-Holonym / Antonym / Co-hyponym → signal hiểu sâu chủ đề.
 - **P12 Word Co-occurrence & Proximity** — Entity + Attribute trong CÙNG câu; modifier đứng ngay trước noun; **Anchor Segments** (lặp key term từ câu trước sang câu sau); Context Qualifiers khi cần điều kiện.
 - **P13 N-gram Optimization** — phrase-level (khác P10 word-level); n-gram **unique per section**; macro n-gram (toàn bài) ≠ micro n-gram (per section).
-- **P14 Bold Keywords & Variations** — bold CÂU TRẢ LỜI/insight + 2-3 keyword variations quan trọng; KHÔNG bold thuật ngữ đơn thuần; `<em>` cho từ ngoại; ~5-8 bold/1800 ký tự. *Data: keywords-in-bold có tín hiệu, SỐ LƯỢNG bold ≈0 — bold đúng chỗ, không bold nhiều.*
+- **P14 Bold Keywords & Variations** — bold CÂU TRẢ LỜI/insight + 2-3 keyword variations quan trọng; **bold = thẻ `<strong>`, KHÔNG dùng `<b>`** (policy 2026-08-29 — kể cả khi đăng WordPress, không chạy bước strong-to-b của publish kit); KHÔNG bold thuật ngữ đơn thuần; `<em>` cho từ ngoại; ~5-8 bold/1800 ký tự. *Data: keywords-in-bold có tín hiệu, SỐ LƯỢNG bold ≈0 — bold đúng chỗ, không bold nhiều.*
 - **P15 Featured Snippet Optimization** — xem FS hiện tại của SERP (dạng, word count); information density ≥ trang đang giữ position-0; format khớp (paragraph/list/table); answer ~40 từ/320 ký tự; bold answer trong L0.
 - **P16 Keyword Positions** — keyword chính trong **100 chữ đầu VÀ 100 chữ cuối**; đoạn 2 dùng synonyms (không lặp exact); ≥1 H2 chứa keyword; không nhồi.
 

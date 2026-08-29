@@ -1,6 +1,6 @@
 # SOP 08 — Onpage SEO Checklist (Cơ bản → Nâng cao)
 
-> Bản đóng gói cho SEO Production — sync từ `SEO Knowledge/Semantic SEO A - Z/sop/08-onpage-checklist.md` ngày 2026-07-17.
+> Bản đóng gói cho SEO Production — sync từ `SEO Knowledge/Semantic SEO A - Z/sop/08-onpage-checklist.md` ngày 2026-07-17 (vá P14 strong-policy 2026-08-29).
 > Bản chưng cất — đã lược evidence/theory; bản đầy đủ ở kho gốc.
 > Wikilink [[...]] trong file = tri thức nội bộ sâu (wiki Semantic SEO, không đóng gói theo dự án).
 > Gặp wikilink cần đào sâu → hỏi SEO Lead / Vincent, hoặc tra kho gốc trên máy master.
@@ -48,7 +48,7 @@
 | P11 | **Word Relationships 5 loại: Synonyms (≥3-4) / Hypernym-Hyponym / Meronym-Holonym / Antonym / Co-hyponym** |
 | P12 | Co-occurrence (E+A cùng câu) + Proximity + **Anchor Segments** + Context Qualifiers |
 | P13 | **N-gram phrase-level: unique per section; macro n-gram ≠ micro n-gram** |
-| P14 | Bold câu trả lời + 2-3 keyword variations, KHÔNG bold thuật ngữ, `<em>` từ ngoại, ~5-8 bold/1800 chữ; bold đúng chỗ, không bold nhiều |
+| P14 | Bold câu trả lời + 2-3 keyword variations — bold = thẻ `<strong>`, KHÔNG dùng `<b>` (policy 2026-08-29); KHÔNG bold thuật ngữ, `<em>` từ ngoại, ~5-8 bold/1800 chữ; bold đúng chỗ, không bold nhiều |
 | P15 | Featured Snippet: density ≥ top-0, format khớp, ~40 từ/320 ký tự, bold answer L0 |
 | P16 | Keyword chính **100 chữ đầu VÀ 100 chữ cuối**; đoạn 2 synonyms; ≥1 H2 keyword |
 

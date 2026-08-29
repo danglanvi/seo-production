@@ -179,3 +179,13 @@ Luật ghi:
 - AGENT.md thêm mục 0 bản nhúng luật giao tiếp + chất lượng cấp workspace (chat ngắn gọn / deliverable completeness > brevity) để repo standalone tự chứa.
 - Áp thẳng cùng file cho 2 instance careerviet + minh-tuan-mobile (1 file, không đổi master_version).
 - Files touched: AGENT.md, MIGRATION.md, log.md
+
+## [2026-08-29] refactor | v2026.08.3 — tích hợp wp-publish-workflow-kit + policy `<strong>` + SOP 11 đăng bài WP — @claude
+- Phân tích repo team `github.com/LongDZ1204/wp-publish-workflow-kit` (66 file) + đối chiếu wiki Semantic SEO A-Z. Quyết định Vincent: content team dừng ở Google Doc; khâu đăng/sửa WordPress thuộc WS06 (bạn SEO); policy bold = `<strong>`, `<b>` = 0; kit giữ repo riêng, không vendor.
+- Policy `<strong>`: vá P14 ở kho gốc wiki + pack `02-raw/knowledge/sop/08-onpage-checklist.md` + `skills/seo-onpage/references/p-series-checklist.md`; mục Policy GTV mới trong wiki [[Semantic Emphasis]]. Khi đăng WP: KHÔNG chạy bước strong-to-b của kit.
+- SOP MỚI `02-raw/knowledge/sop/11-publish-wp.md` (sync từ kho gốc, copy nguyên): 2 flow input (Google Doc link trong Sheet đăng bài 11 cột / SEO kiêm content đăng thẳng), gate pre-publish, verify kép WP+Sheet, giới hạn kit + cách bù. Đăng ký: `_MANIFEST.md` hàng 18 + `knowledge/README.md` ma trận WS06.
+- CLAUDE.md root: §5.2 hàng WS06 (+ kit + sop/11 + done-criteria verify kép) · §5.4 (chốt khâu đăng web thuộc WS06) · §11 (+ interface kit, dùng được standalone). Trạm 06: README + CLAUDE.md (persona publish, ĐƯỢC/KHÔNG ĐƯỢC, luật nạp).
+- Upgrade spec gửi team kit (4 nhóm A-D: policy strong + slugify tiếng Việt · enforce width/height + lazy + tier ảnh + ngưỡng meta · approval hash AUDIT + so modified + backup immutable + env guard + drop-block cảnh báo · hooks tích hợp internal-linking/image-seo-optimize): `06-onpage-internal-link/WP-PUBLISH-KIT_upgrade-spec_v1.md`.
+- Mirror skills đồng bộ bằng `tools/sync-skills.sh` (34/34, parity 0 lệch).
+- Files touched: CLAUDE.md, 02-raw/knowledge/{sop/08-onpage-checklist.md,sop/11-publish-wp.md,_MANIFEST.md,README.md}, 06-onpage-internal-link/{README.md,CLAUDE.md,WP-PUBLISH-KIT_upgrade-spec_v1.md}, skills/seo-onpage/references/p-series-checklist.md (+2 mirror), MIGRATION.md, log.md · kho gốc wiki: Semantic Emphasis.md, sop/08, sop/11 (mới), index.md, log.md
+- Công đoạn: — (infra master) · WS: 06
