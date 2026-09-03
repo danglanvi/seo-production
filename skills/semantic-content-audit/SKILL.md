@@ -1,15 +1,17 @@
 ---
 name: semantic-content-audit
-description: "Audit and optimize existing content for semantic SEO compliance. Use when: (1) Reviewing content against the 60 Semantic Writing Rules, (2) Checking E-E-A-T compliance with emphasis on first-hand experience, (3) Auditing content structure and hierarchy, (4) Verifying Contextual Layers implementation, (5) Checking Introduction General Summary quality, (6) Auditing measurement precision and citation patterns, (7) Verifying internal link placement, (8) Identifying content gaps and improvements, (9) Checking consistency across Semantic Content Network, (10) Auditing review content against Google guidelines, (11) Detecting AI-writing patterns — 'bài này có AI không', 'check AI content', Humanness verdict with evidence (Phase 5, routes fixes to humanizer skill)."
+description: "Audit and optimize existing content for semantic SEO compliance. Use when: (1) Reviewing content against the 60 Semantic Writing Rules, (2) Checking E-E-A-T compliance with emphasis on first-hand experience, (3) Auditing content structure and hierarchy."
 metadata:
-  version: "2.0"
+  version: "2.2"
 ---
 
 # Semantic Content Audit
 
-Audit existing content against semantic SEO standards, the 60 Semantic Writing Rules, E-E-A-T requirements, Google Helpful Content guidelines, **and AI-writing pattern detection (Phase 5 — Humanness)**.
+Audit existing content against semantic SEO standards, the 60 Semantic Writing Rules, E-E-A-T requirements, Google Helpful Content guidelines, **AI-writing pattern detection (Phase 5 — Humanness)** và **gate GEO G-BÀI (Phase 6 — 4 item, chấm riêng)**.
 
-## 5-Phase Audit Process
+**Phân vai với `geo-content-optimization`:** skill này trả lời "bài có đạt chuẩn semantic/E-E-A-T/human không" + gate G-BÀI 4 item; `geo-content-optimization` chấm Bộ BÀI /12 (mode spot-check) và trả lời "vì sao bài không được AI cite, sửa chunk nào" (mode full). Gate FAIL, cần /12 hoặc rewrite → route sang đó.
+
+## 6-Phase Audit Process
 
 ### Phase 1: Structural Audit
 - Compare against content brief/outline
@@ -45,7 +47,20 @@ Audit existing content against semantic SEO standards, the 60 Semantic Writing R
 - **DETECT-only**: Phase này không sửa bài. MEDIUM/HIGH → route skill `humanizer` (FIX layer — rewrite, giữ voice, preserve personality markers). Không flag rhetorical question / direct address / contractions là lỗi — đó là dấu hiệu NGƯỜI.
 - Lý do chấm riêng (không cộng vào 66đ): giữ backward-compatibility mọi audit cũ, giống AX Extension bên `seo-onpage`.
 
-## Scoring System (66 Points Total + Humanness verdict riêng)
+### Phase 6: Gate GEO G-BÀI — 4 item (chấm RIÊNG, không tính vào 66đ)
+
+Chạy mặc định khi full audit bài đã publish hoặc khi user hỏi "bài này có được AI cite không". Bốn item = gate cứng mỗi bài (fail bất kỳ → G-BÀI FAIL, bài phải sửa trước khi onpage/refresh) — tiêu chí đầy đủ + evidence tại `sop/06-self-checklist/tier-1-content-writing.md` § "G-BÀI" (canonical, không chép lại ở đây).
+
+| GE | Check nhanh (tick ✅/❌) |
+|---|---|
+| GE-16 | 100-150 từ đầu main content = câu trả lời thẳng, không storytelling intro (ngoại lệ narrative niche); bài informational chính có Key-Facts table |
+| GE-17 | Heading = câu hỏi thật của user; bài gánh đúng 1 câu hỏi chính (≥2 → đề xuất tách page); cluster fan-out có heading cover; không chấm độ dài/số heading theo dải cố định |
+| GE-18 | Câu đầu sau MỌI heading = câu trả lời đúng pattern (định nghĩa/how-to/so sánh/yes-no), 40-75 từ, đủ E-A-V, không modality |
+| GE-19 | Mỗi H2 cắt rời vẫn đủ Entity + context + claim; không "như đã nói ở trên" xuyên section; khối ý <~200 từ; heading tổ tiên có nghĩa |
+
+Output: **G-BÀI: PASS/FAIL (item rớt)**. Bộ BÀI /12 đầy đủ (GE-20…GE-27), scorecard, rewrite per chunk → `geo-content-optimization` (mode spot-check = tick /12; mode full = 6 bước).
+
+## Scoring System (66 Points Total + Humanness verdict riêng + gate G-BÀI riêng)
 
 ### Structural Score (12 Points)
 
@@ -65,7 +80,7 @@ Audit existing content against semantic SEO standards, the 60 Semantic Writing R
 | Macro terms throughout | 2 | Central entity consistent |
 | Micro terms contained | 2 | Section-specific terms stay local |
 | Word proximity | 2 | Related terms close together |
-| L0 answer-first | 2 | Every H2 starts with direct answer |
+| L0 answer-first | 2 | Every H2/H3 starts with direct answer (câu đầu sau heading — GE-18; không ép mọi đoạn thân) |
 | L1-L3 present | 2 | Concept, mechanism, evidence layers |
 | General Summary in intro | 2 | Extractive + Abstractive |
 
@@ -163,10 +178,12 @@ For detailed audit criteria, see reference files:
 | Review Content Audit | [references/review-content-audit.md](references/review-content-audit.md) |
 | Helpful Content Issues & Fixes | [references/helpful-content-issues.md](references/helpful-content-issues.md) |
 | **AI-Pattern Detection (Phase 5 Humanness)** | [references/ai-detection-checklist.md](references/ai-detection-checklist.md) |
+| **Gate GEO G-BÀI (Phase 6)** | `sop/06-self-checklist/tier-1-content-writing.md` § G-BÀI (canonical) · Bộ BÀI /12 + rewrite → skill `geo-content-optimization` (spot-check / full) |
 
-**CRITICAL**: Always read `references/extended-eeat-audit.md` when auditing reviews, YMYL content, or any content requiring E-E-A-T compliance. Run Phase 5 whenever the user asks "bài này có AI không" / "check AI content" — or by default on any full audit of drafted content.
+**CRITICAL**: Always read `references/extended-eeat-audit.md` when auditing reviews, YMYL content, or any content requiring E-E-A-T compliance. Run Phase 5 whenever the user asks "bài này có AI không" / "check AI content" — or by default on any full audit of drafted content. Run Phase 6 by default on any full audit of **published** content or when the user asks about AI citation.
 
 ## Changelog
 
+- **v2.2 (2026-08-29 — gộp v2.1 → v2.2 cùng ngày, Vincent duyệt):** (1) **Phase 6 = gate GEO G-BÀI 4 item** (GE-16…19; canonical `sop/06-self-checklist/tier-1-content-writing.md` § G-BÀI), chấm riêng không phá 66đ, chạy mặc định với bài đã publish; Bộ BÀI /12, scorecard, rewrite → `geo-content-optimization` 1.3 (mode spot-check / full) — phương án C: core skill giữ hook, lớp GEO ở skill geo-*. (2) Reconcile "L0 answer-first" = câu đầu sau heading (không ép đoạn thân) với `semantic-content-writing` 2.2. (3) GE-17 không chấm độ dài/số heading theo dải cố định (độ dài theo loại node + benchmark đối thủ). (4) Description +(12); phân vai 1 câu với GCO; header 6-Phase. Bản `-ca` 1.3.2-ca giữ module Retrievability 12 việc public. Port CP ×5.
 - **v2.0 (2026-07-04):** thêm **Phase 5 — AI-Pattern Detection (Humanness)** theo yêu cầu Vincent: tích hợp taxonomy humanizer v3.1 thành `references/ai-detection-checklist.md` (DETECT-only, 4 nhóm + ngưỡng đếm, verdict LOW/MEDIUM/HIGH + evidence, chấm riêng không phá thang 66đ; fix → route `humanizer`). Cập nhật label "45-point" → 60 Semantic Writing Rules (đúng hiện trạng file rules).
 - v1.x: 4-phase audit + 66-point scoring.

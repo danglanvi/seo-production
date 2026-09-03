@@ -1,17 +1,21 @@
 ---
 name: semantic-html-optimization
-description: Semantic HTML optimization for SEO and AI/LLM discoverability. Use when (1) Creating HTML templates for service pages or landing pages, (2) Auditing HTML structure of websites, (3) Optimizing HTML for AI/LLM citations from ChatGPT, Claude, Perplexity, (4) Implementing proper heading hierarchy with H1, H2, H3, (5) Deciding when to use article vs section elements, (6) Adding semantic elements like main, aside, time, figure, (7) Implementing Schema.org markup with semantic HTML, (8) Centerpiece extraction hygiene — main content flow liền mạch, share buttons/inject không cắt đoạn mở, (9) HTML budget 2MB + DOM order = visual order + rendering notes (image dimensions, JS bundle, metadata trong initial HTML). Triggers include HTML structure, heading hierarchy, semantic tags, article vs section, main content wrapper, AI-readable HTML, LLM optimization, centerpiece extraction, flow, HTML size.
+description: "Semantic HTML optimization for SEO and AI/LLM discoverability. Use when (1) Creating HTML templates for service pages or landing pages, (2) Auditing HTML structure of websites, (3) Making HTML machine-readable so AI engines parse chunk boundaries correctly — retrieval hygiene."
+metadata:
+  version: "1.1"
 ---
 
 # Semantic HTML Optimization
 
-Optimize HTML structure for SEO and AI discoverability. 90% of ChatGPT citations come from well-structured pages.
+Optimize HTML structure for SEO and AI discoverability. Semantic HTML là **retrieval hygiene** (máy parse đúng ranh giới chunk, landmark, thứ tự đọc) — không có nghiên cứu nào gắn một con số citation với semantic HTML.
 
 ## Overview
 
 Skill này cung cấp kiến thức về tối ưu Semantic HTML cho SEO và AI discoverability. Semantic HTML không phải là ranking factor trực tiếp, nhưng giúp Google và LLMs (ChatGPT, Claude, Perplexity) hiểu cấu trúc và ý nghĩa của content.
 
-**Core Insight:** 90% citations từ ChatGPT đến từ các trang có cấu trúc HTML tốt với heading hierarchy rõ ràng.
+**Core Insight (sửa 29/08/2026 — gỡ claim "90% ChatGPT citations" không nguồn):** giá trị chắc chắn của semantic HTML = accessibility, parsing robustness, logical landmarks, ranh giới chunk rõ cho máy cắt passage, maintainability. **Cái làm nên AI citation là kiến trúc passage bên trong HTML** (câu đầu = answer, chunk tự đứng, heading = câu hỏi thật, facts kiểm chứng — AX1-AX6 trong `sop/08-onpage-checklist.md`, GE-16…GE-27 trong `sop/06-self-checklist/tier-1-geo.md`; skill vận hành: `geo-content-optimization`). HTML tốt là điều kiện cần để passage đó được máy đọc đúng, không phải nguyên nhân được cite. Google official: không có yêu cầu HTML/markup đặc biệt cho AI features (developers.google.com/search/docs/fundamentals/ai-optimization-guide).
+
+🔴 **Schema ≠ AI-citation lever.** Causal test DiD Ahrefs 1.885 trang (05/2026): thêm JSON-LD KHÔNG tăng AI citation (AI Mode +2,4% · ChatGPT +2,2% ≈ 0). Schema vẫn đáng làm cho **rich results / entity (Knowledge Graph) / rendering** — việc của `schema-markup-generator` (xem giới hạn ghi ngay đầu skill đó), không tính điểm GEO. FAQ rich result đã chấm dứt 07/05/2026 → FAQ **content** trên trang vẫn giữ (answer-first 40-60 từ), FAQPage schema không còn lý do citation lẫn rich result.
 
 ## When to Use This Skill
 
@@ -205,19 +209,23 @@ For detailed implementation guides, see:
 - [ ] `<header>/<footer>` cho boilerplate
 - [ ] Replace `<div>` với semantic tags
 
-### ✅ AI Optimization
-- [ ] Clear heading hierarchy
-- [ ] `<article>` blocks có thể extract riêng
+### ✅ AI-readable HTML (retrieval hygiene — điều kiện cần, không phải lever citation)
+- [ ] Clear heading hierarchy — heading tổ tiên có nghĩa (không "Tổng quan"/"Kết luận" rỗng): máy gắn heading cha vào chunk như metadata (`includeAncestorHeadings`, Google Cloud docs)
+- [ ] `<article>` blocks có thể extract riêng (ranh giới chunk tự đứng)
 - [ ] `<time>` cho dates
-- [ ] `<strong>` cho key terms
+- [ ] `<strong>` cho key terms (accessibility/semantic emphasis — không có evidence tăng citation)
 - [ ] `<figure>/<figcaption>` cho images
-- [ ] Schema.org JSON-LD markup
+- [ ] Passage bên trong đã qua G-BÀI (GE-16…GE-19) — việc của content, HTML chỉ giữ ranh giới
+
+### 🟡 Rich results / entity — KHÔNG phải citation lever (làm riêng, không tính điểm GEO)
+- [ ] Schema.org JSON-LD theo page type → `schema-markup-generator` (Organization/Person + `sameAs` cho Entity Home; Product/Article/ItemList cho rich results). Causal DiD Ahrefs 1.885 trang 05/2026: schema ≈ 0 tác động AI citation.
+- [ ] KHÔNG thêm FAQPage schema để "được AI cite" — FAQ rich result chấm dứt 07/05/2026; FAQ content answer-first trên trang vẫn giữ.
 
 ## Key Insight
 
 > **John Mueller (Google):** "Semantic HTML helps understand a page, but it's NOT a direct ranking factor. Google treats `<section>`, `<article>`, and `<div>` the SAME way. What matters is CLEAR STRUCTURE."
 
-**Tuy nhiên:** Semantic HTML giúp AI/LLMs hiểu content tốt hơn → 90% ChatGPT citations từ well-structured pages.
+**Tuy nhiên:** Semantic HTML giúp máy cắt passage đúng ranh giới và giữ context (heading tổ tiên đi kèm chunk) — đó là giá trị thật, đo được ở tầng parsing. Claim "90% ChatGPT citations từ well-structured pages" từng nằm ở đây **không có nguồn** và đã gỡ 29/08/2026; số citation có nguồn nằm ở `geo-content-optimization/references/geo-levers-map.md` §5.
 
 ---
 
@@ -309,3 +317,10 @@ Verified qua crawl HTML thô 9 URL (mobile UA) + đối chiếu ranking Ahrefs:
 4. **`<ol>` cho enumeration có thứ tự.** Oscar Wylee nhét 12-14 ordered list trong SEO text PLP (materials 1-7, bước chọn kính) — enumeration = ol, không phải ul, khi thứ tự/số đếm mang nghĩa.
 5. **Schema graph theo archetype:** legal YMYL = `LegalService + City + GeoCoordinates + Person(per attorney) + FAQPage + HowTo + Speakable + AggregateRating`; service-commerce = `Product + AggregateOffer + AggregateRating + Review + FAQPage + BreadcrumbList`; PLP oscarwylee chỉ có `WebSite` (gap của họ — đừng bắt chước, PLP nên có `ItemList/CollectionPage`).
 6. **Counter-signal:** đừng render catalog thành heading (morethanpanel `/pricing`: 4.355 H5 + `noindex`) — item catalog thuộc về `<table>`/`<li>`, heading chỉ dành cho node có nghĩa trong content tree.
+
+---
+
+## Changelog
+
+- **v1.1 (2026-08-29):** gỡ claim không nguồn "90% ChatGPT citations từ well-structured pages" (5 chỗ: SKILL.md ×3, `references/heading-hierarchy.md`, `references/ai-optimization.md`); tách Schema.org/FAQ schema ra khỏi danh sách "LLM ưu tiên cite" thành block **"Rich results / entity — KHÔNG phải citation lever"** trỏ `schema-markup-generator` (causal DiD Ahrefs 1.885 trang 05/2026 ≈ 0; FAQ rich result chấm dứt 07/05/2026); Core Insight viết lại: semantic HTML = retrieval hygiene, citation = kiến trúc passage (AX1-AX6 / GE-16…GE-27); thêm rule heading tổ tiên có nghĩa (`includeAncestorHeadings`). Nguồn: FINDINGS 22/08/2026 §6b + `tier-1-geo.md` v2.0 guardrail 2. Vincent duyệt 29/08.
+- **v1.0 (07/2026):** bản gốc + các bổ sung 09-16/07/2026 (centerpiece hygiene, HTML budget, LAMPRET, tabs/accordion, heading patterns e-commerce VN, Koray live-site).

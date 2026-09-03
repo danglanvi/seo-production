@@ -3,9 +3,9 @@
 1. **Mục đích**: Render kết quả trên KPI đã cam kết — báo cáo tháng/quý/nghiệm thu và case study cuối dự án.
 2. **Công đoạn phụ trách**: #30◇ (Đạt KPI cam kết?), #32 (báo cáo kép + case study, T10).
 3. **Deliverable chuẩn**: báo cáo tháng/quý, BBNT, case study — naming `<CLIENT>_<slug>_v<N>.<ext>` (vd `<CLIENT>_bao-cao-t03_v1.docx`).
-4. **Template**: `_TEMPLATES/bao-cao-thang.md` + bộ `_TEMPLATES/account/` (email, BBNT, quy trình nghiệm thu, SOW-KPI naming).
+4. **Template**: `_TEMPLATES/bao-cao-thang.md` + bộ `_TEMPLATES/account/` (email, BBNT, quy trình nghiệm thu, SOW-KPI naming). Nhịp TUẦN: `_TEMPLATES/weekly-report-slides/` + **`_TEMPLATES/report-config.example.yaml`** → copy thành `09-reporting/report-config.yaml` (setup client mới, 1 lần).
 5. **Checklist QC**: DoD trong `_TEMPLATES/bao-cao-thang.md` + chuẩn bộ `_TEMPLATES/account/` (WS này không có checklist riêng trong `02-raw/knowledge/`).
-6. **Skill gọi**: `skills/gtv-client-report/` (⚠ claude-only, chỉ chạy trong Claude Code) · `skills/expert-case-study/`.
+6. **Skill gọi**: `skills/gtv-client-report/` (tháng/quý/nghiệm thu — ⚠ claude-only) · `skills/gtv-weekly-report/` (deck tuần + format tháng — ⚠ claude-only) · `skills/gtv-project-okrs/` (OKRs quý, đọc range OKRs trong `report-config.yaml`) · `skills/expert-case-study/` (#32).
 7. **Done-criteria**: Báo cáo gửi đúng hạn hằng tháng; tháng cuối: báo cáo kép + BBNT (auto-accept 7 ngày, bảo hành 30 ngày).
 
 Ghi chú:

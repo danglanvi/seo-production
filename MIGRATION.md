@@ -1,5 +1,5 @@
 ---
-master_version: v2026.07.1
+master_version: v2026.09.3
 ---
 
 # MIGRATION — Cập nhật instance lên version master mới
@@ -15,6 +15,41 @@ master_version: v2026.07.1
 ---
 
 ## 1. Có gì mới
+
+### v2026.09.3 (2026-09-03) — Keyword research · WS 14 Entity · Đấu nối content · Audit lẻ · WS 13 CRO (#34–36)
+
+Vincent chốt 03/09: 5 khoảng trống theo `quy-trinh-seo-10-thang` — keyword research chưa có chỗ lưu phương pháp + data, entity có gate mà không có folder/skill, content không đấu nối được với fork, audit lẻ phải chạy full, CRO lẫn trong cấu trúc.
+
+- **13 → 14 workstream · khung 33 → 36 công đoạn:** thêm **#34** CRO conversion path + tracking (T2→T3, gate G1 CR-06/07 ≤T3 — mốc cứng mới §6.2), **#35** UX/UI feature brief + heatmap đợt 1 (T4→T6), **#36** tối ưu landing + A/B (T7→T9). `index.md` bảng B + bảng C (nhịp CRO, content tracking); `_REFERENCE/khung-33-cong-doan.md` (giữ tên file, nội dung 36); README sơ đồ pha.
+- **WS MỚI `13-cro/`** (README · CLAUDE.md persona *CRO Analyst* · AGENTS.md) + 3 template `conversion-path.md` / `ux-feature-brief.md` / `heatmap-recording-review.md` + **skill mới `cro-audit`**. Checklist dùng lại `tier-1-cro-conversion.md` (CR-01…19) + `tier-1-ux-ui.md`. Trạm 04 chỉ còn cấu trúc lock #11 (ma trận M hàng Structure bỏ tier-1-cro phần A → sang WS 13).
+- **Keyword research:** `05-content-plan/keyword-research/` (README) + `_TEMPLATES/keyword-research.md` (M1–M9, cluster, quyết định) + cheat-sheet MỚI `02-raw/knowledge/cheat-sheets/keyword-research-methods.md` (chưng cất wiki: SERP overlap, GSC mining, phantom gate, KD là tool-metric, intent bằng SERP) + `02-raw/seo-data/keywords/` (export immutable). Ma trận M thêm hàng *Keyword research*.
+- **Entity thành workstream riêng (Vincent chốt 03/09):** WS MỚI **`14-entity/`** (README · CLAUDE.md persona *Entity Manager* · AGENTS.md) — #13 chuyển WS `06` → `14`; **skill mới `entity-seo-plan`** (lập + chấm EN-01…16) + `_TEMPLATES/audit-entity.md` → `03-audits/entity/`; `entity-plan.md` đổi `ws: 14-entity`. WS 06 bỏ #13 khỏi công đoạn phụ trách + bỏ checklist entity (chỉ còn thực thi schema/onpage từng URL theo spec entity plan); WS 08 GEO ghi "phối hợp WS14". Ma trận M: hàng *Entity* mới, hàng *Onpage & IL* rút gọn.
+- **Đấu nối content ↔ fork:** `05-content-plan/content-tracking/` (README · `delivered/`) + `tools/content_sync.py` (stdlib): đọc `index.md` + `log.md` fork → `content-status.md` (đếm 9 status, bài kẹt ≥14 ngày, bài humanized sẵn cho WS06) + `--pull-delivered` copy bản humanized về. Ma trận M thêm hàng *Content tracking*.
+- **Audit lẻ:** `03-audits/{technical,content,entity,offsite,full}/` (README mỗi folder) + 4 template `audit-technical.md` / `audit-content.md` / `audit-entity.md` / `audit-offsite.md`; `audit-toan-dien.md` giữ cho bản gộp (#5/#27) trong `full/`.
+- `CLAUDE.md`: §4 folder map, §5.1 (36), §5.2 (+4 hàng, hàng Audit ghi template lẻ), §6.2 (+ mốc tracking ≤T3). `README.md`: 36 công đoạn, 14 WS, 32 template, 37 skill. `_REFERENCE/folder-map.md`.
+- **Port sang instance:** GHI ĐÈ nhóm A (root luật, `_REFERENCE/`, `_TEMPLATES/`, `02-raw/knowledge/`, `skills/` + mirror, README/CLAUDE/AGENTS trạm, `tools/`); **THÊM** folder mới (`13-cro/`, `14-entity/`, `03-audits/*/`, `05-content-plan/keyword-research/`, `content-tracking/`, `02-raw/seo-data/keywords/`); instance đã nhận bản sáng 03/09 có `06-onpage-internal-link/entity/` rỗng → script tự xoá (chỉ khi trong đó không có file nào ngoài README) — không đụng deliverable; `index.md` instance: **append 3 dòng #34–36 + 2 dòng bảng C** (không ghi đè vì có status thật), đổi tiêu đề bảng B. Script `tools/migrate_v2026_09_3.py` ở master làm việc này (idempotent). File audit/keyword research cũ đang nằm rải trong instance: Lead dời tay vào folder mới, log op `move`.
+
+### v2026.09.2 (2026-09-02) — Trạm-first: router §0.5, ORCHESTRATOR thành tùy chọn nâng cao, sub-agent chỉ khi opt-in, tách `_REFERENCE/`, standalone
+
+- **`CLAUDE.md` (463 → 347 dòng):** thêm **§0.5 Router** — bảng lệnh → thao tác (Ingest/Work/QC/Feedback/tra cứu/protocol/điều phối nâng cao) → trạm → "Nạp đúng thứ tự". Luật mới: làm **trong phiên, từng trạm một**; nhiều item cùng trạm (onpage 10 bài, audit 5 URL, QC 3 deliverable) = lặp tuần tự cùng context, báo từng item; **0 sub-agent mặc định**. Pre-work §3 + ma trận M §5.2 + mốc cứng §6.2 + QC §7 giữ nguyên nội dung (không rút gọn input chất lượng). §11 viết lại thành "Standalone": repo không tham chiếu folder nào ngoài nó; 2 điểm chạm duy nhất là repo content của team và kit `wp-publish-workflow-kit` (repo public). §13 thêm anti-pattern "bung sub-agent/orchestrator cho việc 1 trạm".
+- **`_REFERENCE/` MỚI (5 file, nguyên văn từ CLAUDE.md cũ):** `folder-map.md` (§4), `khung-33-cong-doan.md` (§5.1), `qc-report-format.md` (§7.3), `screenshots-protocol.md` (§8), `self-improving.md` (§9). Nạp khi router trỏ tới.
+- **`ORCHESTRATOR.md`:** header → "tùy chọn nâng cao — chỉ đọc khi gọi rõ chạy trọn/nối tiếp/song song/quản đốc"; mặc định quản đốc tự đóng vai nhân viên từng trạm trong cùng phiên; sub-agent (kể cả `ws08-geo`) chỉ khi opt-in "song song"/"fan-out", trần theo `.claude/settings.json` (2 đồng thời, độ sâu 1); §4 fan-out + §5.1 Pre-work đổi câu chữ tương ứng.
+- **`.claude/agents/ws08-geo.md`:** description "CHỈ gọi khi opt-in fan-out hoặc gọi rõ tên"; thêm `tools` (không có Agent → không đẻ sub-agent lồng). **`.claude/settings.json` MỚI:** effort high + trần sub-agent.
+- **`COMMANDS.md`:** tách `làm công đoạn <n>` (trạm-first) và `chạy trọn công đoạn <n>` (điều phối nâng cao). `README.md`: mô tả ORCHESTRATOR là tùy chọn. `AGENT.md`: mục 0 bản nhúng v2026-09-02 (miễn trừ luật ngắn gọn cho deliverable/báo cáo khách/hợp đồng, luật mật độ chữ, sub-agent).
+- **Port sang instance:** GHI ĐÈ nhóm A bảng mục 2 (kể cả `_REFERENCE/`, `.claude/agents/`, `.claude/settings.json`); GIỮ nhóm B. Instance chưa nhận v2026.09.1 thì nhận luôn cả 2 đợt trong một lần đè.
+
+### v2026.09.1 (2026-09-02) — Vá chuỗi GEO v2 đứt gãy + đăng ký gate vào lớp điều phối + lớp business còn thiếu
+
+- **Knowledge pack:** đóng gói `02-raw/knowledge/sop/09-timeline/lop-geo-v2.md` (guideline 6 điểm chạm — trước đây 6 file trỏ path không tồn tại `sop/09-project-timeline/`); re-sync mục AX của `sop/08-onpage-checklist.md` lên **AX1-AX7** (AX6 passage verifiability, AX7 heading/title/meta ↔ fan-out, chuẩn chunk 29/08 bỏ cap 375 từ) — mọi chỗ ghi AX1-AX5/AX1-AX6 đã thống nhất AX1-AX7; version `tier-1-geo.md` thống nhất 2.0.2. `_MANIFEST.md` 18 hàng.
+- **`index.md`:** dòng #13/#14/#21/#28 mang nhãn G0-G5 + gate G-ENT/G-T1 (khớp ma trận M §5.2); luật đọc bảng 3 nói cách ghi gate GEO; bảng C thêm nhịp **Báo cáo khách** (tháng/quý/nghiệm thu) + **Content refresh** (T6/T9).
+- **`ORCHESTRATOR.md` §3:** thêm hàng 4 gate GEO (G-T1 · G-ENT · G-BÀI · G-KH) vào bảng chốt giám đốc; §7 báo đỏ soạn theo `_TEMPLATES/escalation-note.md` (MỚI).
+- **`CLAUDE.md`:** §5.2 hàng Strategy thêm `gtv-project-okrs`; hàng Content plan thêm `geo-fanout-research` ở #10 (fan-out trước khi chốt map, không đợi #28); hàng Reporting thêm `gtv-weekly-report` + `report-config.example.yaml`; §6.2 thêm mốc cứng **G-ENT ≤15 ngày đầu T3**; số skill 35.
+- **Template MỚI (21 → 24):** `entity-plan.md` (#13 — deliverable gate G-ENT, trước đây gate có checklist mà không có mẫu) · `escalation-note.md` · `report-config.example.yaml` (instance mới trước đây không có file khởi tạo báo cáo tuần/OKRs quý).
+- **Template sửa:** `kick-off.md` thêm mục **3b Kỳ vọng & giới hạn** (7 điều nói với khách buổi đầu — 100 ngày, 90% không cần link, GEO directional, SLA, sửa web, cách đo, kỳ vọng mềm ngoài HĐ) + DoD; `handover-checklist.md` mục 5 thêm **trigger tái ký ≤2 tháng → acc-renewal-brief**, khối **bàn giao PIC nội bộ**, mục **5b thu feedback khách 2 câu**; `content-plan-matrix.md` thêm **mục 2b information gain + fan-out coverage per cụm** + DoD.
+- **README trạm 03/08/09/06/11:** đồng bộ danh sách skill/công đoạn/template với ma trận M.
+- **Link chết ra ngoài repo:** `sop/02-content-brief.md`, `common-ai-errors.md`, `weekly-report-slides/README.md`, `.claude/agents/ws08-geo.md` — ghi rõ skill/wiki thuộc fork Content Production hoặc wiki, không đóng gói ở đây (luật standalone §11).
+- **Instance nhận:** nhóm A GHI ĐÈ (root luật + knowledge pack + `_TEMPLATES/` + README trạm); `index.md` instance đang chạy: sửa tay 4 dòng #13/#14/#21/#28 + 2 dòng bảng C (không ghi đè vì có status thật).
+- Ghi chú: `12-feedback-lessons/lessons/` ở master vẫn 0 lesson sau 14 tháng — đề xuất 1 buổi distill hồi tố từ `log.md` (feedback CareerViet 22-23/07, review chéo Codex 30/07) — chưa làm trong đợt này.
 
 ### v2026.08.3 (2026-08-29) — Tích hợp wp-publish-workflow-kit + policy `<strong>` + SOP 11 đăng bài WP
 
@@ -121,7 +156,7 @@ Bản đầu tiên của hệ SEO Production. Không có instance cũ để migr
 - **Knowledge pack** `02-raw/knowledge/`: 12 file copy nguyên + 5 file chưng cất từ SOP Semantic SEO + 6 cheat-sheet per workstream + `_MANIFEST.md`.
 - **QC gate:** công đoạn có checklist không được set `done` khi chưa QC PASS; report theo `_TEMPLATES/qc-report.md` vào `03-audits/qc/`.
 - **_TEMPLATES/** 21 file + `account/` (8 file mẫu báo cáo Account).
-- **20 skill** trong `skills/` + mirror `.claude/skills/` và `.agents/skills/` (`gtv-client-report` chỉ Claude Code).
+- **35 skill** trong `skills/` + mirror `.claude/skills/` và `.agents/skills/` (`gtv-client-report` chỉ Claude Code).
 - **Git polyrepo:** master template repo + repo per client, main-only + phân vùng PIC + `merge=union` cho `log.md`/`feedback-log.md` (`SYNC.md`).
 - **Self-improving 3 vòng:** feedback-log → lessons → vá master/wiki (`CLAUDE.md` §9).
 

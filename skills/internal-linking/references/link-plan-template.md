@@ -1,6 +1,6 @@
 # Link Plan Template — schema output + citation map
 
-Template deliverable của skill `internal-linking`. File output: `<project>_Internal-Link-Plan_v1.md` → `Deliverables/<project>/`.
+Template deliverable của skill `internal-linking`. File output: `<project>_Internal-Link-Plan_v1.md` → tài liệu nội bộ «<project>» (ngoài repo, hỏi Lead/Vincent).
 
 ---
 

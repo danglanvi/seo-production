@@ -12,3 +12,6 @@ Ghi chú:
 
 - Append `log.md` op `handover` khi bàn giao xong; dòng #33 `index.md` chỉ lên `done` khi có bản ký nhận.
 - Khung duy trì 2 track theo `khung-duy-tri.md` — chốt track ngay tại buổi bàn giao, không để mở.
+- **Tái ký không đợi handover**: HĐ còn ≤2 tháng → SEO Lead gửi input tiềm năng giai đoạn tiếp cho Account, Account chạy `acc-renewal-brief` (Account Production) → BD mở deal renewal. Chi tiết mục 5 template.
+- Đổi SEO Lead giữa dự án → dùng khối "Bàn giao PIC nội bộ" trong template (5 thứ Lead cũ để lại), log op `handover` nguồn internal.
+- Thu feedback khách 2 câu (mục 5b) trước khi ký nhận — điểm ≤6 mở feedback-log trong 3 ngày.

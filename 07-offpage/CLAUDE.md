@@ -62,10 +62,10 @@ Tự chấm role `self` đạt hết mới được báo xong — chuẩn chấm
 | Nạp gì | Khi nào |
 |---|---|
 | `../02-raw/knowledge/cheat-sheets/ws07-offpage.md` | Vào trạm — Lưu đồ B + checklist rút gọn |
-| `../skills/backlink-plan/SKILL.md` **phần Gate (Bước 0)** | TRƯỚC mọi quyết định đi link — đọc gate trước, phần còn lại khi lập plan |
-| `../skills/backlink-research/` | DATA — chạy TRƯỚC plan; thiếu research thì dừng ở đây |
-| `../skills/backlink-plan/references/anchor-ratio-framework.md` | Chỉ khi lập anchor plan (Bước 2) |
-| `../skills/textlink-analyzer/` | Chỉ khi thực thi lọc URL textlink PR |
+| `skills/backlink-plan/SKILL.md` (công cụ ở workspace Vincent — bản standalone bỏ qua) **phần Gate (Bước 0)** | TRƯỚC mọi quyết định đi link — đọc gate trước, phần còn lại khi lập plan |
+| `skills/backlink-research/` (công cụ ở workspace Vincent — bản standalone bỏ qua) | DATA — chạy TRƯỚC plan; thiếu research thì dừng ở đây |
+| `skills/backlink-plan/references/anchor-ratio-framework.md` (công cụ ở workspace Vincent — bản standalone bỏ qua) | Chỉ khi lập anchor plan (Bước 2) |
+| `skills/textlink-analyzer/` (công cụ ở workspace Vincent — bản standalone bỏ qua) | Chỉ khi thực thi lọc URL textlink PR |
 | `../02-raw/knowledge/sop/10-offpage-process.md` | Khi cần SOP toàn diện end-to-end |
 
 Không quét cả `references/` của skill — nạp từng file theo pointer khi step cần (§10 root).

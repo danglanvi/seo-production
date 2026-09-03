@@ -1,6 +1,6 @@
 # Bộ mẫu Nghiệm thu — BBNT đợt · BBNT thanh lý · Đề nghị thanh toán (Team Account)
 
-> **Nguồn chuẩn hóa:** BBNT PVI đợt 3, BBNT Sơn Báu đợt 2, BBNT thanh lý Surface, Phiếu đề nghị thanh toán Minh Tuấn Mobile (`GTV Ops/wiki/account/`) + điều khoản thanh toán hợp đồng mẫu (CareerViet PL01/PL02, MTM).
+> **Nguồn chuẩn hóa:** BBNT PVI đợt 3, BBNT Sơn Báu đợt 2, BBNT thanh lý Surface, Phiếu đề nghị thanh toán Minh Tuấn Mobile (tài liệu nội bộ «account» (ngoài repo, hỏi Lead/Vincent)) + điều khoản thanh toán hợp đồng mẫu (CareerViet PL01/PL02, MTM).
 > **Phiên bản:** v1 — 07/2026. Quy ước: `{...}` tự động · `[...]` điền tay · ⚖️ không tự sửa câu chữ.
 
 ## 0. Bộ hồ sơ thanh toán chuẩn (mỗi đợt — theo hợp đồng)

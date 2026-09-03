@@ -5,7 +5,7 @@
 
 ## Core Principle
 
-Heading hierarchy là yếu tố quan trọng NHẤT cho SEO và AI discoverability. 90% ChatGPT citations đến từ các trang có heading structure rõ ràng.
+Heading hierarchy là yếu tố cấu trúc quan trọng nhất cho SEO và AI discoverability — vì máy cắt passage theo ranh giới heading và gắn **heading tổ tiên vào chunk như metadata** (`includeAncestorHeadings`, Google Cloud docs: *"Appending title and headings at all levels to chunks from the middle of the document can help prevent context loss in chunk retrieval and ranking"*). Heading rỗng nghĩa ("Tổng quan", "Kết luận") làm mất lợi thế này. *(Câu "90% ChatGPT citations đến từ trang có heading structure rõ" từng ở đây không có nguồn — gỡ 29/08/2026; evidence citation có nguồn: heading khớp sub-query cosine ≥0,90 → 41% vs 30% cite, Indig × AirOps 04/2026, B — dùng nội bộ, không in ra deliverable khách.)*
 
 ## The Rules
 

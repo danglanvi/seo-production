@@ -1,6 +1,6 @@
 ---
 name: competitor-seo-gap-analysis
-description: "Analyze competitor SEO gaps across Category, Product/Detail, and Blog pages for multiple website types (Job Sites, E-commerce, Service, Informational). Use when: (1) Analyzing competitor traffic distribution and URL structure, (2) Identifying content gaps in Category/PLP pages, (3) Auditing Product/Detail/Job Posting page performance, (4) Comparing Blog content quality and topical coverage, (5) Creating competitive SEO dashboards for client pitching, (6) Building SEO strategy recommendations from gap analysis, (7) Benchmarking against industry leaders, (8) Planning content scaling priorities. Triggers: 'phân tích đối thủ', 'competitor analysis', 'SEO gap analysis', 'so sánh đối thủ', 'content gap', 'category analysis', 'product page audit', 'blog audit', 'competitive benchmark', 'SEO strategy planning', 'pitching dashboard'."
+description: "Analyze competitor SEO gaps across Category, Product/Detail, and Blog pages for multiple website types (Job Sites, E-commerce, Service, Informational). Use when: (1) Analyzing competitor traffic distribution and URL structure, (2) Identifying content gaps in Category/PLP pages."
 metadata:
   version: "1.1"
 ---

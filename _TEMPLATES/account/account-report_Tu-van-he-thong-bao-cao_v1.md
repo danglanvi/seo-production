@@ -1,7 +1,7 @@
 # Tư vấn hệ thống báo cáo khách hàng — Team Account GTV SEO
 
 > **Phạm vi:** review bộ template hiện tại, phương án dashboard (Looker vs HTML), kiến trúc dữ liệu & cách nhập liệu, phân tách nội bộ vs client.
-> **Nguồn đọc:** `GTV Ops/wiki/account/` (bộ mẫu T11-2024 + quy trình phối hợp SA–PSP), hợp đồng CareerViet/PVI/MTM, dashboard Looker CRV (ảnh chụp 05/07/2026).
+> **Nguồn đọc:** tài liệu nội bộ «account» (ngoài repo, hỏi Lead/Vincent) (bộ mẫu T11-2024 + quy trình phối hợp SA–PSP), hợp đồng CareerViet/PVI/MTM, dashboard Looker CRV (ảnh chụp 05/07/2026).
 > **Phiên bản:** v1 — 07/2026. Đi kèm 4 file: Email-Templates, BBNT-Templates, Quy-trinh-nghiem-thu (HTML), Dashboard-Demo (HTML).
 
 ---
@@ -143,7 +143,7 @@ Nguyên tắc: **sheet là nơi duy nhất con người gõ số**; dashboard, e
 1. **Tuần 1:** duyệt bộ template v1 (email + BBNT) → áp cho kỳ báo cáo gần nhất; rà lỗi 04/07 ngày ở các dự án đang chạy.
 2. **Tuần 2–3:** build pipeline Apps Script + hoàn thiện HTML template từ demo; chuẩn hóa Sheet «File theo dõi» cho CRV.
 3. **Tháng tiếp theo:** pilot CRV chạy song song Looker; lấy feedback khách; chốt go/no-go nhân bản sang PVI, MTM và dự án mới.
-4. **Sau pilot:** file-back quy trình chốt vào `GTV Ops/wiki/account/` (wiki hóa), đóng gói thành SOP onboarding Account.
+4. **Sau pilot:** file-back quy trình chốt vào tài liệu nội bộ «account» (ngoài repo, hỏi Lead/Vincent) (wiki hóa), đóng gói thành SOP onboarding Account.
 
 ## Câu hỏi mở (cần Vincent chốt dần)
 

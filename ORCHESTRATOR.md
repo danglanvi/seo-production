@@ -1,10 +1,10 @@
-# ORCHESTRATOR — Quản đốc dây chuyền 33 công đoạn
+# ORCHESTRATOR — Quản đốc dây chuyền 36 công đoạn
 
-> **Lớp điều phối** đứng trên các trạm của SEO Production. Đọc khi session phải chạy trọn một công đoạn, nhiều công đoạn liên tiếp, hoặc bung nhiều sub-agent. Luật gốc là `CLAUDE.md` cùng thư mục — file này KHÔNG chép lại luật, chỉ trỏ về đúng mục (§); nếu thấy xung đột: `CLAUDE.md` thắng.
+> **Lớp điều phối tùy chọn nâng cao** đứng trên các trạm của SEO Production. Chỉ đọc khi người vận hành gọi rõ: "chạy trọn công đoạn N", "chạy N→M nối tiếp", "bung song song", "quản đốc". Việc thường ngày (làm 1 công đoạn, onpage/audit/QC nhiều item trong 1 trạm) đi theo router `CLAUDE.md` §0.5 — làm trong phiên, không cần file này. Luật gốc là `CLAUDE.md` cùng thư mục — file này KHÔNG chép lại luật, chỉ trỏ về đúng mục (§); nếu thấy xung đột: `CLAUDE.md` thắng.
 >
 > **Mindset neo:** *Sub-agent là nhân viên. Orchestrator là quản đốc. Bạn là giám đốc — chỉ duyệt ở chốt quan trọng.* Quản đốc gọi nhân viên theo thứ tự → kiểm gate (done-criteria) → fan-out song song khi được phép → gộp → chuyển bước.
 >
-> **Trạm** = một workstream folder (`00-client-context/` → `12-feedback-lessons/`). Mỗi trạm một nhân viên: sub-agent chỉ nạp nội quy trạm nó theo luật nạp 80/20 (`CLAUDE.md` §10), KHÔNG nạp cả hệ.
+> **Trạm** = một workstream folder (`00-client-context/` → `12-feedback-lessons/`). Mỗi trạm một nhân viên: sub-agent chỉ nạp nội quy trạm nó theo luật nạp 80/20 (`CLAUDE.md` §10), KHÔNG nạp cả hệ. **Trên Claude Code:** mặc định quản đốc **tự đóng vai nhân viên từng trạm trong cùng phiên** (0 sub-agent). Chỉ khi người vận hành opt-in "song song"/"fan-out" (mục 4) mới gọi sub-agent: trạm có định nghĩa sẵn trong `.claude/agents/` thì gọi subagent đó (`ws08-geo` — pre-work + gate + luật số liệu đã cài trong định nghĩa); trạm chưa có → giao việc theo gói nội quy như mục 2 bước 3. Trần sub-agent theo `.claude/settings.json` của folder (2 đồng thời, độ sâu 1).
 >
 > File này áp cho master lẫn instance. Vòng điều phối thật chạy trong instance `PROJECTS/<client-slug>/` hoặc repo clone của team — master không có dữ liệu client.
 
@@ -31,7 +31,7 @@
 
 Mọi lệnh cấp mục tiêu chạy đúng vòng này:
 
-1. **Đọc trạng thái** — `index.md` bảng B (33 công đoạn: status, PIC, tháng, Ghi chú) + bảng C (nhịp quý). Xác định: công đoạn đến lượt theo tháng dự án + phụ thuộc, công đoạn `blocked` kèm lý do, nhịp quý đến kỳ chưa tick, mốc cứng sắp chạm (§6.2).
+1. **Đọc trạng thái** — `index.md` bảng B (36 công đoạn: status, PIC, tháng, Ghi chú) + bảng C (nhịp quý). Xác định: công đoạn đến lượt theo tháng dự án + phụ thuộc, công đoạn `blocked` kèm lý do, nhịp quý đến kỳ chưa tick, mốc cứng sắp chạm (§6.2).
 2. **Tra ma trận M** (`CLAUDE.md` §5) — ra trạm (WS folder), skill chính, checklist QC, done-criteria của công đoạn. Không dùng checklist ngoài ma trận.
 3. **Nạp nội quy trạm cho nhân viên** — sub-agent của trạm nhận đúng gói context, không hơn:
    - `AGENT.md` (persona giao tiếp) + Pre-work protocol §3 (bắt buộc với MỌI nhân viên — mục 5).
@@ -68,6 +68,7 @@ Quản đốc tự chạy mọi thứ GIỮA các chốt. Đụng chốt → D�
 | Chốt | Khi nào dừng | Ai chốt |
 |---|---|---|
 | 4 gate ◇ #6, #22, #25, #30 | Trước khi ghi `gate: <verdict>` vào Ghi chú bảng B + append log op `gate` | Theo cột Duyệt bảng B (#6/#22/#25: SEO Lead Project · #30: SEO Director) |
+| 4 gate GEO (`tier-1-geo.md` v2.0.2): **G-T1** (#14 — chưa rank/bot bị chặn = dừng lớp GEO) · **G-ENT** (#13 — `site:domain` không trả lời được câu thương mại = chưa mở #21) · **G-BÀI** (mỗi bài, GE-16…19) · **G-KH** (mọi deliverable GEO gửi khách — guardrail GE-05/GE-35) | G-T1/G-ENT: trước khi ghi `gate: <verdict>` dòng #14/#13 · G-BÀI: trước khi set `done` bài · G-KH: trước khi gửi khách | G-T1/G-ENT: SEO Lead Project · G-BÀI: SEO Lead Project (random 25-30%) · G-KH: Account + Lead |
 | Chiến lược + OKRs (#8; OKRs #24) | Trước khi chốt bản chiến lược/OKRs — quản đốc chỉ chuẩn bị input + draft | SEO Director |
 | Structure lock (#11) | Trước khi khóa wireframe + HTML template — mốc cứng ≤15 ngày đầu T2 | SEO Leader |
 | Ngân sách đẩy mạnh offpage (#25 → #26) | Gate mở mới được lên campaign; mặc định 90% dự án KHÔNG cần đẩy link (§6.2) | SEO Lead Project |
@@ -82,7 +83,7 @@ Bảng trên gom các chốt hay đụng nhất. Cột Duyệt của bảng B l�
 
 ## 4. Fan-out song song — khi nào được bung nhiều nhân viên
 
-Mặc định chạy **tuần tự** — công đoạn sau ăn output công đoạn trước. Fan-out CHỈ bên trong MỘT công đoạn, khi chia được thành các deliverable độc lập:
+Mặc định chạy **tuần tự trong cùng phiên, 0 sub-agent** — công đoạn sau ăn output công đoạn trước; nhiều item cùng trạm thì lặp tuần tự. Fan-out CHỈ khi người vận hành opt-in ("song song"/"fan-out") VÀ bên trong MỘT công đoạn chia được thành các deliverable độc lập:
 
 | Tình huống fan-out hợp lệ | Cách chia việc |
 |---|---|
@@ -103,7 +104,7 @@ Sau khi gộp: quản đốc kiểm done-criteria + chạy QC trên **BẢN GỘ
 
 ## 5. Luật cứng kế thừa (trỏ về, không chép)
 
-1. **Pre-work protocol §3 áp cho MỌI sub-agent** — nhân viên nào cũng đọc đúng thứ tự: `AGENT.md` → dòng công đoạn trong `index.md` → lessons ws (nếu có) → cheat-sheet WS (nếu có) → checklist theo ma trận M (khi Work có checklist / khi QC) → `kpi-commitments.md` khi chạm KPI. Đọc xong báo 3-5 câu nắm được gì rồi mới làm.
+1. **Pre-work protocol §3 áp cho mọi nhân viên được giao việc (chính session hoặc sub-agent khi fan-out)** — nhân viên nào cũng đọc đúng thứ tự: `AGENT.md` → dòng công đoạn trong `index.md` → lessons ws (nếu có) → cheat-sheet WS (nếu có) → checklist theo ma trận M (khi Work có checklist / khi QC) → `kpi-commitments.md` khi chạm KPI. Đọc xong báo 3-5 câu nắm được gì rồi mới làm.
 2. **Im lặng = chưa duyệt** — không có "soft proceed" (`AGENT.md` §4). Execution Rule §0 áp cho cả quản đốc lẫn nhân viên.
 3. **Mốc cứng (§6.2) + nhịp quý (bảng C) ưu tiên hơn việc mới** — việc phát sinh không được chen trước structure lock T2, content URL SEO T3, onpage T4, gate offpage T6, và các kỳ OKRs / audit / AI visibility đến hạn. Trễ mốc cứng → báo đỏ trong báo cáo tháng, không im lặng.
 4. **Standalone mode** — repo clone của team chỉ có folder này; interface ngoài (§11) không tồn tại → bỏ qua, không lỗi, KHÔNG với ra ngoài repo. Thiếu data → hỏi thẳng người vận hành.
@@ -132,7 +133,7 @@ Gặp một trong các tín hiệu sau → quản đốc chủ động báo đ�
 | Khách giữ hạng mục (access, duyệt content, deploy) đe dọa mốc cứng | Báo đỏ + soạn sẵn nội dung nhắc khách cho Account, kèm "rủi ro nếu trễ" bằng ngôn ngữ nói với khách |
 | Lệch số giữa các nguồn data (GSC / GA4 / tool) trong cùng deliverable | DỪNG deliverable liên quan, báo đỏ — không tự chọn một nguồn cho xong |
 
-Mỗi lần báo đỏ: append `log.md` op `feedback` (nguồn: internal); tín hiệu chạm quyết định gate ◇ → ghi kèm vào entry op `gate` khi chốt. Feedback đã báo → vào `12-feedback-lessons/feedback-log.md` theo vòng 1 self-improving (§9).
+Mỗi lần báo đỏ: soạn theo `_TEMPLATES/escalation-note.md` (ai báo · báo ai · trễ bao lâu · rủi ro nói với khách · phương án · deadline quyết) rồi append `log.md` op `feedback` (nguồn: internal); tín hiệu chạm quyết định gate ◇ → ghi kèm vào entry op `gate` khi chốt. Feedback đã báo → vào `12-feedback-lessons/feedback-log.md` theo vòng 1 self-improving (§9).
 
 ---
 

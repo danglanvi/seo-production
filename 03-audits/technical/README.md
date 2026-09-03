@@ -1,0 +1,1 @@
+# 03-audits/technical/ — audit technical lẻ (template `_TEMPLATES/audit-technical.md`, skill `technical-seo-audit` · `seo-drift-tracker` · `seo-logfile-analysis`). Bản gộp 6 hạng mục (#5/#27) nằm ở `../full/`.

@@ -8,18 +8,17 @@
 
 ---
 
-## 0. Nguyên tắc giao tiếp nền (bản nhúng root — v2026-08-15)
+## 0. Nguyên tắc giao tiếp nền (bản nhúng root — v2026-09-02)
 
-> Khối này nhúng đầy đủ luật giao tiếp + chất lượng cấp workspace để bản standalone không cần file ngoài folder. Trong workspace đầy đủ của Vincent: root `AGENT.md` + `AGENTS.md` là bản gốc — vênh thì theo root và báo để sync.
+> Khối này nhúng luật giao tiếp + chất lượng cấp workspace để bản standalone không cần file ngoài folder. Trong workspace đầy đủ của Vincent: root `AGENT.md` + `AGENTS.md` là bản gốc — vênh thì theo root và báo để sync.
 
-**Hai chế độ output:**
-
-- **Chat / trả lời vận hành:** ngắn gọn, đi thẳng trọng tâm — kết luận trước, bằng chứng gọn, không lặp lại điều đã chốt, không diễn giải dài. Không tự dựng header/section/bảng cho câu trả lời ngắn; không tự thêm next-steps/khuyến nghị khi không được hỏi. Plan trình duyệt = khung quyết định + scope, không diễn giải như bài viết.
-- **Content / deliverable** (bài viết, content social, report, proposal, deck, wiki synthesis — output có người đọc cuối): KHÔNG áp luật ngắn gọn — completeness > brevity; câu đủ chủ ngữ – vị ngữ, đủ ngữ cảnh, không cụt lủn; độ dài khớp mục đích.
-
+**Chat / trả lời vận hành:** kết luận trước, bằng chứng gọn; status ngắn (trạng thái + kết luận, không kể bước); caveat ngắn; giải thích ở mức cao trừ khi được hỏi sâu. Không lặp điều đã chốt, không nịnh, không filler, không mở đầu bằng khen. Bullet hoặc bảng khi nội dung nhiều mặt hoặc là status; trao đổi chiến lược thì prose. Plan trình duyệt súc tích nhưng đủ ngữ cảnh: mục tiêu, file chạm, điểm cần quyết — không kể quá trình. Khi chạy tool: 1 câu trước tool call đầu, giữa chừng chỉ báo khi có phát hiện đổi hướng, kết thúc câu đầu là kết quả.
+**Miễn trừ — không áp luật ngắn gọn:** bài viết và prose content, thông điệp marketing (landing, email, ads, social), điều khoản hợp đồng và văn bản pháp lý (giữ nguyên văn, không tóm tắt điều khoản), proposal/báo giá, báo cáo khách, deck, wiki synthesis — completeness > brevity, câu đủ chủ ngữ – vị ngữ, độ dài khớp chuẩn scope.
+**Mật độ chữ (mọi model):** câu ngắn, ngắt đoạn; nói thẳng thay vì ẩn dụ hoa mỹ; báo cáo nghiên cứu/ops = kết luận + bằng chứng + nguồn, không kể quá trình; sửa file bằng edit đúng chỗ, không viết lại cả file khi không cần.
 **Cấu trúc template là sàn:** bảng/section mà template hoặc luật cục bộ bắt buộc — không cắt vì "ngắn gọn", không độn vì "cho đầy đặn".
-**File viết ra đĩa:** độ dài khớp việc cần làm — artifact 2 trang làm được thì không viết 5 trang; không boilerplate, không mục "phòng sau này". Content bài viết: độ dài theo chuẩn scope, không áp câu này.
-**Code viết ra:** tối thiểu đủ dùng — không thêm abstraction, option, defensive code ngoài nhu cầu hiện tại; style khớp code xung quanh.
+**File viết ra đĩa:** độ dài khớp việc cần làm — artifact 2 trang làm được thì không viết 5 trang; không boilerplate, không mục "phòng sau này". Content bài viết: độ dài theo chuẩn scope.
+**Code viết ra:** tối thiểu đủ dùng — không thêm abstraction, option, defensive code ngoài nhu cầu; style khớp code xung quanh.
+**Sub-agent:** mặc định làm trực tiếp trong phiên; chỉ bung khi được gọi rõ "batch", "song song", "khảo sát rộng"; nhiều task cùng dạng trong một trạm = lặp tuần tự cùng context, báo từng item rồi tổng kết.
 **Deliverable lớn (gửi khách, case study, deck):** trình khung nội dung duyệt trước khi dựng bản đầy đủ.
 **Trước khi trả kết quả:** báo rõ phần chưa thể xác minh — không bịa số liệu, proof hay trải nghiệm.
 
@@ -143,7 +142,7 @@ Luật repo: **Show plan → chờ duyệt → thực hiện.**
 
 - **Trực tiếp, không filler**: không "Câu hỏi rất hay", không "Để mình giải thích".
 - **Why trước What**: giải thích lý do + trade-off trước cách làm khi quyết định có ảnh hưởng.
-- **Ngắn khi đủ, đầy đủ khi cần**: status 1 câu; phân tích chiến lược viết prose đầy đủ.
+- **Ngắn khi đủ, đầy đủ khi cần**: status ngắn, không kể bước; phân tích chiến lược viết prose đầy đủ.
 - **Bullet cho status/update, prose cho strategy/analysis.**
 - Không nịnh, không hứa hẹn kết quả SEO không có evidence.
 

@@ -194,3 +194,18 @@ Luật ghi:
 - Commit phần dang dở từ 28/08: `_SETUP/` (doctor + credential per-user + hướng dẫn Drive), BOOTSTRAP trong CLAUDE.md, `requirements.txt`, skill `setup-may`, `_cred.py` cho script sheet, GEO G0-G5 trong §5.1/§5.2, mirror skills. Soát secret: không có key trong tree; `config/local.yaml` đã gitignore.
 - Push `origin/main` → github.com/GTV-SEO-Agency/seo-production (v2026.08.3).
 - Files touched: MIGRATION.md, log.md + toàn bộ file đợt 28/08
+
+## [2026-09-02] refactor | v2026.09.1 — vá chuỗi GEO v2 (lop-geo-v2 đóng gói, AX1-AX7), gate GEO vào ORCHESTRATOR/index, 3 template mới (entity-plan, escalation-note, report-config.example), lớp business kick-off/handover — @claude
+- Nguồn: audit tổng thể workspace 02/09 (Vincent yêu cầu chủ động improve SEO/BD/Account Production theo wiki Business + Semantic SEO).
+- Pages touched: CLAUDE.md §5.2/§6.2 · ORCHESTRATOR.md §3/§7 · index.md (#13/14/21/28, luật 3, bảng C) · MIGRATION.md · README 03/06/08/09/11 · 09-reporting/CLAUDE.md · _TEMPLATES/{kick-off, handover-checklist, content-plan-matrix, README} · 02-raw/knowledge/{_MANIFEST, sop/08, sop/09-timeline/lop-geo-v2 (MỚI), sop/02, common-ai-errors} · path lop-geo-v2 trong skills + 2 mirror + .claude/agents.
+- Chi tiết: MIGRATION.md mục v2026.09.1. Chưa làm: distill lesson hồi tố (0 lesson ở 12-feedback-lessons).
+
+## [2026-09-02] refactor | v2026.09.2 — trạm-first: router §0.5, ORCHESTRATOR tùy chọn, sub-agent opt-in, `_REFERENCE/`, standalone — @claude
+- CLAUDE.md 463 → 347 dòng (router §0.5, §11 standalone, §13 anti-pattern mới); 5 file `_REFERENCE/`; ORCHESTRATOR header/§4/§5.1; ws08-geo description + tools; `.claude/settings.json`; COMMANDS.md tách làm/chạy trọn; README mô tả ORCHESTRATOR; AGENT.md bản nhúng v2026-09-02. Ma trận M, Pre-work, mốc cứng, QC không đổi nội dung.
+- Files touched: CLAUDE.md, _REFERENCE/*.md (5), ORCHESTRATOR.md, .claude/agents/ws08-geo.md, .claude/settings.json, COMMANDS.md, README.md, AGENT.md, MIGRATION.md
+- Công đoạn: — · WS: root
+
+## [2026-09-02] refactor | Standalone sweep (v2026.09.2 bổ sung) — @claude
+- 40 file infra (12 nội quy trạm 0X/CLAUDE.md, skills, cheat-sheet, SETUP.md, CLAUDE.md) — đường dẫn tới wiki/kho nội bộ ngoài repo đổi thành mô tả «tài liệu nội bộ … (ngoài repo, hỏi Lead/Vincent)»; SETUP.md bảng chế độ: "Máy master của Vincent". Đã đè sang 2 instance PROJECTS (careerviet, minh-tuan-mobile) trong đợt migration cùng ngày.
+- Files touched: 0X-*/CLAUDE.md, skills/*/SKILL.md, 02-raw/knowledge/cheat-sheets/*.md, SETUP.md, CLAUDE.md
+- Công đoạn: — · WS: root

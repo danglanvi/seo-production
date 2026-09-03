@@ -14,7 +14,8 @@
 |---|---|---|---|
 | `setup client <tên>` | Protocol 9 bước `SETUP.md`: điền context + bảng A + retiming gói 8/10/12 tháng (chạy SAU khi đã duplicate master + drop raw) | Lead | `setup client acme` |
 | `đến lượt gì tiếp?` / `status dự án` | Đọc bảng B + C `index.md` → công đoạn đến lượt, việc `blocked` + lý do, nhịp quý đến kỳ, mốc cứng sắp chạm | Mọi người | `đến lượt gì tiếp?` |
-| `chạy công đoạn <n>` | Vòng điều phối chuẩn (`ORCHESTRATOR.md` mục 2): tra ma trận M → giao trạm → tự kiểm → kiểm gate + QC → update index + log | PIC công đoạn | `chạy công đoạn 5` |
+| `làm công đoạn <n>` / `làm <deliverable>` | **Trạm-first** (`CLAUDE.md` §0.5): tra ma trận M → nạp nội quy trạm → làm trong phiên → tự kiểm → QC → update index + log. Nhiều item cùng trạm (onpage 10 bài, audit 5 URL) = lặp tuần tự, báo từng item | PIC công đoạn | `làm công đoạn 5` · `onpage 10 bài trong sheet X` |
+| `chạy trọn công đoạn <n>` / `chạy <n>→<m> nối tiếp` | Điều phối nâng cao (`ORCHESTRATOR.md` mục 2): quản đốc tra bảng, xếp việc nhiều công đoạn, chốt giám đốc; sub-agent chỉ khi thêm "song song"/"fan-out" | Lead | `chạy trọn công đoạn 13→14` |
 | `ingest <file> vào 02-raw` | Phân loại raw theo signal (`CLAUDE.md` §2.1) + chưng cất context — không sửa raw, op `ingest` | Mọi người | `ingest hop-dong-acme.pdf vào 02-raw` |
 | `feedback: <nội dung>` | Append `12-feedback-lessons/feedback-log.md`; pattern lặp ≥2 lần → đề xuất promote lesson (§9) | Mọi người | `feedback: khách muốn mục GEO riêng trong báo cáo` |
 

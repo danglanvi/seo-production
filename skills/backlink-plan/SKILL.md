@@ -1,6 +1,6 @@
 ---
 name: backlink-plan
-description: "Lập kế hoạch backlink toàn diện — DECISION layer của bộ skill backlink. Use when: (1) 'lập plan backlink cho [domain/client]', 'backlink recommend', 'nên đi link vào đâu', 'chọn target URL + anchor text'; (2) đã có research data (từ skill backlink-research hoặc data user cấp) cần chuyển thành kế hoạch: gate có-cần-link-không, target URLs, anchor plan per target, method mix, velocity, budget; (3) cần file plan spreadsheet format vận hành GTV. Nguyên tắc: gate 90%-site-không-cần-backlink → money-page link-gap test → supporting-content-first + lăng kính internal link → anchor SERP-consensus (GTV prior làm fallback, references/anchor-ratio-framework.md) → velocity theo nhịp đối thủ. KHÔNG dùng cho: thu thập data (→ backlink-research), thực thi lọc URL textlink PR (→ textlink-analyzer)."
+description: "Lập kế hoạch backlink toàn diện — DECISION layer của bộ skill backlink. Use when: (1) 'lập plan backlink cho [domain/client]', 'backlink recommend', 'nên đi link vào đâu', 'chọn target URL + anchor text'."
 metadata:
   version: "1.1"
 ---

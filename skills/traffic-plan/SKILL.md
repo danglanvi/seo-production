@@ -1,8 +1,8 @@
 ---
 name: traffic-plan
-description: "Lập plan traffic cho dự án SEO GTV theo quy trình 10 tháng (sop/09) — FORECAST layer, 2 mode: Mode Outer-first (T2, công đoạn 9) research Outer Section trước để plan initial traffic tạo Historical Data sớm (ưu tiên Phantom Keywords); Mode FULL (T3 → giữa T4, công đoạn 17) plan toàn bộ với forecast tổng ≥ cam kết hợp đồng +20%, model minh bạch volume × CTR theo position kỳ vọng × hệ số maturity (~100 ngày mature). Use when: (1) 'plan traffic cho [client]', 'lập plan initial traffic T2', 'plan content traffic FULL'; (2) 'forecast traffic có đủ cam kết +20% không', 'kiểm tra gap traffic vs KPI hợp đồng'; (3) cần bảng dự phóng topic → URL → volume → traffic theo tháng đổ vào template traffic-plan.md của SEO Production. Data priority: Ahrefs MCP (keywords-explorer volume, gsc-ctr-by-position khi có GSC) → DataForSEO Labs → CSV/paste tay. KHÔNG dùng cho: chọn topic/xây SCN đầy đủ (→ topical-map-creation), gom bộ keyword cam kết thành topic/URL (→ keyword-topic-url-mapping), lập OKRs (→ okrs-gtv-tag-framework), báo cáo kết quả traffic thực tế (→ gtv-client-report)."
+description: "Lập plan traffic cho dự án SEO GTV theo quy trình 10 tháng (sop/09) — FORECAST layer, 2 mode: Outer-first (T2, công đoạn 9) research Outer Section trước để tạo Historical Data sớm; FULL (T3 → giữa T4, công đoạn 17) plan toàn bộ với forecast tổng ≥ cam kết hợp đồng +20%, model min."
 metadata:
-  version: "1.0"
+  version: "1.1"
 ---
 
 # Traffic Plan
@@ -93,6 +93,16 @@ Quy tắc bắt buộc:
 - Tuổi content tính từ tháng publish theo ma trận content type sop/09 (Content URL SEO: T2 → hết T3; Content Marketing & Strategy: 65% trong T3-T4, chốt ≤15 ngày đầu T6) + dây chuyền onpage (+10-15 ngày) và internal link (+15-30 ngày).
 - Cộng dồn traffic dự phóng theo tháng T1→T10 → vẽ đường plan so với đường cam kết.
 
+### Bước 2b — AI deflection + AI referral (bổ sung 29/08/2026 — kỷ nguyên AI search)
+
+Model Bước 2 giả định CTR SERP cổ điển. Từ 2025-2026 hai thứ đã đổi và phải nằm **tường minh** trong plan (không cộng ngầm, không bỏ qua):
+
+1. **AI deflection — hạ CTR khi SERP có AI Overview.** Với mỗi keyword, gắn cờ `AIO?` (từ research primer S5 / `seo-research` Bước 7 / SERP screenshot / DataForSEO `ai_overview` item). Keyword có AIO → nhân CTR(position) với **hệ số deflection mặc định 0,5** (dải evidence: CTR #1 giảm −34,5% 04/2025 → **−58%** 12/2025, Ahrefs 300k keywords, B; zero-click Google US 68% 2026, SparkToro, B) — ghi là **giả định điều chỉnh được**, hạ xuống 0,4 cho query informational/dạng câu hỏi (AIO trigger 57,9%), giữ 1,0 cho transactional/shopping (AIO trigger 3,2%). Có `gsc-ctr-by-position` của chính site → dùng CTR thực thay hệ số.
+2. **AI referral — dòng riêng, KHÔNG tính vào cam kết.** Dự phóng sessions từ kênh GA4 "AI Assistant" (chatgpt.com · gemini · perplexity · copilot · claude) = **0,3-1% tổng organic** (share AI traffic trung bình 0,32% 2026, SE Ranking, B; site đã mở AI bot + content GEO chuẩn có thể cao hơn — first-party GTV n=1: +111%/tháng sau khi mở bot). Giá trị nằm ở **conversion, không ở volume**: CR kênh AI ≈10× organic (GTV n=1, D) · 23× (Ahrefs, F) · 15,9% vs 1,76% (Seer, B) → trình bày bằng **key events dự phóng**, nhãn directional, tách khỏi đường cam kết (attribution gãy — không nghiệm thu bằng số này).
+3. **Điều kiện để dòng AI referral có nghĩa:** gate G-T1 pass (index + page-one + bot search/user-triggered mở) và G-BÀI áp cho bài mới — nếu dự án chưa mở bot thì dòng này = 0 và ghi "chưa đủ điều kiện" thay vì ước lượng.
+
+Output: cột `AIO?` + `CTR sau deflection` trong bảng dự phóng; dòng "AI referral dự phóng (directional, không cam kết)" trong bảng cộng dồn; mục 6 ghi hệ số deflection + share AI đã dùng kèm nguồn + tháng.
+
 ### Bước 3 — Gap check (chỉ Mode FULL)
 
 1. Tổng traffic dự phóng tại tháng cam kết so với **cam kết +20%**: đạt ≥120% cam kết → PASS.
@@ -117,14 +127,15 @@ Quy tắc bắt buộc:
 |---|---|---|---|---|
 
 ## 2. Bảng dự phóng
-| # | Topic | URL | Core/Outer | Volume | KD | allintitle (nếu Phantom) | Position kỳ vọng (căn cứ) | Traffic dự phóng | Tháng publish | Tháng đạt |
-|---|---|---|---|---|---|---|---|---|---|---|
+| # | Topic | URL | Core/Outer | Volume | KD | allintitle (nếu Phantom) | Position kỳ vọng (căn cứ) | AIO? (hệ số deflection) | Traffic dự phóng | Tháng publish | Tháng đạt |
+|---|---|---|---|---|---|---|---|---|---|---|---|
 
 ## 3. Cộng dồn theo tháng vs đường cam kết
 | Tháng | T1 | T2 | ... | T10 |
 |---|---|---|---|---|
-| Plan cộng dồn | | | | |
+| Plan cộng dồn (organic, đã trừ AI deflection) | | | | |
 | Đường cam kết | | | | |
+| AI referral dự phóng — sessions · key events (directional, KHÔNG tính cam kết) | | | | |
 
 ## 4. Gap check
 - Tổng dự phóng tại tháng cam kết: <N> = <X>% cam kết → <PASS ≥120% | FAIL>
@@ -136,6 +147,8 @@ Quy tắc bắt buộc:
 
 ## 6. Giả định & giới hạn data
 - <mọi giả định: CTR, maturity, position — kèm nguồn; data thiếu gì>
+- AI deflection: hệ số <0,5 / 0,4 / 1,0 theo loại query> — nguồn Ahrefs 12/2025 (−58% CTR #1 khi có AIO) + SparkToro 2026 (zero-click 68%); keyword gắn cờ AIO từ <primer S5 / SERP screenshot / DataForSEO>
+- AI referral: share <0,3-1%> organic (SE Ranking 2026) · CR ≈<10×> organic (directional) · điều kiện G-T1 <pass/fail>
 ```
 
 ## Behavior Gates
@@ -173,4 +186,5 @@ Quy tắc bắt buộc:
 
 ## Changelog
 
+- **2026-08-29 v1.1** — Bước 2b **AI deflection + AI referral** (Vincent duyệt 29/08, FINDINGS 22/08 §1): keyword có AIO → CTR × hệ số deflection mặc định 0,5 (0,4 informational/câu hỏi · 1,0 transactional; evidence Ahrefs −34,5%→−58% CTR #1, SparkToro zero-click 68% — giả định điều chỉnh được, ưu tiên `gsc-ctr-by-position` thực); dòng **AI referral** tách riêng (share 0,3-1%, CR ≈10×/23×/15,9% vs 1,76% — directional, không cam kết, điều kiện G-T1 pass); output thêm cột `AIO?`, dòng AI referral, mục 6 ghi hệ số + nguồn.
 - **2026-07-19 v1.0** — tạo mới: 2 mode Outer-first/FULL theo công đoạn (9)+(17) sop/09, forecast model volume × CTR × maturity, gap check cam kết +20% + route topical-map-creation, data ladder Ahrefs MCP → DataForSEO → paste tay, gate duyệt SEO Director.

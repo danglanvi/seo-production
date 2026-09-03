@@ -59,6 +59,18 @@ Luật nguồn lực: dòng B KHÔNG rút người khỏi nhịp tối thiểu d
 | 3 | Vai trò PM + ước workload 1-3 tháng (cộng thêm nếu có dòng B) | {{...}} |
 | 4 | Timeline dòng B hoạch định lại từ đầu (6-8 tháng, mở rộng chủ đề lớn thì dài hơn) | {{...}} |
 
+**Trigger tái ký (không đợi đến handover):** HĐ còn **≤2 tháng** → SEO Lead gửi input "tiềm năng giai đoạn tiếp" (mục 5 renewal brief) cho Account; Account chạy `acc-renewal-brief` (Account Production) và bàn giao BD mở deal type renewal. Kết quả vs cam kết trong brief phải **khớp tuyệt đối** báo cáo đã gửi khách — không đo mới. Hai tín hiệu tái ký tốt nhất: sau BBNT đợt có kết quả đẹp nhất (không phải khi HĐ sắp hết) · khách hỏi về AI/GEO, thị trường mới, "traffic có mà không ra đơn" (→ CRO).
+
+**Bàn giao PIC nội bộ (khi đổi SEO Lead giữa dự án — ghi ở đây, không có template riêng):** Lead cũ để lại 5 thứ: (1) trạng thái bảng B + việc đang `blocked` và vì sao; (2) 3 quyết định gate gần nhất + lý do; (3) hạng mục khách đang giữ + số ngày; (4) `12-feedback-lessons/feedback-log.md` entry chưa distill; (5) người liên hệ thật phía khách (ai quyết, ai chỉ chuyển tin). Lead mới xác nhận đọc xong → append `log.md` op `handover` (nguồn: internal).
+
+## 5b. Thu feedback khách (bắt buộc trước ký nhận)
+
+Gửi 2 câu qua email/Zalo sau buổi bàn giao (mẫu `email-khao-sat-hai-long` bên Account Production): điểm 0-10 "anh/chị có giới thiệu GTV cho người khác không" + "điều gì hài lòng nhất / muốn GTV làm khác". Ghi điểm + ngày đo vào bảng dưới; điểm ≤6 → mở entry `12-feedback-lessons/feedback-log.md` (nguồn: client) trong 3 ngày.
+
+| Điểm (0-10) | Ngày đo | Ý hài lòng nhất | Ý muốn khác | Entry feedback-log |
+|---|---|---|---|---|
+| {{...}} | {{...}} | {{...}} | {{...}} | {{FB-... hoặc —}} |
+
 ## 6. Ký nhận
 
 | Bên | Người ký | Ngày | Chữ ký |

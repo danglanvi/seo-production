@@ -1,6 +1,6 @@
 ---
 name: seo-logfile-analysis
-description: "Phân tích server log file để thấy Googlebot (và AI crawler) THỰC TẾ crawl gì — crawl budget theo section, status codes bot gặp, đối chiếu 3 nguồn sitemap ↔ cấu trúc ↔ log, crawl waste, tần suất crawl URL quan trọng vs URL rác — phục vụ công đoạn (27) T7 của quy trình SEO 10 tháng (logfile + FULL audit) và audit duy trì hằng tuần giai đoạn maintain. Use when: (1) 'phân tích logfile [site]', 'audit log server [client]', 'Googlebot đang crawl gì trên site'; (2) chạy công đoạn T7 full audit — logfile là mảnh bắt buộc; (3) audit duy trì hằng tuần: crawl waste, 404/5xx Googlebot gặp, URL cam kết có được crawl đều không. Data ladder: (A) log đầy đủ + Python advertools logs_to_df → parquet (+GoAccess dashboard HTML gửi khách) → (B) chỉ GoAccess dashboard → (C) không có log → GSC Crawl Stats làm proxy, ghi rõ giới hạn. 🔴 Luôn verify Googlebot THẬT bằng reverse-DNS trước khi kết luận — fake Googlebot phổ biến ở hosting VN. KHÔNG dùng cho: audit technical site tổng 7 khu vực (→ technical-seo-audit — skill này là deep-dive khu vực 1), fix orphan page bằng link plan (→ internal-linking), traffic decay per bài (→ content-refresh)."
+description: "Phân tích server log file để thấy Googlebot (và AI crawler) THỰC TẾ crawl gì — crawl budget theo section, status codes bot gặp, đối chiếu 3 nguồn sitemap ↔ cấu trúc ↔ log, crawl waste, tần suất crawl URL quan trọng vs URL rác — phục vụ công đoạn (27) T7 của quy trình SEO 10 tháng."
 metadata:
   version: "1.0"
 ---

@@ -1,6 +1,6 @@
 ---
 name: acc-weekly-sync
-description: "Sinh sync brief hằng tuần cho Account của dự án SEO GTV — nhịp TUẦN nội bộ giữa Account và SEO Lead Project: đọc SEO Production instance (index.md Bảng B 33 công đoạn + log.md) theo tháng dự án hiện tại (T1-T10), trả brief 5 phần: mốc cứng 2 tuần tới, công đoạn trễ >1 tuần kèm nguyên văn 'Rủi ro nếu trễ' (ngôn ngữ nói với khách), hạng mục KHÁCH đang giữ + số ngày giữ, red-flags check theo mục 06 tài liệu training (SLA quá 2 lần, coder >2 tuần, sau T6 traffic <70% lộ trình, đổi phạm vi, hỏi traffic users), và câu hỏi cho SEO Lead Project tuần này. Use when: (1) 'sync tuần [client]', 'chuẩn bị sync với SEO Lead', 'weekly brief Account cho [client]'; (2) 'dự án [X] đang trễ gì / khách đang giữ gì / có red flag không'; (3) 'tuần này hỏi SEO Lead cái gì', chuẩn bị nội dung nhắc khách về hạng mục đang giữ. KHÔNG dùng cho: báo cáo tháng/quý/nghiệm thu gửi khách (→ gtv-client-report — skill này là nhịp TUẦN nội bộ, không phải reporting), kick-off + checklist T1 (→ acc-kickoff-setup), audit/điều tra nguyên nhân SEO kỹ thuật khi KPI lệch (→ skill seo-*; skill này chỉ phát hiện + escalate)."
+description: "Sinh sync brief hằng tuần cho Account của dự án SEO GTV — nhịp TUẦN nội bộ giữa Account và SEO Lead Project: đọc SEO Production instance (index.md Bảng B 33 công đoạn + log.md) theo tháng dự án hiện tại (T1-T10), trả brief 5 phần: mốc cứng 2 tuần tới, công đoạn trễ >1 tuần kèm ng."
 metadata:
   version: "1.0"
 ---
@@ -156,7 +156,7 @@ Chạy đủ 5 cờ, mỗi cờ trả: TRIGGERED / CLEAR / THIẾU DATA (+ cách
 
 ## References & wiki
 
-- `SEO Knowledge/Semantic SEO A - Z/sop/09-project-timeline/quy-trinh-seo-10-thang-account.html` — ground truth: 3 nhiệm vụ (mục 02), lưu đồ (03), bảng tháng + rủi ro nguyên văn (04), red flags (06), nhịp tuần/tháng/quý.
+- wiki nội bộ «quy-trinh-seo-10-thang-account» (ngoài repo, hỏi Lead/Vincent) — ground truth: 3 nhiệm vụ (mục 02), lưu đồ (03), bảng tháng + rủi ro nguyên văn (04), red flags (06), nhịp tuần/tháng/quý.
 - `SEO Production/index.md` — Bảng B 33 công đoạn (cột Tháng/Status/Ghi chú), Bảng C nhịp quý.
 - `SEO Production/_TEMPLATES/meeting-note.md` — nếu buổi sync cần ghi note chính thức.
 - Skill anh em: `acc-kickoff-setup` (T1, upstream) · `gtv-client-report` (báo cáo tháng/quý/nghiệm thu, downstream) · `technical-seo-audit`/`seo-onpage`/`content-refresh` (điều tra nguyên nhân khi Lead yêu cầu).

@@ -1,6 +1,6 @@
 # _MANIFEST — Nguồn gốc knowledge pack
 
-Kho gốc: `SEO Knowledge/Semantic SEO A - Z/sop/`. Cột File nguồn tính từ folder này. Cột Đích tính từ `02-raw/knowledge/`.
+Kho gốc: `SEO wiki nội bộ «Semantic» (ngoài repo) SEO A - Z/sop/`. Cột File nguồn tính từ folder này. Cột Đích tính từ `02-raw/knowledge/`.
 
 Luật:
 
@@ -8,7 +8,7 @@ Luật:
 2. Vá nội dung → vá ở kho gốc, sync lại vào master, instance nhận qua MIGRATION. Chi tiết: `README.md` mục 3.
 3. Mỗi lần re-sync: cập nhật ngày trong banner từng file + cột Ngày sync bảng dưới.
 
-## Bảng nguồn (17 hàng)
+## Bảng nguồn (18 hàng)
 
 | # | File nguồn | Hành động | Đích | Dùng cho WS / công đoạn | Ngày sync |
 |---|---|---|---|---|---|
@@ -24,11 +24,12 @@ Luật:
 | 10 | 09-project-timeline/10-thang-thuc-day.md | Copy nguyên | sop/09-timeline/10-thang-thuc-day.md | Timeline toàn dự án — SETUP bước 4 (retiming gói 8/10/12 tháng), bảng B index | 2026-07-17 |
 | 11 | 09-project-timeline/khung-duy-tri.md | Copy nguyên | sop/09-timeline/khung-duy-tri.md | WS11 Handover — #33 | 2026-07-17 |
 | 12 | 09-project-timeline/README.md | Copy nguyên | sop/09-timeline/README.md | Tổng quan quy trình 10 tháng + pointer lưu đồ | 2026-07-17 |
+| 18 | 09-project-timeline/lop-geo-v2.md | Copy nguyên | sop/09-timeline/lop-geo-v2.md | Guideline canonical lớp GEO v2 — 6 điểm chạm G0-G5, gate G-T1/G-ENT/G-BÀI/G-KH, luật phát hành 3 lớp; WS08 GEO #13/14/21/24/27/28/32/33 (mọi tham chiếu `lop-geo-v2.md` trong pack trỏ vào đây) | 2026-09-02 |
 | 13 | 06-self-checklist/tier-1-outline-am.md | Chưng cất — giữ O1-O18 + P0 (ID + mô tả check + ngưỡng pass); lược evidence/rationale/ví dụ dài (~50% dung lượng) | sop/06-self-checklist/tier-1-outline-am.md | WS05 — QC outline/AM (bài viết chạy ở fork Content Production) | 2026-07-17 |
 | 14 | 06-self-checklist/tier-1-content-writing.md | Chưng cất — giữ W1-W21 + Depth/Tone /23; lược evidence/ví dụ dài | sop/06-self-checklist/tier-1-content-writing.md | WS05 — QC bài viết | 2026-07-17 |
 | 15 | 06-self-checklist/tier-3-technical-advance.md | Chưng cất — bỏ cột Data/Evidence, giữ item + ngưỡng | sop/06-self-checklist/tier-3-technical-advance.md | WS03 Audit — #27, 29 | 2026-07-17 |
 | 16 | 07-visual-semantic.md | Chưng cất — giữ Phần B (process Bước 0-8 — viết tắt B0-B8 — + Output + checkbox), Phần C (RACI), Phần D (trade-offs); LOẠI HOÀN TOÀN Phần A (deep theory bảo mật: patents, leak factors, 4 Pillars, centerpiece dial) | sop/07-visual-semantic.md | WS04 Structure — #11 | 2026-07-17 |
-| 17 | 08-onpage-checklist.md | Chưng cất — giữ nguyên P0-P23 (/23) + T2-P1..8 (/31) + T3-P1..8 (/39) + AX1-AX5 (chấm riêng) + luật scoring + luật "sửa nền trước"; lược evidence inline, cột cross-ref wikilink, bảng reconciliation OP1-OP55 | sop/08-onpage-checklist.md | WS06 Onpage & IL — #7, 13, 18, 23 · WS08 GEO (AX1-AX5) — #14, 21, 28 | 2026-08-29 (vá P14 strong-policy) |
+| 17 | 08-onpage-checklist.md | Chưng cất — giữ nguyên P0-P23 (/23) + T2-P1..8 (/31) + T3-P1..8 (/39) + AX1-AX7 (chấm riêng) + luật scoring + luật "sửa nền trước"; lược evidence inline, cột cross-ref wikilink, bảng reconciliation OP1-OP55 | sop/08-onpage-checklist.md | WS06 Onpage & IL — #7, 13, 18, 23 · WS08 GEO (AX1-AX7) — #14, 21, 28 | 2026-08-29 (vá P14 strong-policy) |
 | 18 | 11-publish-wp.md | Copy nguyên — SOP đăng bài WordPress (2 flow input, gate pre-publish, kit wp-publish-workflow-kit, giới hạn kit) | sop/11-publish-wp.md | WS06 Onpage & IL — khâu publish #7, 13, 15, 16, 19, 23 | 2026-08-29 |
 
 ## Bổ sung 19.7.2026 — Hệ checklist v3 (24 hàng, đều Copy nguyên)

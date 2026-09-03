@@ -1,6 +1,6 @@
 ---
 name: setup-may
-description: Cài đặt máy để chạy được repo GTV này — kiểm tra và cài phần mềm còn thiếu (Python, thư viện, Node, Playwright, uv), hướng dẫn người dùng tự tạo Google service account riêng, gắn credential vào repo, rồi in danh sách file/folder Drive cần xin quyền Editor. Use when (1) vừa clone hoặc muốn cài repo — "cài đặt repo github này", "mới tải repo về", "máy tôi cần cài gì", "setup máy", "install this repo", "what do I need to install"; (2) script/skill lỗi thiếu môi trường — "thiếu thư viện", "ModuleNotFoundError", "no module named yaml", "pip install gì", "không chạy được script"; (3) lỗi credential hoặc quyền Google — "không thấy credentials", "GOOGLE_APPLICATION_CREDENTIALS", "service account", "chìa khóa robot", "403 khi đọc sheet", "chưa share sheet", "xin quyền Drive", "tạo credential Google"; (4) hỏi về MCP hoặc .mcp.json của repo. KHÔNG dùng cho việc nội dung (báo cáo, audit, content, hợp đồng) — chỉ cho cài đặt và môi trường.
+description: "Cài đặt máy để chạy repo GTV này: kiểm tra và cài phần mềm thiếu (Python, thư viện, Node, Playwright, uv), hướng dẫn tự tạo Google service account, gắn credential, in danh sách Drive cần xin quyền. Use when vừa clone repo, hỏi 'cần cài gì để chạy', hoặc gặp lỗi thiếu thư viện/credential/403."
 ---
 
 # Cài đặt máy cho repo này

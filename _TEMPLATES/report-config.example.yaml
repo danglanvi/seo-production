@@ -1,0 +1,68 @@
+# report-config.example.yaml — MẪU khởi tạo cho `09-reporting/report-config.yaml` (per client)
+# Cách dùng: copy file này → `09-reporting/report-config.yaml` trong instance, điền giá trị thật, KHÔNG commit về master.
+# Schema đầy đủ + ý nghĩa từng range_key: `skills/gtv-weekly-report/references/report-config-schema.md`.
+# Mọi field bắt buộc trừ khi ghi (optional). Giá trị dưới đây là placeholder.
+
+client: "<client-slug>"                 # trùng slug instance, vd careerviet
+client_name: "<Tên hiển thị>"
+domain: "<domain client, không https>"
+
+credentials: ~/.config/gcp/<service-account>.json   # mỗi người 1 service account (xem _SETUP/HUONG-DAN-GOOGLE-CREDENTIAL.md); env GOOGLE_APPLICATION_CREDENTIALS ghi đè
+
+week_anchor: "YYYY-MM-DD"               # NGÀY ĐẦU của W1 — đúng thứ trong tuần mà chu kỳ báo cáo dùng
+project_start: "YYYY-MM-DD"
+project_end: "YYYY-MM-DD"
+gsc_lag_days: 2                         # GSC lệch bao nhiêu ngày so với GA4
+
+ga4_property_id: ""                     # (optional) bật module GA4-direct khi đã có quyền
+gsc_site: ""                            # (optional) bật module GSC-direct, vd "sc-domain:example.com"
+
+looker:                                 # (optional) dashboard link-view để CHỤP
+  url: ""
+  pages: []
+
+spreadsheets:                           # workbook CỐ ĐỊNH (id không đổi theo tuần)
+  runrate:
+    id: "<spreadsheetId>"
+    ranges:
+      runrate_tuan: "'<Tên tab Runrate>'!A1:N70"        # parse summary KPI + dòng W(N-5)..W(N+1)
+  ke_hoach:
+    id: "<spreadsheetId>"
+    ranges:
+      report_tuan_tasks: "'<Tên tab Task>'!A1:M120"     # đếm Status + gom dòng trễ (slide SOW)
+  okrs:                                 # (optional) cho skill gtv-project-okrs
+    id: "<spreadsheetId>"
+    ranges:
+      okrs_quy: "'<Tên tab OKRs quý>'!A1:L60"
+
+report_tuan:                            # workbook thay đổi THEO TUẦN
+  name_pattern: "Report Tuần {week}"    # team đặt tên workbook ĐÚNG cú pháp này
+  drive_folder_id: "<folder-id>"        # KHUYẾN NGHỊ: folder Drive cố định của client, share 1 lần cho service account
+  known_ids: {}                         # cache id đã biết, append dần, vd {"11": "<id>"}
+  ranges:
+    overview_wow: "'<tab bảng 1>'!A1:N45"
+    gsc_jlp: "'<tab GSC>'!A1:K260"      # gsc_* → tính top movers theo ΔClicks
+    gsc_blog: "'<tab GSC blog>'!A1:K160"
+
+top_movers:
+  min_clicks: 30                        # "top page" = max(clicks 2 kỳ) ≥ ngưỡng — 80/20
+  top_n: 10
+
+kpi_targets:                            # mục tiêu NĂM theo sheet vận hành client-agreed — khớp 00-client-context/kpi-commitments.md
+  pageview_year: 0
+  apply_year: 0                         # đổi tên theo KPI cam kết thật (lead_year, order_year…)
+
+page_groups:                            # nhóm trang + cờ thuộc cụm KPI
+  - {name: "<nhóm 1>", kpi: true}
+  - {name: "<nhóm 2>", kpi: false}
+
+source_links:                           # link mở thẳng tab nguồn cho khối .data-meta của deck (gid KHÔNG khai tay)
+  runrate: {workbook: runrate, tab: "<Tên tab Runrate NGUYÊN VĂN>", label: "Runrate tuần"}
+  tasks: {workbook: ke_hoach, tab: "<Tên tab Task>", label: "Kế hoạch & task"}
+  gsc: {label: "Google Search Console", can: "link view GSC hoặc export định kỳ"}
+
+output:
+  weekly_dir: "09-reporting/weekly"
+  analysis_dir: "09-reporting/analysis"
+  deck_name: "<CLIENT>_bao-cao-tuan-W{week}_v{ver}"
+  template: "09-reporting/weekly-template/deck-template.html"

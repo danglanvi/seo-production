@@ -1,4 +1,4 @@
-> Bản đóng gói cho SEO Production — sync từ `SEO Knowledge/Semantic SEO A - Z/sop/09-project-timeline/README.md` ngày 2026-07-17.
+> Bản đóng gói cho SEO Production — sync từ `SEO wiki nội bộ «Semantic» (ngoài repo) SEO A - Z/sop/09-project-timeline/README.md` ngày 2026-07-17.
 > Wikilink [[...]] trong file = tri thức nội bộ sâu (wiki Semantic SEO, không đóng gói theo dự án).
 > Gặp wikilink cần đào sâu → hỏi SEO Lead / Vincent, hoặc tra kho gốc trên máy master.
 > 3 file .html lưu đồ (quy-trinh-seo-10-thang / duy-tri / account) KHÔNG đóng gói theo dự án — xem trên máy master (xem `_MANIFEST.md`).
@@ -18,7 +18,7 @@
 | quy-trinh-seo-duy-tri.html | Bản trình bày duy trì: lưu đồ dòng A + dòng B, bảng 10 việc ưu tiên, ma trận timeline 6 tháng đầu, nhịp daily→6-monthly, kanban tháng điển hình |
 | quy-trinh-seo-10-thang-account.html | Bản **training bộ phận Account**: 3 nhiệm vụ, lưu đồ Account, bảng theo tháng (kèm mốc CRO), checklist lấy từ khách, red flags |
 
-Bản học viên TAG (3 phiên bản: đầy đủ · đơn giản cho tay ngang/quản lý · **website đã có hiện trạng**): `TAG Ops/wiki/product/quy-trinh-seo-10-thang/`.
+Bản học viên TAG (3 phiên bản: đầy đủ · đơn giản cho tay ngang/quản lý · **website đã có hiện trạng**): tài liệu nội bộ «quy-trinh-seo-10-thang» (ngoài repo, hỏi Lead/Vincent).
 
 **Lớp CRO (chốt 05/07/2026):** site-wide elements CRO T2-T3 (chung đợt audit tổng thể + UX/UI + cấu trúc) · conversion path + landing page T8-T10 (đo lường chuyển đổi & tối ưu theo tracking từ cuối P2) · dự án duy trì: CRO landing page tháng 2-4 của giai đoạn duy trì.
 

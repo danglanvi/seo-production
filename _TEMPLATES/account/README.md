@@ -1,6 +1,6 @@
 # Bộ template Account (báo cáo / nghiệm thu / quản trị dự án)
 
-> Bản đóng gói cho SEO Production — copy từ `Deliverables/GTV-Account-Report-System/` ngày 2026-07-17.
+> Bản đóng gói cho SEO Production — copy từ tài liệu nội bộ «GTV-Account-Report-System» (ngoài repo, hỏi Lead/Vincent) ngày 2026-07-17.
 > Canonical GIỮ ở chỗ cũ; khi bản gốc thay đổi, sync lại qua MIGRATION.md của master (không sửa trực tiếp tại đây trong instance).
 
 | File | Dùng cho |

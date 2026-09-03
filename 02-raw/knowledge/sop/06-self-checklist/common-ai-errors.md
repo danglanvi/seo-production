@@ -4,8 +4,8 @@ phase: qc-editing
 last_updated: 2026-07-19
 source_file: raw/_ingested/Quy trình SEO PSP - All In One/3. Quy trình Content _ Production/AI Content checklist Topical Authority/3. Checklist đảm bảo chất lượng nội dung Content AI - Quality Content AI SEO Checklist.xlsx (Sheet 2 — 21 lỗi gốc)
 supporting_sources:
-  - skills/humanizer/SKILL.md (v3.1 — pattern catalog, detection landscape 2026)
-  - skills/semantic-content-writing/SKILL.md (v2.0.2 — 60 rules, Language Discipline)
+  - skills/humanizer/SKILL.md (v3.1 — pattern catalog, detection landscape 2026) — skill thuộc fork Content Production, không đóng gói ở SEO Production
+  - skills/semantic-content-writing/SKILL.md (v2.0.2 — 60 rules, Language Discipline) — như trên; ở SEO Production dùng file này + tier-1-content-writing.md để QC bài nhận từ fork
 items_count: 28
 related_wiki:
   - "[[Contextual Coverage]]"

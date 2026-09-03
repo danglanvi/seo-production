@@ -1,16 +1,18 @@
 # _TEMPLATES/ — Kho template deliverable (client-neutral)
 
-Mỗi deliverable của 12 workstream có template chuẩn ở đây. Naming khi dùng: `<CLIENT>_<slug>_v<N>.<ext>` — clone template về đúng WS folder rồi điền, KHÔNG sửa template gốc (muốn nâng cấp template → vá ở master qua MIGRATION).
+Mỗi deliverable của 13 workstream có template chuẩn ở đây. Naming khi dùng: `<CLIENT>_<slug>_v<N>.<ext>` — clone template về đúng WS folder rồi điền, KHÔNG sửa template gốc (muốn nâng cấp template → vá ở master qua MIGRATION).
 
-## Template cấp 1 (21 file)
+## Template cấp 1 (32 file)
 
 | Nhóm | Template |
 |---|---|
-| Chiến lược & kế hoạch | `okrs.md` · `topical-map.md` · `traffic-plan.md` · `content-plan-matrix.md` · `structure-brief.md` |
-| Audit & QC | `audit-toan-dien.md` · `gap-analysis.md` · `qc-report.md` |
-| Offpage | `backlink-campaign.md` · `gate-offpage-decision.md` · `internal-link-plan.md` · `textlink` (xem skill) |
+| Chiến lược & kế hoạch | `okrs.md` · `keyword-research.md` (#4, v2026.09.3) · `topical-map.md` · `traffic-plan.md` · `content-plan-matrix.md` (có mục 2b information gain + fan-out) · `structure-brief.md` |
+| Audit & QC | `audit-toan-dien.md` (full 6 hạng mục) · `audit-technical.md` · `audit-content.md` · `audit-entity.md` · `audit-offsite.md` (lẻ, v2026.09.3) · `gap-analysis.md` · `qc-report.md` |
+| Onpage · Entity · Offpage | `onpage-batch.md` · `entity-plan.md` (#13, gate G-ENT — WS 14) · `internal-link-plan.md` · `backlink-campaign.md` · `gate-offpage-decision.md` · `textlink` (xem skill) |
 | GEO | `geo-baseline.md` |
-| Client & vận hành | `kick-off.md` · `meeting-note.md` · `bao-cao-thang.md` · `hop-dong-cam-ket.md` · `handover-checklist.md` |
+| CRO (WS 13, v2026.09.3) | `conversion-path.md` (#34) · `ux-feature-brief.md` (#35) · `heatmap-recording-review.md` (#35/#36) |
+| Reporting | `bao-cao-thang.md` · `report-config.example.yaml` (copy → `09-reporting/report-config.yaml`) |
+| Client & vận hành | `kick-off.md` (có 3b Kỳ vọng & giới hạn) · `meeting-note.md` · `escalation-note.md` · `hop-dong-cam-ket.md` · `handover-checklist.md` (có trigger tái ký + bàn giao PIC + feedback khách) |
 | Self-improving | `feedback-entry.md` · `lessons-workstream.md` · `retro-pha.md` |
 
 ## Subfolder

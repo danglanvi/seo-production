@@ -1,6 +1,6 @@
 ---
 name: acc-kickoff-setup
-description: "Chạy mốc cứng T1 của Account cho dự án SEO GTV: phân tích hợp đồng đã ký (trích KPI cam kết, scope, SLA duyệt content, điều khoản đặc biệt) để điền 00-client-context/ của SEO Production instance, sinh checklist lấy từ khách đúng 4 nhóm (Access / Thông tin doanh nghiệp / Con người / Quy trình làm việc) theo tài liệu training Account, soạn agenda kick-off do Account chủ trì + form meeting note, và chốt definition-of-done 'kick-off xong'. Use when: (1) 'kick-off client [X]', 'chuẩn bị kick-off', 'setup Account cho dự án mới [client]'; (2) 'phân tích hợp đồng [client] cho Account', 'trích KPI + SLA từ hợp đồng'; (3) 'sinh checklist lấy access/thông tin từ khách', 'khách mới cần cung cấp gì'. KHÔNG dùng cho: lập proposal/cam kết KPI trước khi ký (→ gtv-proposal), dựng instance SEO Production về mặt kỹ thuật — duplicate master, retiming 33 dòng, fork content (→ SEO Production/SETUP.md protocol 9 bước; skill này là lớp Account chạy TRÊN instance đã dựng), hoạch định OKRs dự án (→ okrs-gtv-tag-framework), báo cáo tháng/quý cho khách (→ gtv-client-report), nhịp sync tuần sau T1 (→ acc-weekly-sync)."
+description: "Mốc cứng T1 của Account cho dự án SEO GTV: phân tích hợp đồng đã ký (KPI cam kết, scope, SLA duyệt content, điều khoản đặc biệt) để điền 00-client-context/ của instance SEO Production + sinh checklist lấy từ khách 4 nhóm. Use when: 'kick-off [client]', 'setup context từ hợp đồng [client]', 'checklist cần khách cung cấp'."
 metadata:
   version: "1.0"
 ---
@@ -146,7 +146,7 @@ Trả file `<client>_acc-kickoff-setup_v1.md` vào `10-client-management/` của
 
 ## References & wiki
 
-- `SEO Knowledge/Semantic SEO A - Z/sop/09-project-timeline/quy-trinh-seo-10-thang-account.html` — ground truth: 3 nhiệm vụ Account, lưu đồ, bảng tháng, checklist mục 05, red flags mục 06.
+- wiki nội bộ «quy-trinh-seo-10-thang-account» (ngoài repo, hỏi Lead/Vincent) — ground truth: 3 nhiệm vụ Account, lưu đồ, bảng tháng, checklist mục 05, red flags mục 06.
 - `SEO Production/SETUP.md` — protocol setup client 9 bước (upstream của skill này).
 - `SEO Production/index.md` — bảng B: dòng #1 (ký HĐ + OKRs), #12 (kick-off — PIC Account).
 - `SEO Production/_TEMPLATES/hop-dong-cam-ket.md` · `_TEMPLATES/kick-off.md` · `_TEMPLATES/meeting-note.md` — template điền trực tiếp.

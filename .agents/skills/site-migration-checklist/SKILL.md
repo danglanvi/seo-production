@@ -1,6 +1,6 @@
 ---
 name: site-migration-checklist
-description: "Checklist + workflow audit site migration (đổi domain, đổi cấu trúc URL, redesign, gộp site, đổi CMS) qua 3 giai đoạn PRE / DURING / POST — layer sự kiện migration, neo lý thuyết Ranking Signal Consolidation và Historical Data (bảo toàn signal, không reset). Use when: (1) 'chuẩn bị migration cho [domain]', 'lập redirect map cho [site]', 'audit staging trước launch'; (2) 'site vừa migrate xong, traffic drop — triage giúp'; (3) 'định nghĩa rollback criteria trước khi đổi CMS'. Benchmark ưu tiên Ahrefs MCP, fallback user export/paste. KHÔNG dùng cho: audit technical định kỳ (→ technical-seo-audit — chỉ gọi làm bước con), content refresh (→ content-refresh), traffic drop không gắn migration event."
+description: "Checklist + workflow audit site migration (đổi domain, đổi cấu trúc URL, redesign, gộp site, đổi CMS) qua 3 giai đoạn PRE/DURING/POST — bảo toàn signal, không reset Historical Data. Use when: 'chuẩn bị migration [site]', 'checklist đổi domain', 'site vừa redesign, kiểm tra gì', 'sau migration rớt traffic'."
 metadata:
   version: "1.0"
 ---

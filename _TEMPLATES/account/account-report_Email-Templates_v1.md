@@ -1,6 +1,6 @@
 # Bộ Email Templates — Báo cáo & Nghiệm thu dự án SEO (Team Account)
 
-> **Nguồn chuẩn hóa:** mẫu email hiện hành tại `GTV Ops/wiki/account/` (3. MẪU BÁO CÁO CÔNG VIỆC HÀNG THÁNG + 3.1 THÁNG CUỐI) + điều khoản nghiệm thu/thanh toán trong hợp đồng mẫu (CareerViet, PVI, Minh Tuấn Mobile).
+> **Nguồn chuẩn hóa:** mẫu email hiện hành tại tài liệu nội bộ «account» (ngoài repo, hỏi Lead/Vincent) (3. MẪU BÁO CÁO CÔNG VIỆC HÀNG THÁNG + 3.1 THÁNG CUỐI) + điều khoản nghiệm thu/thanh toán trong hợp đồng mẫu (CareerViet, PVI, Minh Tuấn Mobile).
 > **Phiên bản:** v1 — 07/2026.
 
 ## Quy ước dùng template

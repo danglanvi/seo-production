@@ -1,6 +1,6 @@
 ---
 name: expert-case-study
-description: Write professional SEO case studies in Expert/CEO style following Koray Tuğberk GÜBÜR's methodology. Use when (1) Creating short-form case studies for LinkedIn, X/Twitter, professional platforms, (2) Writing authority-positioning content with methodology focus, (3) User requests "viết case study dạng ngắn", "expert case study", "professional case study", "case study cho LinkedIn", "CEO style case study", (4) When user wants results-first content without personal narrative or storytelling. NOT for team/community style case studies with timeline storytelling or personal struggles.
+description: "Write professional SEO case studies in Expert/CEO style following Koray Tuğberk GÜBÜR's methodology. Use when (1) Creating short-form case studies for LinkedIn, X/Twitter, professional platforms, (2) Writing authority-positioning content with methodology focus."
 ---
 
 # Expert Case Study Writing

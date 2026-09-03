@@ -4,7 +4,7 @@
 >
 > **Đối tượng đọc:** Vincent / SEO Lead Project — người khởi tạo dự án. Team Executive/Account chỉ cần clone repo dự án đã setup xong (xem `SYNC.md` mục 1).
 >
-> **Folder này là gì?** Master template **client-neutral** — không chứa data của bất kỳ client nào. Mọi infra (33 công đoạn, 12 workstream, knowledge pack, QC gate, 20 skill) đã sẵn sàng. Việc của bạn: duplicate → drop hợp đồng → trigger Claude setup.
+> **Folder này là gì?** Master template **client-neutral** — không chứa data của bất kỳ client nào. Mọi infra (36 công đoạn, 13 workstream, knowledge pack, QC gate, 37 skill) đã sẵn sàng. Việc của bạn: duplicate → drop hợp đồng → trigger Claude setup.
 >
 > Đọc kèm: [`CLAUDE.md`](./CLAUDE.md) (luật vận hành) · [`SYNC.md`](./SYNC.md) (git + đồng bộ team) · [`MIGRATION.md`](./MIGRATION.md) (update instance cũ lên version master mới).
 
@@ -16,8 +16,8 @@
 
 | Chế độ | Ai dùng | Khác biệt khi setup |
 |---|---|---|
-| **Trong workspace Vincent** (tồn tại `../GTV Ops/`) | Vincent, SEO Lead trên máy master | Bước 3 đọc được client meta từ `GTV Ops/wiki/entities/clients/`; bước 7-8 chạy đủ |
-| **Standalone** (clone repo dự án của team) | Executive, Account, Lead làm remote | Không có `GTV Ops/` — bước 3 Claude hỏi thông tin thay vì tự đọc; bước 8 bỏ phần bookkeeping GTV Ops |
+| **Máy master của Vincent** | Vincent, SEO Lead trên máy master | Bước 3 đọc được client meta từ tài liệu nội bộ «clients» (ngoài repo, hỏi Lead/Vincent); bước 7-8 chạy đủ |
+| **Standalone** (clone repo dự án của team) | Executive, Account, Lead làm remote | Không có tài liệu nội bộ «GTV Ops» (ngoài repo) — bước 3 Claude hỏi thông tin thay vì tự đọc; bước 8 bỏ phần bookkeeping GTV Ops |
 
 Standalone: bước 7 (fork Content Production) do Vincent/Lead thực hiện trên máy master rồi cấp repo content cho team; instance chỉ giữ link fork trong `05-content-plan/README.md`.
 
@@ -76,7 +76,7 @@ setup client <tên>
 
 Claude thực hiện (theo Execution Rule — show plan, chờ duyệt, rồi ghi):
 
-1. Đọc toàn bộ raw vừa drop + `GTV Ops/wiki/entities/clients/<slug>.md` (nếu trong workspace; standalone → hỏi thông tin còn thiếu).
+1. Đọc toàn bộ raw vừa drop + tài liệu nội bộ «<slug>» (ngoài repo, hỏi Lead/Vincent) (nếu trong workspace; standalone → hỏi thông tin còn thiếu).
 2. Fill 3 file skeleton trong `00-client-context/`: `client-profile.md` · `marketing-foundation.md` · `kpi-commitments.md`.
 3. Tạo `00-client-context/hop-dong-cam-ket.md` từ `_TEMPLATES/hop-dong-cam-ket.md` — trích trường cam kết, công thức đo KPI, mốc nghiệm thu từ hợp đồng.
 4. Điền bảng A (Thông tin dự án) trong `index.md` — hết `{{PLACEHOLDER}}`.
@@ -104,7 +104,7 @@ Lead + team chốt **Tier 2 checklist nào được bật** cho dự án này (t
 
 Chỉ khi chạy trong workspace Vincent:
 
-- Client page `GTV Ops/wiki/entities/clients/<slug>.md` thêm link sang instance.
+- Client page tài liệu nội bộ «<slug>» (ngoài repo, hỏi Lead/Vincent) thêm link sang instance.
 - Log op `setup` cả 2 nơi: `log.md` của instance + log GTV Ops.
 
 Standalone: chỉ log `log.md` instance.

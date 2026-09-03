@@ -4,10 +4,11 @@
 
 | KPI | Description | Target | Tracking Frequency |
 |-----|-------------|--------|-------------------|
-| **Brand Mention** | Times brand appears in AI responses | >60% BOFU prompts | Daily |
-| **AI Citations** | Citation count (Semrush/Ahrefs AI features) | Increasing trend | Weekly |
-| **Share of Voice** | % mention vs competitors | >30% SOV | Monthly |
+| **Brand Mention** | Times brand appears in AI responses — **ChatGPT + Google AI (AI Mode/Gemini/AIO) là kênh bắt buộc**, Perplexity/Copilot/Claude bổ sung (29/08/2026) | >60% BOFU prompts trên cả 2 kênh bắt buộc | Weekly-2 weeks nội bộ (polling ≥3 lần/prompt — GE-33) |
+| **AI Citations** | Citation count — Ahrefs `site-explorer-ai-responses-count` + Brand Radar (tách found vs cited) · GSC Generative AI (Beta) impressions | Increasing trend (directional) | Weekly |
+| **Share of Voice** | % mention vs competitors — theo topic, tách engine | >30% SOV | Monthly |
 | **Information Accuracy** | AI describes brand correctly | >90% accurate | Monthly |
+| **AI Referral + AI CVR vs Organic CVR** | Sessions + conversion rate kênh GA4 "AI Assistant" so với Organic Search (mục § GA4 bên dưới) | Directional — không nghiệm thu | Monthly |
 
 ## Detailed Metrics
 
@@ -16,7 +17,7 @@
 **What to track:**
 - Mention count per prompt
 - Mention count trend over time
-- Mention by AI platform (ChatGPT, Perplexity, Gemini, Claude)
+- Mention by AI platform — thứ tự ưu tiên: **ChatGPT · Google AI Mode · Gemini app · AI Overviews** (bắt buộc) → Perplexity · Copilot · Claude (bổ sung). Đo Google AI **tách 3 bề mặt** (AIO ≠ AI Mode: 13,7% trùng citation)
 
 **How to measure:**
 ```
@@ -39,6 +40,12 @@ Target by funnel:
 - Semrush: Position Tracking → AI Overviews
 - Ahrefs: Site Explorer → AI Citations (if available)
 - Manual: Run prompts, note source citations
+
+**⚠️ Reliability caveats (added 08/2026 — refresh theo lint quý):**
+- Citation counts are **directional and lagging**, not real-time human visibility: a 404'd + deindexed page still received daily citations for ~8 weeks (@top5seo 07/2026, n=1, author-labeled "half-baked" — methodological warning only). Suspect any standalone "citations up/steady" chart.
+- **Date-stamp every number**: ChatGPT search format changed 3x since 06/2026; `search_queries` field gone 16-20/08/2026 → fan-out numbers pre/post 08/2026 are not comparable, and tools reading that field return empty/wrong until patched for the pipe format (`fast|query|freshness_window|domain`).
+- Asking an LLM whether a tactic works is **not** measurement (convergence problem — cats.txt, Williams-Cook 08/2026). Reject the 4 fake proofs as evidence: crawled / indexed / RAG-repeated / LLM-endorsed.
+- `genui_run` widget queries (stocks, sports, maps) have no citations to win — exclude from citation opportunity counts.
 
 ### 3. Share of Voice (SOV)
 
@@ -151,14 +158,45 @@ Track same metrics for 5-7 competitors:
 | **SE Ranking** | AI visibility | Multi-platform, sentiment analysis |
 | **AIClicks.io** | Cross-platform | Brand vs competitor, source identification |
 | **Semrush** | AI citations | Position tracking with AI Overviews |
+| **Microsoft Clarity AI Citations** | Grounding-query visibility (free) | Branded vs non-branded grounding queries + Share of Authority by query type (official feature 03/08/2026). Caveats: branded-classification methodology unpublished; coverage leans Bing/Copilot ecosystem — verify before client commitments |
+| **Ahrefs — AI responses + Brand Radar** (GTV có MCP) | Citation + mention count per engine (AIO / ChatGPT / AI Mode / Gemini / Perplexity / Copilot) | `site-explorer-ai-responses-count` (số AI responses cite site — nguồn đo AIO hợp lệ theo HĐ GTV), nhóm `brand-radar-*` (mentions overview/history, cited pages, SoV). ⚠ Tách **cited** (hiện link) vs **found** (retrieve không link) — 2 metric riêng; mọi số kèm ngày query + nhãn directional. Map tool → ô báo cáo: `gtv-client-report/references/data-paths.md` §1 |
+| **GSC → Performance → Generative AI features (Beta)** | Impressions/clicks từ AIO + AI Mode (official, free) | Bề mặt có nhưng không join được với query/click của performance report; số nhiễm bot của các tool tracking → dùng như trend directional, kèm workflow GSQi bên dưới |
+| **GA4 — channel group "AI Assistant"** | Traffic + conversion thực từ AI (official, free) | Setup ở mục § GA4 bên dưới — đây là **nguồn đối chiếu bắt buộc** trước khi tuyên bố thắng GEO (GE-35) |
+
+### GA4 — channel "AI Assistant" setup + AI CVR vs Organic CVR (mới 29/08/2026)
+
+**Vì sao:** citation/mention là số **lagging + nhiễm bot**; referral thật + chuyển đổi thật trong GA4 là bằng chứng duy nhất khách tin. Case first-party GTV (08/2026, enterprise VN, ẩn danh, n=1, nhãn D): mở robots cho AI bot → pageview kênh AI Assistant 84.764 → 179.177 (+111%/tháng), CR từ AI ≈10× organic.
+
+**Cách setup (Admin → Data display → Channel groups → tạo custom group hoặc thêm channel vào bản copy của Default):**
+
+| Channel | Điều kiện (Session source matches regex) | Ghi chú |
+|---|---|---|
+| **AI Assistant** | `chatgpt\.com\|chat\.openai\.com\|gemini\.google\.com\|bard\.google\.com\|perplexity\.ai\|copilot\.microsoft\.com\|bing\.com/chat\|claude\.ai\|you\.com\|meta\.ai\|grok\.com\|x\.ai` | Đặt **trên** Referral trong thứ tự ưu tiên channel; thêm domain khi thấy referrer mới trong báo cáo Traffic acquisition |
+| AI Assistant — Google AI Mode | không tách được bằng referrer (AI Mode/AIO click về dạng `google` organic) | Dùng GSC Generative AI (Beta) làm proxy impressions; không cộng vào channel AI Assistant |
+
+**Đọc số (Reports → Acquisition → Traffic acquisition, dimension = Session channel group):** Sessions · Engaged sessions · Key events · **Session key event rate** → so sánh hàng "AI Assistant" với "Organic Search" cùng kỳ. Xuất 2 số: `AI CVR / Organic CVR` (bội số) + AI sessions share (%). Kỳ so sánh ≥28 ngày; mẫu <100 session/tháng → chỉ ghi "chưa đủ mẫu".
+
+**Benchmark tham chiếu (đặt kỳ vọng, KHÔNG cam kết — mẫu người khác):** Ahrefs tự đo 23× (0,5% traffic → 12,1% signups, 06/2025, F) · Seer Interactive: ChatGPT 15,9% · Perplexity 10,5% · Claude 5% · Gemini 3% vs Google organic 1,76% (B) · Semrush: LLM visitor 4,4× (C) · GTV first-party ≈10× (D). AI visitor ở lại lâu hơn (Claude 18,6' · ChatGPT 9,7' vs Google 4,3' — SE Ranking 2026, B). Số AI referral tổng chỉ ~0,3% traffic (SE Ranking) → giá trị nằm ở CR, không ở volume.
+
+**Luật report:** hàng "Conversion từ AI Assistant" là mục chuẩn trong báo cáo tháng (`gtv-client-report` v1.3), nhãn directional, không phải KPI nghiệm thu; attribution gãy (user discover ở ChatGPT, quay lại qua Google/direct) → đọc cùng branded search trend.
+
+### GSC workflow: surfacing AI Mode queries (GSQi, 08/2026)
+
+GSC's 2 reports cannot be joined: performance report has clicks but no AIO/AI Mode surface breakout; Generative AI report has surface but no clicks. Workaround (Glenn Gabe/GSQi, practitioner ops guide — fragile to GSC changes, refresh theo lint quý):
+
+1. Bulk export query + page via **Search Analytics API** (beats the 1,000-row UI limit).
+2. Feed the spreadsheet to an LLM to classify **AI Mode candidates** (signals: ultra-short follow-ups "yes/tell me more", context-less danglers, long conversational prompts) + reasoning + cited URL.
+3. Treat results as candidates, not ground truth — Google doesn't label surface.
+
+⚠️ GSC query data is itself polluted by **automated queries from AI-visibility tracking companies** — your own GSC AI impressions include the tracking industry's bots.
 
 ### DIY Tracking (Google Sheets)
 
 **Tab 1: Prompt List**
 | Prompt ID | Category | Intent | Prompt VN | Prompt EN |
 
-**Tab 2: Daily Tracking**
-| Date | Prompt ID | ChatGPT | Perplexity | Gemini | Claude | Notes |
+**Tab 2: Tracking (weekly-2 weeks, ≥3 lần chạy/prompt/engine — ghi tỷ lệ)**
+| Date | Prompt ID | ChatGPT (bắt buộc) | Google AI Mode (bắt buộc) | Gemini app (bắt buộc) | AIO (theo keyword) | Perplexity | Copilot | Claude | Model version / format era | Notes |
 
 **Tab 3: Monthly Summary**
 | Month | Mention Rate | SOV | Accuracy | Top Performer | Underperformer |

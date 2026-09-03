@@ -45,7 +45,7 @@ Mọi URL publish đạt chuẩn onpage Tier 1 (/23), internal link chạy theo 
 |---|---|
 | `skills/seo-onpage/` | Mặc định cho mọi batch onpage (chấm P-series) |
 | `skills/internal-linking/` | Khi lập/audit IL plan (#18) |
-| `skills/schema-markup-generator/` | Chỉ khi làm entity/schema (#13) — schema ≠ lever AI citation |
+| `skills/schema-markup-generator/` | Chỉ khi gắn schema cho URL theo spec entity plan (`14-entity/`, #13) — schema ≠ lever AI citation |
 | `skills/image-seo-optimize/` | Chỉ khi batch có ảnh cần tối ưu bulk |
 
 Luật nạp 80/20: nạp đúng file checklist theo ma trận M, không quét cả `knowledge/`; references/ của skill nạp từng file theo pointer khi step cần.

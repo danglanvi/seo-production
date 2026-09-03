@@ -1,6 +1,6 @@
 # Knowledge pack — checklist & SOP đóng gói theo dự án
 
-Bản đóng gói READ-ONLY từ kho `SEO Knowledge/Semantic SEO A - Z/sop/`. Nguồn gốc + ngày sync từng file: xem `_MANIFEST.md`. Path dưới đây tính từ `02-raw/knowledge/`.
+Bản đóng gói READ-ONLY từ kho `SEO wiki nội bộ «Semantic» (ngoài repo) SEO A - Z/sop/`. Nguồn gốc + ngày sync từng file: xem `_MANIFEST.md`. Path dưới đây tính từ `02-raw/knowledge/`.
 
 ## 1. Ma trận WS ↔ checklist
 
@@ -13,7 +13,7 @@ Bản đóng gói READ-ONLY từ kho `SEO Knowledge/Semantic SEO A - Z/sop/`. Ng
 | Content plan | 05-content-plan | sop/01-topical-map.md (DoD 15) · sop/02-content-brief.md · sop/06-self-checklist/tier-1-outline-am.md · sop/06-self-checklist/tier-1-content-writing.md (QC bài) | Bài viết chạy ở fork `Content Production - <client>/` |
 | Onpage & IL | 06-onpage-internal-link | sop/08-onpage-checklist.md (P0 → /23 → /31 → /39) · sop/03-internal-linking.md · sop/04-entity-optimization.md · sop/11-publish-wp.md (đăng/sửa bài WordPress) | Publish qua kit `wp-publish-workflow-kit` (repo riêng — CLAUDE.md §11) |
 | Offpage | 07-offpage | — (DoD gate-offpage-decision + backlink-campaign trong `_TEMPLATES/`) | |
-| GEO | 08-geo-ai-visibility | AX1-AX5 trong sop/08-onpage-checklist.md · DoD geo-baseline (`_TEMPLATES/`) | |
+| GEO | 08-geo-ai-visibility | AX1-AX7 trong sop/08-onpage-checklist.md · DoD geo-baseline (`_TEMPLATES/`) | |
 | Reporting | 09-reporting | — (DoD bao-cao-thang + `_TEMPLATES/account/`) | |
 | Client mgmt | 10-client-management | — (DoD kick-off template) | |
 | Handover | 11-handover-maintenance | sop/09-timeline/khung-duy-tri.md · handover-checklist (`_TEMPLATES/`) | |
@@ -38,7 +38,7 @@ Xuyên suốt:
 ## 3. Luật re-sync
 
 1. knowledge/ READ-ONLY trong instance: không sửa, không thêm, không xóa.
-2. Vá nội dung: vá ở kho gốc `SEO Knowledge/Semantic SEO A - Z/sop/` → sync vào master `SEO Production/` → instance nhận qua MIGRATION (xem `MIGRATION.md` root).
+2. Vá nội dung: vá ở kho gốc `SEO wiki nội bộ «Semantic» (ngoài repo) SEO A - Z/sop/` → sync vào master `SEO Production/` → instance nhận qua MIGRATION (xem `MIGRATION.md` root).
 3. File copy nguyên giữ tên gốc → re-sync bằng diff: strip banner rồi diff với kho gốc.
 4. Mỗi lần re-sync: cập nhật ngày trong banner từng file + cột Ngày sync trong `_MANIFEST.md` + log op refactor.
 

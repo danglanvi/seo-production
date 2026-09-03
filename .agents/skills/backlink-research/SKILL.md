@@ -1,6 +1,6 @@
 ---
 name: backlink-research
-description: "Backlink research toàn diện — DATA layer của bộ skill backlink (research → plan → thực thi). Use when: (1) 'research backlink [domain/keyword]', 'phân tích backlink đối thủ', 'link gap analysis', 'backlink audit', 'đối thủ lấy link ở đâu'; (2) cần data nền trước khi lập backlink plan: profile mình vs đối thủ, link gap, anchor consensus SERP, velocity, linkable assets, money-page link-gap test; (3) chuẩn bị pitch/proposal cần off-page data. Data source ưu tiên: DataForSEO Backlinks API (references/dataforseo-backlinks-api.md) → Ahrefs MCP/export → CSV. Output = research file feed cho skill backlink-plan. KHÔNG dùng cho: lập kế hoạch/anchor plan (→ backlink-plan), thực thi textlink PR (→ textlink-analyzer), research keyword/SERP content (→ seo-research)."
+description: "Backlink research toàn diện — DATA layer của bộ skill backlink (research → plan → thực thi). Use when: (1) 'research backlink [domain/keyword]', 'phân tích backlink đối thủ', 'link gap analysis', 'backlink audit', 'đối thủ lấy link ở đâu'."
 metadata:
   version: "2.1"
 ---

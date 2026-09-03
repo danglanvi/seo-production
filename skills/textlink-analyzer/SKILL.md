@@ -1,6 +1,6 @@
 ---
 name: textlink-analyzer
-description: "Lọc URL + gợi ý anchor text cho chiến dịch textlink PR quy mô lớn (1.000-5.000 links/đợt, đặt sidebar trên bài báo đã tồn tại). Use when: (1) 'lọc URL đặt textlink', 'phân bổ anchor text', 'plan textlink cho [domain]'; (2) user gửi export URL từ báo PR (vài chục nghìn URL/domain) cần lọc theo mức liên quan; (3) cần bảng anchor plan theo tỷ lệ an toàn (hoặc tỷ lệ chỉ định) đúng format sheet vận hành GTV (Mô tả trước | Từ khóa | Mô tả sau | URL đích | Dofollow | Số link | Volume | Anchor Type). Nguyên tắc lọc: CHỈ đọc chuỗi ký tự trên URL slug để phỏng đoán nội dung (không crawl) — ưu tiên liên quan trang đích > topic/category > domain, cộng điểm URL có backlink trỏ tới. KHÔNG dùng cho: phân tích backlink đối thủ (→ backlink-research), lập plan tổng (→ backlink-plan), internal link trong site (→ Internal Linking rules)."
+description: "Lọc URL + gợi ý anchor text cho chiến dịch textlink PR quy mô lớn (1.000-5.000 links/đợt, đặt sidebar trên bài báo đã tồn tại). Use when: (1) 'lọc URL đặt textlink', 'phân bổ anchor text', 'plan textlink cho [domain]'."
 metadata:
   version: "1.0.3"
 ---

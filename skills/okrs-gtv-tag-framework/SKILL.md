@@ -1,6 +1,6 @@
 ---
 name: okrs-gtv-tag-framework
-description: Comprehensive OKRs (Objectives and Key Results) framework for GTV SEO Agency and The AI Growth. Use when (1) Creating OKRs for companies, departments, or individuals, (2) Setting up OKRs for SEO service projects with clients, (3) Reviewing or auditing existing OKRs against best practices, (4) Converting goals/tasks into proper OKR format, (5) Building OKRs tracking systems or templates, (6) Comparing OKRs vs KPIs and determining which to use, (7) Training teams on OKRs methodology, (8) Creating quarterly planning documents for SEO agencies, (9) Cascading company OKRs to department OKRs. Triggers include 'tạo OKRs', 'thiết lập mục tiêu', 'OKRs cho dự án SEO', 'key results', 'objective', 'mục tiêu quý', 'KPI vs OKR', 'chấm điểm OKRs', 'quarterly planning', 'goal setting', 'SEO project planning', 'OKRs phòng ban', 'cascade OKRs'.
+description: "Comprehensive OKRs (Objectives and Key Results) framework for GTV SEO Agency and The AI Growth. Use when (1) Creating OKRs for companies, departments, or individuals, (2) Setting up OKRs for SEO service projects with clients."
 ---
 
 # OKR GTV & TAG Framework

@@ -2,7 +2,7 @@
 type: sop
 tier: 1
 phase: outline-am
-last_updated: 2026-04-20
+last_updated: 2026-08-29
 source_file: raw/guidelines/Full Semantic Content Checklist - Verion 2 - update 16.4.2026.xlsx
 items_count: 19
 tags: [sop, tier-1, outline, article-methodology, self-checklist]
@@ -39,6 +39,21 @@ tags: [sop, tier-1, outline, article-methodology, self-checklist]
 | O16 | Information Gain | [[Information Gain Score]] |
 | O17 | Bridge to Supplement | [[Contextual Bridge]] |
 | O18 | Supplement Quality | [[Supplementary Content]] |
+
+---
+
+## 🔴 G-BÀI design-in — cài 4 item GEO từ outline (bổ sung 2026-08-29)
+
+Gate **G-BÀI** (GE-16 · GE-17 · GE-18 · GE-19, `tier-1-geo.md` v2.0.2) được verify ở Phase 3 nhưng **quyết định ở Phase 2** — "design-in, không vá sau" (`lop-geo-v2.md` §G3). Không thêm item mới vào /19; mỗi GE gắn vào O-item sẵn có:
+
+| GE | Cài ở outline như thế nào | Map O |
+|---|---|---|
+| **GE-16** Mở đầu = câu trả lời | Intro phác (abstractive draft) mở bằng answer/định nghĩa Central Entity, không background; Concordance với thứ tự H2; bài informational chính: ghi "Key-Facts table" vào AM intro | O4 · O11 |
+| **GE-17** Heading = câu hỏi thật, 1 trang 1 câu hỏi | O7 K2Q khi query dạng câu hỏi; **map fan-out theo cluster ≤4** (không liệt kê từng sub-query) — mỗi cluster ≥1 heading; O8 coverage không phình: bài gánh ≥2 câu hỏi chính / ≥2 cluster ngoài Central Search Intent → **tách page theo QDP** (26-50% subtopic thắng 100% — Indig 04/2026, B); **không dải số từ / số heading cố định** — độ dài + số heading theo loại node (quality node/pillar dài hơn leaf node), Section Benchmark đối thủ (anchor chính), intent, vị trí topical map, bộ query target (Vincent 29/08) | O7 · O8 · O1 (QDP) |
+| **GE-18** Câu đầu sau heading = câu trả lời | Field **Subordinate Text** của mỗi block ghi đúng pattern theo heading-type (định nghĩa / how-to / so sánh / yes-no), mục tiêu 40-75 từ | O11 · O12 |
+| **GE-19** Chunk tự đứng + hierarchy mạch lạc | O5: H3 trong scope H2, heading tổ tiên có nghĩa (cấm "Tổng quan"/"Kết luận"/"Phần 2" rỗng); mỗi H2/H3 = 1 facet tự đứng (Answer-a-facet); section dự kiến >1 khối ý (~200 từ) → tách H3; AM ghi "không hồi chỉ xuyên section" ở Lưu ý khi section liền kề dễ dính | O5 · O2 · O11 |
+
+**Chuẩn chunk GTV (29/08/2026):** không cap số từ section; 1 heading = 1 facet · L0 40-75 từ · khối ý <~200 từ · mỗi câu tự đứng. Bảng canonical con số chunk: [[Audition Chunk]] §"3 con số chunk" — không neo 375/128/500 trong outline.
 
 ---
 

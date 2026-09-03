@@ -1,8 +1,8 @@
 ---
 name: technical-seo-audit
-description: "Audit technical SEO tầng SITE theo bộ audit nội bộ GTV/TAG (template xlsx audit toàn diện 3.2025 + docx giải thích The AI Growth): crawl & log file, index coverage, redirect & canonical, sitemap & robots.txt, Core Web Vitals & site speed, JS rendering, HTTPS & mobile — DIAGNOSTIC layer, wrap tools/seo-audit-tool và Ahrefs Site Audit MCP, output báo cáo checklist-status kèm priority fix. Use when: (1) 'audit technical [domain]', 'kiểm tra technical SEO [site]'; (2) 'site không được index / crawl chậm / redirect loạn / index bloat'; (3) 'check Core Web Vitals / crawl budget cho [domain]'. Data priority: Ahrefs/Semrush site-audit MCP (khi có project sẵn) hoặc Screaming Frog CLI headless tự chạy full-crawl + seo-audit-tool --deep → SF export tay → checklist manual chỉ-có-URL; kèm AI-crawler readiness (robots per-bot, log AI hits, TTFB AI gate). KHÔNG dùng cho: onpage semantic per-page (→ seo-onpage), viết schema/JSON-LD (→ schema-markup-generator), sửa HTML semantic structure (→ semantic-html-optimization), backlink audit (→ backlink-research)."
+description: "Audit technical SEO tầng SITE theo bộ audit nội bộ GTV/TAG (template xlsx + script crawl/PageSpeed/DataForSEO): index, crawl, redirect, CWV, crawl budget. Use when: 'audit technical [domain]', 'kiểm tra technical SEO [site]', 'site không được index / crawl chậm / redirect loạn', 'check Core Web Vitals'."
 metadata:
-  version: "1.4"
+  version: "1.6"
 ---
 
 # Technical SEO Audit
@@ -147,7 +147,7 @@ Khu vực 4 mặc định chỉ VALIDATE. Khi user yêu cầu generate → sinh 
 ### Bước 5 — Render report & trả file
 
 - Render theo skeleton ở mục Output.
-- Đặt tên: `<client>_Technical-SEO-Audit_v1.md` → `Deliverables/<project>/` (tăng `_v2` nếu trùng). Audit nội bộ GTV/TAG → hỏi user nơi trả nếu chưa rõ.
+- Đặt tên: `<client>_Technical-SEO-Audit_v1.md` → tài liệu nội bộ «<project>» (ngoài repo, hỏi Lead/Vincent) (tăng `_v2` nếu trùng). Audit nội bộ GTV/TAG → hỏi user nơi trả nếu chưa rõ.
 - Kết report: đề xuất re-audit sau khi fix P0/P1 (validate qua GSC + re-crawl).
 
 ## Bảng ngưỡng (whitelist — nguồn bắt buộc)
@@ -270,6 +270,9 @@ Khu vực 4 mặc định chỉ VALIDATE. Khi user yêu cầu generate → sinh 
 **Google docs hiện hành:** web.dev/articles/vitals · support.google.com/webmasters/answer/7440203 · developers.google.com/crawling/docs/crawl-budget · developers.google.com/search/docs/crawling-indexing/javascript/javascript-seo-basics · developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap
 
 ## Changelog
+
+- **v1.6 (2026-08-29, Vincent duyệt 29/08 — FINDINGS 22/08 §6-H):** item **4.13 AI bot access** và **1.17 AI crawler hits** nâng lên **P0 khi GEO Readiness verdict = Chuẩn hoá hoặc HĐ có KPI GEO** (= gate G-T1 GE-02 của `tier-1-geo.md` v2.0.2; search + user-triggered bot bị chặn → dừng lớp GEO trước khi audit chunk), giữ P1/P2 cho dự án SEO thường; thêm evidence first-party +111% pageview kênh AI Assistant sau khi mở bot (n=1, nhãn D, ẩn danh); trỏ bot-purpose matrix canonical `lop-geo-v2.md` §G1; bảng route "AX1-AX5" → AX1-AX7 + ghi rõ 4.13/1.17 là pre-flight input cho `geo-content-optimization` Bước 0.
+- **v1.5 (2026-08-21):** thêm item 1.18 Markdown for Agents (Cloudflare) — ADVANCED/opt-in P3, measure-first (Vincent duyệt 21/08: "bỏ vào checklist cũng được, tuy nhiên cần đo lường độ hiệu quả kỹ hơn"): curl check content negotiation + đếm markdown-requests trong log làm baseline, 2 gate (Content-Signal policy review + fail-silent limits), KHÔNG bán như GEO lever. Nguồn: Batch 39 wiki (Cloudflare official + Suganthan 44-day n=1).
 
 - **v1.4 (2026-07-19):** INTEGRATE từ gap-audit claude-seo (repo 11.7k★, đã phân loại INTEGRATE): (1) **Whole-site Health Score 0-100** (Bước 4b) — điểm khu vực (✅+0,5×⚠️)/(✅+⚠️+❌) × trọng số baseline GTV (điều chỉnh theo dự án), data-tier gate (chỉ Path A/B + completeness check, khu vực >50% ⬜ loại + redistribute), cờ P0 đi kèm score, luật so sánh giữa kỳ T1→T4→T7; (2) **Sitemap GENERATE mode** (`$SITEMAP_MODE=generate`, Bước 4c) — lọc URL theo chuẩn 4.1–4.3 (loại noindex/redirect/non-canonical/4xx-5xx), segment product/category/blog khi site lớn, bảng diff crawled-vs-sitemap bắt buộc, không tự upload; (3) **Falsifiability field** per finding — gate #5 + cột mới trong fix list + leading indicator sau fix. Output skeleton: thêm Health Score (mục 1), cột Điểm khu vực (mục 2), cột Falsifiability (mục 4), mục 7 sitemap. Metadata version đồng bộ lại theo changelog (drift 1.2/1.3 cũ).
 - **v1.3 (2026-07-13, P0 remediation LINT-2026-005):** (1) bỏ blanket claim "AI crawler không render JS" → re-label `observational` (vendor docs không cam kết) ở khu vực 6 + item 6.5; (2) thêm **bot-purpose matrix** search/training/user-triggered (OAI-SearchBot·GPTBot·ChatGPT-User / Claude-SearchBot·ClaudeBot·Claude-User / PerplexityBot·Perplexity-User / Google-Extended) theo crawler docs chính chủ; (3) fix 1.17: Google-Extended không có UA riêng trong log (chỉ là robots token, chặn không ảnh hưởng Google Search) + training-bot hits không phải AI-visibility KPI.

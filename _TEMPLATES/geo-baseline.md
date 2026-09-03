@@ -4,8 +4,8 @@ ws: 08-geo-ai-visibility
 cong_doan: 14 (GEO G0 Readiness & Baseline + G1 Retrieval hygiene, T1→T3)
 skill: geo-tracking-prompt-selection
 lich_do: baseline T1 · giữa kỳ T6 (#24) · báo cáo T10 (#32) · quý (duy trì)
-checklist: sop/06-self-checklist/tier-1-geo.md v2.0 (GE-01…GE-37)
-guideline: sop/09-project-timeline/lop-geo-v2.md (6 điểm chạm)
+checklist: sop/06-self-checklist/tier-1-geo.md v2.0.2 (GE-01…GE-37)
+guideline: sop/09-timeline/lop-geo-v2.md (6 điểm chạm)
 naming: "{{CLIENT}}_geo-baseline_v{{N}}.md"
 version: v2
 ---

@@ -1,6 +1,6 @@
 # SOP 08 — Onpage SEO Checklist (Cơ bản → Nâng cao)
 
-> Bản đóng gói cho SEO Production — sync từ `SEO Knowledge/Semantic SEO A - Z/sop/08-onpage-checklist.md` ngày 2026-07-17 (vá P14 strong-policy 2026-08-29).
+> Bản đóng gói cho SEO Production — sync từ `SEO wiki nội bộ «Semantic» (ngoài repo) SEO A - Z/sop/08-onpage-checklist.md` ngày 2026-07-17 (vá P14 strong-policy 2026-08-29).
 > Bản chưng cất — đã lược evidence/theory; bản đầy đủ ở kho gốc.
 > Wikilink [[...]] trong file = tri thức nội bộ sâu (wiki Semantic SEO, không đóng gói theo dự án).
 > Gặp wikilink cần đào sâu → hỏi SEO Lead / Vincent, hoặc tra kho gốc trên máy master.
@@ -107,14 +107,17 @@
 ## AX — AI-Search & GEO Extension
 
 > Không tính vào /39. Chấm riêng cho trang cần tối ưu AI Overview / ChatGPT / Perplexity.
+> **Canonical checklist GEO:** `sop/06-self-checklist/tier-1-geo.md` v2.0.2 (GE-01…GE-37) — AX1-AX7 là lớp per-page của nó, map: AX1→GE-19 · AX2→GE-16 · AX3→GE-27 · AX4→GE-07 · AX5→GE-25 · AX6→GE-23 · AX7→GE-17. Quy trình 6 điểm chạm: `sop/09-timeline/lop-geo-v2.md`. (Re-sync từ wiki 2026-09-02 — bản trước 07/2026 chỉ có AX1-AX5 và cap 375 từ, đã hết hạn.)
 
 | ID | Check |
 |---|---|
-| AX1 | **Chunk self-containment** — mỗi H2 section tự đứng như answer hoàn chỉnh trong ~1 retrieval chunk (≤~375 từ, đủ entity + context + claim) |
+| AX1 | **Chunk self-containment** — mỗi H2 section tự đứng như answer hoàn chỉnh (đủ entity + context + claim khi cắt rời; không hồi chỉ xuyên section). **Chuẩn chunk GTV 29/08/2026: không cap số từ section** — 1 heading = 1 facet · câu đầu sau heading 40-75 từ · khối ý <~200 từ · mỗi câu tự đứng; heading hierarchy mạch lạc và mang nghĩa (heading tổ tiên đi kèm chunk như metadata — heading rỗng nghĩa "Tổng quan"/"Kết luận" làm mất lợi thế này) |
 | AX2 | **Front-load value** — best content trong 30% đầu trang; không bury the lede; bỏ storytelling intro |
 | AX3 | **AIO counter-positioning** — so content vs AI Overview hiện tại: claim AIO miss → cover sâu; format AIO prefer (definition đầu, structured list, E-A-V) → align |
 | AX4 | **Canonical & index hygiene** — canonical tự trỏ, không noindex ngoài ý muốn, đã index, featured image indexed (`src:`) |
 | AX5 | **Blur Test** — screenshot blur 50% vẫn nhận ra topic + function của trang |
+| AX6 | **Passage verifiability** — mỗi claim quan trọng nằm trong passage vừa **rank được** vừa **khớp câu phát biểu** ở mức passage. Citation AIO/AI Mode chạy 2 pha: AI sinh summary từ tài liệu được chọn rồi mới verify từng đoạn bằng khoảng cách embedding trước khi gắn link → **document nuôi summary ≠ document được cite**. Check: passage trả lời 1 sub-query có tự đứng không (đi cùng AX1) + dùng đúng vocabulary của câu trả lời kỳ vọng (patent Google verified 21/08/2026) |
+| AX7 | **Heading / title / meta ↔ cluster fan-out** — fan-out của query gom **≤4 cluster** (~90%, chỉ ~27% sub-query ổn định giữa các lần chạy — số tuyệt đối không neo); mỗi cluster thuộc Central Search Intent của bài có ≥1 heading khớp câu hỏi con (K2Q khi query dạng câu hỏi; heading khớp sát cite 41% vs lệch 30%); **title + meta + slug chứa từ vựng cluster** — AI engine lọc ứng viên theo title+meta+URL trước khi fetch; cluster ngoài CSI → page khác (QDP), không nhồi. Cluster map: skill `geo-fanout-research` hoặc mô phỏng nhanh 8 lens. Chấm: 3 mức khớp/gần/lệch per cluster + ✅/❌ title/meta |
 
 **Per-engine emphasis** (tinh chỉnh AX3 theo engine mục tiêu):
 

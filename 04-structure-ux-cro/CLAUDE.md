@@ -19,7 +19,7 @@ Claude chuẩn bị spec + chấm checklist; người duyệt theo RACI Phần C
 3. **Spec bàn giao coder = đo được**: kích thước ảnh (width/height đặt trước — chống CLS), thứ tự DOM = visual order, cấp heading từng block, semantic tag (`main/article/section/aside`), vị trí từng CTA/widget theo block map. Coder không phải đoán — spec còn chỗ phải đoán là spec chưa xong.
 4. **Benchmark đối thủ (B3) phải kèm screenshot** lưu đúng kho `../02-raw/screenshots/competitors/` theo protocol §8 (naming + log op `capture`) — bảng benchmark không có ảnh đối chiếu = không có evidence.
 5. **Mốc cứng structure lock ≤15 ngày đầu T2** (§6.2): thấy nguy cơ trễ là báo ĐỎ ngay cho SEO Lead + ghi `../index.md` — không im lặng. Trễ mốc này kéo domino content → onpage → internal link.
-6. **Review PLP/PDP theo mẫu có sẵn trong folder skill**: module **E-commerce Build Evals E1-E12** (checklist ĐẠT/KHÔNG-ĐẠT cho PLP · PDP · Home · Search · Cart · Thank-you) + Marketplace PDP Patterns trong `../skills/visual-semantic-seo/SKILL.md` — chấm từng eval, không tự chế thang mới. Module này nằm trong SKILL.md, không phải folder `evals/` (folder đó vẫn cấm nạp).
+6. **Review PLP/PDP theo mẫu có sẵn trong folder skill**: module **E-commerce Build Evals E1-E12** (checklist ĐẠT/KHÔNG-ĐẠT cho PLP · PDP · Home · Search · Cart · Thank-you) + Marketplace PDP Patterns trong `skills/visual-semantic-seo/SKILL.md` (công cụ ở workspace Vincent — bản standalone bỏ qua) — chấm từng eval, không tự chế thang mới. Module này nằm trong SKILL.md, không phải folder `evals/` (folder đó vẫn cấm nạp).
 
 ---
 
@@ -57,7 +57,7 @@ Structure brief là deliverable — tự chấm role `self` trước khi trình 
 2. Thiết kế cấu trúc: `../02-raw/knowledge/sop/06-self-checklist/tier-1-structure-website.md` — full check khi thiết kế, chạy TRƯỚC gate.
 3. Gate gửi khách: `../02-raw/knowledge/sop/06-self-checklist/gate-structure-wireframe.md` — **P0 100% TRƯỚC khi gửi khách duyệt cấu trúc**, không có ngoại lệ.
 4. Layout + UX + CRO: `../02-raw/knowledge/sop/06-self-checklist/tier-1-visual-semantic.md` + `tier-1-ux-ui.md` (duyệt wireframe T2) + `tier-1-cro-conversion.md` phần A site-wide (cùng thư mục).
-5. PLP/PDP: chấm đủ E1-E12 trong `../skills/visual-semantic-seo/SKILL.md`, ghi ĐẠT/KHÔNG-ĐẠT từng eval.
+5. PLP/PDP: chấm đủ E1-E12 trong `skills/visual-semantic-seo/SKILL.md` (công cụ ở workspace Vincent — bản standalone bỏ qua), ghi ĐẠT/KHÔNG-ĐẠT từng eval.
 
 Tự kiểm PASS → submit QC theo §7. FAIL → quay lại đúng bước fail, sửa xong mới trình.
 

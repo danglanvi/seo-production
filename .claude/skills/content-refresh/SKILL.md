@@ -1,6 +1,6 @@
 ---
 name: content-refresh
-description: "Phát hiện và xếp hạng content decay sau publish từ data hiệu suất theo cửa sổ thời gian (28 ngày detect, 90 ngày + YoY validate), tách seasonal vs decay thật, bắt cannibalization, phân loại nguyên nhân và sinh UPDATE BRIEF — DECAY-DETECTION front-end của vòng đời content, output là input cho 10-update-pipeline. Use when: (1) 'kiểm tra content decay [site]', 'bài nào đang rớt traffic', 'rà bài cần refresh [site/cluster]'; (2) 'traffic bài [URL] giảm, có cần update không'; (3) audit quý content sau publish. Data ưu tiên Ahrefs MCP (gsc-*, site-explorer-*-history), fallback GSC export CSV, đường lùi cuối là URL + triệu chứng. KHÔNG dùng cho: thực thi sửa bài (→ Content Production/10-update-pipeline + content-update-orchestrator), audit chất lượng nội dung (→ semantic-content-audit), authority gap/backlink (→ backlink-plan)."
+description: "Phát hiện và xếp hạng content decay sau publish từ data hiệu suất theo cửa sổ. Use when: (1) 'kiểm tra content decay [site]', 'bài nào đang rớt traffic', 'rà bài cần refresh [site/cluster]'; (2) 'traffic bài [URL] giảm, có cần update không'; (3) audit quý content sau publish."
 metadata:
   version: "1.0"
 ---
@@ -140,7 +140,7 @@ Decision tree đầy đủ: [references/decay-signals.md](references/decay-signa
 **UPDATE BRIEF** — mỗi URL flag UPDATE 1 file, skeleton đầy đủ ở [references/update-brief-template.md](references/update-brief-template.md).
 
 **Đặt tên file:**
-- Report: `<site>_Content-Refresh-Report_v1.md` → `Deliverables/<project>/` (tăng `_v2`, `_v3`… nếu trùng).
+- Report: `<site>_Content-Refresh-Report_v1.md` → tài liệu nội bộ «<project>» (ngoài repo, hỏi Lead/Vincent) (tăng `_v2`, `_v3`… nếu trùng).
 - Brief: `<slug>__brief_v1.md` → folder `10-update-pipeline/<cluster>/` của brand tương ứng (`Content Production - GTV/` hoặc `Content Production - TAG/`), khớp convention output pipeline `<slug>__vN.md`.
 
 ## Behavior Gates

@@ -2,7 +2,7 @@
 type: sop
 tier: 1
 phase: content-writing
-last_updated: 2026-04-20
+last_updated: 2026-08-29
 source_file: raw/guidelines/Full Semantic Content Checklist - Verion 2 - update 16.4.2026.xlsx
 items_count: 21
 tags: [sop, tier-1, content-writing, semantic-writing, anti-ai, self-checklist]
@@ -47,6 +47,23 @@ tags: [sop, tier-1, content-writing, semantic-writing, anti-ai, self-checklist]
 | W21 | Tone & Brand Voice | [[Brand Identity]] |
 
 **Anti-AI cluster (W10–W15):** signature phân biệt content người viết vs AI-generated — Nuke Words Filter, Natural Prose, Burstiness, Personality, Experience.
+
+---
+
+## 🔴 G-BÀI — gate GEO per bài (bổ sung 2026-08-29)
+
+Bốn item **kiến trúc passage** của `tier-1-geo.md` v2.0 (GE-16 · GE-17 · GE-18 · GE-19) là **gate cứng mỗi bài publish/refresh**: fail bất kỳ 1 item = trả về Writer, **không đưa sang onpage** — ngang hàng P0 gate L0 của W18. Không tạo checklist mới: mỗi GE map vào W-item sẵn có, chỉ thêm tiêu chí GEO. Chấm Bộ BÀI /12 đầy đủ (GE-16…GE-27) ở Tracking Sheet "GEO Checklist GE v2"; ở đây chỉ 4 item gate.
+
+| GE | Tiêu chí ĐẠT (lăng kính GEO) | Map W | Ev |
+|---|---|---|---|
+| **GE-16** Mở đầu trang = câu trả lời | 100-150 từ đầu main content trả lời thẳng câu hỏi chính, **không storytelling intro** (ngoại lệ narrative niche — SERP-intent-conditional); Extractive + Abstractive, Concordance với H2; bài informational chính có **Key-Facts table** (3-6 fact quan trọng nhất) trên trang. Evidence: 38% citation AIO trích từ 100 từ đầu (Surfer 06/2026, C) · 44,2% từ 30% đầu trang (Indig 02/2026, B) | W1 (+ W20) | B |
+| **GE-17** Heading = câu hỏi thật, 1 trang 1 câu hỏi | Heading bám đúng outline đã qua O7/O8 (K2Q khi query dạng câu hỏi; map fan-out theo **cluster ≤4**, không đuổi từng query); bài không phình ra ngoài outline "cho đủ coverage" — bài cover quá rộng → flag về Phase 2 đề xuất **tách page** (26-50% subtopic thắng 100%, B); **không chấm độ dài / số heading theo dải cố định** — độ dài theo loại node (quality node/pillar dài hơn leaf) + benchmark đối thủ (Vincent 29/08) | W18 | B |
+| **GE-18** Câu đầu sau heading = câu trả lời | Subordinate Text theo 4 pattern (định nghĩa → "X là…" · how-to → "Để X, làm N bước…" · so sánh → verdict trước · yes/no → trả lời rồi mới điều kiện); câu trả lời trực tiếp **40-75 từ**, đủ E-A-V, không modality ở câu answer | W2 (+ W16) | B |
+| **GE-19** Chunk tự đứng + heading hierarchy mạch lạc | Mỗi H2 cắt rời vẫn đủ Entity + context + claim; **không đại từ hồi chỉ xuyên section** ("như đã nói ở trên", "phương pháp này" mà antecedent ở section trước); mỗi khối ý <~200 từ (observational — Chrome), **không cap số từ section**; heading tổ tiên có nghĩa (không "Tổng quan"/"Kết luận" rỗng — máy gắn heading cha vào chunk như metadata, `includeAncestorHeadings`); mỗi câu tự đứng S-V-O | W12 + W17 + W11 | A/B |
+
+**Chuẩn chunk GTV (chốt 29/08/2026, thay mọi ngưỡng "≤375 từ" cũ):** 1 heading = 1 facet · L0 40-75 từ · khối ý <~200 từ · mỗi câu tự đứng. Con số chunk theo token (128/800/500) thuộc 3 hệ khác nhau, chỉ để hiểu cơ chế — bảng canonical [[Audition Chunk]] §"3 con số chunk".
+
+**Cách tick:** Writer tự chấm 4 GE cùng lúc với W-item map; SEO EX verify V-Pass kiểm lại 4 dòng này trước. Skill hỗ trợ: `semantic-content-writing` (quick gate G-BÀI) · `general-summary-introduction` (GE-16) · audit sâu 1 trang → `geo-content-optimization`.
 
 ---
 

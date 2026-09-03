@@ -1,6 +1,6 @@
 ---
 name: gtv-project-okrs
-description: "Lập / điều chỉnh / đối chiếu OKRs QUÝ của một dự án SEO client trong instance SEO Production. Quy trình 5 bước: đọc sheet OKRs team đang dùng → đối chiếu với kết quả phân tích kỳ vừa khép → ra danh sách quyết định điều chỉnh (sửa / chỉnh / thêm) → dựng bản OKRs mới (bản .md canonical + bản .html tô màu để review) → chốt bằng 22 mục self-check rồi trình SEO Director. Use when: (1) 'lên OKRs quý [N] cho [client]', 'chỉnh OKRs quý này', 'OKRs quý 2 nên như thế nào'; (2) 'đối chiếu OKRs với sheet team' sau khi team sửa sheet; (3) khép quý cần chấm điểm + carry-over. KHÔNG dùng cho: framework OKRs lý thuyết / cascade công ty↔phòng ban (→ okrs-gtv-tag-framework), plan traffic chi tiết topic-level (→ traffic-plan), báo cáo kỳ cho client (→ gtv-weekly-report). 🔒 GTV-only, cần instance có 01-strategy-okrs/ + 09-reporting/report-config.yaml."
+description: "Lập / điều chỉnh / đối chiếu OKRs QUÝ của một dự án SEO client trong instance. Use when: (1) 'lên OKRs quý [N] cho [client]', 'chỉnh OKRs quý này', 'OKRs quý 2 nên như thế nào'; (2) 'đối chiếu OKRs với sheet team' sau khi team sửa sheet; (3) khép quý cần chấm điểm + carry-over."
 ---
 
 # gtv-project-okrs — OKRs quý của dự án SEO

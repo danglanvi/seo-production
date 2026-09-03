@@ -138,4 +138,4 @@ Khoá API lấy từ Lead. **Không bao giờ viết API key vào file được 
 - Không gửi file key qua email, chat hay Drive dùng chung. Máy nào cần thì tạo key riêng cho máy đó.
 - Không dùng chung một robot giữa nhiều người bằng cách chuyền file key cho nhau.
 - Không sửa `_SETUP/` — thư mục này là bản sao đồng bộ từ kho chung, sửa sẽ bị đè ở lần sync sau.
-  Thấy sai thì báo Lead vá bản gốc `_Shared/setup-kit/`.
+  Thấy sai thì báo Lead vá bản gốc wiki nội bộ «setup-kit» (ngoài repo, hỏi Lead/Vincent).

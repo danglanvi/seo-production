@@ -1,8 +1,8 @@
 ---
 name: internal-linking
-description: "Executable hóa lý thuyết internal linking của wiki Semantic SEO thành link plan cụ thể — DECISION layer cho link NỘI BỘ trong site, nhận topical map làm input, executable hóa Bước 20 SOP 01 (signals flow to Core) + audit SOP 03. Use when: (1) 'lên internal link plan cho [site]', 'audit internal link [domain]', 'đề xuất anchor internal cho [cluster]'; (2) site có orphan pages, pillar over-linked, link cross-cluster không qua bridge; (3) vừa publish burst bài mới cần nối link ngay. Data ưu tiên: Ahrefs MCP (pages-by-internal-links + linked-anchors-internal) → Screaming Frog inlinks export → chỉ topical map (plan lý thuyết). KHÔNG dùng cho: textlink báo PR/external (→ textlink-analyzer), backlink (→ backlink-research / backlink-plan), tạo topical map (→ topical-map-creation), onpage audit tổng thể (→ /seo-onpage)."
+description: "Executable hóa lý thuyết internal linking của wiki Semantic SEO thành link plan cụ thể — DECISION layer cho link NỘI BỘ trong site, nhận topical map làm input, executable hóa Bước 20 SOP 01 (signals flow to Core) + audit SOP 03. Use when: (1) 'lên internal link plan cho [site]'."
 metadata:
-  version: "1.0.1"
+  version: "1.1"
 ---
 
 # Internal Linking — Link Plan theo Semantic SEO
@@ -50,7 +50,8 @@ Biến lý thuyết internal linking trong wiki (Koray + GTV Extensions Rule 59-
 - Map sang cấu trúc SCN: **Root ↔ Homepage; Seeds ↔ Root; Nodes ↔ Seed; node-node cross-seed và seed-seed được phép** ([[Semantic Content Network]] §Types of Webpages). Ghi rõ page nào là Root/Seed/Node.
 - Xác định **Quality Nodes** (3-5 page link trực tiếp từ main content homepage — `sop/01` Bước 13) và **Trending Nodes** (bắt buộc bridge về Core, không đứng riêng — Bước 14).
 - ⚠️ Định nghĩa Contextual Border/Bridge lấy từ wiki page tương ứng ([[Contextual Border]], [[Contextual Bridge]]) — nếu wiki chưa có page đầy đủ, dùng mô tả trong `sop/03` và flag trong output.
-- Output trung gian: bảng `cluster | pillar | pages | role SCN | border/bridge` — show cho user duyệt trước khi sang Bước 2.
+- **Owned truth pages — lớp G2 GEO (bổ sung 29/08/2026):** đánh dấu trong map các trang là **nguồn sự thật của brand** — about/giới thiệu · pricing/báo giá · FAQ · docs/chính sách · đại lý/địa điểm · trang tác giả. AI engine verify brand bằng fan-out `site:domain [câu hỏi thương mại]` (64% fan-out có `site:`, Nectiv 08/2026) → các trang này phải (a) **được link từ main content của homepage/pillar** (không chỉ footer — footer là weak signal), (b) nhận anchor mô tả đúng câu hỏi ("bảng giá dịch vụ SEO 2026", không "xem thêm"), (c) không orphan. Test nhanh: 5-10 câu khách hay hỏi → mỗi câu có 1 trang trả lời được bằng text và trang đó có ≥1 inbound từ pillar liên quan. Thiếu trang → flag "G2 gap" cho content (`sop/04` lớp GEO), không phải việc của link plan.
+- Output trung gian: bảng `cluster | pillar | pages | role SCN | border/bridge | truth page?` — show cho user duyệt trước khi sang Bước 2.
 
 ### Bước 2 — Audit hiện trạng (Path A/B; Path C bỏ qua, ghi chú)
 Phát hiện theo đúng threshold có nguồn (citation map [references/link-plan-template.md](references/link-plan-template.md) §3):
@@ -95,7 +96,7 @@ Mỗi link đề xuất sinh anchor theo [references/anchor-rules.md](references
 
 ## Output
 
-Convention đặt tên file: `<project>_Internal-Link-Plan_v1.md` → trả về `Deliverables/<project>/` (tăng `_v2` nếu trùng). Skeleton deliverable:
+Convention đặt tên file: `<project>_Internal-Link-Plan_v1.md` → trả về tài liệu nội bộ «<project>» (ngoài repo, hỏi Lead/Vincent) (tăng `_v2` nếu trùng). Skeleton deliverable:
 
 ```markdown
 # Internal Link Plan — <domain> (<date>)

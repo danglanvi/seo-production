@@ -5,13 +5,14 @@
 
 ## Core Insight
 
-> **90% of ChatGPT citations come from well-structured pages with clear heading hierarchy.**
+> Semantic HTML là **điều kiện cần** để máy cắt passage đúng ranh giới — không phải nguyên nhân được cite. *(Câu "90% of ChatGPT citations come from well-structured pages" từng ở đây không có nguồn — gỡ 29/08/2026.)*
 
-LLMs (ChatGPT, Claude, Perplexity, Gemini) ưu tiên cite từ pages có:
-1. Clear heading structure (H1 → H2 → H3)
-2. Semantic HTML elements (`<article>`, `<section>`)
-3. Structured data (Schema.org)
-4. Clean, extractable content blocks
+Cái có evidence (nội bộ, nguồn + tháng trong `geo-content-optimization/references/geo-levers-map.md` §5): AI engines cite passage **tự đứng** (chunk cắt rời vẫn đủ entity + context + claim), **câu đầu sau heading = answer**, **heading khớp câu hỏi con** của user, facts kiểm chứng + cite nguồn. HTML giúp 4 việc đó bằng:
+1. Clear heading structure (H1 → H2 → H3) — heading tổ tiên đi kèm chunk như metadata (`includeAncestorHeadings`), heading rỗng nghĩa làm mất lợi thế
+2. Semantic HTML elements (`<article>`, `<section>`) — ranh giới chunk rõ
+3. Clean, extractable content blocks — in-flow, không share-button/inject cắt ngang, DOM order = visual order
+
+🔴 **Structured data (Schema.org) KHÔNG nằm trong danh sách này.** Causal DiD Ahrefs 1.885 trang (05/2026): thêm schema ≈ 0 tác động AI citation. Schema = rich results / entity / rendering → `schema-markup-generator`.
 
 ## How AI Systems Read Your Content
 
@@ -312,28 +313,25 @@ AI loves structured lists for "how-to" and "what are" queries:
         </figure>
       </section>
 
-      <!-- FAQ section -->
-      <section id="faq" itemscope itemtype="https://schema.org/FAQPage">
+      <!-- FAQ section — FAQ content giữ (answer-first 40-60 từ), KHÔNG FAQPage schema:
+           FAQ rich result chấm dứt 07/05/2026; schema ≈ 0 tác động AI citation (DiD Ahrefs 05/2026) -->
+      <section id="faq">
         <h2>Câu Hỏi Thường Gặp</h2>
         
-        <article itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
-          <h3 itemprop="name">Semantic SEO mất bao lâu để có kết quả?</h3>
-          <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-            <p itemprop="text">
-              Thường thấy kết quả sau <strong>3-6 tháng</strong>, 
-              phụ thuộc vào độ cạnh tranh và chất lượng implementation.
-            </p>
-          </div>
+        <article>
+          <h3>Semantic SEO mất bao lâu để có kết quả?</h3>
+          <p>
+            Thường thấy kết quả sau <strong>3-6 tháng</strong>, 
+            phụ thuộc vào độ cạnh tranh và chất lượng implementation.
+          </p>
         </article>
         
-        <article itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
-          <h3 itemprop="name">Semantic SEO có thay thế technical SEO không?</h3>
-          <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-            <p itemprop="text">
-              Không. Semantic SEO <strong>bổ sung</strong> cho technical SEO, 
-              không thay thế. Cả hai đều cần thiết.
-            </p>
-          </div>
+        <article>
+          <h3>Semantic SEO có thay thế technical SEO không?</h3>
+          <p>
+            Không. Semantic SEO <strong>bổ sung</strong> cho technical SEO, 
+            không thay thế. Cả hai đều cần thiết.
+          </p>
         </article>
       </section>
 
@@ -366,10 +364,9 @@ AI loves structured lists for "how-to" and "what are" queries:
 - [ ] `<strong>` for key facts
 - [ ] `<em>` for emphasis
 
-### ✅ Structured Data
-- [ ] Schema.org JSON-LD (Article, FAQPage, etc.)
-- [ ] FAQ schema for Q&A sections
-- [ ] Service/Product schema where relevant
+### 🟡 Structured Data — rich results / entity, KHÔNG tính vào AI-citation
+- [ ] Schema.org JSON-LD theo page type (Article, Product, Service, Organization/Person + `sameAs`) → sinh bằng `schema-markup-generator`; làm vì rich results + entity understanding, không vì citation (DiD Ahrefs 1.885 trang 05/2026 ≈ 0)
+- [ ] KHÔNG FAQPage schema (rich result chấm dứt 07/05/2026) — FAQ content answer-first trên trang vẫn giữ
 
 ### ✅ Content Format
 - [ ] Intro paragraph summarizing main points
@@ -380,10 +377,10 @@ AI loves structured lists for "how-to" and "what are" queries:
 
 ## Result
 
-When optimized correctly:
-- **Google:** Better understanding → Higher rankings → Featured snippets
-- **ChatGPT:** Clear structure → Easy extraction → Citations
+When optimized correctly (`hypothesis` — cơ chế parsing đã verify, tác động citation chưa có số riêng cho HTML):
+- **Google:** Better understanding → chunk/passage đúng ranh giới → Featured snippets / AIO passage
+- **ChatGPT:** Clear structure → passage tự đứng được lift đúng → điều kiện cần cho citation
 - **Claude:** Semantic tags → Context understanding → Accurate answers
-- **Perplexity:** Schema + Structure → Source linking → Traffic
+- **Perplexity:** Structure + passage tự đứng → Source linking → Traffic *(bỏ "Schema" khỏi chuỗi này 29/08/2026 — schema ≈ 0 tác động citation)*
 
-**Your content becomes THE source AI systems cite for your topic.**
+**HTML sạch chỉ mở cửa; cái được cite là passage bên trong** — kiến trúc passage chấm theo GE-16…GE-27 (`sop/06-self-checklist/tier-1-geo.md`), audit bằng `geo-content-optimization`.

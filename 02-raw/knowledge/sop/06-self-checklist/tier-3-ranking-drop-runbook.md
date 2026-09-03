@@ -52,7 +52,7 @@ tags: [sop, tier-3, ranking-drop, google-update, runbook, seo-audit, diagnosis]
 
 - Search (ẩn danh, đúng location) 5-10 query đại diện: SERP có AIO mới xuất hiện không? AIO có cite mình không? Feature mới nào chiếm above-the-fold (AIO, Shopping pack, video, forum/UGC block như Reddit)?
 - Signature của "AIO ăn click": position GSC ổn định + impressions ổn định/tăng + **CTR & clicks rớt**.
-- Nếu đúng signature → đây là bài toán **GEO/CTR, không phải bài toán ranking** → route sang skill `geo-content-optimization` (audit AX1-AX5, counter-positioning) + kết luận trong output form là "AIO displacement", KHÔNG chạy 10 nhánh nội tại cho các URL này.
+- Nếu đúng signature → đây là bài toán **GEO/CTR, không phải bài toán ranking** → route sang skill `geo-content-optimization` (audit AX1-AX7, counter-positioning) + kết luận trong output form là "AIO displacement", KHÔNG chạy 10 nhánh nội tại cho các URL này.
 - SERP feature khác đổi (video pack mới, local pack mới) → note vào RD-C item intent/SERP elements.
 
 ### TR-05 — Thay đổi gần đây trên site (change log) `L*`

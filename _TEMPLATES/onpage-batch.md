@@ -12,7 +12,7 @@ date: "{{YYYY-MM-DD}}"
 
 # Onpage Batch {{BATCH_ID}} — {{CLIENT}}
 
-> Checklist gốc: `02-raw/knowledge/sop/08-onpage-checklist.md` (P0 gate + Tier 1 /23 + Tier 2 /31 + Tier 3 /39 + AX1-AX5).
+> Checklist gốc: `02-raw/knowledge/sop/08-onpage-checklist.md` (P0 gate + Tier 1 /23 + Tier 2 /31 + Tier 3 /39 + AX1-AX7).
 > Khi instantiate: lưu thành `06-onpage-internal-link/{{CLIENT}}_onpage-batch-<n>_v1.md`.
 
 ## 1. Thông tin batch
@@ -30,7 +30,7 @@ date: "{{YYYY-MM-DD}}"
 1. **P0 — Content Quality Gate**: content chưa V-Pass thì KHÔNG onpage — trả về Content, không chấm tiếp.
 2. Publish trang mới: chạy đủ Tier 1 (P1-P23, /23). Tier 2/3 cộng thêm theo cột Tier.
 3. Audit trang cũ: chạy Tier 1 → 3, dừng ở tier có ≥3 item FAIL. **Sửa nền trước, tối ưu sau.**
-4. AX1-AX5 (AI-search) KHÔNG tính vào /39 — chấm riêng cho trang cần GEO/AI Overview (mục 5).
+4. AX1-AX7 (AI-search) KHÔNG tính vào /39 — chấm riêng cho trang cần GEO/AI Overview (mục 5).
 5. Review 3 tầng: Self 100% → SEO EX verify → Lead random 25-30% (gap dương lớn = cờ đỏ).
 6. Không tự hạ ngưỡng để cho qua; item không verify được ghi CANNOT-VERIFY, không tính pass.
 

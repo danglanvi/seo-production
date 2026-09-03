@@ -18,7 +18,7 @@ Repo tự chứa cho hệ SEO delivery của GTV. Chạy được ở hai chế 
 - Trong workspace GTV của Vincent: áp toàn bộ `AGENTS.md` ở các thư mục ancestor trước, rồi file này. Master nằm ngay dưới root; instance `PROJECTS/<client-slug>/` nằm sâu hơn một cấp.
 - Bản clone standalone của team: file này + `CLAUDE.md` cùng thư mục là luật đầy đủ — KHÔNG tham chiếu ra ngoài repo.
 
-Trước mọi task trong scope này, đọc toàn bộ `CLAUDE.md` cùng thư mục (luật pipeline + 33 công đoạn),
+Trước mọi task trong scope này, đọc toàn bộ `CLAUDE.md` cùng thư mục (luật pipeline + 36 công đoạn),
 `AGENT.md` (persona giao tiếp), và `SYNC.md` khi task đụng git/đồng bộ.
 
 - Skill canonical của repo: `skills/`; runtime mirror `.claude/skills/` (Claude) + `.agents/skills/` (Codex/Antigravity) — mirror committed sẵn, KHÔNG sửa trực tiếp. Sửa skill = sửa trong `skills/` rồi đồng bộ mirror: bản standalone chạy `bash _SETUP/sync-skills.sh` (đóng gói sẵn trong repo; bản cũ `tools/sync-skills.sh` vẫn dùng được); trong workspace Vincent dùng `tools/sync-agent-skills.rb` ở root workspace như cũ.

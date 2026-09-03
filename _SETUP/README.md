@@ -3,7 +3,7 @@
 Bộ cài đặt dùng chung cho các repo production của GTV. **Sửa ở đây, không sửa mirror.**
 
 ```
-_Shared/setup-kit/            ← canonical (thư mục này)
+wiki nội bộ «setup-kit» (ngoài repo, hỏi Lead/Vincent)            ← canonical (thư mục này)
         ↓  python3 tools/sync-setup-kit.py
 <repo>/_SETUP/                ← mirror trong 6 repo, sinh tự động, có MANIFEST.json
 <repo>/.claude/skills/setup-may/   ← skill, sinh cùng lúc từ skill/setup-may/

@@ -6,7 +6,7 @@ Skeleton HTML cho deck báo cáo tuần theo skill `gtv-weekly-report` — chu�
 
 1. Lần đầu setup client: copy folder này → `09-reporting/weekly-template/`, thay logo (`assets/logo-client.png`, `assets/logo-gtv.png`), điền tên client/đối thủ cố định.
 2. Mỗi tuần: skill `gtv-weekly-report` CLONE `deck-template.html` → `09-reporting/weekly/<YYYY>-W<NN>/<CLIENT>_bao-cao-tuan-W<NN>_v1.html`, điền data từ `digest.json` theo `skills/gtv-weekly-report/references/slide-map.md`.
-3. Export: `bash skills/frontend-slides/scripts/export-pdf.sh <file.html> <file.pdf>` (hoặc đường dẫn skill frontend-slides ở workspace root).
+3. Giao khách bản **HTML** (mở trực tiếp bằng trình duyệt, luật HTML-only của hệ báo cáo). Chỉ export PDF khi khách yêu cầu rõ: dùng `python3 skills/gtv-weekly-report/scripts/qa_deck.py --pdf` nếu có, hoặc Playwright/Chrome headless theo `RUNBOOK-bao-cao-ky.md` — skill `frontend-slides` KHÔNG đóng gói trong SEO Production.
 
 ## Loại slide có sẵn trong skeleton (12 exemplar)
 

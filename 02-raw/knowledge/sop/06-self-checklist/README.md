@@ -80,7 +80,7 @@ tags: [sop, self-checklist, outline, content-writing, quality-gate]
 | `tier-1-offpage-backlink.md` | (20)(25)(26) — per batch link + content offpage + textlink PR | 7 |
 | `tier-1-traffic-users.md` | T8-T9 — ⚠ risk cao, CHỈ khi SEO Director duyệt (gate 100% phần P0) | 5 |
 | `tier-1-cro-conversion.md` | Site-wide T2-T3 · per landing T8-T10 · conversion path | 3 |
-| `tier-1-geo.md` | Lớp GEO T1-T10 (reuse AX1-AX5, guardrail llms.txt/schema ≠ lever) | 5 |
+| `tier-1-geo.md` | Lớp GEO T1-T10 (reuse AX1-AX7, guardrail llms.txt/schema ≠ lever) | 5 |
 | `tier-1-gbp-local.md` | Dự án local — vận hành GBP hằng tháng | 5 |
 | `quality-content-ai.md` | Vận hành content AI 6 phase (pointer về tier-1, không duplicate) | 5 |
 | `common-ai-errors.md` | Error catalog 28 lỗi khi QC/edit bài AI | — |

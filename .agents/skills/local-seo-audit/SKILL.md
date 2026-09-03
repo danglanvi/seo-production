@@ -1,6 +1,6 @@
 ---
 name: local-seo-audit
-description: "Audit local SEO tầng WEBSITE-SIGNALS + GBP-CONTENT cho khách local VN (Google Business Profile + Google Maps là mặt trận chính) — nửa WEBSITE của cặp skill local (nửa kia: map-pack-intelligence đo platform data/geo-grid): phân loại business type (brick-and-mortar / SAB / hybrid / multi-location chain) → GBP optimization checklist (categories, attributes, photos, posts, Q&A, services, booking) → NAP consistency onsite (schema/footer/contact/trang chi nhánh khớp GBP từng ký tự) → location pages cho chuỗi đa chi nhánh → citations health (Google Maps, Facebook, directory ngành dọc VN, duplicate listing) → review signals (velocity, rating vs đối thủ, tỷ lệ phản hồi) — output audit report theo business type + prioritized action list, mỗi finding kèm Falsifiability. Use when: (1) 'audit local SEO [business/domain]', 'kiểm tra GBP [client]', 'vì sao không lên map pack' (phần website/GBP-content); (2) client local / đa chi nhánh (chuỗi phòng khám, showroom, nhà hàng) cần checklist tối ưu GBP + location pages; (3) quy trình 10 tháng chạm mốc 'GMB Post / dự án local có GMB'. Data priority: DataForSEO Business Data API (nếu có) → khách export GBP Insights / screenshot GBP dashboard → crawl website + xem GBP public trên Maps ẩn danh (đường lùi cuối, luôn chạy được). KHÔNG dùng cho: geo-grid rank tracking / SoLV / competitor radius (→ map-pack-intelligence), viết JSON-LD LocalBusiness (→ schema-markup-generator), entity strategy tổng thể + Knowledge Panel (→ sop/04-entity-optimization + Brand Entitization Playbook), technical site-level (→ technical-seo-audit)."
+description: "Audit local SEO tầng WEBSITE-SIGNALS + GBP-CONTENT cho khách local VN (nửa website của cặp skill local; nửa kia: map-pack-intelligence): business type, GBP checklist, NAP onsite, location pages đa chi nhánh, citations, review. Use when: 'audit local SEO [khách]', 'tối ưu GBP', 'location page cho chuỗi'."
 metadata:
   version: "1.0"
 ---
@@ -112,7 +112,7 @@ Theo skeleton Output; mỗi finding ❌/⚠️ bắt buộc kèm **Falsifiabilit
 
 ## Output
 
-File: `Deliverables/<project>/<client>_Local-SEO-Audit_v1.md` (tăng `_v2` nếu trùng).
+File: tài liệu nội bộ «<client>_Local-SEO-Audit_v1» (ngoài repo, hỏi Lead/Vincent) (tăng `_v2` nếu trùng).
 
 ```markdown
 # Local SEO Audit — <business>

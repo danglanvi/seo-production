@@ -1,6 +1,6 @@
 ---
 name: keyword-topic-url-mapping
-description: "Gom bộ keyword CAM KẾT hợp đồng thành topic → xác định URL SEO tương ứng — công đoạn (4) T1 của quy trình 10 tháng GTV, MAPPING layer đứng trước topical map và traffic plan. Phương pháp: gọi skill serp-clustering (DATA layer) lấy bảng cụm SERP-overlap → skill này CONSUME bảng cụm rồi quyết định; fallback semantic/intent grouping thủ công theo Central Search Intent khi không chạy được serp-clustering. Từ topic → 1 URL SEO chính (chống cannibalization), phân loại Core/Outer, intent I/N/C/T, page type đề xuất, % keyword + % search volume per topic. Use when: (1) 'nhóm keyword cam kết thành topic cho [client]', 'mapping keyword → URL SEO', 'công đoạn 4 T1'; (2) có bộ từ khóa hợp đồng (kpi-commitments.md hoặc paste) cần chuyển thành cấu trúc topic/URL trước khi làm topical map; (3) cần bảng keyword ↔ topic ↔ URL ↔ intent ↔ Core/Outer ↔ % làm input cho topical-map-creation + traffic-plan. Data priority: Ahrefs MCP (serp-overview) → DataForSEO SERP → grouping thủ công theo intent. KHÔNG dùng cho: xây SCN/topical map đầy đủ toàn site (→ topical-map-creation — skill này CHỈ mapping bộ keyword cam kết), research 1 bài/1 SERP sâu (→ seo-research), forecast traffic (→ traffic-plan)."
+description: "Gom bộ keyword CAM KẾT hợp đồng thành topic → xác định URL SEO tương ứng — công đoạn (4) T1 của quy trình 10 tháng GTV, MAPPING layer đứng trước topical map và traffic plan. Use when: (1) 'nhóm keyword cam kết thành topic cho [client]', 'mapping keyword → URL SEO'."
 metadata:
   version: "1.2"
 ---

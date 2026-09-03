@@ -1,6 +1,6 @@
 # KPI Table Formats — Skeleton 3 chế độ báo cáo
 
-> Nguồn nền (tên file/folder giữ nguyên văn filesystem, kể cả space thừa): `GTV Ops/wiki/account/3. MẪU BÁO CÁO CÔNG VIỆC HÀNG THÁNG.docx`, `GTV Ops/wiki/account/3.1 MẪU BÁO CÁO KPI DỰ ÁN - THÁNG CUỐI - NGHIỆM THU .docx`, workbook `GTV Ops/wiki/account/(T11-2024) MẪU BÁO CÁO DỰ  ÁN/1. BÁO CÁO KẾT QUẢ.xlsx`, `GTV Ops/wiki/offers/kpi-commitment-template.md`, `GTV Ops/wiki/playbooks/contract-playbook.md`. Template gốc read-only — file này chỉ trích cấu trúc + điều khoản công khai với khách.
+> Nguồn nền (tên file/folder giữ nguyên văn filesystem, kể cả space thừa): tài liệu nội bộ «3. MẪU BÁO CÁO CÔNG VIỆC HÀNG THÁNG» (ngoài repo, hỏi Lead/Vincent), tài liệu nội bộ «3.1 MẪU BÁO CÁO KPI DỰ ÁN - THÁNG CUỐI - NGHIỆM THU » (ngoài repo, hỏi Lead/Vincent), workbook tài liệu nội bộ «1. BÁO CÁO KẾT QUẢ» (ngoài repo, hỏi Lead/Vincent), tài liệu nội bộ «kpi-commitment-template» (ngoài repo, hỏi Lead/Vincent), tài liệu nội bộ «contract-playbook» (ngoài repo, hỏi Lead/Vincent). Template gốc read-only — file này chỉ trích cấu trúc + điều khoản công khai với khách.
 
 ## TOC
 

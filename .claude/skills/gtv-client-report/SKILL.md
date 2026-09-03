@@ -1,6 +1,6 @@
 ---
 name: gtv-client-report
-description: "Sinh báo cáo client GTV theo mẫu Account chuẩn — layer REPORTING: chỉ render kết quả trên KPI đã cam kết trong hợp đồng/workbook, 3 chế độ THÁNG, QUÝ (OKRs review theo sheet OKRs workbook), THÁNG CUỐI/NGHIỆM THU (họp nghiệm thu + auto-accept 7 ngày + bảo hành 30 ngày). Use when: (1) 'viết báo cáo tháng cho [client]', 'làm report KPI tháng thứ [n]'; (2) 'báo cáo quý / review OKRs quý [n] cho [client]'; (3) 'báo cáo nghiệm thu / báo cáo tháng cuối [client]'. Data ladder: Ahrefs MCP → SpySERP+GA4 → điền tay. Output kép: markdown draft email + .docx theo MẪU. 🔒 GTV-only, chạy trong Claude Code workspace, không đóng gói claude.ai. KHÔNG dùng cho: lập proposal/cam kết KPI mới (→ gtv-proposal), hoạch định OKRs mới (→ okrs-gtv-tag-framework), phân tích SEO sâu nguyên nhân tụt hạng (→ skill seo-*)."
+description: "Sinh báo cáo client GTV theo mẫu Account chuẩn — layer REPORTING: chỉ render kết quả. Use when: (1) 'viết báo cáo tháng cho [client]', 'làm report KPI tháng thứ [n]'; (2) 'báo cáo quý / review OKRs quý [n] cho [client]'; (3) 'báo cáo nghiệm thu / báo cáo tháng cuối [client]'."
 metadata:
   version: "1.1"
 ---
@@ -9,7 +9,7 @@ metadata:
 
 Sinh báo cáo gửi khách hàng GTV (email + .docx) đúng MẪU BÁO CÁO của phòng Account: bảng KPI 7 cột, bảng tiến độ, dữ liệu CRO, điều khoản nghiệm thu nguyên văn. Skill này đứng **hạ nguồn** của `gtv-proposal` (KPI đã cam kết là input, không phải output) và **thượng nguồn** của việc gửi mail/nghiệm thu của Account.
 
-🔒 **GTV-only, workspace-only**: skill đọc wiki `GTV Ops/` và có thể chạm dữ liệu client thật — chỉ chạy trong Claude Code workspace, KHÔNG đóng gói lên claude.ai. Không mix entity TAG dưới mọi hình thức.
+🔒 **GTV-only, workspace-only**: skill đọc wiki tài liệu nội bộ «GTV Ops» (ngoài repo) và có thể chạm dữ liệu client thật — chỉ chạy trong Claude Code workspace, KHÔNG đóng gói lên claude.ai. Không mix entity TAG dưới mọi hình thức.
 
 ## Phân vai (tránh lấn sân)
 
@@ -29,7 +29,7 @@ Sinh báo cáo gửi khách hàng GTV (email + .docx) đúng MẪU BÁO CÁO c�
 - `$CLIENT` — tên dự án/khách hàng GTV (phải là client GTV, không phải học viên TAG).
 - `$MODE` — `thang` | `quy` | `nghiem-thu` (tháng cuối).
 - `$PERIOD` — tháng thứ mấy của hợp đồng (hoặc quý mấy), kèm khoảng ngày đo (vd: 01/06–30/06).
-- `$KPI_SOURCE` — nguồn KPI cam kết: workbook `1. BÁO CÁO KẾT QUẢ.xlsx` của dự án (sheet KPI/OKRs) hoặc trang client trong `GTV Ops/wiki/entities/clients/`.
+- `$KPI_SOURCE` — nguồn KPI cam kết: workbook `1. BÁO CÁO KẾT QUẢ.xlsx` của dự án (sheet KPI/OKRs) hoặc trang client trong tài liệu nội bộ «clients» (ngoài repo, hỏi Lead/Vincent).
 
 **Optional:**
 - `$RANK_EXPORT` — file/paste export SpySERP (bộ keyword cam kết + vị trí + ngày tracking).
@@ -46,7 +46,7 @@ Sinh báo cáo gửi khách hàng GTV (email + .docx) đúng MẪU BÁO CÁO c�
 ## Workflow
 
 ### Bước 0 — Scope gate & confirm (🔴 bắt buộc, chờ xác nhận rồi mới chạy)
-- [ ] Xác nhận `$CLIENT` là **client GTV** (đối chiếu `GTV Ops/wiki/entities/clients/` nếu nghi ngờ). Nghi ngờ mix TAG → dừng, hỏi.
+- [ ] Xác nhận `$CLIENT` là **client GTV** (đối chiếu tài liệu nội bộ «clients» (ngoài repo, hỏi Lead/Vincent) nếu nghi ngờ). Nghi ngờ mix TAG → dừng, hỏi.
 - [ ] Xác nhận `$MODE` + `$PERIOD` + khoảng ngày đo. Mode `nghiem-thu` → hỏi thêm giờ/ngày đề xuất họp nghiệm thu + số HĐ.
 - [ ] Hỏi **đơn vị Organic Traffic theo HĐ client này** (Sessions / Product Pageview / Organic Traffic — các nguồn mẫu không thống nhất, KHÔNG tự chọn mặc định).
 - [ ] Detect data path A/B/C theo input có sẵn. Nếu Path A: **báo số MCP call dự kiến** (thường 3-6 call: rank-tracker-overview, gsc-performance-history, brand-radar nếu có GEO KPI, + render) và **chờ xác nhận** trước khi gọi.
@@ -80,7 +80,7 @@ Header cố định: `LOẠI KPI | HẠNG MỤC | CAM KẾT | KẾT QUẢ | TỶ
 ### Bước 5 — Xuất output kép
 1. **Markdown draft email** — đúng skeleton, tiêu đề `[GTV SEO] – BÁO CÁO TIẾN ĐỘ VÀ KPI DỰ ÁN (<Tên dự án>) THÁNG THỨ <n>`, account dán thẳng vào Gmail.
 2. **File .docx theo MẪU** — gọi skill `docx` render từ markdown, giữ đúng cấu trúc bảng (hàng chốt KẾT QUẢ KPI merge ô như mẫu gốc).
-Ghi cả 2 file về `Deliverables/<project-GTV>/` (TASK ROUTING), tên `<client>_Report_v1.md` / `.docx` (tăng `_v2`, `_v3` nếu trùng).
+Ghi cả 2 file về tài liệu nội bộ «<project-GTV>» (ngoài repo, hỏi Lead/Vincent) (TASK ROUTING), tên `<client>_Report_v1.md` / `.docx` (tăng `_v2`, `_v3` nếu trùng).
 
 ### Bước 6 — Delivery checklist
 - [ ] Đúng entity GTV, không lẫn case/số liệu TAG.
@@ -88,7 +88,7 @@ Ghi cả 2 file về `Deliverables/<project-GTV>/` (TASK ROUTING), tên `<client
 - [ ] Cột nghiệm thu không ô nào >100%; "Chưa cam kết" loại khỏi trung bình.
 - [ ] Điều khoản nghiệm thu nguyên văn, đúng biến thể chế độ.
 - [ ] Tiếng Việt có dấu đầy đủ; thuật ngữ SEO giữ tiếng Anh.
-- [ ] File đặt đúng `Deliverables/<project-GTV>/`, không sửa gì trong `GTV Ops/wiki/account/`.
+- [ ] File đặt đúng tài liệu nội bộ «<project-GTV>» (ngoài repo, hỏi Lead/Vincent), không sửa gì trong tài liệu nội bộ «account» (ngoài repo, hỏi Lead/Vincent).
 
 ## Output
 
@@ -126,13 +126,13 @@ Như vậy, GTV SEO đã hoàn thành …% KPI theo cam kết tháng thứ <n> c
 <Điều khoản nghiệm thu — NGUYÊN VĂN theo references/kpi-table-formats.md>
 ```
 
-**Naming:** `Deliverables/<project-GTV>/<client>_Report_v1.md` + `<client>_Report_v1.docx`.
+**Naming:** tài liệu nội bộ «<client>_Report_v1» (ngoài repo, hỏi Lead/Vincent) + `<client>_Report_v1.docx`.
 
 ## Behavior Gates
 
 1. **🧠 Think Before** — Trước khi render: mode nào? Entity chắc chắn GTV? Đơn vị traffic theo HĐ client này là gì? KPI nào có cam kết tháng này? Assumption sai làm hỏng bảng nghiệm thu → hỏi trước, không đoán.
 2. **🔴 Evidence** — Mọi con số trong bảng KPI truy được về **nguồn + ngày/khoảng ngày đo** (SpySERP ngày tracking nào, GA4 từ ngày–đến ngày, Ahrefs/SemRush cho GEO). Không nguồn → `[CẦN SỐ LIỆU]`, không điền. Số nghiệm thu chỉ lấy từ nguồn chuẩn hợp đồng (SpySERP/GA4/Ahrefs-AIO theo Điều 1).
-3. **✂️ Surgical** — Read-only với template gốc trong `GTV Ops/wiki/account/`; không sửa workbook dự án; chỉ tạo file output mới trong `Deliverables/<project-GTV>/`. Phát hiện wiki client cần update → note 1 câu, không tự sửa.
+3. **✂️ Surgical** — Read-only với template gốc trong tài liệu nội bộ «account» (ngoài repo, hỏi Lead/Vincent); không sửa workbook dự án; chỉ tạo file output mới trong tài liệu nội bộ «<project-GTV>» (ngoài repo, hỏi Lead/Vincent). Phát hiện wiki client cần update → note 1 câu, không tự sửa.
 4. **🎯 Goal-driven** — Mục tiêu report: khách đủ evidence để reply "Đồng ý nghiệm thu kết quả KPI theo báo cáo" trong 4 ngày. Mọi hàng KPI phải có link báo cáo trỏ đúng folder `[Tên Dự Án] - SEO Reports` (khách quyền Comment).
 
 ## Anti-patterns
@@ -152,7 +152,7 @@ Như vậy, GTV SEO đã hoàn thành …% KPI theo cam kết tháng thứ <n> c
 
 - [references/kpi-table-formats.md](references/kpi-table-formats.md) — skeleton đầy đủ 3 chế độ, menu KPI chuẩn, điều khoản nghiệm thu nguyên văn, ví dụ đã điền (ẩn danh).
 - [references/data-paths.md](references/data-paths.md) — map Ahrefs MCP tools từng ô bảng KPI, cách đọc export SpySERP/GA4, skeleton Path C, cấu trúc folder báo cáo khách.
-- Nguồn nền (read-only, KHÔNG sửa; tên file/folder giữ nguyên văn filesystem, kể cả space thừa): `GTV Ops/wiki/account/3. MẪU BÁO CÁO CÔNG VIỆC HÀNG THÁNG.docx` · `GTV Ops/wiki/account/3.1 MẪU BÁO CÁO KPI DỰ ÁN - THÁNG CUỐI - NGHIỆM THU .docx` · `GTV Ops/wiki/account/(T11-2024) MẪU BÁO CÁO DỰ  ÁN/1. BÁO CÁO KẾT QUẢ.xlsx` · `GTV Ops/wiki/account/(T11-2024) MẪU BÁO CÁO DỰ  ÁN/GUIDELINE THIẾT LẬP FILE BÁO CÁO KHÁCH HÀNG.docx`.
+- Nguồn nền (read-only, KHÔNG sửa; tên file/folder giữ nguyên văn filesystem, kể cả space thừa): tài liệu nội bộ «3. MẪU BÁO CÁO CÔNG VIỆC HÀNG THÁNG» (ngoài repo, hỏi Lead/Vincent) · tài liệu nội bộ «3.1 MẪU BÁO CÁO KPI DỰ ÁN - THÁNG CUỐI - NGHIỆM THU » (ngoài repo, hỏi Lead/Vincent) · tài liệu nội bộ «1. BÁO CÁO KẾT QUẢ» (ngoài repo, hỏi Lead/Vincent) · tài liệu nội bộ «GUIDELINE THIẾT LẬP FILE BÁO CÁO KHÁCH HÀNG» (ngoài repo, hỏi Lead/Vincent).
 - Wiki: [[kpi-commitment-template]] — menu KPI chuẩn (TOP theo bộ, Organic Traffic, GEO); [[contract-playbook]] — nguồn đo Điều 1 (SpySERP/Ahrefs/GA4), TOP lồng nhau, cách tính gate giải ngân theo đợt, bảo hành ≥90%/30 ngày (🔒 phần giá/hoàn trả confidential); [[tracking-schema]] — chỉ dùng làm evidence QA content nội bộ, KHÔNG đưa vào email khách.
 
 ## Changelog

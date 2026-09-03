@@ -1,6 +1,6 @@
 # SOP 11 — Đăng bài WordPress (WS06 Onpage & IL)
 
-> Bản đóng gói cho SEO Production — sync từ `SEO Knowledge/Semantic SEO A - Z/sop/11-publish-wp.md` ngày 2026-08-29 (copy nguyên).
+> Bản đóng gói cho SEO Production — sync từ `SEO wiki nội bộ «Semantic» (ngoài repo) SEO A - Z/sop/11-publish-wp.md` ngày 2026-08-29 (copy nguyên).
 > Wikilink [[...]] trong file = tri thức nội bộ sâu (wiki Semantic SEO, không đóng gói theo dự án).
 > Gặp wikilink cần đào sâu → hỏi SEO Lead / Vincent, hoặc tra kho gốc trên máy master.
 

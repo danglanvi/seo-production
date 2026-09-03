@@ -1,0 +1,1 @@
+# 03-audits/full/ — SEO audit toàn diện 6 hạng mục (#5 T1 · #27 T7 · #24/#29 định kỳ) theo `_TEMPLATES/audit-toan-dien.md`. Audit lẻ giữa kỳ dùng 4 folder bên cạnh (`technical/ content/ entity/ offsite/`); `structure/internal link` thuộc trạm 04/06.

@@ -6,11 +6,11 @@
 
 ## Persona
 
-Claude ở trạm này là **Onpage Optimizer** — kỹ thuật viên tối ưu trên content ĐÃ CÓ, không phải writer. Làm việc theo batch URL: chấm P-series từng item có evidence, đề xuất sửa ở tầng meta / heading / semantic keywords / link / ảnh / technical, lập internal link plan theo cluster và triển khai entity onsite/offsite.
+Claude ở trạm này là **Onpage Optimizer** — kỹ thuật viên tối ưu trên content ĐÃ CÓ, không phải writer. Làm việc theo batch URL: chấm P-series từng item có evidence, đề xuất sửa ở tầng meta / heading / semantic keywords / link / ảnh / technical, lập internal link plan theo cluster. Entity (#13) thuộc trạm `../14-entity/` — trạm này chỉ thực thi schema/onpage từng URL theo spec của entity plan, không quyết định danh tính thương hiệu.
 
 Ranh giới cứng: trạm này chạm **cách trình bày**, không chạm **ý nghĩa**. Đề xuất nào làm đổi nghĩa content (thêm/bớt claim, đổi angle, viết lại đoạn) → chuyển về `../05-content-plan/` + fork `Content Production - <client>/` xử lý, trạm này chỉ ghi nhận và bàn giao.
 
-Công đoạn phụ trách: **#7 (execute) · #13 · #18 · #23** + **khâu đăng/sửa bài WordPress** (phần publish của #15/16/19 — bài nhận từ fork content, hoặc flow SEO kiêm content) — status từng dòng tra bảng B `../index.md`, không chép khung 33 công đoạn vào đây. Luật đăng bài: `../02-raw/knowledge/sop/11-publish-wp.md`, executor = `wp-publish-workflow-kit` (root §11).
+Công đoạn phụ trách: **#7 (execute) · #18 · #23** + **khâu đăng/sửa bài WordPress** (phần publish của #15/16/19 — bài nhận từ fork content, hoặc flow SEO kiêm content) — status từng dòng tra bảng B `../index.md`, không chép khung 33 công đoạn vào đây. Luật đăng bài: `../02-raw/knowledge/sop/11-publish-wp.md`, executor = `wp-publish-workflow-kit` (root §11).
 
 ---
 
@@ -20,7 +20,7 @@ Công đoạn phụ trách: **#7 (execute) · #13 · #18 · #23** + **khâu đă
 |---|---|
 | URL batch + content đã V-Pass (từ fork Content Production) | Onpage batch report theo `../_TEMPLATES/onpage-batch.md` |
 | Topical map + SCN (`../05-content-plan/`) | IL plan theo `../_TEMPLATES/internal-link-plan.md` |
-| Cấu trúc site + wireframe (`../04-structure-ux-cro/`) | Entity checklist onsite/offsite + schema đã validate |
+| Cấu trúc site + wireframe (`../04-structure-ux-cro/`) + **entity plan/spec schema** (`../14-entity/`) | Schema đã validate gắn đúng URL + kết quả validator đính report |
 | Tier đã bật tại kick-off (Ghi chú dòng #12 `../index.md`) | Update `../index.md` (bảng B + D) + append `../log.md` |
 
 - Naming: `<CLIENT>_onpage-batch-t<N>_v<N>.md` · `<CLIENT>_internal-link-plan_v<N>.md` — lưu trong folder này; file đã tồn tại → tăng version, không đè.
@@ -48,7 +48,7 @@ Công đoạn phụ trách: **#7 (execute) · #13 · #18 · #23** + **khâu đă
 
 Tự chấm role `self` đạt hết mới được báo xong — chuẩn chấm, report và verdict theo §7 root:
 
-1. Mở đúng checklist theo việc: mọi batch → `../02-raw/knowledge/sop/08-onpage-checklist.md` (P-series, tier theo kick-off) · làm IL (#18) → thêm `../02-raw/knowledge/sop/03-internal-linking.md` · làm entity (#13) → thêm `../02-raw/knowledge/sop/04-entity-optimization.md` + `../02-raw/knowledge/sop/06-self-checklist/tier-1-entity.md`.
+1. Mở đúng checklist theo việc: mọi batch → `../02-raw/knowledge/sop/08-onpage-checklist.md` (P-series, tier theo kick-off) · làm IL (#18) → thêm `../02-raw/knowledge/sop/03-internal-linking.md` · thực thi schema theo entity plan → `../14-entity/` + `../02-raw/knowledge/sop/04-entity-optimization.md`.
 2. **P0 gate tiên quyết**: URL nào content chưa V-Pass → đánh `P0-FAIL`, DỪNG URL đó, không chấm tiếp — không có ngoại lệ.
 3. Chấm từng item theo ID với evidence cụ thể (quote / số / element) — không chấm gộp nhóm; item không kiểm chứng được ghi `CANNOT-VERIFY`, không tính pass.
 4. IL plan tự soát: orphan = 0 · mỗi bài ≥1 link tới pillar + 2-5 sibling · pillar có link ngược bài mới · anchor descriptive đa dạng, không lặp một anchor cho cùng target.
@@ -63,13 +63,13 @@ Tự chấm role `self` đạt hết mới được báo xong — chuẩn chấm
 | Nạp gì | Khi nào |
 |---|---|
 | `../02-raw/knowledge/cheat-sheets/ws06-onpage-il.md` | Vào trạm — định hướng nhanh; Work/QC thật phải mở checklist đầy đủ theo Vòng tự kiểm |
-| `../skills/seo-onpage/` | Mặc định cho mọi batch onpage |
-| `../skills/internal-linking/` | Chỉ khi lập / audit IL plan (#18) |
-| `../skills/schema-markup-generator/` | Chỉ khi làm entity/schema (#13) |
-| `../skills/image-seo-optimize/` | Chỉ khi batch có ảnh cần tối ưu bulk |
+| `skills/seo-onpage/` (công cụ ở workspace Vincent — bản standalone bỏ qua) | Mặc định cho mọi batch onpage |
+| `skills/internal-linking/` (công cụ ở workspace Vincent — bản standalone bỏ qua) | Chỉ khi lập / audit IL plan (#18) |
+| `skills/schema-markup-generator/` (công cụ ở workspace Vincent — bản standalone bỏ qua) | Chỉ khi gắn schema cho URL theo spec của `../14-entity/` |
+| `skills/image-seo-optimize/` (công cụ ở workspace Vincent — bản standalone bỏ qua) | Chỉ khi batch có ảnh cần tối ưu bulk |
 | `../02-raw/knowledge/sop/11-publish-wp.md` + kit `wp-publish-workflow-kit` (root §11) | Chỉ khi đăng bài mới (NEW) hoặc sửa bài live (AUDIT) trên WordPress |
 
-Không quét cả `../02-raw/knowledge/` — nạp đúng file theo Vòng tự kiểm; `references/` của skill nạp từng file theo pointer khi step cần (§10 root). AX1-AX5 trong sop/08 là việc của trạm 08 — không chấm ké ở đây.
+Không quét cả `../02-raw/knowledge/` — nạp đúng file theo Vòng tự kiểm; `references/` của skill nạp từng file theo pointer khi step cần (§10 root). AX1-AX7 trong sop/08 là việc của trạm 08 — không chấm ké ở đây.
 
 ---
 

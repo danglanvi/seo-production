@@ -1,6 +1,6 @@
 ---
 name: image-seo-optimize
-description: "Tối ưu SEO hình ảnh theo semantic (bulk) — đặt tên file, alt text, caption, metadata keywords cho ảnh ĐÃ CÓ + performance layer per-image (file-size tier theo vị trí, format ladder AVIF→WebP→JPEG, lazy-load/LCP, CLS, Discover ≥1200px). Use when: (1) 'tối ưu ảnh cho bài [X]', 'tối ưu bulk hình ảnh', 'đặt tên + alt cho folder ảnh'; (2) user đưa folder ảnh (tên folder = tên bài viết, có thể kèm file text bài trong folder); (3) user đưa Google Docs URL chứa bài + ảnh; (4) cần gợi ý alt text/filename/metadata chuẩn semantic cho ảnh trước khi upload CMS. Chuẩn áp dụng: P19-P20 (onpage checklist GTV), Layer 4 7.5 (Entity+Attribute+Action), SOP 07 Visual Semantic B4. KHÔNG dùng cho: brief ảnh cho designer khi CHƯA có ảnh (→ media-brief), generate ảnh (→ brand-image-gen-gtv-tag), audit layout tổng thể (→ visual-semantic-seo), audit CWV/performance tầng site (→ technical-seo-audit)."
+description: "Tối ưu SEO hình ảnh theo semantic (bulk) — đặt tên file, alt text, caption, metadata keywords cho ảnh ĐÃ CÓ + performance layer per-image (file-size tier theo vị trí, format ladder AVIF→WebP→JPEG, lazy-load/LCP, CLS, Discover ≥1200px). Use when: (1) 'tối ưu ảnh cho bài [X]'."
 metadata:
   version: "1.1"
 ---

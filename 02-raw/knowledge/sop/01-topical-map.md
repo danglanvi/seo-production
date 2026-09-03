@@ -16,7 +16,7 @@ related:
 tags: [sop, project-delivery, topical-map, 23-step]
 ---
 
-> Bản đóng gói cho SEO Production — sync từ `SEO Knowledge/Semantic SEO A - Z/sop/01-topical-map.md` ngày 2026-07-17.
+> Bản đóng gói cho SEO Production — sync từ `SEO wiki nội bộ «Semantic» (ngoài repo) SEO A - Z/sop/01-topical-map.md` ngày 2026-07-17.
 > Wikilink [[...]] trong file = tri thức nội bộ sâu (wiki Semantic SEO, không đóng gói theo dự án).
 > Gặp wikilink cần đào sâu → hỏi SEO Lead / Vincent, hoặc tra kho gốc trên máy master.
 

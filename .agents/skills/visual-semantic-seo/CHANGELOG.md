@@ -13,7 +13,7 @@
 
 ### Added
 
-- **PROCESS 7 bước** (Design-in / Audit-fix) — bản đầy đủ + RACI: `SEO Knowledge/Semantic SEO A - Z/sop/07-visual-semantic.md`.
+- **PROCESS 7 bước** (Design-in / Audit-fix) — bản đầy đủ + RACI: `Knowledge/Semantic SEO A - Z/sop/07-visual-semantic.md`.
 - **Centerpiece Dial** — rule ≤120 từ là conditional theo vertical (đo từ teardown morethanpanel/sutliffstout).
 - **Conversion Layer** — CTA-as-heading (YMYL) / order widget in-card (e-com).
 - **Entity Card Skeleton** — "page as database render".

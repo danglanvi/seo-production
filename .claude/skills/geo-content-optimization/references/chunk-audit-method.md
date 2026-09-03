@@ -27,20 +27,23 @@ Chunking thực tế của ChatGPT THÔ: cắt giữa câu, dính navigation ([[
 | Chrome DocumentChunker | max 200 words/passage, max 30 passages/page | Trần passage phía Google | [[Audition Chunk]] mục Fact-fix |
 | AIO cited passages | phổ biến 134-167 từ; 62% trong dải 100-300 từ | **Sweet spot khi REWRITE passage trả lời: 100-170 từ** | Wellows 12/2025, qua [[AI Overviews]] |
 | Khối coherent extract được | 200-300 từ | Trần cho section cần dài | Dejan 2026 |
-| **AX1 canonical (skill này)** | **≤~375 TỪ / H2 section** (≈500 tokens) | Ngưỡng PASS/FAIL kích thước | `sop/08` AX1 — evidence Dejan 500-token chunks |
+| **Chuẩn chunk GTV (29/08/2026)** | **Không cap số từ / H2 section.** Khối ý **<~200 từ** là con số vận hành duy nhất (`observational`, Chrome) | Ngưỡng vận hành khi audit + rewrite | Vincent chốt 29/08/2026 — thay cho "≤~375 từ" cũ (không có nguồn; 500 token là default cấu hình Vertex, không phải yêu cầu Google Search) |
 
-⚠ **Từ vs tokens:** bản thiết kế skill từng ghi "≤~375 tokens" nhưng sop/08 AX1 canonical ghi "≤~375 **từ**" (lệch ~25%). Skill theo SOP. Muốn đổi đơn vị → Vincent duyệt + sửa SOP trước, sửa skill sau.
+**Vì sao bỏ 375 từ:** 4 con số chunk trong wiki thuộc 4 hệ khác nhau (ChatGPT ≈128 token · OpenAI file_search 800 · Vertex 500 · Chrome 200 từ) và **không hệ nào là yêu cầu của Google Search** (Google: *"no requirement to break your content into tiny pieces"*). Cap số từ section ép cắt ngắn → mất contextual coverage của facet. Cái máy cần là **ranh giới + tự đứng + heading tổ tiên**, không phải độ dài. Bảng canonical: [[Audition Chunk]] §"3 con số chunk".
 
-## 3. Rubric self-containment per chunk (AX1)
+## 3. Rubric self-containment per chunk (AX1 → GE-19)
 
-Chấm mỗi chunk 4 tiêu chí — fail ≥2 tiêu chí → verdict REWRITE:
+Chấm mỗi chunk 5 tiêu chí — fail ≥2 tiêu chí → verdict REWRITE:
 
 | # | Tiêu chí | Pass khi | Fail khi |
 |---|---|---|---|
 | a | **Tự đứng** | Cắt rời khỏi bài, chunk vẫn đủ Entity (tên đầy đủ, không viết tắt lần đầu) + context + claim để trả lời trọn 1 sub-query | Người đọc phải đọc section trước mới hiểu |
-| b | **Kích thước** | ≤~375 từ / H2 section | Vượt → cân nhắc tách H3 hoặc tách page |
-| c | **Câu 1 = answer** | Câu đầu sau heading trả lời trực tiếp heading (Subordinate Text Match — mục 4) | Dính 1 trong 5 anti-patterns |
+| b | **1 heading = 1 facet + khối ý** | Section trả lời trọn **1** sub-question/cluster; mỗi khối ý (đoạn/nhóm đoạn cùng 1 ý) **<~200 từ**; section nhiều facet → đã tách H3 | Section gánh ≥2 facet không tách; khối ý >200 từ không có heading/đoạn mới; hoặc bị cắt cụt để "cho ngắn" mà thiếu E-A-V |
+| c | **Câu 1 = answer, 40-75 từ** | Câu đầu sau heading trả lời trực tiếp heading (Subordinate Text Match — mục 4), dài 40-75 từ, đủ E-A-V | Dính 1 trong 5 anti-patterns |
 | d | **Không hồi chỉ** | Không "điều này", "như trên", "sản phẩm nói trên", đại từ mơ hồ | Có → chunk mất nghĩa khi bị cắt rời |
+| e | **Heading tổ tiên có nghĩa** | H1/H2 cha của chunk đọc lên là biết chunk nói về entity/facet nào (`includeAncestorHeadings` — máy gắn heading cha vào chunk như metadata) | Heading cha rỗng nghĩa: "Tổng quan", "Phần 2", "Kết luận", "Thông tin thêm" |
+
+Ngoài rubric: **mỗi câu trong chunk tự đứng S-V-O đủ E-A-V** (53% citation là câu giữa đoạn — Indig, B) — không chấm điểm riêng, nhưng là lý do rewrite ưu tiên câu quotable hơn nhồi thêm chữ.
 
 Verdict thứ 3 — **TÁCH PAGE**: khi nhiều chunk lệch hẳn Central Search Intent của page (page đa chủ đề). Tín hiệu định lượng nếu đo được embedding: snippet representativeness <0,80 = red flag (mean thực nghiệm 0,92; 88,7% >0,9; chỉ 2,2% cases dưới 0,80 — Dejan 2026). Đề xuất tách, KHÔNG đề xuất viết thêm cho "đủ coverage".
 
@@ -100,8 +103,24 @@ Weighted theo thứ tự sức mạnh predictor:
 | **Heading↔query alignment** | 30% | % heading đạt pass-band + title 0,656 benchmark + slug natural-language (89,78% vs 81,11%) | Content signal mạnh nhất: cosine ≥0,90 = 41% vs <0,50 = 30%; +19pp trong nhóm top-rank (Indig 04/2026; Ahrefs 04/2026) |
 | **Chunk quality (AX1+AX2)** | 30% | % chunk PASS rubric mục 3 + front-load mục 6 | Audition Chunk gate; 44,2% citations first-30% |
 | **Freshness** | 20% | Ngày update cuối ≤30 ngày = full điểm | 76,4% top cited pages update trong 30 ngày (GEO.md — giữ đúng số); `URL_freshness_score` (Yeşilyurt). Nuance: trong 1 retrieval set trang established thắng trang mới, trừ news |
-| **Tactics KDD** | 20% | Có statistics + expert quotes + cite nguồn uy tín trong các chunk chính | Top-3 tactics, visibility tới ~40%; rank thấp hưởng lợi nhất +115% (KDD 2024) |
+| **Tactics KDD** | 20% | Có quote nguồn liên quan + statistics + cite nguồn sau claim trong các chunk chính; mỗi số truy được nguồn + ngày | KDD 2024 đọc primary: Quotation Addition top, "+41%/+28%" theo 2 metric proxy (GPT-3.5, 2023-24); đòn bẩy lớn nhất khi trang là nguồn yếu trong câu trả lời (Rank-5 +115,1% đi kèm Rank-1 −30,3%) — không viết "+40%"/"+115%" |
 
 🔴 KHÔNG chấm vào scorecard: schema (causal test Ahrefs 1.885 pages ≈ 0 tác động citation), llms.txt (không phải lever), content volume (correlation ~0,194), độ dài (snippet length ↔ quality r=0,05; page length ↔ representativeness r=-0,07 — Dejan 2026), DR page-level ("DR does not matter much" — [[Core Source]]).
 
 **Đọc điểm:** ≥8/10 = giữ + theo dõi; 5-7 = rewrite chunk fail; <5 = cân nhắc tách page / quay lại outline. Mục tiêu cuối không phải điểm — là thành Core Source (FCR 0,42 vs 0,23 uncited).
+
+**ROI khi verdict REWRITE (bổ sung 29/08/2026):** chỉ **tái cấu trúc không đổi chữ** (đảo câu đầu lên, tách khối ý, gộp claim về 1 câu quotable đúng heading) đã cho **+17,3% citation trên 6 engine** (Yu et al., arXiv 2603.29979 — đọc qua Surfer, nhãn C→B, cần đọc primary) → thứ tự rewrite: cấu trúc trước → câu quotable → mới thêm facts/quote (KDD). Sau restructure, chấm thêm **AX6** (mục 8).
+
+## 8. AX6 — Passage verifiability (GE-23)
+
+Cơ chế linkify 2 pha (patent US11769017B1 + US20240289407A1, verified 21/08/2026): AI sinh summary từ nhiều SRD, rồi **verify từng đoạn của summary bằng khoảng cách embedding** với passage nguồn trước khi gắn link → **document nuôi summary ≠ document được cite**. Trang có claim đúng nhưng phát biểu rải ở 2-3 đoạn, hoặc nằm dưới heading lệch cluster, sẽ nuôi câu trả lời mà không được link.
+
+Check per claim quan trọng (3-6 claim/bài, lấy từ Key-Facts table của intro nếu có):
+
+| # | Câu hỏi | Pass | Fail → fix |
+|---|---|---|---|
+| 1 | Claim nằm dưới heading **khớp cluster** mà claim trả lời? (Bước 3) | ✅ | Chuyển claim về đúng section |
+| 2 | Claim là **1 câu S-V-O hoàn chỉnh**, có số + nguồn + ngày ngay trong câu hoặc câu liền kề? | ✅ | Gộp 2-3 mảnh thành 1 câu quotable |
+| 3 | Câu đó **tự đứng** khi cắt khỏi đoạn (không hồi chỉ, entity tên đầy đủ)? | ✅ | Thay đại từ bằng entity |
+
+Output: `<n>/<m> claim PASS` + danh sách claim cần gộp — ghi vào report mục 3 (Alignment) dòng AX6.

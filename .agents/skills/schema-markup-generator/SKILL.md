@@ -1,6 +1,6 @@
 ---
 name: schema-markup-generator
-description: "Sinh JSON-LD structured data hoàn chỉnh theo page type (Organization, LocalBusiness, Person/Author, Article, Product, ItemList, Service, Breadcrumb) + thiết kế Entity Home (About page schema, sameAs Wikipedia/Wikidata/socials, NAP) + Author entity (Person + ProfilePage) — layer GENERATE, xuất block dán được + hướng dẫn validate. Use when: (1) 'tạo schema markup cho [URL/page]', 'sinh JSON-LD cho [page type]'; (2) 'thiết kế Entity Home / About page schema cho [brand]'; (3) 'setup Author entity / Person schema cho [tác giả]'; (4) 'validate schema [page]'. ⚠️ Schema KHÔNG phải AI-citation lever (DiD 1.885 trang, Ahrefs 05/2026) — giá trị thật: rich results, entity understanding/Knowledge Graph, voice. KHÔNG dùng cho: HTML semantic container (→ semantic-html-optimization), nội dung E-A-V trong body text (→ semantic-content-writing), audit onpage tổng (→ seo-onpage), thực thi entity off-site (→ Brand Entitization Playbook)."
+description: "Sinh JSON-LD structured data hoàn chỉnh theo page type (Organization, LocalBusiness, Person/Author, Article, Product, ItemList, Service, Breadcrumb) + thiết kế Entity Home (About page schema, sameAs Wikipedia/Wikidata/socials, NAP) + Author entity (Person + ProfilePage) — layer G."
 metadata:
   version: "1.0.1"
 ---
@@ -92,7 +92,7 @@ Chạy [references/entity-home-checklist.md](references/entity-home-checklist.md
 
 ## Output
 
-File: `Deliverables/<project>/<project>_Schema-JSONLD_v1.md` (tăng `_v2` nếu trùng). Task wiki nội bộ → trả trực tiếp trong chat.
+File: tài liệu nội bộ «<project>_Schema-JSONLD_v1» (ngoài repo, hỏi Lead/Vincent) (tăng `_v2` nếu trùng). Task wiki nội bộ → trả trực tiếp trong chat.
 
 ```markdown
 # Schema Markup — <page/entity> (<PAGE_TYPE>)

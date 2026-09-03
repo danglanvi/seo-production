@@ -1,6 +1,6 @@
 ---
 name: map-pack-intelligence
-description: "Đo lường map pack theo tọa độ cho khách local VN — nửa PLATFORM-DATA của cặp skill local (nửa kia: local-seo-audit làm website signals + GBP content): geo-grid rank tracking (lưới 3x3/5x5 quanh vị trí kinh doanh, bán kính theo loại hình) → Share of Local Voice (SoLV = % điểm lưới business xuất hiện top 3 map pack) → competitor radius mapping (đối thủ nào thắng ở khu vực nào, khoảng cách ảnh hưởng ranking thế nào) → review velocity comparison (nhịp review mình vs 3-5 đối thủ pack) → cross-platform NAP matrix (Google/Apple Maps/Bing Places/Facebook) — output SoLV baseline + bảng grid + competitor gap + action đổ về local-seo-audit. Use when: (1) 'đo map pack [business]', 'SoLV baseline', 'geo-grid tracking [client]', 'mình đứng thứ mấy trên Maps quanh khu vực'; (2) 'đối thủ nào đang thắng map pack ở [khu vực]', so nhịp review với đối thủ; (3) trước/sau khi fix theo local-seo-audit cần số before/after. Data ladder: DataForSEO Business Data / SERP API với tọa độ per điểm (nếu có) → export GBP Insights + search tay ẩn danh theo grid (hướng dẫn chuẩn: giả lập vị trí/UULE hoặc đi thực địa spot-check) → screenshot khách cung cấp (đường lùi cuối, luôn chạy được). KHÔNG dùng cho: audit GBP listing content + NAP onsite + location pages (→ local-seo-audit), citations như link layer (→ backlink-research), viết JSON-LD (→ schema-markup-generator), đưa SoLV vào báo cáo client định kỳ (→ gtv-client-report)."
+description: "Đo map pack theo tọa độ cho khách local VN (nửa platform-data của cặp skill local; nửa kia: local-seo-audit): geo-grid rank tracking 3x3/5x5, Share of Local Voice (SoLV), competitor radius, review velocity, NAP matrix. Use when: 'đo map pack [khách]', 'SoLV baseline', 'rank Google Maps theo khu vực'."
 metadata:
   version: "1.0"
 ---
@@ -95,7 +95,7 @@ metadata:
 
 ## Output
 
-File: `Deliverables/<project>/<client>_Map-Pack-SoLV_<YYYY-MM>_v1.md`.
+File: tài liệu nội bộ «<client>_Map-Pack-SoLV_<YYYY-MM>_v1» (ngoài repo, hỏi Lead/Vincent).
 
 ```markdown
 # Map Pack Intelligence — <business> (chi nhánh <X>)

@@ -1,0 +1,1 @@
+# 03-audits/content/ — audit content + toppage lẻ (template `_TEMPLATES/audit-content.md`, skill `semantic-content-audit` · `content-refresh`). Bài cần viết/refresh → brief sang fork Content Production, tracking ở `05-content-plan/content-tracking/`.

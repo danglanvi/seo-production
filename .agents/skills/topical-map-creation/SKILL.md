@@ -1,9 +1,9 @@
 ---
 name: topical-map-creation
-description: "Create topical maps for semantic content networks following Koray's topical authority framework + AI-search era layer (2026). Use when: (1) Consulting clients to gather business/audience information, (2) Building website content architecture, (3) Planning semantic content networks, (4) Identifying entity-attribute pairs for articles, (5) Establishing topical coverage strategy, (6) Creating core vs outer section plans, (7) Prioritizing content based on attribute filtration and RPP scoring, (8) Designing internal link architecture, (9) Planning publication strategy, (10) Determining quality and trending nodes, (11) Optimizing for GEO/AI Search citation, (12) Query fan-out coverage check, (13) Deciding page vs heading vs sentence (QDP/QDH/QDS), (14) Planning off-site corroboration + video nodes. Triggers: 'tạo topical map', 'thiết kế topical map', 'topical authority', 'semantic content network', 'xây dựng cấu trúc content', 'lập bản đồ chủ đề', 'query fan-out', 'QDP'."
+description: "Create topical maps for semantic content networks following Koray's topical authority framework + AI-search era layer (2026). Use when: (1) Consulting clients to gather business/audience information, (2) Building website content architecture."
 ---
 
-# Topical Map Creation (v2.1)
+# Topical Map Creation (v2.2)
 
 > **v2.0 (Jul 2026):** thêm AI-Search Era Layer (query fan-out, QDP/QDH/QDS, Surround Sound, quality gate, KPI shift) + Layer 1 Lexical module (GTV). Koray KHÔNG sửa pipeline gốc — các bổ sung đánh dấu (v2.0) chèn vào đúng phase. Evidence: wiki `sources/research-2026-07-topical-map-ai-era.md`.
 
@@ -280,16 +280,16 @@ Có thể verify cụm bằng skill `serp-clustering` (ma trận SERP-overlap + 
 
 #### Step 10b: Query Fan-Out Coverage Check (v2.0)
 
-AI Mode/AIO tách 1 query thành nhiều synthetic sub-queries (Google công bố kỹ thuật query fan-out tại I/O 05/2025; con số **~8-12 sub-queries/query** từ independent research, không phải công bố chính thức). Chỉ 38% AIO citations đến từ top-10 (Ahrefs 03/2026) → bề mặt retrieval rộng hơn ranking.
+AI Mode/AIO tách 1 query thành nhiều synthetic sub-queries (Google công bố kỹ thuật query fan-out tại I/O 05/2025). **Số sub-query tuyệt đối đổi theo phiên bản model — không neo** (sửa 29/08/2026: bỏ "~8-12"); cái ổn định là **~90% fan-out gom được vào ≤4 cluster** và chỉ ~27% sub-query lặp lại giữa các lần chạy (Batch 40, 08/2026) → map theo cluster. Chỉ ~38% AIO citations đến từ top-10 (Ahrefs 01/2026) → bề mặt retrieval rộng hơn ranking; trang rank cho nhiều sub-query cùng lúc có xác suất cite cao hơn (+161%, Surfer — C).
 
-1. Với mỗi representative query của cluster: sinh fan-out set bằng LLM (lens: comparison, how-it-works, cost, alternatives, risks, for-whom…) hoặc tool Qforia.
-2. Đối chiếu map: sub-query nào chưa có node/heading phụ trách → ghi gap.
-3. **Coverage ở cấp network, focus ở cấp page** (Indig 815k pairs): 1 sub-query cần 1 passage/heading tự đứng Ở ĐÂU ĐÓ trong network — KHÔNG nhồi mọi sub-query vào 1 page.
-4. Không chase từng synthetic query (non-deterministic) — chỉ dùng để tìm coverage gap.
+1. Với mỗi representative query của cluster: sinh fan-out set bằng skill **`geo-fanout-research`** (8 lens: định nghĩa · cách làm · so sánh · chi phí · đối tượng · rủi ro · thay thế · địa phương/thời điểm + evidence PAA/related/AIO; gom cluster ≤4, chấm ổn định ≥2/3 lần chạy) hoặc LLM/Qforia nếu chạy nhanh.
+2. Đối chiếu map: **cluster** nào chưa có node/heading phụ trách → ghi gap (đơn vị là cluster, không phải từng sub-query).
+3. **Coverage ở cấp network, focus ở cấp page** (Indig 815k pairs): 1 cluster cần 1 passage/heading tự đứng Ở ĐÂU ĐÓ trong network — KHÔNG nhồi mọi cluster vào 1 page; cluster khác Central Search Intent → page riêng (Step 10c QDP).
+4. Không chase từng synthetic query (non-deterministic) — chỉ dùng để tìm coverage gap; date-stamp model version khi lưu cluster map.
 
 #### Step 10c: QDP/QDH/QDS Decision (v2.0 — Koray SOP)
 
-Mỗi gap/cluster → quyết định mức: **Page / Heading / Sentence**. 4 tiêu chí: (1) different entities, (2) high search demand, (3) recognizable query pattern, (4) low similarity to existing queries. **≥3/4 → Page riêng** (Google sẽ construct index mới theo index size + vocabulary uniformity + PageRank). 2/4 → Heading (giữ query template + L0 answer để thăng cấp sau). ≤1/4 → Sentence (implied attribute).
+Mỗi gap/cluster → quyết định mức: **Page / Heading / Sentence**. 4 tiêu chí: (1) different entities, (2) high search demand, (3) recognizable query pattern, (4) low similarity to existing queries. **≥3/4 → Page riêng** (Google sẽ construct index mới theo index size + vocabulary uniformity + PageRank; similarity = 1/4 phiếu, không veto — verdict 01/08/2026, chi tiết `keyword-topic-url-mapping/references/qdp-gate.md`). 2/4 → Heading (giữ query template + L0 answer để thăng cấp sau). ≤1/4 → Sentence (implied attribute).
 
 > **Rubric CANONICAL (v2.1 — 07/2026):** `keyword-topic-url-mapping/references/qdp-gate.md` — bản đầy đủ có cách chấm operational per tiêu chí (similarity = WEIGHTED theo term nặng, proxy SERP-overlap; pattern gần như luôn pass — đừng để nó một mình quyết), mức 4 mới **Component** (table/calculator/filter — 1 component trả cả query family), và nhánh document-cluster (vocabulary uniformity). Nguồn public: bài SEL local 22/07/2026 (`wiki/sources/local-seo-topical-authority-sel-koray.md`).
 
@@ -350,6 +350,19 @@ Re-evaluate 3 pillars:
 **Video/YouTube nodes cho Core Section topics**: YouTube mentions = tín hiệu AI visibility mạnh nhất (r=0.737, Ahrefs 12/2025); 18% AIO citations = YouTube. Text-only map bỏ trống 1/5 bề mặt citation. Mỗi Quality Node nên có video companion (transcript + chapters + VideoObject).
 
 **Corroboration nodes (Surround Sound — Koray 09/2025)**: off-site mentions/references per core entity là COMPONENT của map, không phải PR việc phụ — branded web mentions = correlate #1 với AI visibility (hơn backlinks ~3:1). Sub-map per core entity: YouTube video, LinkedIn posts (domain cited #2), guest/PR pages, profiles. ⚠️ Platform mix volatile (ChatGPT bỏ ưu tiên Reddit/Wikipedia đột ngột 09/2025) → distributed bets, không all-in 1 platform. ⚠️ KHÔNG dùng tactic dynamic rendering prompt-injection theo user-agent (cloaking-adjacent).
+
+**Ma trận loại nguồn off-site (bổ sung 29/08/2026 — map vào GE-28…GE-32 `tier-1-geo.md`, chạy chung chiến dịch offsite G4, không tách ngân sách):**
+
+| Loại nguồn | Vai trò trong map | Evidence + nhãn | Lưu ý 08/2026 |
+|---|---|---|---|
+| **Listicle / best-of bên thứ ba** | Có mặt ở **1/3 đầu** danh sách đang được cite trong ngách; giữ info cập nhật (danh sách cũ feed AI thông tin sai) | Ahrefs 75k brand 12/2025: branded mentions r 0,66-0,71 (B) | ⚠ **Cửa sổ đang khép:** ChatGPT 5.6 cắt citation listicle **−50,5%** (Peec AI qua Lily Ray 20/08/2026 — secondhand, **C**); cite ≠ recommend (chỉ 43% citation kèm recommend, Ahrefs 07/2026 F) |
+| **Review platform / directory ngành** | Entity confirmation + rating consistency | GE-30 | Rating/NAP/E-A-V phải khớp site chính chủ |
+| **PR / báo ngành đang rank** | Corroboration cho claim + facts của brand | Branded web mentions r 0,66-0,71 (B) | Ưu tiên bài **đang rank** cho query ngách, không PR rời |
+| **YouTube (video companion)** | Tín hiệu mạnh nhất: r **0,737** (Ahrefs 12/2025, B); 18% AIO citations = YouTube | GE-29 | Transcript + chapters + VideoObject; 1 video/Quality Node |
+| **UGC / forum** (Reddit EN; Voz/Tinhte/nhóm FB VN) | Thí nghiệm có đo — ROI đảo chiều theo engine + thời điểm (Reddit #1 Gemini app 29,2% · ChatGPT <1% từ 08/2026) | GE-31 (**giả thuyết**, chưa có data VN) | Không bán như tactic đã chứng minh |
+| **Owned truth pages** (about/pricing/FAQ/docs) | Nguồn sự thật để fan-out `site:` verify (64% fan-out có `site:`, Nectiv 08/2026) | GE-11 (gate G-ENT) | Không phải off-site nhưng là điều kiện để off-site có tác dụng |
+
+**Rule nhất quán facts:** cùng **tên entity · số liệu · giá · năm thành lập · USP** ở mọi nguồn (site, GBP, LinkedIn, listicle, PR, video description) — lệch nhau là lý do AI "not confident" và không cite; register facts brand 1 trang, refresh khi đổi.
 
 #### Step 15: Create Title Tags & Determine Macro Contexts
 
@@ -474,13 +487,14 @@ See `references/publication-strategy.md` for detailed frequency patterns.
 - `references/topical-map-patterns.md` - Entity-attribute patterns and case study examples (⚠️ file còn ghi "5 Components" — thiếu Root; theo SKILL.md v2.0: 6 components)
 - `references/internal-linking-guide.md` - Complete internal linking rules
 - `references/publication-strategy.md` - Publishing frequency and timing patterns
-- Wiki evidence base: `SEO Knowledge/Semantic SEO A - Z/wiki/sources/research-2026-07-topical-map-ai-era.md` (delta list 15 items + debates) · `wiki/concepts/frameworks/QDP-QDH-QDS.md` · `wiki/concepts/frameworks/Surround Sound.md`
+- Wiki evidence base: wiki nội bộ «research-2026-07-topical-map-ai-era» (ngoài repo, hỏi Lead/Vincent) (delta list 15 items + debates) · `wiki/concepts/frameworks/QDP-QDH-QDS.md` · `wiki/concepts/frameworks/Surround Sound.md`
 - Phân vai: gom nhóm keyword bằng SERP evidence (overlap matrix, ngưỡng, chain-merge) → skill `serp-clustering` (DATA layer)
 
 ---
 
 ## Changelog
 
+- **v2.2 (2026-08-29, Vincent duyệt 29/08 — Đợt 3, FINDINGS 22/08 §6-B/D):** Step 10b bỏ trần "~8-12 sub-queries" (hết hạn theo model) → **map theo cluster ≤4** (~90% gom, ~27% ổn định), sinh bằng skill mới `geo-fanout-research`, gap tính theo cluster, +161% (C), date-stamp model; Step 14b thêm **ma trận loại nguồn off-site** (listicle ⚠ −50,5% ChatGPT 5.6 C · review · PR đang rank · YouTube 0,737 · UGC VN giả thuyết · owned truth pages) map GE-28…32 + **rule nhất quán facts** ở mọi nguồn.
 - **v2.1 (2026-07-19):** route gom nhóm keyword bằng SERP evidence → skill `serp-clustering` (dòng Phân vai ở Reference Files + câu verify ở Step 10). Không đổi pipeline.
 - **v2.0 (Jul 2026):** (1) Components & Ratios fix — thêm Root (component thứ 6), ratio Core:Outer = 30-40%:60-70%, Cost of Retrieval làm map-level criterion. (2) Layer 1 Lexical Module (GTV) — 8 lexical relations, merge rule, antonym bridge, cross-lingual. (3) Step 10b Query Fan-Out Coverage Check. (4) Step 10c QDP/QDH/QDS + quality gate publish/merge/skip (chống overclustering). (5) Step 14b Video Nodes + Corroboration Nodes (Surround Sound). (6) AI Mode/AIO layer — KPI shift (LLM citations, Topic Share), GEO brief rules (citations/quotes/stats), micro-semantics pass, map refresh định kỳ. Nguồn: Batch 23 research (wiki).
 - **v1.0:** Koray classic 6-phase / 21-step process + GEO ChatGPT pipeline + case studies.

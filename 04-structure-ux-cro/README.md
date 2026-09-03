@@ -12,3 +12,4 @@ Ghi chú:
 
 - Mỗi page type (home, category, product/service, blog) = 1 structure brief riêng, đủ output B0→B8.
 - Structure lock trễ kéo domino content + onpage — trễ mốc phải escalate SEO Lead ngay, ghi `index.md`.
+- **CRO tách sang WS `13-cro/` từ v2026.09.3** (#34 conversion path + tracking, #35 UX/UI feature brief + heatmap, #36 A/B). Trạm này chỉ chấm `tier-1-ux-ui.md` cho wireframe; `tier-1-cro-conversion.md` chấm ở trạm 13. CRO cần đổi cấu trúc → quay về đây làm structure brief version mới.

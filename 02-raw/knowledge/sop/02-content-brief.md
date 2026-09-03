@@ -9,7 +9,7 @@ related:
   - "[[Heading Vectors]]"
 ---
 
-> Bản đóng gói cho SEO Production — sync từ `SEO Knowledge/Semantic SEO A - Z/sop/02-content-brief.md` ngày 2026-07-17.
+> Bản đóng gói cho SEO Production — sync từ `SEO wiki nội bộ «Semantic» (ngoài repo) SEO A - Z/sop/02-content-brief.md` ngày 2026-07-17.
 > Wikilink [[...]] trong file = tri thức nội bộ sâu (wiki Semantic SEO, không đóng gói theo dự án).
 > Gặp wikilink cần đào sâu → hỏi SEO Lead / Vincent, hoặc tra kho gốc trên máy master.
 
@@ -41,7 +41,7 @@ follow đúng standard của team bạn.
 -->
 
 ### Default sections (sẽ refine theo input của bạn)
-Xem cấu trúc 11 section trong [`skills/seo-brief/SKILL.md`](../skills/seo-brief/SKILL.md):
+Xem cấu trúc 11 section trong skill `seo-brief` (thuộc wiki Semantic SEO / fork Content Production — KHÔNG đóng gói trong SEO Production; tương đương gần nhất trong repo này: `skills/topical-map-creation` bước Content Brief + `_TEMPLATES/content-plan-matrix.md`):
 1. Central Search Intent
 2. Macro Context
 3. Micro Context

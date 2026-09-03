@@ -36,6 +36,16 @@ date: "{{YYYY-MM-DD}}"
 | 6 | News / Information Gain | T6 → T9 | {{N}} | Số lượng ít — giữ momentum + unique | Content | SEO |
 | 7 | Template / Programmatic | Không cố định — theo research | {{N}} | Template duyệt trước khi nhân bản | Content | Content Leader |
 
+## 2b. Information gain & fan-out coverage — chốt TRƯỚC khi viết (per cụm)
+
+> Lý do đặt ở đây, không đợi #28 (T7): AI engine chọn ứng viên theo cluster fan-out (≤4 cluster/query) và cite bài có thứ đối thủ không có. Hai thứ này phải được **thiết kế vào cụm** ở T1-T2, không vá sau. Nguồn: AX7 + GE-17 (`sop/08-onpage-checklist.md`, `tier-1-geo.md`), Information Gain 7 trục (skill `semantic-outline-methodology`), skill `geo-fanout-research`.
+
+| Cụm / Quality Node | Cluster fan-out (≤4, từ `geo-fanout-research` hoặc mô phỏng 8 lens) | Heading/page nào phủ cluster | Trục information gain (≥1: data gốc · test thật · case GTV/khách · ảnh/tài sản tự làm · góc nhìn chuyên gia · so sánh có số · quy trình thật) | Evidence non-commodity (URL đối thủ + thứ họ thiếu) |
+|---|---|---|---|---|
+| {{cụm}} | {{c1 · c2 · c3 · c4}} | {{H2/page}} | {{trục}} | {{...}} |
+
+Luật: cụm không nêu được ≥1 trục information gain có evidence → chưa đưa vào plan viết (giữ ở "chờ nguyên liệu" — hỏi khách data/case/ảnh). Cluster ngoài Central Search Intent → page khác (QDP), không nhồi vào cùng bài.
+
 ## 3. Tracking % mốc
 
 Cập nhật hàng tháng. Lệch âm → ghi hành động + owner, không để trống.
@@ -72,5 +82,6 @@ Chỉ điền khi không phải gói 10 tháng. Nguồn: bảng "Biến thể 8 
 - [ ] Ma trận đủ 7 dòng, mỗi dòng có số bài plan + PIC + người duyệt.
 - [ ] Cột cửa sổ đã retiming đúng gói {{8 | 10 | 12}} tháng.
 - [ ] Tổng traffic dự phóng ≥ cam kết +20% (khớp `{{CLIENT}}_traffic-plan`).
+- [ ] Mục 2b: mọi Quality Node có cluster fan-out ≤4 + ≥1 trục information gain kèm evidence; cụm thiếu nguyên liệu đã ghi "chờ" + việc hỏi khách có owner.
 - [ ] Tracking % mốc cập nhật đến tháng hiện tại, lệch âm có hành động + owner.
 - [ ] Link fork Content Production hoạt động; cập nhật index.md + log.md op `work`.
