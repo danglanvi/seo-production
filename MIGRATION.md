@@ -257,3 +257,11 @@ commit "migration: master <tag>" và push.
 **KHÔNG tính:** data dự án (`00-client-context/`, deliverable, `index.md`, `log.md`, feedback/lessons) — thuộc từng instance, không vào MIGRATION.
 
 **Nhịp tích lũy:** Lead distill lessons TUẦN → Vincent gộp lesson `scope: system` về master THÁNG → master tag version + broadcast MIGRATION theo QUÝ hoặc theo batch đủ lớn.
+
+## [2026-09-05] refactor | Runtime adapter và nguồn luật
+- Sửa entry đúng scope; adapter trỏ luật cục bộ. SEO/CareerViet/Minh Tuan Mobile dời nguyên văn mục tra cứu sang _REFERENCE/runtime-*.md; giữ gate và đường dẫn tính từ root.
+- Files touched: AGENTS.md, AGENT.md khi có sửa, CLAUDE.md khi có tách, .agents/rules/runtime-entry.md, _REFERENCE/runtime-*.md.
+
+## [2026-09-05] refactor | Persona sinh từ nguồn và runtime quickstart
+- AGENT.md có block/hash sinh từ root, giữ nguyên phần cục bộ. README.md có bảng bắt đầu theo runtime. Content thêm proof contract cho claim-verifier; Account thêm snapshot contract cho report, không đổi nguồn nghiệm thu.
+- Files touched: AGENT.md, README.md; skills/claim-verifier hoặc skills/gtv-client-report khi có.

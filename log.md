@@ -209,3 +209,11 @@ Luật ghi:
 - 40 file infra (12 nội quy trạm 0X/CLAUDE.md, skills, cheat-sheet, SETUP.md, CLAUDE.md) — đường dẫn tới wiki/kho nội bộ ngoài repo đổi thành mô tả «tài liệu nội bộ … (ngoài repo, hỏi Lead/Vincent)»; SETUP.md bảng chế độ: "Máy master của Vincent". Đã đè sang 2 instance PROJECTS (careerviet, minh-tuan-mobile) trong đợt migration cùng ngày.
 - Files touched: 0X-*/CLAUDE.md, skills/*/SKILL.md, 02-raw/knowledge/cheat-sheets/*.md, SETUP.md, CLAUDE.md
 - Công đoạn: — · WS: root
+
+## [2026-09-05] refactor | Runtime adapter và nguồn luật
+- Sửa entry đúng scope; adapter trỏ luật cục bộ. SEO/CareerViet/Minh Tuan Mobile dời nguyên văn mục tra cứu sang _REFERENCE/runtime-*.md; giữ gate và đường dẫn tính từ root.
+- Files touched: AGENTS.md, AGENT.md khi có sửa, CLAUDE.md khi có tách, .agents/rules/runtime-entry.md, _REFERENCE/runtime-*.md.
+
+## [2026-09-05] refactor | Persona sinh từ nguồn và runtime quickstart
+- AGENT.md có block/hash sinh từ root, giữ nguyên phần cục bộ. README.md có bảng bắt đầu theo runtime. Content thêm proof contract cho claim-verifier; Account thêm snapshot contract cho report, không đổi nguồn nghiệm thu.
+- Files touched: AGENT.md, README.md; skills/claim-verifier hoặc skills/gtv-client-report khi có.

@@ -94,3 +94,18 @@ SEO Production/
 | `SETUP.md` | Protocol "setup client <tên>" 9 bước |
 | `SYNC.md` | Git đồng bộ team: nhịp pull/push, phân vùng PIC, xử lý conflict, MIGRATION cho Lead |
 | `MIGRATION.md` | Update master → instance: bảng GHI ĐÈ / GIỮ, master_version |
+
+## Bắt đầu theo runtime — 05/09/2026
+
+Mở **chính repo này** làm workspace; luật chuyên môn giữ ở `CLAUDE.md`, persona ở `AGENT.md`.
+
+| Runtime | Đường nạp luật và skill | Ca thử read-only |
+|---|---|---|
+| Claude Code | CLAUDE.md → AGENT.md → luật trạm; .claude/skills từ skills/ | “Đọc luật, cho biết trạm và gate của việc tôi định làm; chưa sửa file.” |
+| Codex | AGENTS.md yêu cầu đọc CLAUDE.md + AGENT.md; .agents/skills | Cùng ca thử; đối chiếu đúng entity và nơi trả output trong luật. |
+| Antigravity | Global bootstrap + .agents/rules trỏ AGENTS/CLAUDE/AGENT; .agents/skills | Kiểm rule trong Customizations; chọn Always On nếu chưa bật, rồi chạy ca thử trên. |
+| Hermes | Chỉ profile được cấp cho vai trò này; terminal.cwd/workdir của job phải nạp AGENTS.md của profile | Hỏi nguồn được đọc, nơi được ghi và điểm cần người duyệt; không cấp cả repo cho bot team chỉ để thử. |
+
+Kiểm môi trường: `python3 _SETUP/setup_doctor.py --json`
+
+Skill `private`/`claude-only` giữ giới hạn trong manifest; có mirror không đồng nghĩa có quyền dữ liệu. Bản standalone không cần toàn bộ workspace của Vincent: thiếu nguồn ngoài repo thì dùng fallback của skill hoặc báo phần thiếu. Chỉ sync canonical của repo; giữ fork có chủ đích. Có quyền read-only không tự có quyền gửi/publish.
