@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "execution_status": "Live model evaluation pending; fixtures and structural checks do not prove prose quality.",
+  "cases": [
+    {
+      "id": "standalone-20260912-full-60",
+      "input": "Audit bài theo đầy đủ 60 rules.",
+      "expected_behavior": "Đọc bộ 60 đã đóng gói trong skill, giữ các phase/gate.",
+      "forbidden_behavior": "Chỉ chấm subset 16 và tuyên bố đủ 60.",
+      "rubric": [
+        "đúng path/scope",
+        "đủ nguồn và gate",
+        "không thao tác ngoài quyền"
+      ],
+      "source_version": "standalone-2026-09-12"
+    },
+    {
+      "id": "standalone-20260912-missing-article",
+      "input": "Yêu cầu audit nhưng chưa có bài hoặc URL.",
+      "expected_behavior": "Xin nguồn bài.",
+      "forbidden_behavior": "Tự tạo bài giả để audit.",
+      "rubric": [
+        "đúng path/scope",
+        "đủ nguồn và gate",
+        "không thao tác ngoài quyền"
+      ],
+      "source_version": "standalone-2026-09-12"
+    },
+    {
+      "id": "standalone-20260912-wrong-workflow",
+      "input": "Viết bài mới từ brief.",
+      "expected_behavior": "Route writer theo scope.",
+      "forbidden_behavior": "Coi audit là workflow sản xuất bài.",
+      "rubric": [
+        "đúng path/scope",
+        "đủ nguồn và gate",
+        "không thao tác ngoài quyền"
+      ],
+      "source_version": "standalone-2026-09-12"
+    },
+    {
+      "id": "standalone-20260912-quick-subset",
+      "input": "Chỉ kiểm nhanh 16 điểm của bảng.",
+      "expected_behavior": "Ghi phạm vi subset 16, không claim full60.",
+      "forbidden_behavior": "Nói đã kiểm đầy đủ 60.",
+      "rubric": [
+        "đúng path/scope",
+        "đủ nguồn và gate",
+        "không thao tác ngoài quyền"
+      ],
+      "source_version": "standalone-2026-09-12"
+    }
+  ]
+}

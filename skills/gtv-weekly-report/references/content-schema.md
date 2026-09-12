@@ -2,7 +2,7 @@
 
 > Từ W12, deck tuần được RÁP TỰ ĐỘNG: AI chỉ viết **nhận xét/action** trong 1 file `content.yaml` nhỏ,
 > `build_deck.py` ráp toàn bộ HTML (bảng số từ data-ref, class pos/neg/mut, brandbar, page-no, data-meta).
-> Exemplar đầy đủ 28 slide: `PROJECTS/careerviet/09-reporting/weekly/2026-W11/content-w11.yaml`.
+> Mẫu YAML chạy thử nằm tại `references/content-sample.yaml` trong skill này: dữ liệu giả lập, minh họa cú pháp cover/table/action/thanks, không phải mẫu đủ 28 slide hay nguồn số khách. Khi dựng report thật, dùng schema và data-ref bên dưới cùng nguồn đã chốt của instance.
 
 ## Lệnh build
 

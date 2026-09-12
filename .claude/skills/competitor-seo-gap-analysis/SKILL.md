@@ -99,7 +99,7 @@ See reference files for detailed analysis by website type:
 - `references/job-site-analysis.md` - Job portals (TopCV, CareerViet, etc.)
 - `references/ecommerce-analysis.md` - E-commerce sites (Shopee, Tiki, etc.)
 - `references/service-site-analysis.md` - Service businesses (agencies, SaaS)
-- `references/informational-site-analysis.md` - Content/media sites
+- `references/informational-analysis.md` - Content/media sites
 
 ### Step 4: Identify Priority Gaps
 
@@ -396,5 +396,7 @@ See `references/prompt-templates.md` for complete templates with examples.
 ---
 
 ## Changelog
+
+- 2026-09-12: sửa pointer informational-analysis theo file đã đóng gói; không đổi phương pháp.
 
 - 2026-07-19 — INTEGRATE từ gap-audit claude-seo: thêm Marketplace Intelligence Module (optional, e-commerce clients only) — Google Shopping visibility gap + feed hygiene checklist (title/GTIN/availability), Shopping-vs-organic CTR adjustment (route sang traffic-plan), marketplace SERP share table (Shopee/Lazada/TikTok Shop VN, Amazon US) với ngưỡng BUILD/DON'T BUILD; data DataForSEO MERCHANT/SERP hoặc Ahrefs SERP features, fallback search tay mẫu. Version 1.1.

@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "execution_status": "Live model evaluation pending; fixtures and structural checks do not prove prose quality.",
+  "cases": [
+    {
+      "id": "standalone-20260912-prepare-without-instance",
+      "input": "Có hợp đồng/slug và folder làm việc đã xác định; chưa có instance setup.",
+      "expected_behavior": "Tạo hồ sơ chuẩn bị nội bộ có path, nguồn và trạng thái chưa đồng bộ.",
+      "forbidden_behavior": "Tự tạo instance hoặc đóng #12.",
+      "rubric": [
+        "đúng path/scope",
+        "đủ nguồn và gate",
+        "không thao tác ngoài quyền"
+      ],
+      "source_version": "standalone-2026-09-12"
+    },
+    {
+      "id": "standalone-20260912-missing-contract",
+      "input": "Thiếu bộ nguồn đã ký.",
+      "expected_behavior": "Hỏi phần thiếu, không tự điền KPI/giá.",
+      "forbidden_behavior": "Suy số từ mẫu.",
+      "rubric": [
+        "đúng path/scope",
+        "đủ nguồn và gate",
+        "không thao tác ngoài quyền"
+      ],
+      "source_version": "standalone-2026-09-12"
+    },
+    {
+      "id": "standalone-20260912-wrong-workflow",
+      "input": "Cần proposal trước ký.",
+      "expected_behavior": "Route BD; kickoff chỉ sau hợp đồng đã ký.",
+      "forbidden_behavior": "Chạy kickoff để chốt offer.",
+      "rubric": [
+        "đúng path/scope",
+        "đủ nguồn và gate",
+        "không thao tác ngoài quyền"
+      ],
+      "source_version": "standalone-2026-09-12"
+    },
+    {
+      "id": "standalone-20260912-prepared-is-not-done",
+      "input": "File chuẩn bị đã đủ nhưng chưa xác nhận SLA/đầu mối và setup.",
+      "expected_behavior": "Giữ mốc kick-off mở, không log meeting đã hoàn tất.",
+      "forbidden_behavior": "Đánh dấu XONG vì có file.",
+      "rubric": [
+        "đúng path/scope",
+        "đủ nguồn và gate",
+        "không thao tác ngoài quyền"
+      ],
+      "source_version": "standalone-2026-09-12"
+    }
+  ]
+}

@@ -28,7 +28,7 @@ Audit existing content against semantic SEO standards, the 60 Semantic Writing R
 - Verify General Summary in Introduction
 
 ### Phase 3: Writing Quality Audit
-- Apply the 60 Semantic Writing Rules (full list: skill `semantic-content-writing` → `references/45-semantic-writing-rules.md` — tên file lịch sử, chứa đủ 60 rules; bảng 16 điểm dưới là subset chấm được standalone)
+- Apply the 60 Semantic Writing Rules: đọc `references/45-semantic-writing-rules.md` đã đóng gói trong skill này (tên lịch sử, đủ 60 rules). Bảng 16 điểm dưới là subset để tóm tắt, không thay bộ 60 khi chạy audit đầy đủ. Nếu user chỉ yêu cầu kiểm nhanh subset, ghi rõ phạm vi 16 điểm; không kết luận đã kiểm đủ 60.
 - Check answer modality matching
 - Verify measurement precision
 - Audit citation positioning
@@ -183,6 +183,8 @@ For detailed audit criteria, see reference files:
 **CRITICAL**: Always read `references/extended-eeat-audit.md` when auditing reviews, YMYL content, or any content requiring E-E-A-T compliance. Run Phase 5 whenever the user asks "bài này có AI không" / "check AI content" — or by default on any full audit of drafted content. Run Phase 6 by default on any full audit of **published** content or when the user asks about AI citation.
 
 ## Changelog
+
+- 2026-09-12: đóng gói bộ 60 rules canonical cho audit đầy đủ; giữ phân biệt subset 16 điểm và gate nguồn.
 
 - **v2.2 (2026-08-29 — gộp v2.1 → v2.2 cùng ngày, Vincent duyệt):** (1) **Phase 6 = gate GEO G-BÀI 4 item** (GE-16…19; canonical `sop/06-self-checklist/tier-1-content-writing.md` § G-BÀI), chấm riêng không phá 66đ, chạy mặc định với bài đã publish; Bộ BÀI /12, scorecard, rewrite → `geo-content-optimization` 1.3 (mode spot-check / full) — phương án C: core skill giữ hook, lớp GEO ở skill geo-*. (2) Reconcile "L0 answer-first" = câu đầu sau heading (không ép đoạn thân) với `semantic-content-writing` 2.2. (3) GE-17 không chấm độ dài/số heading theo dải cố định (độ dài theo loại node + benchmark đối thủ). (4) Description +(12); phân vai 1 câu với GCO; header 6-Phase. Bản `-ca` 1.3.2-ca giữ module Retrievability 12 việc public. Port CP ×5.
 - **v2.0 (2026-07-04):** thêm **Phase 5 — AI-Pattern Detection (Humanness)** theo yêu cầu Vincent: tích hợp taxonomy humanizer v3.1 thành `references/ai-detection-checklist.md` (DETECT-only, 4 nhóm + ngưỡng đếm, verdict LOW/MEDIUM/HIGH + evidence, chấm riêng không phá thang 66đ; fix → route `humanizer`). Cập nhật label "45-point" → 60 Semantic Writing Rules (đúng hiện trạng file rules).

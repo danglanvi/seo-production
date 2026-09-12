@@ -69,7 +69,7 @@ Per money page dự kiến: export backlink của **money page tương ứng ở
 ## 6. Linkable assets: content type hút link + nguồn lặp lại
 ## Caveats: ngày pull, path, tiêu chí bỏ qua, độ tin
 ```
-**Location:** client GTV → `PROJECTS/<client>/backlink-research/`; standalone → trả trong chat. File này = input bắt buộc của `backlink-plan`.
+**Location:** gốc instance SEO Production do người dùng chọn; thư mục đích `07-offpage/backlink-research/`. Nếu đang ở master, xác định instance trước; không ghi dữ liệu client vào master. Lưu `<slug>_backlink-research_v<N>.md` (tăng version nếu đã có); ghi ngày pull, đường dẫn nguồn và caveats. Chốt folder đích ở Bước 0 từ ngữ cảnh đã rõ, chỉ hỏi khi thiếu. Trả link file để `backlink-plan` nhận làm input; tóm tắt chat không thay artifact.
 
 ## Behavior Gates
 
@@ -95,6 +95,8 @@ Per money page dự kiến: export backlink của **money page tương ứng ở
 - Wiki: [[Link Building]] (nguyên tắc hợp nhất Vincent 2021 + Floate 2026) · [[TrustRank]] (proxy trust ≠ DR) · [[sources/backlink-a-z-video-vincent-2021]] · [[sources/research-2026-07-backlink-methods]] · [[sources/research-2026-07-spam-link-criteria]]
 
 ## Changelog
+
+- 2026-09-12: output file trong deal/instance đã chọn, bàn giao path cho backlink-plan; giữ gate scope/cost và evidence.
 
 - **v2.1 (2026-07-04):** thêm `references/spam-filter-criteria.md` (research 07/2026: Mueller/SpamBrain neutralize, DataForSEO 18 signals thuần technical, Semrush false positives, Floate Link Vetting, Ahrefs no-score-by-design) — screening Bước 3/5 chuyển sang verdict KEEP/REVIEW/REJECT, spam score hạ xuống prior yếu; anti-pattern mới "loại chỉ vì tool flag".
 - **v2.0 (2026-07-04):** rename từ `competitor-backlink-analysis` v1.0 + mở rộng thành DATA layer đầy đủ: DataForSEO Path A ưu tiên (endpoint reference mới), thêm Bước 2 Velocity + Bước 4 Anchor consensus (SERP-first) + Bước 5 Money-page link-gap test (Floate 09/2025); siết phân vai 3 layer (bỏ "opportunity shortlist" — chuyển sang backlink-plan). Nền: video process Vincent 2021 + research Floate/industry 07/2026.

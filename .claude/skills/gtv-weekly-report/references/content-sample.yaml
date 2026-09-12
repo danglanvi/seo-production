@@ -1,0 +1,51 @@
+{
+  "meta": {
+    "client": "Dự án minh họa",
+    "title": "Mẫu kỹ thuật — dữ liệu giả lập, không gửi khách",
+    "edit_key": "synthetic-weekly-v1",
+    "week_label": "W1"
+  },
+  "slides": [
+    {
+      "type": "cover",
+      "title": "DỰ ÁN MINH HỌA",
+      "outline": "Kiểm cú pháp report",
+      "week_line": "Dữ liệu giả lập · không gửi khách",
+      "domain": "https://example.com/"
+    },
+    {
+      "type": "table_full",
+      "crumb": "Mẫu kỹ thuật › Bảng literal",
+      "pill": "MINH HỌA",
+      "sub": "Dữ liệu giả lập để kiểm cấu trúc",
+      "data_meta": "Nguồn: fixture giả lập trong content-sample.yaml; kỳ: W1 mẫu; không dùng cho khách.",
+      "table": {
+        "headers": [
+          "Nhóm",
+          "Số URL"
+        ],
+        "col_kinds": [
+          "name",
+          "num"
+        ],
+        "rows": [
+          [
+            "Nhóm mẫu",
+            "10"
+          ]
+        ]
+      },
+      "action": {
+        "label": "Việc cần làm",
+        "items": [
+          "Thay fixture bằng nguồn đã chốt của instance trước khi dựng report thật."
+        ]
+      }
+    },
+    {
+      "type": "thanks",
+      "word": "KẾT THÚC MẪU",
+      "foot": "Fixture kiểm kỹ thuật; không là báo cáo khách."
+    }
+  ]
+}

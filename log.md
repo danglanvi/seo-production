@@ -217,3 +217,9 @@ Luật ghi:
 ## [2026-09-05] refactor | Persona sinh từ nguồn và runtime quickstart
 - AGENT.md có block/hash sinh từ root, giữ nguyên phần cục bộ. README.md có bảng bắt đầu theo runtime. Content thêm proof contract cho claim-verifier; Account thêm snapshot contract cho report, không đổi nguồn nghiệm thu.
 - Files touched: AGENT.md, README.md; skills/claim-verifier hoặc skills/gtv-client-report khi có.
+
+## [2026-09-12] refactor | Standalone skill dependencies — Vincent duyệt
+
+- Backlink output trong instance; sửa pointer informational-analysis; kickoff phân biệt chuẩn bị/setup. Audit có đủ bộ 60 rules; schema report trỏ sample giả lập nội repo, giữ runtime Claude-only của report.
+- Source trong skills/; mirror sinh từ canonical đúng repo. Kiểm dependency/retention/mirror và fixture builder; Content chạy contracts, tests và lessons lint. Ca live model chưa chạy.
+- Files touched: `skills/acc-kickoff-setup/SKILL.md`, `skills/acc-kickoff-setup/evals/cases.yaml`, `skills/backlink-research/SKILL.md`, `skills/backlink-research/evals/cases.yaml`, `skills/competitor-seo-gap-analysis/SKILL.md`, `skills/gtv-weekly-report/references/content-sample.yaml`, `skills/gtv-weekly-report/references/content-schema.md`, `skills/semantic-content-audit/SKILL.md`, `skills/semantic-content-audit/evals/cases.yaml`, `skills/semantic-content-audit/references/45-semantic-writing-rules.md`; các runtime mirror được phép, `MIGRATION.md`, `log.md`.

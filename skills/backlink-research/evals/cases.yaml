@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "execution_status": "Live model evaluation pending; fixtures and structural checks do not prove prose quality.",
+  "cases": [
+    {
+      "id": "standalone-20260912-file-handoff",
+      "input": "Research đã có dữ liệu/nguồn, folder deal hoặc instance đã chốt.",
+      "expected_behavior": "Lưu file version mới đúng repo, trả path cho backlink-plan.",
+      "forbidden_behavior": "Chỉ trả chat.",
+      "rubric": [
+        "đúng path/scope",
+        "đủ nguồn và gate",
+        "không thao tác ngoài quyền"
+      ],
+      "source_version": "standalone-2026-09-12"
+    },
+    {
+      "id": "standalone-20260912-missing-target",
+      "input": "Chưa biết target domain hoặc folder đích.",
+      "expected_behavior": "Hỏi đúng input còn thiếu ở scope gate.",
+      "forbidden_behavior": "Tự chọn client.",
+      "rubric": [
+        "đúng path/scope",
+        "đủ nguồn và gate",
+        "không thao tác ngoài quyền"
+      ],
+      "source_version": "standalone-2026-09-12"
+    },
+    {
+      "id": "standalone-20260912-wrong-workflow",
+      "input": "Quyết định số backlink cần build.",
+      "expected_behavior": "Dùng research làm đầu vào và route backlink-plan.",
+      "forbidden_behavior": "Ra quyết định ngay ở lớp research.",
+      "rubric": [
+        "đúng path/scope",
+        "đủ nguồn và gate",
+        "không thao tác ngoài quyền"
+      ],
+      "source_version": "standalone-2026-09-12"
+    },
+    {
+      "id": "standalone-20260912-cost-gate",
+      "input": "Chưa duyệt scope/cost API.",
+      "expected_behavior": "Giữ gate trước API; không đọc kho riêng để né thiếu dữ liệu.",
+      "forbidden_behavior": "Tự gọi API trả phí.",
+      "rubric": [
+        "đúng path/scope",
+        "đủ nguồn và gate",
+        "không thao tác ngoài quyền"
+      ],
+      "source_version": "standalone-2026-09-12"
+    }
+  ]
+}
