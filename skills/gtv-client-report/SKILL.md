@@ -34,7 +34,7 @@ Sinh báo cáo gửi khách hàng GTV (email + .docx) đúng MẪU BÁO CÁO c�
 **Optional:**
 - `$RANK_EXPORT` — file/paste export SpySERP (bộ keyword cam kết + vị trí + ngày tracking).
 - `$TRAFFIC_EXPORT` — file/paste export GA4 (Sessions hoặc Product Pageview, kênh Organic, theo khoảng ngày).
-- `$CRO_DATA` — Time on site, Bounce Rate, chuyển đổi CTA (Call/Mess/Hotline/Form) — chỉ số trực tiếp lấy từ trao đổi với khách.
+- `$CRO_DATA` — v2026.09.4: 4 khối từ WS 13 (`13-cro/` của instance): 3a chuyển đổi kỳ này (micro GA4 đã QA + outcome đối soát, đúng nhãn), 3b phát hiện (evidence-backlog E≥2), 3c việc đã sửa + số quan sát trước/sau, 3d chờ phía khách. Không còn Time on site / Bounce. Tracking chưa PASS → câu chờ dev, không kết luận.
 - `$PROGRESS` — danh sách công việc tháng (tên, thời hạn, trạng thái, kết quả).
 - `$REPORT_FOLDER_URL` — link folder `[Tên Dự Án] - SEO Reports` để điền cột "Link báo cáo".
 
@@ -72,7 +72,7 @@ Header cố định: `LOẠI KPI | HẠNG MỤC | CAM KẾT | KẾT QUẢ | TỶ
 - Câu chốt: "Như vậy, GTV SEO đã hoàn thành …% KPI theo cam kết tháng thứ … của hợp đồng SEO."
 
 ### Bước 4 — Render các section còn lại theo chế độ
-- **`thang`**: bảng TIẾN ĐỘ (`STT | Tên công việc | Thời hạn | Trạng thái | Kết quả công việc`; trạng thái chuẩn: Đã làm / Đang làm / Cần xử lý) → dữ liệu CRO (gián tiếp + trực tiếp, kèm ghi chú đính PDF từ GA) → vấn đề phát sinh (3 ý bắt buộc: điều chỉnh web / thay đổi từ KH / khâu content) → kế hoạch tháng sau → 2 câu Lưu ý cố định (SpySERP Google.com.vn; khách check thứ hạng trong 2-3 ngày) → **điều khoản nghiệm thu THÁNG nguyên văn** (4 ngày xác nhận / 7 ngày làm việc tạm dừng / cộng dồn tối đa 14 ngày / >15 ngày điều chỉnh KPI).
+- **`thang`**: bảng TIẾN ĐỘ (`STT | Tên công việc | Thời hạn | Trạng thái | Kết quả công việc`; trạng thái chuẩn: Đã làm / Đang làm / Cần xử lý) → dữ liệu CRO (4 khối 3a–3d theo `kpi-table-formats.md` mục 3, ảnh che PII) → vấn đề phát sinh (3 ý bắt buộc: điều chỉnh web / thay đổi từ KH / khâu content) → kế hoạch tháng sau → 2 câu Lưu ý cố định (SpySERP Google.com.vn; khách check thứ hạng trong 2-3 ngày) → **điều khoản nghiệm thu THÁNG nguyên văn** (4 ngày xác nhận / 7 ngày làm việc tạm dừng / cộng dồn tối đa 14 ngày / >15 ngày điều chỉnh KPI).
 - **`quy`**: render đủ 5 section theo mẫu v1.1 (references mục 6): OKRs review (+% hoàn thành, tổng quý) → diễn biến thứ hạng 3 tháng + Δ quý trước → KPI lũy kế 3 tháng + trung bình → GEO/AI visibility quý (nếu HĐ có) → vấn đề & trọng tâm quý tới. ⚠️ Chỉ cập nhật Status/% của OKRs đã hoạch định — KHÔNG lập OKRs mới. Không kèm điều khoản nghiệm thu 4/7 ngày (nghiệm thu theo đợt/tháng). Cuối report luôn kèm dòng "Format báo cáo quý v1.1 — góp ý sau lần dùng đầu".
 - **`nghiem-thu`**: như `thang` nhưng: câu chốt tham chiếu số HĐ + lời cảm ơn; KHÔNG có "kế hoạch tháng tiếp theo"; thay bằng **đề xuất họp nghiệm thu** (giờ/ngày cụ thể); điều khoản: khách phản hồi trong 4 ngày → chuyển giai đoạn **Bảo hành kết quả 30 ngày**; sau **7 ngày làm việc** không phản hồi → báo cáo **mặc nhiên được chấp thuận** → thủ tục thanh lý HĐ.
 - 🔴 Đoạn điều khoản nghiệm thu là ngôn ngữ pháp lý đã chuẩn hóa — **render nguyên văn theo skeleton trong references, không paraphrase.**

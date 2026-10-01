@@ -81,7 +81,7 @@ Luật đọc bảng:
 | AI visibility | ☐ Baseline T1 | ☐ Giữa kỳ T6 | ☐ Báo cáo T10 | — |
 | Báo cáo khách (WS09) | ☐ Tháng — ngày {{dd}} hằng tháng (theo kick-off) | ☐ Quý — T3 · T6 · T9 | ☐ Nghiệm thu — theo đợt HĐ | ☐ Báo cáo kép + BBNT + case study T10 |
 | Content refresh (WS03 #24/#29) | ☐ Rà decay T6 | ☐ Rà decay T9 | — | — |
-| CRO (WS13 #34–36) | ☐ Tracking verify ≤T3 | ☐ Heatmap đợt 1 T4-T6 | ☐ A/B đợt 2 T7-T9 | — |
+| CRO (WS13 #34–36) | ☐ Measurement plan + tracking QA ≤T3 · blocker P0 | ☐ Evidence-backlog + brief + heatmap đợt 1 T4-T6 | ☐ Rollout có theo dõi / A/B (nếu đủ mẫu) T7-T9 | — |
 | Content tracking (WS05 `content_sync.py`) | ☐ T2 hằng tuần | ☐ Trước review tháng | — | — |
 
 ## D. Deliverable registry

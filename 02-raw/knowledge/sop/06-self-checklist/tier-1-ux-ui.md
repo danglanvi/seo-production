@@ -2,8 +2,9 @@
 type: sop
 tier: 1
 phase: ux-ui
-last_updated: 2026-07-19
+last_updated: 2026-09-13
 source_file: "raw/_ingested/Quy trình SEO PSP - All In One/2. QUY TRÌNH SEO Project/Content/Tiêu chuẩn Content Category & Product UXUI - (PSP) GTV SEO.xlsx"
+changelog: "v2026.09.4 (2026-09-13): UX-18 — label hiện cố định (placeholder không thay), focus not obscured, target size 24px AA / 44px nội bộ."
 items_count: 18
 related:
   - "[[Website Functions]]"
@@ -80,7 +81,7 @@ tags: [sop, tier-1, ux-ui, wireframe, design-review, self-checklist]
 | ID | Item | Tiêu chí ĐẠT | Nguồn |
 |---|---|---|---|
 | UX-17 | **Skeleton / lazy-load hợp lý** | Lazy-load áp cho ảnh/khối DƯỚI fold; ảnh hero/LCP KHÔNG lazy (loading eager + width/height đặt trước — không CLS); vùng chờ data có skeleton/placeholder thay vì nhảy layout; đo thật ở `tier-3-technical-advance.md` (CWV) | MỚI — wiki [[Core Web Vitals]] |
-| UX-18 | **Accessibility cơ bản** | Text contrast ≥4.5:1 (large text ≥3:1); focus state nhìn thấy được khi tab; ảnh nội dung có alt (chuẩn alt semantic → VS-13); mọi form field có label/placeholder rõ | MỚI |
+| UX-18 | **Accessibility cơ bản** | Text contrast ≥4.5:1 (large text ≥3:1); focus state nhìn thấy được khi tab, không bị sticky header/CTA che (WCAG 2.2 Focus Not Obscured); ảnh nội dung có alt (chuẩn alt semantic → VS-13); mọi form field có **label hiện cố định + liên kết `for/id`** — placeholder chỉ bổ sung ví dụ, không thay label (WCAG 3.3.2, NN/g); target size: 24px là tối thiểu WCAG 2.2 AA, ≥44px là chuẩn nội bộ GTV | MỚI → SỬA (v2026.09.4: label ≠ placeholder; focus not obscured; target size) |
 
 ---
 

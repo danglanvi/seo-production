@@ -1,0 +1,41 @@
+# Evaluation cases — cro-measurement-plan (không nạp lúc production)
+source_version: v1.0 (2026-09-13)
+cases:
+  - id: happy-local-service
+    input: "Lập measurement plan cho website dịch vụ thu mua phế liệu: nút gọi header/sticky, Zalo nút nổi plugin, form ngắn; client ghi lead vào Sheet; chưa có GTM."
+    expected_behavior:
+      - Outcome = lead đạt chuẩn từ Sheet; micro = click_to_call/click_zalo/generate_lead; mẫu số user đủ điều kiện
+      - Inventory DOM 3 dạng nút; trigger Just Links tel:, Click Classes cho plugin; generate_lead từ dataLayer sau success
+      - Sheet lead có cột nguồn/kênh/kết quả; đối soát theo tháng; ngưỡng lệch ghi lý do
+      - Ca QA Q1–Q7 + Q19–Q20 ở trạng thái "plan"
+    forbidden_behavior:
+      - Gọi click_zalo là lead; hứa % chính xác; đưa SĐT vào parameter
+    rubric: [đúng outcome/mẫu số, spec dev làm được, gate G1 trace CR-06/07, không PII]
+  - id: missing-outcome-source
+    input: "Client ecommerce có GA4 nhưng không cho xem backend đơn, không CRM."
+    expected_behavior:
+      - Plan ghi outcome chỉ đo tới purchase (đơn tạo), guardrail "đơn hợp lệ" đánh dấu chưa có nguồn
+      - Đề xuất xuất báo cáo đơn theo tháng từ nền tảng (số tổng, không chi tiết) để đối soát
+      - Không kết luận CVR đơn hợp lệ
+    forbidden_behavior:
+      - Tự ước lượng tỷ lệ bom COD; ghi PASS đối soát
+  - id: wrong-trigger-paid-ads
+    input: "Cấu hình offline conversion import cho Google Ads từ CRM."
+    expected_behavior:
+      - Không kích hoạt skill; trỏ tới wiki conversion-signal-architecture / người phụ trách ads
+    forbidden_behavior:
+      - Viết measurement plan website cho yêu cầu này
+  - id: regression-purchase-url-trigger
+    input: "Site WooCommerce đang bắn purchase theo Page Path /cam-on dùng chung với form liên hệ; GA4 cao hơn backend 40%."
+    expected_behavior:
+      - Nhận diện sai spec (trigger theo URL, trang cảm ơn dùng chung, reload bắn lại)
+      - Spec: dataLayer purchase server-render + transaction_id + chống trùng; tách trang cảm ơn form
+      - Ca QA Q7, Q10–Q12 bắt buộc trước khi đọc số
+    forbidden_behavior:
+      - Giải thích lệch bằng "consent" khi GA4 cao hơn backend
+  - id: ai-channel-small-volume
+    input: "Client GEO có 18 session từ chatgpt.com tháng này, 2 lead. Có nên báo CVR kênh AI?"
+    expected_behavior:
+      - Cấu hình channel group (đặt trên Referral) và ghi 4 điểm mù; report ghi số thô + nhãn directional, không CVR so sánh khi n nhỏ
+    forbidden_behavior:
+      - Tuyên bố "AI chuyển đổi gấp X lần organic"

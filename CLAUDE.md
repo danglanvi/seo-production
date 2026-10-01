@@ -125,7 +125,7 @@ Sau khi đọc, **báo cáo 3-5 câu** điều nắm được (status công đo�
 
 ## §4. Folder Map (tóm tắt — đầy đủ ở `_REFERENCE/folder-map.md`)
 
-`00-client-context/` (context + kpi-commitments) · `01-strategy-okrs/` · `02-raw/` (IMMUTABLE: contracts-proposals, seo-data (+ `keywords/` export research), logfiles, client-docs, knowledge = SOP/checklist/cheat-sheet read-only, screenshots) · `03-audits/` (+ `qc/` kho QC report · `technical/ content/ entity/ offsite/` audit lẻ · `full/` toàn diện) · `04-structure-ux-cro/` (cấu trúc lock #11) · `05-content-plan/` (plan + tracking, không chứa bài · `keyword-research/` · `content-tracking/` đấu nối fork) · `06-onpage-internal-link/` · `07-offpage/` · `08-geo-ai-visibility/` · `09-reporting/` · `10-client-management/` · `11-handover-maintenance/` · `12-feedback-lessons/` · `13-cro/` (#34–36) · `14-entity/` (#13, gate G-ENT) · `99-archive/` · `_TEMPLATES/` (32 template) · `_REFERENCE/` (tra cứu) · `skills/` (37 skill) · `tools/` (`content_sync.py`) · `index.md` (bảng A dự án + B 36 công đoạn + C nhịp quý + D deliverable) · `log.md`.
+`00-client-context/` (context + kpi-commitments) · `01-strategy-okrs/` · `02-raw/` (IMMUTABLE: contracts-proposals, seo-data (+ `keywords/` export research), logfiles, client-docs, knowledge = SOP/checklist/cheat-sheet read-only, screenshots) · `03-audits/` (+ `qc/` kho QC report · `technical/ content/ entity/ offsite/` audit lẻ · `full/` toàn diện) · `04-structure-ux-cro/` (cấu trúc lock #11) · `05-content-plan/` (plan + tracking, không chứa bài · `keyword-research/` · `content-tracking/` đấu nối fork) · `06-onpage-internal-link/` · `07-offpage/` · `08-geo-ai-visibility/` · `09-reporting/` · `10-client-management/` · `11-handover-maintenance/` · `12-feedback-lessons/` · `13-cro/` (#34–36) · `14-entity/` (#13, gate G-ENT) · `99-archive/` · `_TEMPLATES/` (35 template) · `_REFERENCE/` (tra cứu) · `skills/` (38 skill) · `tools/` (`content_sync.py`) · `index.md` (bảng A dự án + B 36 công đoạn + C nhịp quý + D deliverable) · `log.md`.
 
 Luật cứng folder:
 
@@ -183,7 +183,7 @@ Cập nhật sau MỖI thao tác (§2):
 |---|---|---|
 | Structure lock (#11) | ≤15 ngày đầu T2 | Wireframe + HTML template duyệt xong mới mở content hàng loạt |
 | Gate G-ENT (#13) | ≤15 ngày đầu T3 | `site:domain` phải trả lời được 5-10 câu thương mại cơ bản bằng text chính chủ (GE-11) — chưa pass thì KHÔNG mở đợt GEO #21; entity plan theo `_TEMPLATES/entity-plan.md` |
-| Tracking chuyển đổi (#34, gate G1 CR-06/07) | ≤ hết T3 | GA4 event gắn + verify DebugView; chưa pass thì KHÔNG mở #35/#36 — traffic không đo được chuyển đổi là traffic không chứng minh được |
+| Tracking chuyển đổi (#34, gate G1 CR-06/07) | ≤ hết T3 | Measurement plan + GA4 event gắn + QA (`_TEMPLATES/measurement-plan.md`, `tracking-qa.md`); chưa pass thì vẫn làm research/blocker P0/brief sửa lỗi ở #35 nhưng KHÔNG công bố CR/uplift, KHÔNG A/B (#36) — traffic không đo được chuyển đổi là traffic không chứng minh được (v2026.09.4) |
 | Content URL SEO (#15) | Xong T3 | Trễ → báo đỏ trong báo cáo tháng, không im lặng |
 | Onpage URL SEO | Xong T4 | Dây chuyền content → onpage → internal link không được đứt |
 | Gate Offpage (#25) | T6 | Mặc định **90% dự án KHÔNG cần đẩy mạnh link** — gate chỉ mở khi có evidence theo Lưu đồ B |

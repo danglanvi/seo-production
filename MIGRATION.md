@@ -1,5 +1,5 @@
 ---
-master_version: v2026.09.3
+master_version: v2026.09.4
 ---
 
 # MIGRATION — Cập nhật instance lên version master mới
@@ -15,6 +15,19 @@ master_version: v2026.09.3
 ---
 
 ## 1. Có gì mới
+
+### v2026.09.4 (2026-09-13) — WS 13 CRO v2: đo trước, pattern có mức nặng, brief dev làm được, rollout có theo dõi
+
+Vincent chốt 12/09: CRO là phần tăng giá trị hợp đồng SEO để tái ký (không phải dịch vụ riêng); mặc định "research + sửa lỗi + rollout có theo dõi", A/B là ngoại lệ; pattern theo cơ chế chuyển đổi (gọi/Zalo · form · báo giá · giỏ hàng · apply) thay vì theo ngành. Nguồn phương pháp: wiki `Knowledge/Inbound Marketing/` (44 + 13 nguồn, review Fable 5.1 12–13/09).
+
+- **Skill `cro-audit` v2.0:** router readiness (A research+fix+rollout | B A/B) × cơ chế × loại trang; scorecard P0/P1/P2 × R × E; blocker P0 site-wide tách khỏi CR-08; ≤3 click thành diagnostic; deadline triển khai ≠ cửa sổ đọc số; 6 references (`readiness-router`, `research-evidence`, `patterns-condensed` 10 pattern, `feature-brief` 10 mục, `experiment-lite` feasibility + SRM, `report-hook` 3 khối) + `evals/cases.yaml` 10 ca.
+- **Skill MỚI `cro-measurement-plan`:** outcome + mẫu số, event contract theo cơ chế (GA4 recommended + custom gọi/Zalo/apply), spec GTM cho dev khách, kênh AI Assistant (custom channel group đặt trên Referral, 4 điểm mù), đối soát CRM/Sheet, 20 ca QA; 4 references + evals.
+- **`13-cro/CLAUDE.md`:** luật cứng 1–7 viết lại (G1 cho phép research/blocker/brief; blocker P0 bất kể rank; scorecard; ≤3 click diagnostic; deadline ≠ cửa sổ; spec 10 mục); bảng I/O thêm measurement-plan, tracking-qa, evidence-backlog; không đặt KPI nội bộ theo tỷ lệ brief được triển khai (bỏ 13/09) — theo dõi bằng ba mốc trạng thái brief + P0 còn mở.
+- **Checklist:** `tier-1-cro-conversion.md` — G1, CR-08, CR-14 (+INP/CLS p75), CR-15 (rollout có theo dõi; 1 giả thuyết = 1 treatment; feasibility), CR-16 (diagnostic). `tier-1-ux-ui.md` — UX-18 (label ≠ placeholder, focus not obscured, 24px AA / 44px nội bộ).
+- **Template:** MỚI `measurement-plan.md`, `tracking-qa.md`, `evidence-backlog.md`; SỬA `ux-feature-brief.md` (§2 metric theo dõi thay "CR +x%", §3 spec 10 mục, §4 cửa sổ ≥4 tuần + trạng thái brief), `heatmap-recording-review.md` (§4 log sửa lỗi/rollout/A/B + feasibility + SRM). `_TEMPLATES/README.md` 32 → 35.
+- **Root:** `CLAUDE.md` §6.2 dòng tracking; `index.md` bảng C hàng CRO; `README.md` 35 template / 38 skill. Report tháng: skill `gtv-client-report` §3 CRO đổi thành 3 khối (phát hiện · đã sửa + số quan sát · chờ khách) — vá ở root và fork repo này.
+- **Patch cùng ngày (review Astra 13/09, 11 finding):** `cro-audit` v2.1 + `cro-measurement-plan` v1.1 — "thành công" = kết quả nghiệp vụ (không HTTP 200), listener WPForms bằng jQuery, metric tử/mẫu/đơn vị tường minh, regex kênh AI full match + allowlist có neo, quota GA4, dedup không dựa localStorage, QA có N/A + gate theo cơ chế primary, scorecard thứ tự tường minh + severity tách evidence + P0 tồn hiện đầu report, bảng chuyển việc WS13/WS04/technical/copywriting, "lỗi web VN" → giả thuyết cần kiểm. SOP: ma trận `_REFERENCE/runtime-workstream-matrix.md` hàng CRO; `13-cro/README.md`; `conversion-path.md` (§0 readiness, §1 contract mới + mapping legacy, ≤3 click diagnostic, DoD); `heatmap-recording-review.md` (E3/E2, §3 đường + QA ngay sau deploy); `ux-feature-brief.md` (nguồn vấn đề E3/E2, QA ngay sau deploy); `tracking-qa.md` + `measurement-plan.md` (N/A, gate theo cơ chế, quota, metric); CR-06 (contract + mapping legacy), CR-19 (pending khi G1 chưa pass/offsite); `04-structure-ux-cro/CLAUDE.md` (WS04 kiểm thiết kế, WS13 giữ tracking/live QA); `CLAUDE.md` §4 đếm 35 template/38 skill; report §3 (root + fork). Review: `Knowledge/Inbound Marketing/wiki/syntheses/gtv-cro-build-review-astra-2026-09-13_v1.md`.
+- **Port sang instance:** GHI ĐÈ nhóm A (`13-cro/CLAUDE.md` + `README.md`, 2 checklist, `_TEMPLATES/` 6 file CRO, `_REFERENCE/runtime-workstream-matrix.md`, `skills/cro-audit`, `skills/cro-measurement-plan` + mirror, `skills/gtv-client-report/references/kpi-table-formats.md`, `04-structure-ux-cro/CLAUDE.md`, `CLAUDE.md`, `README.md`, `MIGRATION.md`); `index.md` instance: sửa tay hàng CRO bảng C (không ghi đè vì có status thật). Deliverable `13-cro/` đã có giữ nguyên; conversion-path cũ thêm §0 readiness ở đầu khi chạm lại. Port sau pilot và duyệt.
 
 ### v2026.09.3 (2026-09-03) — Keyword research · WS 14 Entity · Đấu nối content · Audit lẻ · WS 13 CRO (#34–36)
 

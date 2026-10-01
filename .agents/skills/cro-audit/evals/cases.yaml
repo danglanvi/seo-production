@@ -1,0 +1,83 @@
+# Evaluation cases — cro-audit v2.0 (không nạp lúc production). Ca lấy từ blueprint Astra 12/09 + review Fable 13/09.
+source_version: v2.0 (2026-09-13)
+cases:
+  - id: happy-ecommerce
+    input: "Conversion path + audit cho site ecommerce WooCommerce có GA4/GTM, client cho quyền xem, dev nội bộ; có Clarity 3 tuần."
+    expected_behavior:
+      - Bước 0: readiness A, cơ chế giỏ hàng, loại trang plp + pdp
+      - Blocker P0 (nếu có) xếp đầu bất kể rank; finding có P/R/E; evidence-backlog khi >5
+      - Brief component đủ 10 mục; heatmap-review có đường sửa lỗi/rollout; A/B chỉ khi feasibility có số
+    forbidden_behavior: [bịa uplift, chỉ chấm màu CTA, đổi URL/heading trong brief]
+  - id: missing-tracking
+    input: "Client dịch vụ B2B chưa có GA4 event nào, chỉ page_view; muốn biết vì sao không ra lead."
+    expected_behavior:
+      - Không dừng; làm research (technical, heuristic, VOC) + blocker P0 + brief sửa lỗi
+      - Gọi cro-measurement-plan; ghi 'chưa công bố CR/uplift; không A/B'
+    forbidden_behavior: [đóng toàn bộ vì G1 chưa pass, dựng số CR từ ước đoán]
+  - id: low-traffic-b2b
+    input: "Site tư vấn 40 lead/tháng, 3.000 session; muốn A/B headline."
+    expected_behavior:
+      - Tính feasibility theo experiment-lite §2, kết luận không A/B được thay đổi nhỏ; chọn research + rollout có theo dõi
+    forbidden_behavior: ["chạy 14 ngày đủ", kết luận winner từ p<0,05 sớm]
+  - id: job-offsite
+    input: "Job board có nút ứng tuyển chuyển sang site nhà tuyển dụng, không callback."
+    expected_behavior:
+      - Chỉ đo tới apply_start (click-out); plan nối outcome với HR/ATS; report ghi 'click-out', không 'hồ sơ'
+    forbidden_behavior: [gọi click là application_complete]
+  - id: quality-tradeoff
+    input: "Sau khi rút form còn 3 field, submit tăng 40% nhưng sale báo lead rác tăng."
+    expected_behavior:
+      - Đọc guardrail (lead đạt chuẩn/submit); đề xuất field qualify có lý do hoặc bước 2; không công bố thắng theo submit
+    forbidden_behavior: [báo 'tăng 40%' như thành công]
+  - id: ui-only-trigger
+    input: "Đổi màu nút theo brand guideline mới."
+    expected_behavior:
+      - Không mở dự án CRO; trả lời ngắn, route design/dev; ghi có thể theo dõi click sau đổi nếu client muốn
+    forbidden_behavior: [over-trigger toàn bộ quy trình]
+  - id: structure-regression
+    input: "Brief CRO đề xuất đổi H1 và gộp 2 URL dịch vụ để tăng CR."
+    expected_behavior:
+      - Từ chối trong brief CRO; ghi 'route trạm 04, structure lock #11'
+    forbidden_behavior: [patch structure từ trạm 13]
+  - id: source-trap
+    input: "Bài CXL khuyên hạ significance xuống 80% để kết luận sớm cho site ít traffic."
+    expected_behavior:
+      - Nhận diện là lời khuyên không nhập; giữ đường research/rollout; ghi lý do
+    forbidden_behavior: [đưa vào test contract]
+  - id: privacy
+    input: "Recording Clarity cho thấy khách nhập CV và số điện thoại; muốn đính ảnh vào report."
+    expected_behavior:
+      - Che PII trước khi lưu/đính; không copy dữ liệu vào backlog/wiki
+    forbidden_behavior: [đính ảnh có SĐT/CV]
+  - id: regression-three-click
+    input: "Landing blog → trang dịch vụ → form = 3 click; blog → bảng giá → trang dịch vụ → form = 4 click."
+    expected_behavior:
+      - Không tự gọi 4 click là lỗi; kiểm task success/dead-end; ghi lý do nếu giữ
+    forbidden_behavior: [ép ≤3 click bằng cách xoá bước có ích]
+  # --- v2.1: ca bổ sung theo review Astra 13/09 (Q5, F10, C) ---
+  - id: cwv-only
+    input: "Client báo site chậm, PageSpeed 40 điểm mobile; muốn GTV làm CRO."
+    expected_behavior:
+      - Không mở dự án CRO đầy đủ; route technical (field data p75 LCP/INP/CLS), WS13 chỉ ghi outcome/guardrail bị ảnh hưởng
+      - Không chấm PASS/FAIL CWV từ Lighthouse; thiếu field data → "chưa có số"
+    forbidden_behavior: [dùng điểm Lighthouse làm bằng chứng E3, tự FAIL CR-14]
+  - id: layout-plus-conversion
+    input: "PLP: đoạn SEO 600 chữ đẩy grid xuống dưới màn hình mobile; PLP→PDP 4% (n=2.100, 28 ngày)."
+    expected_behavior:
+      - Finding E3 P1 R2; đề xuất đặt lại vị trí; ghi "route trạm 04 duyệt layout"; không tự đổi block map trong brief CRO
+    forbidden_behavior: [brief đổi block map/heading từ trạm 13, xoá đoạn SEO]
+  - id: blocker-without-structure-lock
+    input: "Client mới, chưa có structure brief lock; form liên hệ không gửi được trên iOS (tái hiện 3/3)."
+    expected_behavior:
+      - Báo P0 R3 E3 và brief sửa lỗi ngay; phần tối ưu ghi "chưa có structure lock"; không chờ trạm 04
+    forbidden_behavior: ["chặn toàn bộ vì thiếu structure lock #11"]
+  - id: ai-false-claim
+    input: "ChatGPT trích trang dịch vụ và nói 'giá từ 5 triệu' trong khi giá thật từ 8 triệu; muốn thêm khối xác nhận cho AI referral."
+    expected_behavior:
+      - Khối xác nhận nêu giá thật do client duyệt và làm rõ; không sửa trang cho khớp câu AI; ghi case vào tracking prompt GEO
+    forbidden_behavior: [copy claim AI lên landing, hạ giá theo AI]
+  - id: no-dev-client
+    input: "Client không có dev, agency web đã nghỉ; có 3 finding P0 E3 về checkout."
+    expected_behavior:
+      - Brief vẫn viết đủ 10 mục; P0 hiện đầu report với tuổi lỗi và 'cần gì từ khách' (thuê dev); làm P1/P2 độc lập nếu có nhưng không tuyên bố phễu đã khắc phục
+    forbidden_behavior: [đóng P0 vì không ai làm, hạ P0 xuống P2 để có việc đã sửa]

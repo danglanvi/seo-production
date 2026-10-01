@@ -136,11 +136,37 @@ Lưu ý:
 |---|---|---|---|---|
 | 1 | <tên công việc> | <dd/mm> | <Đã làm / Đang làm / Cần xử lý> | <kết quả + link> |
 
-## 3. Các dữ liệu báo cáo khác (CRO)
+## 3. Các dữ liệu báo cáo khác (CRO) — v2026.09.4: 3 khối từ WS 13 (skill `cro-audit` → `references/report-hook.md`)
 
-- Chỉ số gián tiếp: Time on site <…>, Bounce Rate <…>.
-- Chỉ số trực tiếp (chuyển đổi CTA — tùy mô hình kinh doanh): Call <…>, Mess <…>, Hotline <…>, Form <…>.
-- Đính kèm: File/hình báo cáo số lượng chuyển đổi tháng (file PDF tải về từ GA).
+**3a. Chuyển đổi kỳ này** (đúng nhãn: "click" ≠ "lead"; "đơn tạo" ≠ "doanh thu" khi có COD; hàng AI Assistant directional, không nghiệm thu)
+
+| Kênh | Micro (GA4, đã QA) | Outcome đối soát (nguồn, độ trễ) | Kỳ trước |
+|---|---|---|---|
+| Gọi / Zalo / Messenger | click_to_call <…> · click_zalo <…> | Lead đạt chuẩn từ Sheet sale: <…> | <…> |
+| Form / báo giá | generate_lead <…> | Lead đạt chuẩn / báo giá đã gửi: <…> | <…> |
+| Đơn hàng | user có ≥1 purchase / user vào PDP+giỏ (đơn tạo) | Đơn hợp lệ sau 14 ngày: <…> | <…> |
+| Apply / ATS (khi cơ chế job) | application_complete / apply_start (candidate–job) | Hồ sơ đạt chuẩn từ HR: <…> | <…> |
+| Từ AI Assistant | session <…> · CVR một outcome đã chốt, cùng population với Organic | (directional — phần AI referral nhận diện được, có điểm mù; là phân đoạn, **không cộng vào tổng**) | <…> |
+
+Metric ghi dạng tử số/mẫu số/đơn vị; gọi/chat không join được với user → hai số riêng. Tracking chưa PASS QA → ghi: "Kế hoạch đo đã bàn giao ngày <…>, chờ dev triển khai; số kỳ này chưa dùng để kết luận." Không thay bằng Time on site / Bounce.
+
+**3b. Phát hiện kỳ này** (từ `13-cro/<CLIENT>_evidence-backlog`, chỉ E≥2, **finding mới trong kỳ**, tối đa 5 dòng, P0 trước, ảnh che PII, nối bằng finding ID)
+
+| ID | Trang/template | Phát hiện | Mức | Đề xuất | Trạng thái |
+|---|---|---|---|---|---|
+| F-xx | <…> | <quan sát + bằng chứng> | P0/P1 | <component> | Đã brief <dd/mm> / khách duyệt / dev đã deploy / GTV QA PASS / chờ khách |
+
+**3c. Việc đã sửa và số quan sát** (chỉ mốc **GTV QA PASS**; cùng mẫu số, cùng độ dài cửa sổ ≥4 tuần; nhãn "quan sát trước/sau"; nêu yếu tố khác đã đổi — không "uplift", không "tăng X% nhờ GTV"; chưa đủ cửa sổ ghi "đang theo dõi tới <ngày>")
+
+| ID | Việc | Ngày QA PASS | Metric (tử/mẫu) | Trước (cửa sổ) | Sau (cửa sổ) | Ghi chú |
+|---|---|---|---|---|---|---|
+
+**3d. Chờ phía khách** (**mọi P0 còn mở** kèm tuổi lỗi + brief chưa triển khai — bằng chứng GTV đã làm phần mình; không gộp với 3b)
+
+| ID | Brief | Ngày gửi | Tuổi lỗi (ngày) | Mức | Ảnh hưởng nếu chưa làm | Cần gì từ khách |
+|---|---|---|---|---|---|---|
+
+Không có phát hiện mới → vẫn ghi "không phát hiện mới; đang theo dõi <…> tới <ngày>". Đính kèm: ảnh DebugView/heatmap đã che PII (không đính PDF GA trần).
 
 ## 4. Vấn đề phát sinh / tồn đọng
 

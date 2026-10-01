@@ -56,7 +56,7 @@ Structure brief là deliverable — tự chấm role `self` trước khi trình 
 1. Process: `../02-raw/knowledge/sop/07-visual-semantic.md` — từng bước B0-B8 có Output đúng spec; **B7 là hard gate: mọi checkbox phải pass** trước khi build được duyệt.
 2. Thiết kế cấu trúc: `../02-raw/knowledge/sop/06-self-checklist/tier-1-structure-website.md` — full check khi thiết kế, chạy TRƯỚC gate.
 3. Gate gửi khách: `../02-raw/knowledge/sop/06-self-checklist/gate-structure-wireframe.md` — **P0 100% TRƯỚC khi gửi khách duyệt cấu trúc**, không có ngoại lệ.
-4. Layout + UX + CRO: `../02-raw/knowledge/sop/06-self-checklist/tier-1-visual-semantic.md` + `tier-1-ux-ui.md` (duyệt wireframe T2) + `tier-1-cro-conversion.md` phần A site-wide (cùng thư mục).
+4. Layout + UX + CRO: `../02-raw/knowledge/sop/06-self-checklist/tier-1-visual-semantic.md` + `tier-1-ux-ui.md` (duyệt wireframe T2) + `tier-1-cro-conversion.md` phần A site-wide (cùng thư mục) — trạm 04 **kiểm thiết kế** phần A trên wireframe (CTA hierarchy, form chuẩn, widget không che); **tracking (CR-06/07) và QA trên trang live thuộc WS 13** — không gate tracking ở wireframe (v2026.09.4).
 5. PLP/PDP: chấm đủ E1-E12 trong `skills/visual-semantic-seo/SKILL.md` (công cụ ở workspace Vincent — bản standalone bỏ qua), ghi ĐẠT/KHÔNG-ĐẠT từng eval.
 
 Tự kiểm PASS → submit QC theo §7. FAIL → quay lại đúng bước fail, sửa xong mới trình.

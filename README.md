@@ -71,8 +71,8 @@ SEO Production/
 │   ├── knowledge/                   knowledge pack (sop/ + cheat-sheets/ + _MANIFEST.md)
 │   └── screenshots/                 own-site/ · competitors/ · serp-ai/ · tools/
 ├── 12-feedback-lessons/          ← feedback-log.md + lessons/ + retro/
-├── 99-archive/ · _TEMPLATES/ (32 template + account/ + examples/ + weekly-report-slides/)
-├── skills/ (37 skill delivery — canonical) · .claude/skills/ (mirror Claude) · .agents/skills/ (mirror Codex)
+├── 99-archive/ · _TEMPLATES/ (35 template + account/ + examples/ + weekly-report-slides/)
+├── skills/ (38 skill delivery — canonical) · .claude/skills/ (mirror Claude) · .agents/skills/ (mirror Codex)
 └── tools/sync-skills.sh              ← đồng bộ skills/ → 2 mirror khi chạy standalone
 ```
 
