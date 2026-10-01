@@ -223,3 +223,19 @@ Luật ghi:
 - Backlink output trong instance; sửa pointer informational-analysis; kickoff phân biệt chuẩn bị/setup. Audit có đủ bộ 60 rules; schema report trỏ sample giả lập nội repo, giữ runtime Claude-only của report.
 - Source trong skills/; mirror sinh từ canonical đúng repo. Kiểm dependency/retention/mirror và fixture builder; Content chạy contracts, tests và lessons lint. Ca live model chưa chạy.
 - Files touched: `skills/acc-kickoff-setup/SKILL.md`, `skills/acc-kickoff-setup/evals/cases.yaml`, `skills/backlink-research/SKILL.md`, `skills/backlink-research/evals/cases.yaml`, `skills/competitor-seo-gap-analysis/SKILL.md`, `skills/gtv-weekly-report/references/content-sample.yaml`, `skills/gtv-weekly-report/references/content-schema.md`, `skills/semantic-content-audit/SKILL.md`, `skills/semantic-content-audit/evals/cases.yaml`, `skills/semantic-content-audit/references/45-semantic-writing-rules.md`; các runtime mirror được phép, `MIGRATION.md`, `log.md`.
+
+## [2026-09-28] skill-update | Fact-fix dẫn patent cho website function (seo-onpage 1.4.1, visual-semantic-seo 3.0.1) — Vincent duyệt
+
+- seo-onpage P22: bỏ "broken function = negative signal — patent US10565267B1, interaction weight cao"; giữ yêu cầu CTA/form/filter hoạt động như tiêu chuẩn UX và chuyển đổi. US10565267B1 là patent xếp hạng bài đăng mạng xã hội.
+- visual-semantic-seo: 2 reference bỏ dẫn US10565267B1, US8868565B1, US20150234930A1 làm căn cứ website function; bảng 1x/5x/10x thành mức ưu tiên kiểm nội bộ; SKILL.md bỏ dẫn US7716225B1 cho "broken function".
+- Nguồn đối chiếu: `Knowledge/Google Leak Decoded` (toàn văn patent). Mirror `.claude/skills/`, `.agents/skills/` chỉ đồng bộ 2 skill này (repo đang có thay đổi chưa commit ở mirror khác).
+- Còn lại: xlsx `Deliverables/Admin/Checklist_Onpage_Semantic_SEO - v5.4.xlsx` ô D33 vẫn ghi claim cũ; skill ghi xlsx là bản gốc khi lệch, chờ Vincent sửa.
+- Files touched: `skills/seo-onpage/SKILL.md`, `skills/seo-onpage/references/p-series-checklist.md`, `skills/visual-semantic-seo/SKILL.md`, `skills/visual-semantic-seo/CHANGELOG.md`, `skills/visual-semantic-seo/references/website-function-seo.md`, `skills/visual-semantic-seo/references/ecommerce-website-functions.md` (+ mirror)
+
+## [2026-09-28] refactor | Knowledge pack: quy định về tăng CTR theo leak Google (V61) — Vincent duyệt — @claude
+
+- Re-sync từ kho gốc: `sop/10-offpage-process.md` (v1.1, §4 thêm mục "Tín hiệu người dùng (click)") và `sop/06-self-checklist/tier-1-traffic-users.md` (thêm Phụ lục B: 5 hình thức không dùng, 3 lý do theo leak, câu trả lời mẫu cho Account).
+- Dòng Traffic users ⚠ giữ nguyên trong khung công đoạn và `index.md`: vẫn optional, chỉ chuyển `todo` khi SEO Director duyệt bằng văn bản. Click bot, trình giả lập, proxy, gói click không rõ nguồn bị cấm trong mọi dự án khách.
+- `MIGRATION.md` thêm mục v2026.09.5 (gộp cả fact-fix 2 skill cùng ngày); `_MANIFEST.md` cập nhật ngày sync hàng 30 và 38. Chưa commit, chưa tag git. Instance (`PROJECTS/`) chưa nhận bản vá.
+- Files touched: `02-raw/knowledge/sop/10-offpage-process.md`, `02-raw/knowledge/sop/06-self-checklist/tier-1-traffic-users.md`, `02-raw/knowledge/_MANIFEST.md`, `MIGRATION.md`
+- Công đoạn: dòng Traffic users (T8 → T9) · WS: 07

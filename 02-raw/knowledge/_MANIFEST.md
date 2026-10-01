@@ -50,7 +50,7 @@ Hàng #6 (README.md) đã RE-SYNC 2026-07-19 (bản v3.1 — registry toàn hệ
 | 27 | checklist-entity-onsite-web.md | sop/06-self-checklist/ | WS06 — #13 deep-dive onsite per trang | 2026-07-19 |
 | 28 | tier-1-social-google-stack.md | sop/06-self-checklist/ | WS06 — entity offsite: social + Google Stack | 2026-07-19 |
 | 29 | tier-1-offpage-backlink.md | sop/06-self-checklist/ | WS07 — #20, 25◇, 26 per batch (P0 7) | 2026-07-19 |
-| 30 | tier-1-traffic-users.md | sop/06-self-checklist/ | WS07 — T8-T9 ⚠ Director duyệt (kèm baseline thông số 19.7) | 2026-07-19 |
+| 30 | tier-1-traffic-users.md | sop/06-self-checklist/ | WS07 — T8-T9 ⚠ Director duyệt (kèm baseline thông số 19.7; Phụ lục B hình thức không dùng theo leak 28.9) | 2026-09-28 |
 | 31 | tier-1-geo.md | sop/06-self-checklist/ | WS08 — #14, 21, 28 (guardrail llms.txt/schema ≠ lever) | 2026-07-19 |
 | 32 | tier-1-gbp-local.md | sop/06-self-checklist/ | WS03/WS08 — dự án local, vận hành GBP hằng tháng | 2026-07-19 |
 | 33 | quality-content-ai.md | sop/06-self-checklist/ | WS05 — vận hành content AI 6 phase (pointer về tier-1) | 2026-07-19 |
@@ -58,7 +58,7 @@ Hàng #6 (README.md) đã RE-SYNC 2026-07-19 (bản v3.1 — registry toàn hệ
 | 35 | tier-3-ranking-drop-runbook.md | sop/06-self-checklist/ | WS03 — sự kiện rớt hạng/Google update (triage + 10 nhánh) | 2026-07-19 |
 | 36 | checklist-xu-ly-ma-doc.md | sop/06-self-checklist/ | WS03 — sự kiện hack/mã độc (4 phase, 35 items) | 2026-07-19 |
 | 37 | checklist-khoi-phuc-seo-ranking.md | sop/06-self-checklist/ | WS03 — phục hồi SAU sự cố (gate sạch 5/5) | 2026-07-19 |
-| 38 | 10-offpage-process.md (sop/ gốc) | sop/10-offpage-process.md | WS07 — SOP offpage toàn diện (3 layer + method catalog 3 tier) | 2026-07-19 |
+| 38 | 10-offpage-process.md (sop/ gốc) | sop/10-offpage-process.md | WS07 — SOP offpage toàn diện (3 layer + method catalog 3 tier); §4 có mục tín hiệu người dùng từ 28.9 | 2026-09-28 |
 | 39 | checklist-phap-ly-content-website.md | sop/06-self-checklist/ | WS03 Audit T1 + WS05 per batch content — pháp lý content/website VN (PL-01→16, P0 7) | 2026-07-19 |
 | 40 | checklist-project-intake-tham-dinh.md | sop/06-self-checklist/ | Tiền dự án (trước SETUP instance) — go/no-go thẩm định, Director duyệt (PI-01→14 + 6 red-flags, P0 6) | 2026-07-19 |
 

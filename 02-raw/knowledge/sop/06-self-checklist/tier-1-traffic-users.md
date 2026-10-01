@@ -2,7 +2,7 @@
 type: sop
 tier: 1
 phase: traffic-users
-last_updated: 2026-07-19
+last_updated: 2026-09-28
 source_files:
   - raw/_ingested/Quy trình SEO PSP - All In One/Kiến Thức triển khai Traffic User.pptx
 items_count: 16
@@ -18,6 +18,7 @@ tags: [sop, tier-1, traffic-users, ctr, self-checklist, quality-gate, high-risk]
 > **Số items:** 16 (TU-01 – TU-16) = 5 Gate tiền triển khai + 5 Thiết lập + 4 Giám sát + 2 Kết thúc.
 > **🔴 RỦI RO CAO:** Đây là hạng mục thao túng hành vi tìm kiếm — vi phạm Google spam policies nếu bị nhận diện. **CHỈ triển khai khi SEO Director duyệt bằng văn bản.** Gate tiền triển khai (TU-01 → TU-05) = **P0, phải pass 100%** trước khi bật bất kỳ user nào. Fail 1 item gate → KHÔNG chạy, không có ngoại lệ.
 > **Scoring:** Self Score /16. Lead/Director review 100% (KHÔNG random như checklist content — hạng mục này review toàn bộ).
+> **Không dùng (bổ sung 28/09/2026):** click bot, trình giả lập, proxy, gói click không rõ nguồn bị cấm trong mọi dự án khách, kể cả khi có văn bản duyệt. Danh sách và lý do theo leak Google 2024: xem Phụ lục B.
 
 ## Map item → ref
 
@@ -417,3 +418,43 @@ Luật áp: CTR tổng sau bơm ≤ **trần của position MỤC TIÊU** (mục
 **Test protocol trước khi scale:** 1 URL không phải money page × 10 user/ngày × 10 ngày → đối chiếu 3 nguồn (dashboard vendor / GA4 / GSC trễ ~2 ngày) → check ASN từng IP (dính datacenter = dừng ngay) → check phân bố tỉnh/thiết bị/giờ truy cập tự nhiên.
 
 **Cảnh báo bổ sung 2026 (giữ nguyên khi trình Director):** spam update 06/2026 mở rộng sang thao túng AI search; **tuyệt đối không dùng cho local/GBP** (cộng đồng báo penalty nặng ở map pack); hiệu ứng mang tính duy trì — ngừng bơm là tụt (thí nghiệm Fishkin); mô hình download VN "thật người, giả intent" — hành vi sau click là vector Google đo ngày càng tốt.
+
+---
+
+## Phụ lục B — Hình thức không dùng và rủi ro theo leak Google 2024 (bổ sung 28/09/2026)
+
+> Nguồn: wiki `Knowledge/Google Leak Decoded`, nhóm F08.2 (nén tín hiệu và lọc dữ liệu click), việc V61. Cách xử lý theo nguyên tắc ở SOP 10 mục 4: giữ tactic legacy, gắn tier kiểm soát thay vì xoá. Dòng Traffic users giữ ở tier ⚠, chỉ chạy khi SEO Director duyệt bằng văn bản và pass 100% gate TU-01 → TU-05.
+
+### B.1 Không dùng trong mọi dự án khách
+
+Các hình thức dưới đây bị cấm, kể cả khi có văn bản duyệt:
+
+1. Click bot, trình giả lập trình duyệt, công cụ tự động tìm kiếm rồi click.
+2. Traffic chạy qua proxy dân cư, IP datacenter hoặc VPN.
+3. Gói click không giải trình được nguồn user hoặc không cho xem log (timestamp, keyword, IP).
+4. Thuê click qua nền tảng việc vặt trả tiền (micro-task) mà không kiểm được người thật, thiết bị và IP.
+5. Mọi hình thức mua click chưa qua gate TU-01 → TU-05.
+
+### B.2 Ba lý do theo leak
+
+Mức bằng chứng: có trong leak. Google chưa xác nhận chính thức cơ chế lọc click.
+
+| Trường trong leak | Mô tả gốc | Ý nghĩa với hạng mục này |
+|---|---|---|
+| `QualityNavboostCrapsCrapsClickSignals` (hai bản squashed và unsquashed) | Dữ liệu click được lưu ở hai bản, đã nén và chưa nén | Nén tín hiệu làm một lượng click lớn bất thường không lấn át tín hiệu khác. Bơm nhiều click không cho kết quả tương ứng |
+| `QualityNavboostCrapsCrapsData.voterTokenCount` | Số voter token khác nhau, là cận dưới của số người dùng riêng biệt đóng góp vào dữ liệu, dùng để lọc theo quyền riêng tư | Click dồn từ ít người có thể không được tính. Đây là suy luận từ mô tả trường |
+| `QualityNavboostCrapsCrapsData.unscaledIpPriorBadFraction` | Giá trị ước lượng trước theo địa chỉ IP, dùng ở bước phạt trong `craps-penalty.cc` | Click từ dải IP có tiền sử bất thường có thể bị giảm giá trị |
+
+### B.3 Hệ quả với chiến dịch Traffic users đã được duyệt
+
+1. Ba trường trên áp cho mọi click, kể cả click của user thật được điều phối. TU-05, TU-08, TU-09 và TU-10 giảm dấu vết, không loại bỏ được rủi ro.
+2. Văn bản duyệt TU-01 ghi thêm ba rủi ro ở mục B.2.
+3. Nguồn user phải chứng minh được số người dùng riêng biệt mỗi ngày và dải IP. Nguồn không chứng minh được thì fail TU-05.
+
+### B.4 Account trả lời khi khách hỏi mua traffic hoặc tăng CTR
+
+Áp cho cờ đỏ số 5 của MR-12 (monthly-project-review). Câu trả lời mẫu:
+
+"Bên em không dùng bot, proxy hay gói click tự động cho dự án. Dữ liệu rò rỉ của Google năm 2024 cho thấy Google có lưu số người dùng khác nhau và mức xấu theo IP của dữ liệu click, nên cách này rủi ro cao, nếu có tác dụng thì thường ngắn hạn. Hạng mục traffic users với người dùng thật là hạng mục rủi ro cao, bên em chỉ triển khai khi SEO Director duyệt bằng văn bản."
+
+Sau khi trả lời, Account chuyển yêu cầu cho SEO Lead Project hoặc SEO Director, không tự cam kết.

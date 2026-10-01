@@ -265,7 +265,7 @@ From Content Warehouse API leak (May 2024), module `QualityPreviewRanklabTitle` 
 
 ## Interaction Signals (⚠️ interpretation — không có nguồn cho con số)
 
-Bảng weight cũ (click 5x, conversion 10x…) KHÔNG tìm được backing trong patent/leak nào — giữ ý niệm định tính: active interactions với functions (click, form fill, filter) validate page function; broken function = negative signal (US7716225B1 model hóa xác suất click theo feature + behavior).
+Bảng weight cũ (click 5x, conversion 10x…) KHÔNG tìm được backing trong patent/leak nào — giữ ý niệm định tính: active interactions với functions (click, form fill, filter) validate page function; broken function làm mất chuyển đổi (heuristic thực hành; chưa có patent hay thuộc tính leak nói chức năng hỏng bị trừ điểm. US7716225B1 là patent reasonable surfer về trọng số link theo xác suất click, không nói về chức năng trang; fact-fix 28/09/2026).
 
 **Formula: Visual Semantic (Layout) + Website Function (Interactive) + Block Chunking (Self-Contained Units) + Image-Level Semantics = Semantic Intent Validation**
 
@@ -405,7 +405,7 @@ Rules chung: đặt placeholder `{Brand}`, `{Doctor Name}`… cho mọi tên th�
 
 ## Reference Files
 
-> ⚠️ **v3.0 blanket caveat:** các file trong `references/` viết ở v1.0-v2.1 và CHƯA được fact-fix từng dòng — một số còn cite US8949242B1/US10565267B1/US8868565B1/US20150234930A1/"vboostFactor"/"Google WebFormer" theo cách cũ. Khi mâu thuẫn với SKILL.md: **SKILL.md (v3.0, verified) là nguồn đúng**; bảng patent chuẩn ở section "Related Google Patents (verified 2026-07-02)". Backlog: fact-fix từng reference file.
+> ⚠️ **v3.0 blanket caveat:** các file trong `references/` viết ở v1.0-v2.1 và CHƯA được fact-fix từng dòng — một số còn cite US8949242B1/US10565267B1/US8868565B1/US20150234930A1/"vboostFactor"/"Google WebFormer" theo cách cũ. Khi mâu thuẫn với SKILL.md: **SKILL.md (v3.0, verified) là nguồn đúng**; bảng patent chuẩn ở section "Related Google Patents (verified 2026-07-02)". Đã fact-fix phần dẫn patent trong `website-function-seo.md` và `ecommerce-website-functions.md` (28/09/2026); các reference khác vẫn là backlog.
 
 Chỉ đọc reference đúng với task hiện tại:
 

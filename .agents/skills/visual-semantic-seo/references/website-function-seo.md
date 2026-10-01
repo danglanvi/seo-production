@@ -9,35 +9,27 @@ Nhưng cả hai kết hợp = **Semantic Intent Validation**
 | Aspect | Visual Semantic | Website Function |
 |--------|-----------------|------------------|
 | Definition | Layout, hierarchy, prominence | Interactive elements (buttons, forms) |
-| Google Patent | US8949242B1 | US10565267B1, US20150234930A1 |
+| Bằng chứng | Martin Splitt (Google) về centerpiece; patent US7421651B2 (tách khối theo khoảng trắng thị giác) | Chưa có patent hay thuộc tính leak trực tiếp; heuristic thực hành (fact-fix 28/09/2026) |
 | Purpose | Identify centerpiece | Validate user intent match |
 | Evaluation | Annotation systems | Engagement tracking |
 
 ## How Google Tracks Website Functions
 
-### Google Patent US10565267B1 - Quality Score
+### Về patent từng dẫn ở đây (fact-fix 28/09/2026)
 
-```python
-Quality_Score = function(
-    recentness_score,
-    affinity_score,
-    popularity_score
-)
+US10565267B1 ("Determining a quality score for a content item") xếp hạng bài đăng trong stream mạng xã hội theo tốc độ tương tác ở hai khung thời gian, có trọng số theo loại tương tác. Patent không nói về trang web, không có khái niệm "chức năng hỏng", không có hệ số 5x hay 10x. Không dùng patent này làm căn cứ cho website function.
 
-Popularity_Score = function(
-    total_interaction_count,
-    recent_interaction_count,
-    interaction_types  # passive vs active
-)
-```
+Ý niệm định tính vẫn giữ: tương tác chủ động (bấm nút, điền form, lọc) cho thấy trang làm được việc người dùng cần; chức năng hỏng làm mất chuyển đổi.
 
 ### Interaction Types
 
-| Type | Examples | Weight |
+| Type | Examples | Mức ưu tiên kiểm (quy ước nội bộ) |
 |------|----------|--------|
-| **Passive** | View, scroll, pause | Low (1x) |
-| **Active** | Click button, fill form | High (5x) |
-| **Conversion** | Submit, purchase | Highest (10x) |
+| **Passive** | View, scroll, pause | Thấp |
+| **Active** | Click button, fill form | Cao |
+| **Conversion** | Submit, purchase | Cao nhất |
+
+Mức ưu tiên là quy ước để chọn chức năng cần kiểm trước, không phải trọng số của Google.
 
 ## Required Website Functions (Service Pages)
 
@@ -182,9 +174,9 @@ User action: Can't take action → Leave
 Result: Intent mismatch ✗ → Bounce signal
 ```
 
-## Google Patent US8868565B1 - Click Duration
+## Thời lượng kỳ vọng theo loại trang (quy ước thực hành)
 
-Google calibrates expected click duration by content type:
+US8868565B1 từng được dẫn ở đây: patent đặt ngưỡng click ngắn và click dài riêng cho từng nhóm nội dung, trong bối cảnh landing page quảng cáo, và không đưa ra các con số dưới đây. Bảng là quy ước để đọc số liệu GA4, không phải ngưỡng của Google.
 
 | Page Type | Expected Duration | Signal |
 |-----------|-------------------|--------|
@@ -199,9 +191,9 @@ Google calibrates expected click duration by content type:
 - If user clicks CTA → leaves immediately → Negative
 - Match expected duration for page type
 
-## Google Patent US20150234930A1 - Functional Extensions
+## Tiện ích chức năng trên trang dịch vụ (checklist thực hành)
 
-Google evaluates landing pages for:
+US20150234930A1 từng được dẫn ở đây là patent về tiện ích quảng cáo, không mô tả cách tìm kiếm tự nhiên chấm trang. Ba câu hỏi dưới đây là checklist kiểm của GTV:
 
 1. **Extension rendered?** - Technical correctness
 2. **User click on extension?** - Intent match
@@ -230,8 +222,7 @@ Google evaluates landing pages for:
 Visual Semantic (Layout)
   + Website Function (Interactive)
   = Semantic Relevance (Intent validation)
-  = Quality Score
-  = Ranking Position
+  (giả thuyết thực hành: chưa có nguồn Google nối trực tiếp chức năng trang với thứ hạng)
 ```
 
 ### Matrix

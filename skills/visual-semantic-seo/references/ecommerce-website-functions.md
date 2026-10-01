@@ -12,22 +12,24 @@
 
 ## Core Concept
 
-Website Functions for e-commerce validate **transactional intent**. Google tracks interactions to determine if the page fulfills the user's purchase journey.
+Website Functions for e-commerce validate **transactional intent**. Chức năng giúp trang đáp ứng hành trình mua. Google có đo click trên trang kết quả (NavBoost), nhưng chưa có nguồn cho việc Google chấm từng chức năng trên trang (giả thuyết thực hành).
 
 ```
 Visual Semantic (Layout) + Website Function (Interactive)
-= Intent Validation = Quality Score = Ranking
+= Intent Validation (giả thuyết thực hành, chưa có nguồn nối trực tiếp với thứ hạng)
 ```
 
-## Google Patent References
+## Bằng chứng (fact-fix 28/09/2026)
 
-| Patent | Function |
-|--------|----------|
-| US10565267B1 | Quality score from interactions |
-| US8868565B1 | Click duration by page type |
-| US20150234930A1 | Functional extensions evaluation |
+Ba patent từng dẫn ở đây đã bị gỡ ở SKILL.md v3.0 vì không mô tả website function trong tìm kiếm tự nhiên:
 
-### Expected Durations (E-commerce)
+- US10565267B1: xếp hạng bài đăng mạng xã hội theo tốc độ tương tác.
+- US8868565B1: ngưỡng thời lượng click theo nhóm nội dung, bối cảnh landing page quảng cáo.
+- US20150234930A1: tiện ích quảng cáo.
+
+Các con số thời lượng dưới đây là quy ước thực hành.
+
+### Expected Durations (E-commerce, quy ước thực hành)
 
 | Page Type | Expected Duration | User Behavior |
 |-----------|-------------------|---------------|

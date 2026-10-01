@@ -59,7 +59,7 @@ Content phải **V-Pass 9 hạng mục chất lượng content** (self-checklist
 ### F. Technical & Experience (P21-P23)
 
 - **P21 Clean Code & Semantic HTML** — `<main>` duy nhất (weight 100%), `<article>` self-contained (block AI cite), `<section>` đúng, heading hierarchy sạch không nhảy cấp.
-- **P22 Function Web, Mobile UX & Creative Function** — mọi CTA/form/filter/calculator HOẠT ĐỘNG (broken function = negative signal — patent US10565267B1, interaction weight cao); mobile chuẩn; function sáng tạo thỏa intent SERP.
+- **P22 Function Web, Mobile UX & Creative Function** — mọi CTA/form/filter/calculator HOẠT ĐỘNG (tiêu chuẩn UX và chuyển đổi: chức năng hỏng làm mất chuyển đổi. Không dẫn patent cho ý này: US10565267B1 từng được dẫn là "broken function = negative signal", nhưng patent này xếp hạng bài đăng mạng xã hội theo tốc độ tương tác, không nói về chức năng trang hay hệ số tương tác; fact-fix 28/09/2026 theo wiki Google Leak Decoded); mobile chuẩn; function sáng tạo thỏa intent SERP.
 - **P23 Chạy Prompt Tối Ưu Onpage (2 bước)** — Step 1 EXTRACT từ content: Macro terms, Micro terms/section, Named + Technical entities, LSI, keyword variations, n-grams, facts. Step 2 AUDIT: coverage ≥70% vs top 10? variations đủ mỗi paragraph? n-gram unique/section? → bổ sung thiếu, loại tràn, ghi note tracking.
 
 ## TIER 2 — Project-specific (T2-P1..8, bật tại Kickoff)

@@ -2,7 +2,7 @@
 name: seo-onpage
 description: "Onpage SEO audit & optimization theo checklist P-series GTV (bundled trong references/, chạy được standalone): P0 Quality Gate + P1-P23 Tier 1 (/23) + T2/T3 (/31 → /39) + AX AI-Search Extension. Use when: 'audit onpage [URL]', 'check onpage', 'tối ưu onpage', 'pre-publish CMS'."
 metadata:
-  version: "1.4"
+  version: "1.4.1"
 ---
 
 # SEO Onpage — Audit & Optimization

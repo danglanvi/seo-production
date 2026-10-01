@@ -1,7 +1,7 @@
 ---
 type: sop
 status: draft
-last_updated: 2026-07-19
+last_updated: 2026-09-28
 sources:
   - raw/_ingested/Quy trình SEO PSP - All In One/2. QUY TRÌNH SEO Project/10. Quy Trinh Offpage SEO/2. Quy trình lập kế hoạch Link building - chưa có.xlsx
   - raw/_ingested/Quy trình SEO PSP - All In One/2. QUY TRÌNH SEO Project/10. Quy Trinh Offpage SEO/3. Link building offpage GTV.xlsx
@@ -129,6 +129,15 @@ Nguyên tắc chung của tier này (kế thừa phân loại backlink 6 loại 
 | **AMP như đòn bẩy index** | AMP đã bị Google bỏ ưu đãi; các bước cài AMP trong tài liệu index legacy không còn tác dụng |
 | **Fetch as Google / công cụ index đời cũ (Ghostindexer, Lar index, gói fiverr blog-comment-index)** | Tool/endpoint chết hoặc đổi; thay bằng mục 5 |
 
+### Tín hiệu người dùng (click) — bổ sung 28/09/2026
+
+Mục này áp cho hạng mục Traffic users ở T8 → hết T9 của timeline. Lý do theo leak Google 2024 nằm ở Phụ lục B của [sop/06-self-checklist/tier-1-traffic-users.md](06-self-checklist/tier-1-traffic-users.md).
+
+| Tier | Method | Rủi ro | Điều kiện dùng |
+|---|---|---|---|
+| ⚠ Risk-controlled | **Traffic users** (user thật tìm query chỉ định rồi click vào site) | **Cao** (thao túng hành vi tìm kiếm, vi phạm chính sách spam của Google nếu bị nhận diện) | Chỉ khi SEO Director duyệt bằng văn bản; pass 100% gate TU-01 → TU-05; nền content, internal link, backlink đã chuẩn; không dùng cho local và Google Business Profile |
+| ⛔ Không dùng | **Click bot, trình giả lập, proxy dân cư, IP datacenter hoặc VPN, gói click không rõ nguồn** | **Rất cao** | Cấm trong mọi dự án khách. Leak có trường đếm số người dùng riêng biệt (`voterTokenCount`), mức xấu theo IP (`unscaledIpPriorBadFraction`) và hai bản dữ liệu click đã nén, chưa nén |
+
 *[Legacy giữ: toàn bộ danh mục tactic 16 sheets Boosting Linkjuice + phân loại 6 loại backlink + tiêu chuẩn từng kênh (forum DA/DR/tỷ lệ index, web 2.0 DA>80, guest post traffic ≥3.000...) — chuyển thành điều kiện dùng per method. Nâng cấp 2026: gắn tier + người duyệt + tách compliant (earned/PR) vs risk-managed (paid/tiered) theo guardrail chính sách trong anchor framework.]*
 
 ---
@@ -187,4 +196,5 @@ Nguyên tắc chung của tier này (kế thừa phân loại backlink 6 loại 
 
 ## Changelog
 
+- **2026-09-28 v1.1** — thêm mục "Tín hiệu người dùng (click)" vào §4 theo việc V61 của wiki Google Leak Decoded: Traffic users giữ ở tier ⚠ (SEO Director duyệt bằng văn bản), click bot, proxy và gói click không rõ nguồn vào tier ⛔ kèm lý do theo leak. Checklist Traffic users thêm Phụ lục B.
 - **2026-07-19 v1.0** — hợp nhất legacy 2020-2025 + hệ skill backlink 3 layer. Nguồn legacy đọc đủ: Checklist Boosting Linkjuice (16 sheets), Tiêu chuẩn Triển khai backlinks (2020), Link building GTV (2022 + bản đào tạo), Research & đánh giá backlinks (2025), Quy trình lập kế hoạch Link building, Hướng dẫn Syndication, folder 11 (Index Blog comment + Index link Entity Mastermind). Quyết định chính: gate 90%-chưa-cần đứng đầu quy trình; anchor trỏ canonical framework duy nhất; tactic legacy giữ nguyên nhưng gắn tier ✅/⚠/⛔ + người duyệt; index workflow bỏ tool chết giữ nguyên lý; spam-discount rule thành bước bắt buộc của đo lường.

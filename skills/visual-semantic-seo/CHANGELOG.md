@@ -1,5 +1,11 @@
 # Changelog — Visual Semantic SEO Skill
 
+## v3.0.1 (28/09/2026) — Fact-fix website function
+
+- `references/website-function-seo.md`, `references/ecommerce-website-functions.md`: bỏ dẫn US10565267B1 (bài đăng mạng xã hội), US8868565B1 (landing page quảng cáo), US20150234930A1 (tiện ích quảng cáo) làm căn cứ website function; bảng hệ số 1x/5x/10x đổi thành mức ưu tiên kiểm nội bộ; thời lượng kỳ vọng ghi là quy ước thực hành.
+- SKILL.md mục Interaction Signals: "broken function" ghi là heuristic, bỏ dẫn US7716225B1 (reasonable surfer, trọng số link).
+- Nguồn đối chiếu: wiki `Knowledge/Google Leak Decoded` (toàn văn patent, fact-check wiki Semantic SEO ngày 27-28/09/2026).
+
 ## v3.0 (Jul 2026) — Fact-check + Process + Image-Level Semantics + Design Mode
 
 ### Fixed — Patent/leak citations (verified trên nguồn gốc 2026-07-02)

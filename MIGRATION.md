@@ -1,5 +1,5 @@
 ---
-master_version: v2026.09.4
+master_version: v2026.09.5
 ---
 
 # MIGRATION — Cập nhật instance lên version master mới
@@ -15,6 +15,14 @@ master_version: v2026.09.4
 ---
 
 ## 1. Có gì mới
+
+### v2026.09.5 (2026-09-28) — Quy định về tăng CTR theo leak Google + fact-fix dẫn patent
+
+Vincent duyệt 28/09. Căn cứ: wiki `Knowledge/Google Leak Decoded` (toàn văn patent và mô tả gốc của leak).
+
+- **Knowledge pack:** re-sync `02-raw/knowledge/sop/10-offpage-process.md` (v1.1: §4 thêm mục "Tín hiệu người dùng (click)") và `02-raw/knowledge/sop/06-self-checklist/tier-1-traffic-users.md` (thêm Phụ lục B). Dòng Traffic users giữ nguyên ở tier ⚠, chỉ chạy khi SEO Director duyệt bằng văn bản. Click bot, trình giả lập, proxy, gói click không rõ nguồn bị cấm trong mọi dự án khách. Số item TU-01 → TU-16 không đổi.
+- **Skill:** `seo-onpage` 1.4.1 và `visual-semantic-seo` 3.0.1 bỏ dẫn US10565267B1, US8868565B1, US20150234930A1 làm căn cứ cho website function (chi tiết ở `log.md` ngày 28/09).
+- **Port sang instance:** GHI ĐÈ 2 file knowledge pack trên, `02-raw/knowledge/_MANIFEST.md`, `skills/seo-onpage`, `skills/visual-semantic-seo` và mirror. Không có file mới, không đổi cấu trúc folder. Chiến dịch Traffic users đang chạy ở instance: bổ sung 3 rủi ro của Phụ lục B vào văn bản duyệt TU-01.
 
 ### v2026.09.4 (2026-09-13) — WS 13 CRO v2: đo trước, pattern có mức nặng, brief dev làm được, rollout có theo dõi
 
