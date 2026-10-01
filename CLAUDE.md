@@ -271,7 +271,7 @@ Repo này tự chứa. Hai điểm chạm duy nhất ra ngoài, đều là repo 
 
 | Điểm chạm | Vai trò | Cách nối |
 |---|---|---|
-| Repo content `Content Production - <client>/` (team content) | Viết bài công đoạn 13/15/16/19 | Bên này giao plan (`05-content-plan/`) → bên đó trả bài dạng Google Doc + verdict → bên này ghi tracking/QC. Không link file chéo, không copy bài |
+| Repo content `Content Production - <client>/` (team content) | Viết bài công đoạn 13/15/16/19 · giữ **Kho tri thức khách** `00-context/kb/` (bản gốc fact của khách) | Bên này giao plan (`05-content-plan/`) → bên đó trả bài dạng Google Doc + verdict → bên này ghi tracking/QC. Không link file chéo, không copy bài. **Đồng bộ qua GitHub** (`_REFERENCE/project-sync.md`): `python3 tools/project_sync.py pull` kéo repo content → `content-status.md` + `delivered/` + KB snapshot chỉ đọc ở `00-client-context/kb-snapshot/<YYYY-MM-DD>/`; repo content kéo ngược hồ sơ khách, KPI, topical map, entity của repo này. Mỗi loại dữ liệu chỉ sửa ở repo chủ |
 | `wp-publish-workflow-kit` (repo GitHub public riêng) | Executor đăng/sửa bài WordPress cho WS06 (NEW draft + AUDIT update, approval hash, verify kép) | Clone riêng theo docs của kit; luật GTV chạy trên kit: `02-raw/knowledge/sop/11-publish-wp.md` — **không chạy bước strong-to-b**. KHÔNG vendor code kit vào repo |
 
 Mọi tham chiếu khác tới tài liệu ngoài repo (wiki, kho gốc, folder khác) → **bỏ qua, không lỗi, không hỏi lại**; thiếu data thì hỏi thẳng người vận hành.

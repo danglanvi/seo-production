@@ -22,6 +22,7 @@ Công đoạn phụ trách: **#20 · #25◇ (Gate Offpage, T6) · #26** — stat
 | Cấu trúc site + internal link map + trạng thái content (WS04/05/06) | Campaign plan + CSV per-link theo `../_TEMPLATES/backlink-campaign.md` |
 | Money pages mong muốn (nếu có) + budget + risk level | Handoff: textlink PR → `textlink-analyzer` (kèm quota + ratio per target); outreach → team |
 | Ghi chú dòng #12 + bảng C `../index.md` (nhịp quý) | Update `../index.md` (bảng B + D, `gate: <verdict>`) + append `../log.md` (gate → op `gate`) |
+| Snapshot Kho tri thức khách `../00-client-context/kb-snapshot/<ngày>/` (nếu có) | Mọi nội dung offsite (PR, guest post, trang đại lý, profile) chỉ dùng claim/spec `approved` + `public_ok`, cùng fact với website để thông tin về thương hiệu nhất quán trên web |
 
 - Naming: `<CLIENT>_gate-offpage_v<N>.md` · `<CLIENT>_backlink-campaign_v<N>.md` — lưu trong folder này; đã tồn tại → tăng version.
 - Plan phải có **điều kiện dừng / đổi hướng** — không có điều kiện dừng thì chưa phải plan.

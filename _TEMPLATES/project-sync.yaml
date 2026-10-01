@@ -1,0 +1,6 @@
+# project-sync.yaml — chép ra root của CẢ HAI repo cùng khách (repo SEO và repo content), điền giống nhau.
+# Luật: _REFERENCE/project-sync.md. Repo content kéo từ seo_repo; repo SEO kéo từ content_repo.
+client: "{{CLIENT}}"
+seo_repo: "https://github.com/GTV-SEO-Agency/seo-{{client-slug}}.git"
+content_repo: "https://github.com/GTV-SEO-Agency/content-production-{{client-slug}}.git"
+branch: main

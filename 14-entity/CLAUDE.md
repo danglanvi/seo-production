@@ -19,6 +19,7 @@ Nguyên tắc nền: entity là **điều kiện vào shortlist** của cả Goo
 5. **Gate G-ENT không được "tạm pass"**: chưa trả lời được 5–10 câu thương mại bằng text chính chủ thì ghi FAIL + item fail, KHÔNG mở #21. Mốc cứng ≤15 ngày đầu T3 — thấy nguy cơ trễ báo đỏ SEO Lead + ghi `../index.md`.
 6. **Không viết bài ở đây**: bài entity (about, đội ngũ, founder, chính sách) chạy ở fork Content Production. Trạm này ra brief + spec + trạng thái, giữ link.
 7. **Evidence bắt buộc**: mỗi item EN-xx chấm ĐẠT/KHÔNG phải có bằng chứng — URL, ảnh Rich Results Test, ảnh SERP brand, ảnh câu trả lời AI — lưu `../02-raw/screenshots/own-site/` theo §8.
+8. **Ranh giới với Kho tri thức khách (KB)**: Brand Info Pack giữ danh tính và NAP; fact sản phẩm, chứng nhận, dự án lấy từ snapshot KB (`../00-client-context/kb-snapshot/<ngày>/`). `@id` trong schema là IRI trên domain khách (trường `resource` của trang KB), không phải slug KB. Schema và profile ra ngoài chỉ dùng claim `approved` + `public_ok`.
 
 ---
 

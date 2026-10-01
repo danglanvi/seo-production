@@ -239,3 +239,14 @@ Luật ghi:
 - `MIGRATION.md` thêm mục v2026.09.5 (gộp cả fact-fix 2 skill cùng ngày); `_MANIFEST.md` cập nhật ngày sync hàng 30 và 38. Chưa commit, chưa tag git. Instance (`PROJECTS/`) chưa nhận bản vá.
 - Files touched: `02-raw/knowledge/sop/10-offpage-process.md`, `02-raw/knowledge/sop/06-self-checklist/tier-1-traffic-users.md`, `02-raw/knowledge/_MANIFEST.md`, `MIGRATION.md`
 - Công đoạn: dòng Traffic users (T8 → T9) · WS: 07
+
+
+## [2026-10-01] work | v2026.10.1 — đọc Kho tri thức khách (KB) từ fork content — @claude
+- Vincent duyệt kế hoạch KB 01/10 (bản gốc KB ở fork Content `00-context/kb/`, SEO lấy snapshot). `tools/content_sync.py` thêm `--pull-kb` → `00-client-context/kb-snapshot/<ngày>/` (thử trên instance + fork giả trong scratchpad: snapshot đúng, checksum fork không đổi, lần 2 từ chối ghi đè).
+- Luật trạm thêm 1–2 dòng: root `CLAUDE.md` §11, `00-client-context`, `05-content-plan`, `14-entity` (luật 8), `06-onpage-internal-link`, `07-offpage`, `08-geo-ai-visibility`. `MIGRATION.md` mục v2026.10.1. Chưa commit, chưa tag, chưa migrate instance.
+- Files touched: `tools/content_sync.py`, `CLAUDE.md`, `00-client-context/CLAUDE.md`, `05-content-plan/CLAUDE.md`, `14-entity/CLAUDE.md`, `06-onpage-internal-link/CLAUDE.md`, `07-offpage/CLAUDE.md`, `08-geo-ai-visibility/CLAUDE.md`, `MIGRATION.md`
+
+## [2026-10-01] work | đồng bộ nguồn sự thật với repo content qua GitHub (bổ sung v2026.10.1) — @claude
+- Vincent chốt 01/10: giữ 2 repo mỗi khách, kéo chéo qua GitHub, mỗi loại dữ liệu một repo chủ. Mới: `tools/project_sync.py`, `_REFERENCE/project-sync.md`, `_TEMPLATES/project-sync.yaml`. Sửa: `CLAUDE.md` §11, `SETUP.md` bước 7, `COMMANDS.md`, `AGENTS.md` (mục mới cho mọi runtime), `.gitignore` (`.peer/`), `MIGRATION.md`.
+- Kiểm: chạy thật với `GTV-SEO-Agency/content-production-minh-tuan-mobile` trong scratchpad (content-status 5 bài, delivered 1 bài; KB bỏ qua vì repo content chưa có KB), lần 2 cùng ngày từ chối ghi đè snapshot. Chưa commit, chưa migrate instance.
+- Files touched: `tools/project_sync.py`, `_REFERENCE/project-sync.md`, `_TEMPLATES/project-sync.yaml`, `CLAUDE.md`, `SETUP.md`, `COMMANDS.md`, `AGENTS.md`, `.gitignore`, `MIGRATION.md`

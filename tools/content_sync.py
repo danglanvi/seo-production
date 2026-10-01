@@ -3,6 +3,7 @@
 
   python3 tools/content_sync.py --fork "../Content Production - <client>"            # → 05-content-plan/content-tracking/content-status.md
   python3 tools/content_sync.py --fork "<fork>" --pull-delivered                     # + copy bài humanized/published-gdoc → content-tracking/delivered/<slug>.md
+  python3 tools/content_sync.py --fork "<fork>" --pull-kb                            # + chép Kho tri thức khách 00-context/kb/ → 00-client-context/kb-snapshot/<YYYY-MM-DD>/
 
 Đọc `index.md` (bảng có cột slug + status), `log.md` (ngày đổi status gần nhất), `08-humanized/**/<slug>.md`, `09-publish-gdoc/**/<slug>.md` của fork. Không ghi gì vào fork.
 """
@@ -63,6 +64,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--fork", required=True)
     ap.add_argument("--pull-delivered", action="store_true")
+    ap.add_argument("--pull-kb", action="store_true")
     ap.add_argument("--stuck-days", type=int, default=14)
     a = ap.parse_args()
     fork = Path(a.fork).expanduser().resolve()
@@ -106,6 +108,18 @@ def main():
                 shutil.copy2(src, dd / f"{r['slug']}.md")
                 n += 1
         print(f"✓ delivered/: {n} file (bản để onpage/đăng — sửa ở fork rồi sync lại)")
+
+    if a.pull_kb:
+        kb = fork / "00-context" / "kb"
+        if not kb.is_dir():
+            print("– fork chưa có 00-context/kb/ — bỏ qua --pull-kb")
+            return
+        snap = ROOT / "00-client-context" / "kb-snapshot" / today.isoformat()
+        if snap.exists():
+            raise SystemExit(f"{snap} đã có — snapshot mỗi ngày một bản, không ghi đè")
+        shutil.copytree(kb, snap)
+        n = sum(1 for p in snap.rglob("*") if p.is_file())
+        print(f"✓ kb-snapshot/{today.isoformat()}/: {n} file (chỉ đọc — sửa fact ở fork rồi kéo snapshot mới)")
 
 
 if __name__ == "__main__":

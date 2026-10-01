@@ -36,3 +36,6 @@ __pycache__/
 02-raw/contracts-proposals/*.pdf
 02-raw/seo-data/**/*.xlsx
 09-reporting/samples/*.pdf
+
+# ===== Bản clone tạm của repo cùng khách (tools/project_sync.py) =====
+.peer/

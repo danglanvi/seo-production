@@ -42,6 +42,7 @@ Gói 8/12 tháng retiming theo `../02-raw/knowledge/sop/09-timeline/10-thang-thu
 | Access GSC/Ahrefs (≥1 nguồn) + gap analysis từ WS03 (#2) | Traffic plan theo `../_TEMPLATES/traffic-plan.md` + ma trận content theo `../_TEMPLATES/content-plan-matrix.md` |
 | Competitor topical coverage + momentum benchmark | Publication calendar (5-phase, patternless) + Content Brief top 20 pages |
 | Bài + self-check nhận về từ fork `Content Production - <client>/` | Verdict QC bài + tracking link/trạng thái (folder này không chứa bài) |
+| Snapshot Kho tri thức khách `../00-client-context/kb-snapshot/<ngày>/` (nếu có) | Topical map: mỗi node ghi trang KB / `product_id` tương ứng + cột "KB sẵn sàng / gap"; gap → câu hỏi gửi fork content đưa vào `open-questions.md` |
 
 Naming: `<CLIENT>_<slug>_v<N>.md` (vd `<CLIENT>_topical-map_v1.md`). File đã tồn tại → tăng version, không đè.
 

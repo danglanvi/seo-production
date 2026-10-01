@@ -99,6 +99,7 @@ Lead + team chốt **Tier 2 checklist nào được bật** cho dự án này (t
 - Fork `Content Production - <client>/` theo `SETUP.md` bên đó (setup brand riêng).
 - Link chéo 2 chiều: ghi path fork vào `05-content-plan/README.md` của instance này.
 - Nhắc lại luật: phần VIẾT BÀI (công đoạn 13, 15, 16, 19) chạy ở fork; bên này chỉ giữ plan + tracking + QC kết quả.
+- **Đồng bộ nguồn sự thật (01/10/2026):** chép `_TEMPLATES/project-sync.yaml` ra root của **cả** repo này và repo content, điền `seo_repo` + `content_repo` giống nhau, commit + push cả hai. Từ đó mỗi team chạy `pull` ở repo mình để có dữ liệu của team kia (`_REFERENCE/project-sync.md`). Khách B2B kỹ thuật / nhiều SKU: nhắc team content dựng Kho tri thức khách (`00-context/kb/`) ngay sau kick-off.
 
 ### Bước 8 — Bookkeeping
 

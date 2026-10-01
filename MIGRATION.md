@@ -1,5 +1,5 @@
 ---
-master_version: v2026.09.5
+master_version: v2026.10.1
 ---
 
 # MIGRATION — Cập nhật instance lên version master mới
@@ -15,6 +15,15 @@ master_version: v2026.09.5
 ---
 
 ## 1. Có gì mới
+
+### v2026.10.1 (2026-10-01) — Đọc Kho tri thức khách (KB) từ fork content
+
+Vincent duyệt 01/10. Fork content giữ bản gốc fact của khách ở `00-context/kb/` (sổ fact + catalog sản phẩm/biến thể); instance SEO chỉ đọc snapshot.
+
+- **Tool:** `tools/content_sync.py --pull-kb` chép bundle `kb/` của fork vào `00-client-context/kb-snapshot/<YYYY-MM-DD>/` (mỗi ngày một bản, không ghi đè, không ghi gì vào fork).
+- **Luật trạm (1–2 dòng mỗi trạm):** root `CLAUDE.md` §11 (điểm chạm KB) · `00-client-context` (tài liệu kỹ thuật chuyển về fork; #3 tra FD-11/14/15/22 trong snapshot) · `05-content-plan` (node topical map ghi trang KB + cột gap) · `14-entity` luật 8 (Brand Info Pack giữ danh tính/NAP, KB giữ fact sản phẩm; `@id` là IRI trên domain khách) · `06-onpage-internal-link` (link theo quan hệ KB, bảng thông số + schema Product từ catalog, giá/tồn kho từ hệ thống bán hàng) · `07-offpage` + `08-geo-ai-visibility` (output ra ngoài chỉ dùng claim `approved` + `public_ok`; GEO đối chiếu câu trả lời AI với KB).
+- **Đồng bộ qua GitHub (nguồn sự thật chung giữa team SEO và team content):** `tools/project_sync.py pull` kéo repo content cùng khách (theo `project-sync.yaml` ở root) về `.peer/content/` rồi chạy `content_sync.py` (trạng thái bài + bài đã humanize + KB snapshot kèm `_source.md`). Repo content có lệnh đối xứng kéo hồ sơ khách, KPI, OKRs, cấu trúc URL, topical map/plan, internal link plan, GEO, entity (không bao giờ kéo `hop-dong-*`). Bảng "ai giữ dữ liệu nào": `_REFERENCE/project-sync.md` (mới). Mẫu cấu hình `_TEMPLATES/project-sync.yaml` (mới). `SETUP.md` bước 7, `COMMANDS.md`, `AGENTS.md`, `.gitignore` (`.peer/`) cập nhật. Thử thật với GitHub 01/10: kéo `content-production-minh-tuan-mobile` (5 bài, 1 bài delivered).
+- **Port sang instance:** GHI ĐÈ `tools/content_sync.py`, `tools/project_sync.py` (mới), `_REFERENCE/project-sync.md`, `_TEMPLATES/project-sync.yaml`, 7 file `CLAUDE.md` trên, `SETUP.md`, `COMMANDS.md`; PATCH TAY `AGENTS.md` (mục mới cuối file) và `.gitignore` (thêm `.peer/`). Sau đó chép `project-sync.yaml` ra root instance, điền 2 repo, commit + push. Không đổi knowledge pack.
 
 ### v2026.09.5 (2026-09-28) — Quy định về tăng CTR theo leak Google + fact-fix dẫn patent
 

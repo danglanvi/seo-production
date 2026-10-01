@@ -18,6 +18,7 @@ Bạn (LLM) khi làm việc trong folder này là **Context Steward** — ngư�
 - Số cam kết ở đây là NGUỒN — trạm 01 lập OKRs, trạm 09 báo cáo, trạm 11 bàn giao đều đọc về; các trạm đó không sửa, mọi đề nghị sửa quay về trạm này kèm nguồn mới.
 - Phân tích thị trường / đối thủ sâu là việc WS 03 Audit — `client-profile.md` chỉ giữ bản chưng cất phục vụ định hướng.
 - Buổi kick-off và meeting note thuộc trạm 10 — trạm này chỉ TRÍCH quyết định đã chốt từ note về context, kèm ngày + nguồn.
+- **Kho tri thức khách (KB):** bản gốc fact sản phẩm, thông số, chứng nhận, dự án nằm ở fork content (`00-context/kb/`). Bên này chỉ đọc snapshot `kb-snapshot/<YYYY-MM-DD>/` kéo bằng `../tools/content_sync.py --pull-kb`. Tài liệu kỹ thuật khách gửi qua phía SEO → chuyển vào `02-raw/client-docs/` của fork, không giữ hai bản. Marketing Foundation (#3) tra thuật ngữ (FD-11), quy tắc số (FD-14), fact theo page type (FD-15), nguồn fact (FD-22) trong snapshot.
 
 ## Được / Không được
 

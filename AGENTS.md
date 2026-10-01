@@ -24,3 +24,8 @@ Trước mọi task trong scope này, đọc toàn bộ `CLAUDE.md` cùng thư m
 - Skill canonical của repo: `skills/`; runtime mirror `.claude/skills/` (Claude) + `.agents/skills/` (Codex/Antigravity) — mirror committed sẵn, KHÔNG sửa trực tiếp. Sửa skill = sửa trong `skills/` rồi đồng bộ mirror: bản standalone chạy `bash _SETUP/sync-skills.sh` (đóng gói sẵn trong repo; bản cũ `tools/sync-skills.sh` vẫn dùng được); trong workspace Vincent dùng `tools/sync-agent-skills.rb` ở root workspace như cũ.
 - Tên tool cũ (AskUserQuestion/WebFetch/MCP cụ thể) = capability tương đương của runtime hiện tại; thiếu thì dùng fallback trong skill và ghi rõ giới hạn dữ liệu.
 - `gtv-client-report` và `gtv-weekly-report` chỉ có ở Claude Code (không nằm trong `.agents/skills/`). Codex/Antigravity chỉ làm draft thủ công theo template + luật trạm `09-reporting`, ghi rõ giới hạn và không gửi thẳng cho khách.
+
+## Kho tri thức khách + đồng bộ với repo content (mọi runtime, thêm 01/10/2026)
+
+- Fact của khách (sản phẩm, thông số, chứng nhận, dự án) có bản gốc ở Kho tri thức của repo content. Repo này chỉ đọc snapshot: `python3 tools/project_sync.py pull` → `00-client-context/kb-snapshot/<ngày>/` (+ trạng thái bài, bài đã humanize). Output ra ngoài (schema, offsite, sửa GEO) chỉ dùng claim `approved` + `public_ok`.
+- Repo content kéo ngược hồ sơ khách, KPI, topical map, entity của repo này. Mỗi loại dữ liệu chỉ sửa ở repo chủ. Luật: `_REFERENCE/project-sync.md`.

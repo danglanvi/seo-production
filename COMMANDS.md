@@ -18,6 +18,7 @@
 | `chạy trọn công đoạn <n>` / `chạy <n>→<m> nối tiếp` | Điều phối nâng cao (`ORCHESTRATOR.md` mục 2): quản đốc tra bảng, xếp việc nhiều công đoạn, chốt giám đốc; sub-agent chỉ khi thêm "song song"/"fan-out" | Lead | `chạy trọn công đoạn 13→14` |
 | `ingest <file> vào 02-raw` | Phân loại raw theo signal (`CLAUDE.md` §2.1) + chưng cất context — không sửa raw, op `ingest` | Mọi người | `ingest hop-dong-acme.pdf vào 02-raw` |
 | `feedback: <nội dung>` | Append `12-feedback-lessons/feedback-log.md`; pattern lặp ≥2 lần → đề xuất promote lesson (§9) | Mọi người | `feedback: khách muốn mục GEO riêng trong báo cáo` |
+| `kéo dữ liệu content` / `project sync` | `python3 tools/project_sync.py pull`: kéo repo content cùng khách từ GitHub → trạng thái bài, bài đã humanize, snapshot Kho tri thức khách (`_REFERENCE/project-sync.md`) | Mọi người, đầu phiên | `kéo dữ liệu content` |
 
 Nội quy chung: root `CLAUDE.md` (4 thao tác §2, pre-work §3) + `AGENT.md`.
 

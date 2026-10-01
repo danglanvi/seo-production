@@ -22,6 +22,7 @@ Công đoạn phụ trách: **#7 (execute) · #18 · #23** + **khâu đăng/sử
 | Topical map + SCN (`../05-content-plan/`) | IL plan theo `../_TEMPLATES/internal-link-plan.md` |
 | Cấu trúc site + wireframe (`../04-structure-ux-cro/`) + **entity plan/spec schema** (`../14-entity/`) | Schema đã validate gắn đúng URL + kết quả validator đính report |
 | Tier đã bật tại kick-off (Ghi chú dòng #12 `../index.md`) | Update `../index.md` (bảng B + D) + append `../log.md` |
+| Snapshot Kho tri thức khách `../00-client-context/kb-snapshot/<ngày>/` (nếu có) | Internal link theo quan hệ trong KB (sản phẩm ↔ ứng dụng ↔ tiêu chuẩn ↔ dự án; gốc ↔ biến thể). Bảng thông số onpage và thuộc tính schema Product lấy từ catalog; giá/tồn kho trong schema lấy từ hệ thống bán hàng của site, không lấy từ KB |
 
 - Naming: `<CLIENT>_onpage-batch-t<N>_v<N>.md` · `<CLIENT>_internal-link-plan_v<N>.md` — lưu trong folder này; file đã tồn tại → tăng version, không đè.
 - **Batch report bắt buộc là BẢNG**: mỗi dòng = 1 URL × score `/23` (hoặc `/31`, `/39` theo tier đã bật) × item FAIL (theo ID) × ngày fix dự kiến. Không viết batch report dạng prose chung chung.

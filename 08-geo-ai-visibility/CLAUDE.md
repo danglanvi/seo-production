@@ -22,6 +22,7 @@ Công đoạn phụ trách theo **lớp GEO v2 — 6 điểm chạm** (`../02-ra
 | AI answer hiện tại cho queries (user paste / screenshot — không bịa) | GEO audit + đề xuất rewrite per chunk (chỉ chunk FAIL) |
 | Danh sách competitor (5-7) + core services / top categories | Report đợt FS/AIO: danh sách query + kết quả cite per query |
 | Lịch bảng C `../index.md` (T1 / T6 / T10 hoặc retiming gói) | Update `../index.md` (bảng B + D) + append `../log.md` |
+| Snapshot Kho tri thức khách `../00-client-context/kb-snapshot/<ngày>/` (nếu có) | Prompt set dựng từ audiences × applications × standards của KB. Đối chiếu câu trả lời AI với claim KB → danh sách fact AI nói sai + hướng sửa onsite/offsite (chỉ dùng claim `approved` + `public_ok`) |
 
 - Naming: `<CLIENT>_geo-baseline_v<N>.md` · `<CLIENT>_geo-dot-<1|2>_v<N>.md` — lưu trong folder này; đã tồn tại → tăng version.
 - **Evidence bắt buộc:** screenshot câu trả lời AI lưu `../02-raw/screenshots/serp-ai/` đúng naming `YYYYMMDD_<subject-slug>_<scope>.png` (§8 root) — deliverable nhúng bằng relative path, không copy ảnh vào folder này, không để ảnh chỉ trong chat.
