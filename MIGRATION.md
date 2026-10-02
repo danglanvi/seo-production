@@ -1,5 +1,5 @@
 ---
-master_version: v2026.10.1
+master_version: v2026.10.2
 ---
 
 # MIGRATION — Cập nhật instance lên version master mới
@@ -15,6 +15,16 @@ master_version: v2026.10.1
 ---
 
 ## 1. Có gì mới
+
+### v2026.10.2 (2026-10-02) — Knowledge pack: SOP 12 mô hình backlink stack + SOP 10 v1.2
+
+Vincent duyệt 02/10. Nguồn: tài liệu training nội bộ "Bí thuật backlink thất truyền" bản 6, đã ingest vào kho gốc wiki Semantic SEO.
+
+- **Knowledge pack, file mới:** `02-raw/knowledge/sop/12-backlink-stack-models.md` (v1.0). Nội dung ở mức bản đội SEO: quy trình duyệt, khung T.T.T, thư viện mô hình (DAS, TAS, 08 method, báo có buffer), luật tầng T1/T2/T3, bộ luật thiết kế, chuẩn tài sản MS-01→14, đo ba tầng với bốn mốc kiểm, kill switch, worksheet, rubric 10 tiêu chí. Không gồm bảng năm dạng textlink báo, cách tìm nguồn trust cao, sáu mô hình mở rộng, danh sách vendor (SEO Lead và SEO Director giữ).
+- **Knowledge pack, re-sync:** `sop/10-offpage-process.md` (v1.2: §1.6 khung T.T.T bản 2026; §4 người duyệt tier ⚠ là SEO Lead xem trước, SEO Director chốt mọi phương án; textlink báo ở trang chủ, chuyên mục, sitewide sang tier ⚠; luật PBN hai trường hợp; link wheel giữa các domain rời vào tier ⛔) và `sop/06-self-checklist/tier-1-offpage-backlink.md` (OF-05, OF-08; số item và P0 không đổi).
+- **Skill:** `backlink-plan` 1.2. Mức Aggressive (PBN, parasite, mô hình stack, textlink báo ở trang chủ/chuyên mục/sitewide) do SEO Lead xem trước, SEO Director chốt; làm được cho khách khi phương án đã duyệt; có luật tầng đi kèm. Bỏ câu "GTV không làm cho khách".
+- **Chưa đổi:** ma trận nạp (`02-raw/knowledge/README.md` mục 1, `_REFERENCE/runtime-workstream-matrix.md`, `CLAUDE.md` §5.2), khung công đoạn, `index.md`. SOP 12 chưa có mốc trong quy trình 10 tháng; Vincent cập nhật sau. Cho tới lúc đó, mô hình stack chỉ chạy khi có phương án được SEO Director chốt.
+- **Port sang instance:** GHI ĐÈ 3 file knowledge pack trên, `02-raw/knowledge/_MANIFEST.md`, `skills/backlink-plan` và mirror. Batch đang chạy có hạng mục thuộc OF-08: bổ sung chữ ký SEO Director nếu trước đó chỉ có SEO Lead duyệt.
 
 ### v2026.10.1 (2026-10-01) — Đọc Kho tri thức khách (KB) từ fork content
 

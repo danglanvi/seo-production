@@ -2,7 +2,7 @@
 type: sop
 tier: 1
 phase: offpage-backlink
-last_updated: 2026-07-19
+last_updated: 2026-10-02
 source_files:
   - raw/_ingested/Quy trình SEO PSP - All In One/2. QUY TRÌNH SEO Project/10. Quy Trinh Offpage SEO/Checklist triển khai Bosting Linkjuice.xlsx
   - raw/_ingested/Quy trình SEO PSP - All In One/2. QUY TRÌNH SEO Project/10. Quy Trinh Offpage SEO/6. Tiêu chuẩn Triển khai backlinks.xlsx
@@ -32,10 +32,10 @@ tags: [sop, tier-1, offpage, backlink, textlink, self-checklist, quality-gate]
 | OF-02 | Target URL lăng kính supporting-first | skill `backlink-plan` B1 · [[Internal Linking Rules and Strategy]] |
 | OF-03 | Anchor plan đúng canonical framework | `anchor-ratio-framework.md` (4 lớp) |
 | OF-04 | Velocity theo nhịp đối thủ | skill `backlink-plan` B4 |
-| OF-05 | Tiêu chí site đặt link (Theme-Trust-Traffic) | [[Source Authority]] |
+| OF-05 | Tiêu chí site đặt link (T.T.T bản 2026: Theme 35 · Traffic 35 · Trust 30) | [[Source Authority]] · `sop/12-backlink-stack-models.md` §2 |
 | OF-06 | Footprint check nguồn | [[TrustRank]] |
 | OF-07 | Authority-Aggression per nguồn | `anchor-ratio-framework.md` Nguyên tắc 3 |
-| OF-08 | Legacy tactic (PBN/Web2.0/RSS/Forum spin) ⚠ Lead duyệt | — |
+| OF-08 | Legacy tactic + mô hình stack ⚠ Lead xem trước, Director chốt | `sop/12-backlink-stack-models.md` |
 | OF-09 | Đa dạng nền tảng + dofollow/nofollow + cap domain | — |
 | OF-10 | Phantom Keywords cho bài offpage | [[Query Network]] |
 | OF-11 | Bài unique — không spin | — |
@@ -141,6 +141,8 @@ tags: [sop, tier-1, offpage, backlink, textlink, self-checklist, quality-gate]
 
 **Tóm tắt:** Mỗi domain/URL trong batch được đánh giá theo thứ tự **Theme (liên quan ngành) → Traffic (thật) → Trust**, hiện đại hóa từ tiêu chuẩn 2020/2025: (1) Theme: keyword ở domain/URL/title, có ranking topic liên quan; (2) Traffic thật: page traffic >100 (bài có sẵn) hoặc site traffic >1.000 (guest post) trên Ahrefs — tùy thị trường; (3) Trust: DR >30 tham chiếu, backlink profile tự nhiên; (4) site được index bình thường, không bị penalty; (5) outbound profile sạch: domain không bán link tràn lan, external link ít, link out cùng theme.
 
+**Cập nhật 02/10/2026 (khung T.T.T bản 2026, `sop/12` §2):** thang điểm là **Theme 35, Traffic 35, Trust 30** trên tổng 100 (Vincent chốt 02/10/2026, kinh nghiệm GTV). Theme xét ở cấp trang: Title, URL và đoạn chữ quanh link có từ khoá của trang đích; website cùng ngành là điểm cộng. Trust tách hai phần: sức mạnh (DR, UR, số link ra) và TrustRank (trang có được nguồn cận seed trỏ tới không). Câu "Theme là ưu tiên quan trọng nhất" ở phần mô tả bên dưới là bản 2025, giữ làm lịch sử. Kiểm thêm chính trang đặt link: đã index chưa, chuyên mục còn cập nhật không, có link nào trỏ vào không.
+
 **Mô tả đầy đủ:**
 Phân loại ưu tiên theo hệ 2025 (`4. Research & đánh giá backlinks.xlsx`):
 - **Loại 1:** Theme + Trust + Traffic, đặt trên bài đã có traffic (>100 page traffic), keyword ở domain/URL/title → tốt nhất cho tier 1.
@@ -195,23 +197,24 @@ Phân loại ưu tiên theo hệ 2025 (`4. Research & đánh giá backlinks.xlsx
 
 ---
 
-### OF-08 — Legacy tactics (PBN / Web 2.0 / RSS / Forum spin / backlink 3rd party) ⚠ risk-controlled — Lead duyệt 🔴 P0
+### OF-08 — Legacy tactics và mô hình stack (PBN / Web 2.0 / RSS / Forum spin / backlink 3rd party / DAS, TAS, 08 method, báo có buffer) ⚠ risk-controlled — Lead xem trước, Director chốt 🔴 P0
 
 **Nhóm:** Chất lượng nguồn
 
-**Tóm tắt:** Các chiến thuật legacy trong bộ Boosting Linkjuice — PBN/PBN mininet/The 08 Method/10-minutes Tier 2, Web 2.0 articles brand, RSS Feedburner, Forum spin content, backlink 3rd party (mua Konker...) — **GIỮ trong kho chiến thuật nhưng KHÔNG phải mặc định**. Batch chứa bất kỳ hạng mục nào trong nhóm này → phải có **Lead/Vincent duyệt bằng văn bản** (risk level = aggressive trong plan), client GTV mặc định KHÔNG dùng.
+**Tóm tắt:** Các chiến thuật legacy trong bộ Boosting Linkjuice — PBN/PBN mininet/The 08 Method/10-minutes Tier 2, Web 2.0 articles brand, RSS Feedburner, Forum spin content, backlink 3rd party (mua Konker...) — **GIỮ trong kho chiến thuật nhưng KHÔNG phải mặc định**. Batch chứa bất kỳ hạng mục nào trong nhóm này → phải có **SEO Lead xem trước và SEO Director chốt bằng văn bản** (risk level = aggressive trong plan). Nhóm này không phải hạng mục mặc định; PBN, parasite và mô hình stack làm được cho khách khi đã có duyệt (Vincent xác nhận 02/10/2026). Từ 02/10/2026 luật này áp cho cả mô hình stack ở `sop/12` (DAS, TAS, 08 method, báo có buffer) và textlink báo ở trang chủ, chuyên mục, sitewide.
 
 **Mô tả đầy đủ:**
 1. Nhận diện hạng mục legacy trong batch: PBN các dạng, Web 2.0 copy bài, RSS/hub site, forum bài spin, link mua 3rd party (chỉ từng cho phép ở T2/T3).
-2. Có → check plan: `$RISK_LEVEL = aggressive` + chữ ký duyệt của Lead? Không có → bỏ hạng mục đó ra khỏi batch.
+2. Có → check plan: `$RISK_LEVEL = aggressive` + chữ ký duyệt của SEO Director (sau khi SEO Lead đã xem)? Không có → bỏ hạng mục đó ra khỏi batch.
 3. Được duyệt → áp nguyên các guardrail legacy đi kèm: PBN (authority link out ≥ số link về money site, outlink cùng Topical Trust Flow, bài ≥400 chữ, ≤3 link out, giãn 2 ngày, 3-6 link/domain); Forum (DA>10/DR>15, index >5.000 bài, ≥50% forum đúng chủ đề, ≤15 backlink/forum); Web 2.0 (DA>80, 50/50 do-no); 3rd party (không bao giờ trỏ thẳng money site — chỉ T2/T3).
 4. Ghi riêng các link nhóm này trong master list với tag `risk-controlled` — để disavow được khi cần.
+5. Batch thuộc một mô hình stack → kèm worksheet và rubric 10 tiêu chí đã chấm (`sop/12` §9), tài sản đạt MS-01→14 (`sop/12` §6), kill switch ghi trước (`sop/12` §8). Luật tầng: link rẻ, số lượng lớn không chạm website; PBN GTV tự dựng bài bản được trỏ thẳng website như T1, PBN order ngoài từ T2 trở xuống; đợt T2 chỉ mở khi tầng ngay trên đã index.
 
 **Ví dụ Đạt / Không Đạt:**
 ✅ Dự án nội bộ, Vincent duyệt aggressive: batch PBN 5 link theo đúng guardrail, tag riêng trong master list.
 ❌ Client GTV, batch lẫn 10 link web 2.0 spin "cho đa dạng" — không ai duyệt.
 
-**Nguồn:** Chỉ đạo Vincent 07/2026 (không xóa tactic cũ — gắn gate) · `backlink-plan` B3 (aggressive chỉ khi Vincent duyệt rõ; GTV không làm PBN/parasite cho khách) · Legacy: `Checklist triển khai Bosting Linkjuice.xlsx` sheets "plan PBN", "đi link PBN", "the 08 method", "10 minutes Tier 2", "web 2.0 articles brands", "RSS feedburner", "forum 2.0", "backlinks 3rd party".
+**Nguồn:** Training "Bí thuật backlink thất truyền" 27/09/2026 (người duyệt, luật PBN, mô hình stack — cập nhật 02/10/2026) · Chỉ đạo Vincent 07/2026 (không xóa tactic cũ — gắn gate) · `backlink-plan` v1.2 B3 (aggressive: SEO Lead xem trước, SEO Director chốt; PBN/parasite làm được cho khách khi đã duyệt) · Legacy: `Checklist triển khai Bosting Linkjuice.xlsx` sheets "plan PBN", "đi link PBN", "the 08 method", "10 minutes Tier 2", "web 2.0 articles brands", "RSS feedburner", "forum 2.0", "backlinks 3rd party".
 
 ---
 

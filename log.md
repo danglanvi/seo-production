@@ -250,3 +250,28 @@ Luật ghi:
 - Vincent chốt 01/10: giữ 2 repo mỗi khách, kéo chéo qua GitHub, mỗi loại dữ liệu một repo chủ. Mới: `tools/project_sync.py`, `_REFERENCE/project-sync.md`, `_TEMPLATES/project-sync.yaml`. Sửa: `CLAUDE.md` §11, `SETUP.md` bước 7, `COMMANDS.md`, `AGENTS.md` (mục mới cho mọi runtime), `.gitignore` (`.peer/`), `MIGRATION.md`.
 - Kiểm: chạy thật với `GTV-SEO-Agency/content-production-minh-tuan-mobile` trong scratchpad (content-status 5 bài, delivered 1 bài; KB bỏ qua vì repo content chưa có KB), lần 2 cùng ngày từ chối ghi đè snapshot. Chưa commit, chưa migrate instance.
 - Files touched: `tools/project_sync.py`, `_REFERENCE/project-sync.md`, `_TEMPLATES/project-sync.yaml`, `CLAUDE.md`, `SETUP.md`, `COMMANDS.md`, `AGENTS.md`, `.gitignore`, `MIGRATION.md`
+
+## [2026-10-02] refactor | Knowledge pack: SOP 12 mô hình backlink stack + SOP 10 v1.2 — Vincent duyệt — @claude
+
+- Re-sync từ kho gốc: `sop/10-offpage-process.md` (v1.2), `sop/06-self-checklist/tier-1-offpage-backlink.md` (OF-05, OF-08). File mới: `sop/12-backlink-stack-models.md` (v1.0, mức bản đội SEO).
+- Nguồn: training nội bộ "Bí thuật backlink thất truyền" bản 6. Người duyệt mọi phương án grey hat và black hat: SEO Lead xem trước, SEO Director chốt.
+- Chưa nối SOP 12 vào ma trận nạp, khung công đoạn và `index.md`; chờ Vincent cập nhật quy trình 10 tháng. Skill `backlink-plan` chưa sửa.
+- `MIGRATION.md` thêm mục v2026.10.2; `_MANIFEST.md` cập nhật hàng 29, 38, thêm hàng 41. Chưa commit, chưa tag git. Instance (`PROJECTS/`) chưa nhận bản vá.
+- Files touched: `02-raw/knowledge/sop/10-offpage-process.md`, `02-raw/knowledge/sop/12-backlink-stack-models.md`, `02-raw/knowledge/sop/06-self-checklist/tier-1-offpage-backlink.md`, `02-raw/knowledge/_MANIFEST.md`, `MIGRATION.md`
+- Công đoạn: 20, 25◇, 26 · WS: 07
+
+## [2026-10-02] skill-update | backlink-plan 1.2: PBN, parasite làm được cho khách khi được duyệt — Vincent duyệt — @claude
+
+- `skills/backlink-plan/SKILL.md` 1.1 → 1.2 theo canonical root: mức Aggressive do SEO Lead xem trước, SEO Director chốt; luật tầng cho PBN, parasite, link rẻ số lượng lớn; bỏ câu "GTV không làm cho khách". Chép tay 3 nơi (skills, .claude/skills, .agents/skills), không chạy sync toàn bộ.
+- Checklist `tier-1-offpage-backlink.md` re-sync lần 2 trong ngày (OF-08 khớp câu chữ skill). `MIGRATION.md` mục v2026.10.2 bổ sung dòng Skill.
+- Files touched: `skills/backlink-plan/SKILL.md` (+ 2 mirror), `02-raw/knowledge/sop/06-self-checklist/tier-1-offpage-backlink.md`, `MIGRATION.md`
+- Công đoạn: 25◇, 26 · WS: 07
+
+## [2026-10-02] refactor | Knowledge pack: thang điểm T.T.T 35/35/30 + SOP 12 v1.1 — Vincent duyệt — @claude
+
+- Re-sync lần 3 trong ngày: `sop/12-backlink-stack-models.md` (v1.1), `sop/10-offpage-process.md` (§1.6), `sop/06-self-checklist/tier-1-offpage-backlink.md` (OF-05).
+- Nội dung: thang điểm chấm nguồn link là Theme 35, Traffic 35, Trust 30 trên tổng 100; chốt cách ghi các điểm Google không công bố (thừa hưởng trust của nền tảng, link giữa subdomain cùng nền, seed nhóm trust rank cao nhất, keyword trong subdomain và URL, giới hạn 200 anchor của sitewide).
+- Thuộc mục v2026.10.2 của `MIGRATION.md`, không tăng version. Chưa commit; instance chưa nhận.
+- Files touched: 3 file knowledge pack trên
+- Công đoạn: 20, 25◇, 26 · WS: 07
+

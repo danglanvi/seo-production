@@ -2,7 +2,7 @@
 name: backlink-plan
 description: "Lập kế hoạch backlink toàn diện — DECISION layer của bộ skill backlink. Use when: (1) 'lập plan backlink cho [domain/client]', 'backlink recommend', 'nên đi link vào đâu', 'chọn target URL + anchor text'."
 metadata:
-  version: "1.1"
+  version: "1.2"
 ---
 
 # Backlink Plan — Decision Layer
@@ -49,7 +49,7 @@ Theo [references/anchor-ratio-framework.md](references/anchor-ratio-framework.md
 Chọn theo mục tiêu + `$RISK_LEVEL` + budget (evidence 2026: digital PR #1; niche edit > guest post mới; taxonomy đầy đủ ở [[Link Building]]):
 - **Conservative (default, client GTV):** guest post blog cá nhân đúng theme + textlink PR (→ `textlink-analyzer`) + linkable asset/data study + reclaim/unlinked mention.
 - **Moderate:** + niche edit trên aged pages + digital PR local.
-- **Aggressive (chỉ khi Vincent duyệt rõ):** flag rủi ro từng hạng mục — KHÔNG mặc định đề xuất PBN/parasite (GTV không làm cho khách).
+- **Aggressive (SEO Lead xem trước, SEO Director chốt):** PBN, parasite, mô hình stack (DAS, TAS, 08 method, báo có buffer), textlink báo ở trang chủ/chuyên mục/sitewide. **Làm được cho khách** khi phương án đã duyệt (Vincent chốt 02/10/2026); không tự đưa vào plan khi `$RISK_LEVEL` chưa là aggressive. Flag rủi ro từng hạng mục và đặt đúng tầng: PBN GTV tự dựng bài bản (content thật, có traffic) trỏ thẳng money page như T1; PBN order ngoài luôn từ T2 trở xuống; parasite trỏ vào tài sản T1, không trỏ thẳng money page; link rẻ số lượng lớn chỉ chạm tầng đệm. Mỗi hạng mục ghi điều kiện dừng và tag `risk-controlled` trong CSV. Luật thiết kế, chuẩn tài sản, đo ba tầng: SOP 12 `12-backlink-stack-models.md` (wiki Semantic SEO `sop/`; repo Production `02-raw/knowledge/sop/`).
 - **Entity/foundational** (social, profile, citations) → tách sang Entity campaign, KHÔNG trộn (quyết định GTV 2021).
 
 ### Bước 4 — Velocity & timeline
@@ -90,7 +90,8 @@ Kèm **CSV/sheet** mỗi dòng 1 link dự kiến: `Domain/nguồn | Dạng (fre
 - Anchor ratio cứng bỏ qua SERP consensus; exact vượt trần; lặp anchor trong tháng.
 - Trộn Entity campaign vào backlink plan.
 - Velocity vượt nhịp đối thủ nhiều lần ("bung 5.000 link 1 ngày").
-- Đề xuất PBN/parasite mặc định cho client GTV.
+- Đưa PBN/parasite/mô hình stack vào plan khi `$RISK_LEVEL` chưa là aggressive hoặc chưa có SEO Lead xem và SEO Director chốt.
+- PBN order ngoài, parasite hoặc link rẻ số lượng lớn trỏ thẳng money page.
 - Plan không có điều kiện dừng — link mãi cho keyword không nhúc nhích thay vì quay lại sửa content.
 
 ## References & wiki

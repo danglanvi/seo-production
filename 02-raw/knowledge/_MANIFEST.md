@@ -32,7 +32,7 @@ Luật:
 | 17 | 08-onpage-checklist.md | Chưng cất — giữ nguyên P0-P23 (/23) + T2-P1..8 (/31) + T3-P1..8 (/39) + AX1-AX7 (chấm riêng) + luật scoring + luật "sửa nền trước"; lược evidence inline, cột cross-ref wikilink, bảng reconciliation OP1-OP55 | sop/08-onpage-checklist.md | WS06 Onpage & IL — #7, 13, 18, 23 · WS08 GEO (AX1-AX7) — #14, 21, 28 | 2026-08-29 (vá P14 strong-policy) |
 | 18 | 11-publish-wp.md | Copy nguyên — SOP đăng bài WordPress (2 flow input, gate pre-publish, kit wp-publish-workflow-kit, giới hạn kit) | sop/11-publish-wp.md | WS06 Onpage & IL — khâu publish #7, 13, 15, 16, 19, 23 | 2026-08-29 |
 
-## Bổ sung 19.7.2026 — Hệ checklist v3 (24 hàng, đều Copy nguyên)
+## Bổ sung 19.7.2026 — Hệ checklist v3 (25 hàng, đều Copy nguyên; hàng 41 thêm 02.10.2026)
 
 Hàng #6 (README.md) đã RE-SYNC 2026-07-19 (bản v3.1 — registry toàn hệ + 2 checklist treo #6 Batch 36). Các file mới:
 
@@ -49,7 +49,7 @@ Hàng #6 (README.md) đã RE-SYNC 2026-07-19 (bản v3.1 — registry toàn hệ
 | 26 | tier-1-entity.md | sop/06-self-checklist/ | WS06 — #13 gate cuối T1 & T3 (⚠ tactic gated) | 2026-07-19 |
 | 27 | checklist-entity-onsite-web.md | sop/06-self-checklist/ | WS06 — #13 deep-dive onsite per trang | 2026-07-19 |
 | 28 | tier-1-social-google-stack.md | sop/06-self-checklist/ | WS06 — entity offsite: social + Google Stack | 2026-07-19 |
-| 29 | tier-1-offpage-backlink.md | sop/06-self-checklist/ | WS07 — #20, 25◇, 26 per batch (P0 7) | 2026-07-19 |
+| 29 | tier-1-offpage-backlink.md | sop/06-self-checklist/ | WS07 — #20, 25◇, 26 per batch (P0 7); OF-05 khung T.T.T bản 2026, OF-08 mở rộng cho mô hình stack từ 02.10 | 2026-10-02 |
 | 30 | tier-1-traffic-users.md | sop/06-self-checklist/ | WS07 — T8-T9 ⚠ Director duyệt (kèm baseline thông số 19.7; Phụ lục B hình thức không dùng theo leak 28.9) | 2026-09-28 |
 | 31 | tier-1-geo.md | sop/06-self-checklist/ | WS08 — #14, 21, 28 (guardrail llms.txt/schema ≠ lever) | 2026-07-19 |
 | 32 | tier-1-gbp-local.md | sop/06-self-checklist/ | WS03/WS08 — dự án local, vận hành GBP hằng tháng | 2026-07-19 |
@@ -58,9 +58,10 @@ Hàng #6 (README.md) đã RE-SYNC 2026-07-19 (bản v3.1 — registry toàn hệ
 | 35 | tier-3-ranking-drop-runbook.md | sop/06-self-checklist/ | WS03 — sự kiện rớt hạng/Google update (triage + 10 nhánh) | 2026-07-19 |
 | 36 | checklist-xu-ly-ma-doc.md | sop/06-self-checklist/ | WS03 — sự kiện hack/mã độc (4 phase, 35 items) | 2026-07-19 |
 | 37 | checklist-khoi-phuc-seo-ranking.md | sop/06-self-checklist/ | WS03 — phục hồi SAU sự cố (gate sạch 5/5) | 2026-07-19 |
-| 38 | 10-offpage-process.md (sop/ gốc) | sop/10-offpage-process.md | WS07 — SOP offpage toàn diện (3 layer + method catalog 3 tier); §4 có mục tín hiệu người dùng từ 28.9 | 2026-09-28 |
+| 38 | 10-offpage-process.md (sop/ gốc) | sop/10-offpage-process.md | WS07 — SOP offpage toàn diện (3 layer + method catalog 3 tier); §4 có mục tín hiệu người dùng từ 28.9; v1.2 từ 02.10: khung T.T.T bản 2026, người duyệt tier ⚠ = SEO Lead xem trước, SEO Director chốt | 2026-10-02 |
 | 39 | checklist-phap-ly-content-website.md | sop/06-self-checklist/ | WS03 Audit T1 + WS05 per batch content — pháp lý content/website VN (PL-01→16, P0 7) | 2026-07-19 |
 | 40 | checklist-project-intake-tham-dinh.md | sop/06-self-checklist/ | Tiền dự án (trước SETUP instance) — go/no-go thẩm định, Director duyệt (PI-01→14 + 6 red-flags, P0 6) | 2026-07-19 |
+| 41 | 12-backlink-stack-models.md (sop/ gốc) | sop/12-backlink-stack-models.md | WS07 — mô hình backlink stack (⚠ SEO Lead xem trước, SEO Director chốt): khung T.T.T, thư viện mô hình, luật thiết kế, chuẩn tài sản MS-01→14, đo ba tầng, kill switch, worksheet, rubric. Chưa nối vào ma trận nạp và khung công đoạn; chờ Vincent cập nhật quy trình 10 tháng | 2026-10-02 |
 
 ## Nhóm KHÔNG copy
 

@@ -1,8 +1,9 @@
 ---
 type: sop
 status: draft
-last_updated: 2026-09-28
+last_updated: 2026-10-02
 sources:
+  - raw/_ingested/gtv-training-backlink-that-truyen-v6.md
   - raw/_ingested/Quy trình SEO PSP - All In One/2. QUY TRÌNH SEO Project/10. Quy Trinh Offpage SEO/2. Quy trình lập kế hoạch Link building - chưa có.xlsx
   - raw/_ingested/Quy trình SEO PSP - All In One/2. QUY TRÌNH SEO Project/10. Quy Trinh Offpage SEO/3. Link building offpage GTV.xlsx
   - raw/_ingested/Quy trình SEO PSP - All In One/2. QUY TRÌNH SEO Project/10. Quy Trinh Offpage SEO/3. Link building offpage GTV - bản đào tạo.xlsx
@@ -15,6 +16,9 @@ sources:
 related:
   - "[[Link Building]]"
   - "[[TrustRank]]"
+  - "[[PageRank]]"
+  - "[[Authority Stacking]]"
+  - "[[Tiered Link Building]]"
   - "[[Phantom Keywords]]"
   - "[[Consensus]]"
   - "[[Topical Authority]]"
@@ -26,7 +30,7 @@ tags: [semantic-seo, sop, offpage, backlink, gtv]
 
 # SOP 10 — Quy Trình Offpage SEO (Process Layer)
 
-> **Vị trí trong hệ thống:** Đây là tầng PROCESS — nối 3 skill backlink hiện hành (`backlink-research` → `backlink-plan` → `textlink-analyzer`) với timeline dự án 10 tháng ([sop/09-project-timeline/10-thang-thuc-day.md](09-project-timeline/10-thang-thuc-day.md)) và checklist QC per-batch ([sop/06-self-checklist/tier-1-offpage-backlink.md](06-self-checklist/tier-1-offpage-backlink.md)). SOP này KHÔNG lặp lại nội dung skill/checklist — nó định nghĩa **trình tự, handoff, ai làm / ai duyệt, và điều kiện dùng từng method**.
+> **Vị trí trong hệ thống:** Đây là tầng PROCESS — nối 3 skill backlink hiện hành (`backlink-research` → `backlink-plan` → `textlink-analyzer`) với timeline dự án 10 tháng ([sop/09-project-timeline/10-thang-thuc-day.md](09-project-timeline/10-thang-thuc-day.md)) và checklist QC per-batch ([sop/06-self-checklist/tier-1-offpage-backlink.md](06-self-checklist/tier-1-offpage-backlink.md)). SOP này KHÔNG lặp lại nội dung skill/checklist — nó định nghĩa **trình tự, handoff, ai làm / ai duyệt, và điều kiện dùng từng method**. Khung T.T.T, thư viện mô hình stack, luật thiết kế, đo ba tầng và kill switch nằm ở [SOP 12](12-backlink-stack-models.md).
 >
 > **Nguồn gốc:** hợp nhất quy trình offpage legacy GTV 2017-2025 (folder `raw/.../10. Quy Trinh Offpage SEO/` + `11. Các phương pháp index link/`) với hệ skill backlink 3 layer (07/2026). Mỗi mục ghi rõ *[Legacy giữ]* vs *[Nâng cấp 2026]*.
 
@@ -39,7 +43,7 @@ tags: [semantic-seo, sop, offpage, backlink, gtv]
 3. **Supporting-content-first + trang "lăng kính".** Chọn trang tầng thấp trong cấu trúc, intent cụ thể, cạnh tranh thấp, internal link dày 2 chiều (lên cha + xuống con) → sức mạnh tán xạ kéo cả cluster. Không có internal link 2 chiều → fix internal trước khi bắn ([[Internal Linking Rules and Strategy]]). *(Legacy giữ: đây chính là "phương án Tán xạ ánh sáng — Hubpage" + "Topic cluster & phối hợp link juice" trong quy trình 2022; 2026 chỉ đặt tên lại và đưa thành bước bắt buộc.)*
 4. **Anchor theo canonical framework — KHÔNG chế số mới.** Mọi tỷ lệ anchor lấy từ [`skills/backlink-plan/references/anchor-ratio-framework.md`](../../../skills/backlink-plan/references/anchor-ratio-framework.md) (4 lớp: giai đoạn trust 3 giai đoạn → SERP consensus → GTV prior per page type → Authority-Aggression; **Exact ≤8-10% trần cứng mọi giai đoạn**). Bảng ratio 2019/2022 trong file legacy chỉ còn giá trị lịch sử — đã được reconcile vào framework canonical. *(Legacy giữ nguyên lý "an toàn trước, từ khóa sau" + rule "nguồn yếu chỉ nhận brand/naked/generic"; nâng cấp: 1 bản canonical duy nhất thay vì 3 bảng lệch nhau.)*
 5. **Velocity theo nhịp đối thủ — "Hiệu ứng Cừu Đen".** Đừng lạc loài so với đối thủ: nhịp chuẩn = RD/tháng trung bình đối thủ (`backlink-research` §2); site mới bắt đầu ½ nhịp. Tiến độ tăng dần đều, không bung rồi dừng đột ngột — sau khi kết thúc plan chính vẫn duy trì link nền nhỏ giọt. *(Legacy giữ: Cừu Đen + "tiến độ tăng dần đều" + "chia nhỏ backlink sau plan" là luật GTV từ 2019; 2026 chỉ chuẩn hóa cách đo nhịp bằng data.)*
-6. **Theme > Trust > Traffic khi đánh giá nguồn.** Thứ tự đánh giá backlink legacy 2025 giữ nguyên: Theme (keyword ở Domain > URL > Title > onpage > ranking topic liên quan) → Trust (seedsite, TF, sự tự nhiên, DR, UR) → Traffic (từ keyword liên quan, CTR) → Đa dạng (nền tảng, gốc domain, anchor, đích đến). 1 link đúng theme DR50 > 100 link directory rác ([[TrustRank]], [[Consensus]]). *(Legacy giữ nguyên — trùng khớp với rule "Theme > User signal > Trust" của skill 2026.)*
+6. **Khung T.T.T khi đánh giá nguồn (cập nhật 02/10/2026).** Thang điểm 2026 (Vincent chốt 02/10/2026): **Theme 35, Traffic 35, Trust 30** trên tổng 100 (kinh nghiệm GTV, nhãn D). Traffic: trang nguồn có người dùng thật, topic có click. Theme xét ở cấp trang: Title, URL và đoạn chữ quanh link có từ khoá của trang đích; domain cùng ngành là điểm cộng. Trust gồm sức mạnh ([[PageRank]]: DR, UR, số link ra) và [[TrustRank]] (khoảng cách tới seed; Trust Flow để đọc nhanh). Sau ba chữ T vẫn xét Đa dạng (nền tảng, gốc domain, anchor, đích đến). 1 link đúng theme DR50 > 100 link directory rác ([[TrustRank]], [[Consensus]]). Bảng chấm: [SOP 12](12-backlink-stack-models.md) §2. *(Legacy 2025, giữ làm lịch sử: thứ tự Theme → Trust → Traffic → Đa dạng; Theme đọc theo keyword ở Domain > URL > Title > onpage.)*
 7. **Entity campaign tách riêng.** Social profile / Google Stack / citations thuộc chiến dịch Entity ([[Entity Home]], sop/04) — không đếm vào quota backlink, không tính vào velocity so với đối thủ. Nhưng chúng là **điều kiện đi trước**: URL SEO chủ chốt phải có social + stack nền trước khi nhận link trả phí. *(Legacy giữ: "triển khai social và google stack trước khi đi link"; quyết định tách Entity/Backlink là GTV 2021.)*
 8. **Offpage phục vụ Topical Authority, không thay thế nó.** Link chỉ khuếch đại [[Topical Authority]] + [[Historical Data]] đã có từ content — không cứu được site coverage kém. Content offpage (guest post, site vệ tinh) target [[Phantom Keywords]] để tự nó rank và mang trust thật.
 
@@ -95,7 +99,7 @@ Entity nền  Backlink NỀN       GATE OFFPAGE      ĐẨY MẠNH         Textl
 
 ## 4. Method catalog — tier kiểm soát
 
-> Chỉ đạo Vincent: **GIỮ tactic legacy, gắn tier kiểm soát thay vì xóa.** 3 tier: ✅ mặc định (mọi dự án client) · ⚠ risk-controlled (chỉ khi SEO Lead/Director duyệt rõ, có điều kiện dùng) · ⛔ deprecated (không dùng nữa, ghi lý do). Chi phí tương đối: $ thấp · $$ vừa · $$$ cao.
+> Chỉ đạo Vincent: **GIỮ tactic legacy, gắn tier kiểm soát thay vì xóa.** 3 tier: ✅ mặc định (mọi dự án client) · ⚠ risk-controlled (chỉ khi SEO Lead xem trước và SEO Director chốt, có điều kiện dùng; từ 02/10/2026 Director duyệt mọi phương án grey hat và black hat, kể cả mô hình nhỏ) · ⛔ deprecated (không dùng nữa, ghi lý do). Chi phí tương đối: $ thấp · $$ vừa · $$$ cao.
 
 ### ✅ Tier mặc định (conservative — chuẩn client GTV)
 
@@ -105,20 +109,22 @@ Entity nền  Backlink NỀN       GATE OFFPAGE      ĐẨY MẠNH         Textl
 | **Đặt link trên bài đã có traffic (niche edit)** | Nhận trust + traffic sẵn có của bài top | $$ | Thấp-vừa | Ưu tiên loại 1 legacy: Theme ở Domain/URL/Title, page traffic >100 (Ahrefs, tùy thị trường); anchor theo Authority-Aggression (exact chỉ ở nguồn mạnh đúng theme) |
 | **Social entity / stack support** | Nền anchor an toàn (brand/naked/generic) + kích hoạt entity trước khi link trả phí vào | $ | Rất thấp | Chạy TRƯỚC mọi đợt link trả phí vào URL trọng điểm (luật legacy "social + google stack trước khi đi link"); thuộc Entity campaign, không đếm quota backlink |
 | **Linkable asset / data study + reclaim mention** | Earned link compliant, bền nhất | $$ (công content) | Rất thấp | Khi research §6 cho thấy content type hút link trong niche; unlinked mention của brand → xin gắn link |
-| **Textlink báo PR** (route `textlink-analyzer`) | Phủ số lượng lớn anchor an toàn qua hệ báo | $$ | Vừa (paid placement — risk-managed) | Chỉ trong cửa sổ T7-T8, sau khi nền đã vững; lọc URL slug-only, exact ≤ trần, rải velocity theo tuần, giữ danh sách domain để disavow được khi cần |
+| **Textlink báo PR trên từng URL bài** (route `textlink-analyzer`) | Phủ số lượng lớn anchor an toàn qua hệ báo | $$ | Vừa (paid placement — risk-managed) | Chỉ trong cửa sổ T7-T8, sau khi nền đã vững; lọc URL slug-only **đúng chủ đề trang đích** (Title, URL, đoạn quanh link có từ khoá), exact ≤ trần, rải velocity theo tuần, giữ danh sách domain để disavow được khi cần. URL lệch chủ đề mà vẫn muốn dùng → đặt T2 theo SOP 12 §4. Textlink ở trang chủ, chuyên mục, sitewide của báo thuộc tier ⚠ bên dưới |
 
-### ⚠ Tier risk-controlled — SEO Lead/Director duyệt từng chiến dịch
+### ⚠ Tier risk-controlled — SEO Lead xem trước, SEO Director chốt từng phương án
 
 Nguyên tắc chung của tier này (kế thừa phân loại backlink 6 loại legacy): đây là các backlink **dính footprint** (loại 4-6 legacy) — chấp nhận khi (a) khách đã hiểu + đồng ý risk level moderate/aggressive trong plan, (b) keyword kẹt mà economics của link sạch quá đắt, (c) không phải site YMYL/brand lớn nhạy cảm rủi ro. GTV **không mặc định đề xuất** cho client.
 
 | Method | Mục đích | Chi phí | Rủi ro | Điều kiện dùng (khi nào chấp nhận) |
 |---|---|---|---|---|
-| **Web 2.0 / articles brand** | Đa dạng profile, đẩy anchor an toàn, tier 2 cho asset | $ | Vừa (footprint pattern) | Chỉ nền tảng DA cao còn sống (Medium, LinkedIn, Tumblr, WordPress.com); syndication content thật của brand, KHÔNG spin; anchor brand/URL/generic only |
-| **PBN / PBN mininet / "08 method" (subdomain mininet)** | Kiểm soát hoàn toàn anchor + link juice cho keyword kẹt | $$$ (nuôi hệ thống) | **Cao** (manual action, mất cả hệ thống) | Chỉ risk aggressive + Director duyệt; tuân thủ trọn bộ tiêu chuẩn setup PBN legacy (whois/IP lớp C/DNS không trùng, không chung account Google, authority outlink ≥ link về moneysite, bài ≥400 chữ, link cách nhau ≥2 ngày, 3-6 link/domain); không bao giờ chạy trên site khách không thể tách rời |
+| **Web 2.0 / articles brand** | Đa dạng profile, đẩy anchor an toàn, tier 2 cho asset | $ | Vừa (footprint pattern) | Chỉ nền tảng còn được Google đánh giá tốt ở thời điểm làm (kiểm tăng trưởng trên Ahrefs; theo training 09/2026, WordPress.com và Weebly đã bị hạ giá; bảng nền tảng do SEO Lead giữ); syndication content thật của brand, KHÔNG spin; anchor brand/URL/generic only |
+| **PBN / PBN mininet / "08 method" (subdomain mininet)** | Kiểm soát hoàn toàn anchor + link juice cho keyword kẹt | $$$ (nuôi hệ thống) | **Cao** (manual action, mất cả hệ thống) | Chỉ risk aggressive + Director duyệt; tuân thủ trọn bộ tiêu chuẩn setup PBN legacy (whois/IP lớp C/DNS không trùng, không chung account Google, authority outlink ≥ link về moneysite, bài ≥400 chữ, link cách nhau ≥2 ngày, 3-6 link/domain); không bao giờ chạy trên site khách không thể tách rời. **Luật 2026:** PBN GTV tự dựng bài bản (content thật, có traffic) được trỏ thẳng website như T1; PBN order ngoài luôn từ T2 trở xuống; tầng bắn vào vòng 08 method là T3; chuẩn tài sản theo SOP 12 §6 thay cho mốc "bài ≥400 chữ" |
 | **Forum seeding / blog comment (link + index)** | Đa dạng + social signal + thúc index tier 1 | $ | Vừa (spam pattern lộ) | Forum thật còn hoạt động, ≥50% đúng chủ đề, DR >15, tỷ lệ index >80%; anchor brand/URL/generic only, ≤15 link/forum; bài liên quan thật, không spin hàng loạt |
-| **Redirect / schema / iframe / mention link** | Tận dụng nguồn mạnh nhưng dính footprint (loại 4-5 legacy) mà không đặt link trực tiếp | $$ | Vừa-cao (dễ bị neutralize, giá trị không bền) | Chỉ khi nguồn theme rất cao không lấy được link thường; từng case SEO Lead duyệt; không dùng làm trụ chính của plan |
+| **Redirect / schema / iframe / mention link** | Tận dụng nguồn mạnh nhưng dính footprint (loại 4-5 legacy) mà không đặt link trực tiếp | $$ | Vừa-cao (dễ bị neutralize, giá trị không bền) | Chỉ khi nguồn theme rất cao không lấy được link thường; từng case SEO Lead xem trước, SEO Director chốt; không dùng làm trụ chính của plan |
 | **Backlink 3rd party marketplace (konker-style gigs)** | Đẩy tier 2/3 cho asset offpage | $ | Cao (chất lượng không kiểm soát) | CHỈ tier 2-3 (không bao giờ trỏ moneysite — luật legacy giữ nguyên); nhà cung cấp đã test; ngân sách nhỏ thí điểm trước |
-| **Tiered boosting (10-minutes tier 2, link wheel, syndication tier 2)** | Bơm sức mạnh cho web 2.0 / bài báo / stack đang giữ phantom ranking | $-$$ | Vừa | Chỉ boost asset offpage (không trực tiếp moneysite); asset phải đang có phantom keyword rank 5-30 đáng đẩy |
+| **Tiered boosting (10-minutes tier 2, link wheel, syndication tier 2)** | Bơm sức mạnh cho web 2.0 / bài báo / stack đang giữ phantom ranking | $-$$ | Vừa | Chỉ boost asset offpage (không trực tiếp moneysite); asset phải đang có phantom keyword rank 5-30 đáng đẩy; luật tầng T1/T2/T3 và lịch mở đợt T2 theo SOP 12 §4, §7 |
+| **Textlink báo ở trang chủ, chuyên mục, sitewide** *(bổ sung 02/10/2026)* | Juice lớn từ nguồn gần seed | $$$ (thuê theo kỳ 3-12 tháng, hết hạn link bị gỡ) | Cao (link trả phí lặp ở template nhiều trang thuộc nhóm link spam theo chính sách Google) | Mặc định là link T2 trỏ vào tài sản T1 đúng chủ đề; trỏ thẳng website chỉ khi chỗ đặt link khớp source context của trang đích VÀ website đã có nền tảng (SOP 12 §4); sitewide giữ ở T2 kể cả khi đủ điều kiện; so nhịp RD của ngành trước khi đặt; bảng điều kiện từng dạng do SEO Lead giữ |
+| **Mô hình stack: DAS, TAS, 08 method, báo có buffer** *(bổ sung 02/10/2026)* | Xây trust rank sớm cho website mới (DAS, TAS) hoặc dồn PageRank về một URL (08 method, báo có buffer) | $$-$$$ (công dựng tài sản như website thật) | Vừa-cao | Theo trọn [SOP 12](12-backlink-stack-models.md): worksheet + rubric 10 tiêu chí trước khi gửi duyệt, tài sản đạt MS-01→14, đo ba tầng, kill switch ghi trước; cần 1,5-2 tháng mới thấy hiệu quả |
 
 ### ⛔ Deprecated — không dùng, giữ làm tư liệu
 
@@ -128,6 +134,7 @@ Nguyên tắc chung của tier này (kế thừa phân loại backlink 6 loại 
 | **Spin content hàng loạt (forum/web 2.0 spin ≥3 bài trộn)** | SpamBrain/scaled-content-abuse 2024+ nhận diện thẳng; chất lượng âm cho brand |
 | **AMP như đòn bẩy index** | AMP đã bị Google bỏ ưu đãi; các bước cài AMP trong tài liệu index legacy không còn tác dụng |
 | **Fetch as Google / công cụ index đời cũ (Ghostindexer, Lar index, gói fiverr blog-comment-index)** | Tool/endpoint chết hoặc đổi; thay bằng mục 5 |
+| **Link wheel giữa các domain rời** *(bổ sung 02/10/2026)* | Mô hình thao túng link có cấu trúc vòng dễ nhận diện; nay chủ yếu bị vô hiệu hoá, vẫn có rủi ro phạt thủ công. Nguyên lý vòng chỉ dùng ở dạng internal link (pillar–cluster) hoặc vòng trên cùng một tên miền gốc theo SOP 12 |
 
 ### Tín hiệu người dùng (click) — bổ sung 28/09/2026
 
@@ -159,6 +166,8 @@ Mục này áp cho hạng mục Traffic users ở T8 → hết T9 của timeline
 4. **Context còn nguyên** — đoạn co-occurrence quanh anchor không bị sửa mất.
 
 **Nhịp check:** sau đặt 7 ngày (live + submit index) → 30 ngày (indexed? chưa → thúc index đợt 2, vẫn không → đòi nhà cung cấp thay thế) → hàng tháng đến hết dự án (link rớt/bị sửa → xử lý trong tháng). Mục tiêu tỷ lệ index ≥80% mỗi batch (ngưỡng kế thừa chuẩn legacy); batch <80% sau 2 vòng thúc → đánh giá lại nguồn.
+
+**Mô hình stack (SOP 12):** ngoài nhịp check trên, đo theo ba tầng (tài sản index → tài sản lên hạng phantom và có traffic → trang cần SEO) với bốn mốc ngày 7, ngày 30, tuần 8, cuối tháng 3. Chi tiết: [SOP 12](12-backlink-stack-models.md) §7–§8.
 
 *[Legacy giữ: nguyên lý hubpage/stack/social signal + chuẩn ">80% index". Nâng cấp 2026: bỏ tool chết (mục 4 deprecated), thêm định nghĩa link "tính" 4 tiêu chí + nhịp check gắn vào sheet vận hành.]*
 
@@ -196,5 +205,6 @@ Mục này áp cho hạng mục Traffic users ở T8 → hết T9 của timeline
 
 ## Changelog
 
+- **2026-10-02 v1.2** — đồng bộ với tài liệu training "Bí thuật backlink thất truyền" bản 6 (Vincent duyệt). §1.6 đổi sang khung T.T.T bản 2026 (thang điểm Theme 35, Traffic 35, Trust 30; bản 2025 giữ làm legacy). §4: người duyệt tier ⚠ là SEO Lead xem trước, SEO Director chốt mọi phương án; textlink báo trên từng URL bài giữ ở tier ✅, textlink trang chủ/chuyên mục/sitewide sang tier ⚠ (mặc định T2); luật PBN hai trường hợp; thêm dòng mô hình stack; link wheel giữa các domain rời vào tier ⛔. §5 trỏ sang đo ba tầng. Chi tiết mô hình ở SOP 12 mới. Chưa chạm sop/09.
 - **2026-09-28 v1.1** — thêm mục "Tín hiệu người dùng (click)" vào §4 theo việc V61 của wiki Google Leak Decoded: Traffic users giữ ở tier ⚠ (SEO Director duyệt bằng văn bản), click bot, proxy và gói click không rõ nguồn vào tier ⛔ kèm lý do theo leak. Checklist Traffic users thêm Phụ lục B.
 - **2026-07-19 v1.0** — hợp nhất legacy 2020-2025 + hệ skill backlink 3 layer. Nguồn legacy đọc đủ: Checklist Boosting Linkjuice (16 sheets), Tiêu chuẩn Triển khai backlinks (2020), Link building GTV (2022 + bản đào tạo), Research & đánh giá backlinks (2025), Quy trình lập kế hoạch Link building, Hướng dẫn Syndication, folder 11 (Index Blog comment + Index link Entity Mastermind). Quyết định chính: gate 90%-chưa-cần đứng đầu quy trình; anchor trỏ canonical framework duy nhất; tactic legacy giữ nguyên nhưng gắn tier ✅/⚠/⛔ + người duyệt; index workflow bỏ tool chết giữ nguyên lý; spam-discount rule thành bước bắt buộc của đo lường.
