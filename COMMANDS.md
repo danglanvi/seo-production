@@ -57,6 +57,8 @@ Nội quy trạm: `05-content-plan/CLAUDE.md` + `05-content-plan/README.md` + ch
 |---|---|---|---|
 | `onpage batch <danh sách URL> tier <1\|2\|3>` | Chạy batch theo `sop/08-onpage-checklist.md` (P0 → /23 → /31 → /39) + `_TEMPLATES/onpage-batch.md`; không ghi tier → tra Ghi chú dòng #12 | Executive / Lead | `onpage batch 12 URL danh mục tier 1` |
 | `internal link plan cluster <x>` | #18: IL semantic theo `sop/03-internal-linking.md` + `_TEMPLATES/internal-link-plan.md`; done-criteria orphan = 0 | Lead | `internal link plan cluster máy lọc nước` |
+| `chấm MX batch <n>` | Nâng cấp định dạng MX1–MX6 (sơ đồ, bảng, biểu đồ, screenshot/video, khối tương tác): chấm riêng, không tính /23 · /31 · /39, ghi mục 7 của batch report kèm việc đề xuất + người làm (`06-onpage-internal-link/CLAUDE.md`) | Executive / Lead | `chấm MX batch 3` |
+| `xem batch <file> dạng HTML` | `python3 tools/onpage_report_html.py <batch-report.md>` → bảng nhiệt URL × item, sắp xếp theo điểm, lọc theo item FAIL, kèm bảng MX và AX; file `.md` vẫn là bản gốc | Mọi người | `xem batch ACME_onpage-batch-t3_v1.md dạng HTML` |
 
 Nội quy trạm: `06-onpage-internal-link/CLAUDE.md` + `06-onpage-internal-link/README.md` + cheat-sheet `ws06-onpage-il.md`.
 

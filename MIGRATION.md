@@ -1,5 +1,5 @@
 ---
-master_version: v2026.10.2
+master_version: v2026.10.3
 ---
 
 # MIGRATION — Cập nhật instance lên version master mới
@@ -15,6 +15,17 @@ master_version: v2026.10.2
 ---
 
 ## 1. Có gì mới
+
+### v2026.10.3 (2026-10-02) — Onpage: MX nâng cấp định dạng (chấm riêng) + batch report dạng bảng nhiệt HTML
+
+Vincent duyệt 02/10. Đi cùng bản vá Content Production 02/10 (đợt 2): fork content có luật chọn định dạng media và brief video, khối tương tác; trạm 06 là nơi đề xuất nâng cấp cho trang đã có.
+
+- **Trạm 06, mục mới "Nâng cấp định dạng (MX)":** 6 item MX1–MX6 (sơ đồ quy trình, bảng so sánh, biểu đồ số liệu, screenshot/video thao tác, video + transcript + VideoObject, khối tương tác có bảng tĩnh dự phòng). Chấm riêng, điểm `MX x/y`, không cộng vào /23 · /31 · /39, không phải gate, không chặn `done`. SEO chỉ tự làm phần trình bày lại nội dung đã có; cần claim, số liệu, lời đọc mới thì chuyển fork content; khối tương tác đi qua trạm 13 CRO (`ux-feature-brief.md`).
+- **Template:** `_TEMPLATES/onpage-batch.md` thêm luật chấm số 7 và mục 7 (bảng MX).
+- **Tool mới:** `tools/onpage_report_html.py` đọc batch report `.md`, dựng `<report>.view.html`: bảng nhiệt URL × item (sắp xếp theo điểm, lọc theo item FAIL), item rớt nhiều nhất, bảng MX, bảng AX. Chỉ dùng thư viện chuẩn. `.gitignore` thêm `*.view.html`.
+- **Sửa theo:** `06-onpage-internal-link/CLAUDE.md` (hàng ĐƯỢC/KHÔNG ĐƯỢC, vòng tự kiểm bước 7, mục MX), `06-onpage-internal-link/README.md`, `COMMANDS.md` (2 lệnh), `_REFERENCE/runtime-workstream-matrix.md` (ô checklist hàng Onpage & IL).
+- **Chưa đổi:** knowledge pack. `sop/08-onpage-checklist.md` giữ nguyên P-series và AX; MX ở trạng thái thử nghiệm, đủ dữ liệu batch thì Vincent quyết việc đưa vào sop/08 ở kho gốc.
+- **Port sang instance:** GHI ĐÈ `06-onpage-internal-link/CLAUDE.md`, `06-onpage-internal-link/README.md`, `_TEMPLATES/onpage-batch.md`, `tools/onpage_report_html.py` (mới), `COMMANDS.md`, `_REFERENCE/runtime-workstream-matrix.md`, `.gitignore`. Batch report đang chạy: thêm mục 7 khi chấm MX, không cần sửa các mục đã có.
 
 ### v2026.10.2 (2026-10-02) — Knowledge pack: SOP 12 mô hình backlink stack + SOP 10 v1.2
 
@@ -221,7 +232,7 @@ Bản đầu tiên của hệ SEO Production. Không có instance cũ để migr
 | Screenshots infra | `02-raw/screenshots/README.md` (CHỈ README — ảnh là data) |
 | WS infra | `README.md` + **`CLAUDE.md` + `AGENTS.md` (nội quy trạm)** của MỌI workstream folder (`00-client-context/` → `12-feedback-lessons/`) + `03-audits/qc/README.md` |
 | Config | `config/` (`mcp.json.example`) |
-| Tooling | `tools/` (`sync-skills.sh` — dựng lại mirror skill khi chạy standalone) |
+| Tooling | `tools/` (`sync-skills.sh` — dựng lại mirror skill khi chạy standalone · `content_sync.py` · `project_sync.py` · `onpage_report_html.py`) |
 
 ### B. GIỮ (KHÔNG đụng — data + công sức của dự án)
 

@@ -25,7 +25,7 @@ Công đoạn phụ trách: **#7 (execute) · #18 · #23** + **khâu đăng/sử
 | Snapshot Kho tri thức khách `../00-client-context/kb-snapshot/<ngày>/` (nếu có) | Internal link theo quan hệ trong KB (sản phẩm ↔ ứng dụng ↔ tiêu chuẩn ↔ dự án; gốc ↔ biến thể). Bảng thông số onpage và thuộc tính schema Product lấy từ catalog; giá/tồn kho trong schema lấy từ hệ thống bán hàng của site, không lấy từ KB |
 
 - Naming: `<CLIENT>_onpage-batch-t<N>_v<N>.md` · `<CLIENT>_internal-link-plan_v<N>.md` — lưu trong folder này; file đã tồn tại → tăng version, không đè.
-- **Batch report bắt buộc là BẢNG**: mỗi dòng = 1 URL × score `/23` (hoặc `/31`, `/39` theo tier đã bật) × item FAIL (theo ID) × ngày fix dự kiến. Không viết batch report dạng prose chung chung.
+- **Batch report bắt buộc là BẢNG**: mỗi dòng = 1 URL × score `/23` (hoặc `/31`, `/39` theo tier đã bật) × item FAIL (theo ID) × ngày fix dự kiến. Không viết batch report dạng prose chung chung. Bảng MX (mục 7 của template) đứng riêng, không gộp cột điểm.
 - **Dây chuyền bắt buộc** (cuốn chiếu theo chuỗi, không gộp cuối kỳ): content xong → **+10-15 ngày** onpage → **+15-30 ngày** internal link. Mốc cứng "onpage URL SEO xong T4" ở §6.2 root.
 
 ---
@@ -41,6 +41,7 @@ Công đoạn phụ trách: **#7 (execute) · #18 · #23** + **khâu đăng/sử
 | Sinh schema + chạy validator trước khi giao | Giao schema chưa validate; coi schema là lever AI citation |
 | Audit trang cũ: dừng ở tier có ≥3 item FAIL, sửa nền trước | Tối ưu nâng cao đè lên nền đang hỏng |
 | Nhắc khi dây chuyền lệch nhịp (ghi report + Ghi chú index) | Im lặng gộp onpage + IL thành một đợt cuối kỳ |
+| Chấm MX1–MX6 riêng và đề xuất đổi khối nội dung sẵn có sang bảng, sơ đồ, video, khối tương tác (mục "Nâng cấp định dạng") | Cộng MX vào điểm P-series; tự thêm claim hoặc số liệu mới để dựng media; coi MX là điều kiện `done` |
 | Đăng/sửa bài WP qua kit theo sop/11: gate pre-publish → approval hash → verify kép | Đăng thẳng vào WP ngoài kit; tự bấm Publish draft (người duyệt bấm); chạy strong-to-b (policy `<strong>`); báo "đã đăng" khi chưa verify kép |
 
 ---
@@ -55,7 +56,32 @@ Tự chấm role `self` đạt hết mới được báo xong — chuẩn chấm
 4. IL plan tự soát: orphan = 0 · mỗi bài ≥1 link tới pillar + 2-5 sibling · pillar có link ngược bài mới · anchor descriptive đa dạng, không lặp một anchor cho cùng target.
 5. Schema tự soát: pass validator (Rich Results Test / validator schema.org), đính kết quả vào report.
 6. Dây chuyền tự soát: đối chiếu ngày content xong ↔ ngày onpage ↔ ngày IL với nhịp +10-15 / +15-30 ngày; lệch → ghi rõ trong report.
-7. Fail bước nào → sửa → tự kiểm lại từ bước đó. Pass hết → submit QC. Không hạ ngưỡng để cho qua.
+7. MX tự soát (chấm riêng, sau khi URL qua Tier 1): mỗi item MX áp dụng có evidence (element hoặc quote); item không có dạng nội dung tương ứng ghi `N/A`; mỗi item FAIL có việc đề xuất + người làm. MX không ảnh hưởng verdict P-series.
+8. Fail bước nào → sửa → tự kiểm lại từ bước đó. Pass hết → submit QC. Không hạ ngưỡng để cho qua.
+
+---
+
+## Nâng cấp định dạng (MX) — chấm riêng, không tính vào /23 · /31 · /39
+
+Mục tiêu: người đọc và AI hiểu trang nhanh hơn nhờ đúng định dạng cho đúng dạng nội dung. MX là lớp đề xuất, không phải gate: không chặn `done`, không thay T2-P5 (Original Media) và T3-P1 (Information Gain, calculator) của sop/08. Trạng thái: thử nghiệm từ v2026.10.3; khi đủ dữ liệu batch, Vincent quyết việc đưa vào sop/08 ở kho gốc.
+
+Điều kiện chấm: URL đã qua P0 và không bị dừng ở Tier 1 (≥3 item FAIL thì sửa nền trước, chưa chấm MX).
+
+| ID | Trang có dạng nội dung | Đạt khi | Người làm khi FAIL |
+|---|---|---|---|
+| MX1 | Quy trình từ 3 bước, vòng lặp, luồng quyết định | Có sơ đồ luồng hoặc danh sách đánh số; chữ vẫn mô tả đủ từng bước | SEO (dựng từ nội dung sẵn có) |
+| MX2 | So sánh từ 2 đối tượng × 3 thuộc tính | Là bảng HTML (`<table>`), không là đoạn văn dài, không là ảnh chụp bảng | SEO |
+| MX3 | Số liệu theo thời gian, tỷ lệ, phân bố | Có biểu đồ kèm bảng số gốc và nguồn | SEO nếu số đã có trong bài; thiếu số → Content |
+| MX4 | Thao tác trên công cụ, giao diện | Có screenshot chú thích từng bước; từ 5 bước liên tục thì có video ngắn | SEO (screenshot) · Content (video) |
+| MX5 | Trang là chủ đề lõi và SERP có video hoặc AI Overview trích video | Có video 30–90 giây, transcript nằm trên trang, `VideoObject` qua validator | Content (brief video) · SEO (schema) |
+| MX6 | Kết quả phụ thuộc số người đọc nhập (giá, chi phí, ROI) hoặc người đọc phải chọn nhánh | Có khối tương tác kèm bảng tĩnh dự phòng đọc được khi tắt JavaScript | Dev, qua trạm `../13-cro/` (`_TEMPLATES/ux-feature-brief.md`) nếu gói có #35; ngoài gói → ghi đề xuất cho Lead |
+
+Luật chấm:
+
+1. Điểm ghi `MX x/y`, y = số item áp dụng (bỏ `N/A`). Evidence theo từng item như P-series; MX5 cần bằng chứng SERP (ảnh chụp theo `_REFERENCE/screenshots-protocol.md`), không có thì `CANNOT-VERIFY`.
+2. Media bổ sung, không thay chữ: sơ đồ, video, khối tương tác không được là nơi duy nhất chứa thông tin. Crawler và AI đọc chữ.
+3. Việc SEO tự làm chỉ gồm trình bày lại nội dung đã có. Cần claim, số liệu, lời đọc mới → chuyển `../05-content-plan/` + fork content (brief theo Phase 5 media brief của fork). Hệ số cho khối tương tác lấy từ snapshot Kho tri thức khách.
+4. Xem batch report dạng bảng nhiệt: `python3 tools/onpage_report_html.py <batch-report.md>` (file `.md` vẫn là bản gốc).
 
 ---
 

@@ -12,7 +12,8 @@ date: "{{YYYY-MM-DD}}"
 
 # Onpage Batch {{BATCH_ID}} — {{CLIENT}}
 
-> Checklist gốc: `02-raw/knowledge/sop/08-onpage-checklist.md` (P0 gate + Tier 1 /23 + Tier 2 /31 + Tier 3 /39 + AX1-AX7).
+> Checklist gốc: `02-raw/knowledge/sop/08-onpage-checklist.md` (P0 gate + Tier 1 /23 + Tier 2 /31 + Tier 3 /39 + AX1-AX7). MX1–MX6 (nâng cấp định dạng) định nghĩa ở `06-onpage-internal-link/CLAUDE.md`, chấm riêng ở mục 7.
+> Xem dạng bảng nhiệt: `python3 tools/onpage_report_html.py <file này>`.
 > Khi instantiate: lưu thành `06-onpage-internal-link/{{CLIENT}}_onpage-batch-<n>_v1.md`.
 
 ## 1. Thông tin batch
@@ -33,6 +34,7 @@ date: "{{YYYY-MM-DD}}"
 4. AX1-AX7 (AI-search) KHÔNG tính vào /39 — chấm riêng cho trang cần GEO/AI Overview (mục 5).
 5. Review 3 tầng: Self 100% → SEO EX verify → Lead random 25-30% (gap dương lớn = cờ đỏ).
 6. Không tự hạ ngưỡng để cho qua; item không verify được ghi CANNOT-VERIFY, không tính pass.
+7. MX1–MX6 KHÔNG tính vào /23 · /31 · /39 và không phải gate — chấm riêng ở mục 7, chỉ cho URL đã qua P0 và không bị dừng ở Tier 1.
 
 ## 3. Bảng batch — score per URL
 
@@ -75,3 +77,12 @@ Mốc cứng gói 10 tháng: onpage URL SEO XONG hết T4; onpage content strate
 - [ ] Item FAIL lặp ≥2 lần đã có entry đề xuất vào feedback-log.
 - [ ] Dây chuyền IL đã lên lịch khớp internal-link-plan.
 - [ ] Cập nhật index.md (cột QC + status) + log.md op `work`/`qc`.
+
+## 7. MX — nâng cấp định dạng (chấm riêng, không tính điểm P-series)
+
+Mỗi ô ghi `☑` đạt · `❌` rớt · `N/A` khi trang không có dạng nội dung đó · `CANNOT-VERIFY` khi thiếu bằng chứng. Điểm `MX x/y`, y = số item áp dụng. Định nghĩa item và người làm: `06-onpage-internal-link/CLAUDE.md` mục "Nâng cấp định dạng (MX)".
+
+| URL | MX1 sơ đồ quy trình | MX2 bảng so sánh | MX3 biểu đồ số liệu | MX4 screenshot/video thao tác | MX5 video + transcript + VideoObject | MX6 khối tương tác | MX x/y | Việc đề xuất (kèm evidence) | Người làm |
+|---|---|---|---|---|---|---|---|---|---|
+| {{URL}} | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | {{x}}/{{y}} | {{VIEC}} | {{SEO | Content | Dev}} |
+

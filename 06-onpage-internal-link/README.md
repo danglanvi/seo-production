@@ -13,3 +13,4 @@ Ghi chú:
 - Luật scoring sop/08: P0 là gate chặn — xử lý P0 trước, sửa nền trước khi chấm tiếp các nhóm sau.
 - Dây chuyền chuẩn: content publish → +10-15 ngày onpage → +15-30 ngày internal link (cuốn chiếu theo chuỗi, không chờ gộp cuối kỳ).
 - Mốc cứng: onpage URL SEO xong T4.
+- MX1–MX6 (nâng cấp định dạng: sơ đồ, bảng, biểu đồ, video, khối tương tác) chấm riêng ở mục 7 của batch report, không tính vào điểm P-series và không chặn `done` — định nghĩa ở `CLAUDE.md` của trạm. Xem batch dạng bảng nhiệt: `python3 tools/onpage_report_html.py <batch-report.md>`.

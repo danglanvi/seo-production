@@ -275,3 +275,12 @@ Luật ghi:
 - Files touched: 3 file knowledge pack trên
 - Công đoạn: 20, 25◇, 26 · WS: 07
 
+
+## [2026-10-02] refactor | v2026.10.3 — Onpage: MX nâng cấp định dạng (chấm riêng) + batch report dạng bảng nhiệt HTML — Vincent duyệt — @claude
+
+- Vì sao: sop/08 chỉ xét ảnh ở P19–P20 và nhắc calculator ở T3-P1; không có mục nào xét sơ đồ, bảng, video, khối tương tác cho trang đã có. Batch report 20 URL × 23 item khó đọc ở dạng bảng chữ.
+- Mới: mục "Nâng cấp định dạng (MX)" trong `06-onpage-internal-link/CLAUDE.md` (MX1–MX6, chấm riêng, không tính /23 · /31 · /39, không phải gate); mục 7 của `_TEMPLATES/onpage-batch.md`; `tools/onpage_report_html.py`.
+- Sửa theo: `06-onpage-internal-link/README.md`, `COMMANDS.md`, `_REFERENCE/runtime-workstream-matrix.md`, `.gitignore` (`*.view.html`), `MIGRATION.md` (v2026.10.3, bảng GHI ĐÈ hàng Tooling).
+- Không đổi knowledge pack (`02-raw/knowledge/` giữ nguyên).
+- Files touched: như trên
+- Công đoạn: 7(execute), 18, 23 · WS: 06

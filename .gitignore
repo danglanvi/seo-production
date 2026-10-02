@@ -37,5 +37,8 @@ __pycache__/
 02-raw/seo-data/**/*.xlsx
 09-reporting/samples/*.pdf
 
+# ===== Bản xem HTML sinh từ batch report (tools/onpage_report_html.py) =====
+*.view.html
+
 # ===== Bản clone tạm của repo cùng khách (tools/project_sync.py) =====
 .peer/
