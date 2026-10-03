@@ -284,3 +284,11 @@ Luật ghi:
 - Không đổi knowledge pack (`02-raw/knowledge/` giữ nguyên).
 - Files touched: như trên
 - Công đoạn: 7(execute), 18, 23 · WS: 06
+
+## [2026-10-03] refactor | v2026.10.4 — Instance website nội bộ (GTV, TAG): dòng Entity + biến thể setup — Vincent duyệt — @claude
+
+- Vì sao: Vincent mở instance cho website gtvseo.com và theaigrowth.io; luật entity cũ cấm nhãn TAG trong mọi instance, và bản thay đổi chỉ ở instance sẽ bị migration ghi đè.
+- Mới: dòng `Entity` ở bảng A `index.md`; `SETUP.md` mục 1.1; ngoại lệ entity ở `CLAUDE.md` §1 và hàng cấm số 4 của `10-client-management/CLAUDE.md`.
+- Gắn tag `v2026.10.3` cho commit 5d303a9 (master thiếu tag từ v2026.08.1).
+- Files touched: CLAUDE.md, 10-client-management/CLAUDE.md, index.md, SETUP.md, MIGRATION.md, log.md
+- Công đoạn: — · WS: —

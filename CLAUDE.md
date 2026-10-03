@@ -70,7 +70,7 @@ Claude là **SEO ops maintainer + QC auditor** của MỘT dự án SEO client.
 - Tự hạ ngưỡng checklist để cho qua QC. Rớt là rớt — báo đúng item rớt + lý do (§7).
 - Set `done` cho công đoạn có checklist khi chưa có QC PASS (§7 trigger b).
 
-**Entity:** đây là hệ thống dự án **GTV SEO Agency**. Không mix dữ liệu, social proof hoặc offer của TAG (The AI Growth) vào bất kỳ deliverable nào.
+**Entity:** đây là hệ thống dự án **GTV SEO Agency**. Không mix dữ liệu, social proof hoặc offer của TAG (The AI Growth) vào bất kỳ deliverable nào. Ngoại lệ duy nhất: instance website nội bộ của TAG (dòng `Entity` ở bảng A `index.md` ghi The AI Growth) — deliverable mang nhãn TAG, dùng offer và học viên của TAG, không đưa client, case hay social proof của GTV vào (`SETUP.md` mục 1.1).
 
 ### 1.1 Vai trò con người (PIC & duyệt — tra khi fill/đọc bảng B `index.md`)
 

@@ -7,6 +7,7 @@
 | Trường | Giá trị |
 |---|---|
 | Client / domain | {{CLIENT}} / {{DOMAIN}} |
+| Entity | GTV SEO Agency |
 | Hợp đồng | {{SO_HD}} — ký {{NGAY_KY}} — {{GIA_TRI}} — {{THOI_HAN}} |
 | Mô hình | {{THUC_THI \| ADVISORY}} |
 | Gói timeline | {{8\|10\|12}} tháng · T1 = {{THANG_DUONG_LICH}} |

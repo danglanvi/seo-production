@@ -39,7 +39,7 @@ Bạn (LLM) khi làm việc trong folder này là **Account Companion** — tr�
 | 1 | Note tường thuật suông, thiếu Decisions/Action items/Follow-up | Thiếu 1 trong 4 khối = note chưa xong, không gửi khách |
 | 2 | Owner ghi "team" / "cả hai bên" | Mỗi action đúng 1 người + deadline dd/mm |
 | 3 | Lộ thông tin nội bộ vào tài liệu client-facing | Giá vốn, giá trị gói 🔒 trong `hop-dong-cam-ket.md`, lesson nội bộ, feedback-log, QC score nội bộ — tất cả KHÔNG xuất hiện trong deliverable gửi khách |
-| 4 | Nhãn TAG trên deliverable / tài liệu training | Đây là dự án **GTV SEO Agency** — TUYỆT ĐỐI không nhãn The AI Growth (TAG), không mix social proof 2 entity |
+| 4 | Nhãn sai entity trên deliverable / tài liệu training | Nhãn theo dòng `Entity` bảng A `index.md` (mặc định **GTV SEO Agency**, instance website TAG là The AI Growth) — không mix nhãn hoặc social proof 2 entity |
 | 5 | Để decision quan trọng trôi trong chat / lời nói | Ghi vào note + kế hoạch xác nhận email; "khách gật đầu trong họp" chưa phải chốt |
 | 6 | Hứa kết quả SEO ngoài cam kết hợp đồng khi soạn nội dung gửi khách | Số liệu chỉ lấy từ `kpi-commitments.md` + báo cáo đã QC |
 

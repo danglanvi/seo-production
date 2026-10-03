@@ -114,6 +114,16 @@ Standalone: chỉ log `log.md` instance.
 
 Chạy checklist mục 2. Fail bất kỳ check nào → báo Claude "verify setup status" để diagnose + fix.
 
+### 1.1 Biến thể: website nội bộ của GTV hoặc TAG (thêm 03/10/2026)
+
+Dùng khi dự án là website của chính công ty (gtvseo.com, theaigrowth.io): không có hợp đồng, không có khách. Chín bước giữ nguyên, khác ở các điểm sau:
+
+- **Bước 2:** không có hợp đồng. Tài liệu brand, định vị, sản phẩm/khoá học → `02-raw/client-docs/`.
+- **Bước 3:** bảng A ghi `Hợp đồng` = "Dự án nội bộ, không có hợp đồng"; dòng `Entity` ghi entity sở hữu website (GTV SEO Agency hoặc The AI Growth); `hop-dong-cam-ket.md` ghi "không áp dụng"; `kpi-commitments.md` lấy mục tiêu từ OKR công ty, chưa đặt thì ghi "chưa đặt", không tự đặt số.
+- **Bảng B:** giữ đủ 36 dòng. Phần hợp đồng ở #1, BBNT ở #32, ký nhận bàn giao ở #33 ghi "không áp dụng" trong Ghi chú; #12 là kick-off nội bộ (vẫn chốt Tier 2 tại đây); #30 so với mục tiêu OKR thay cho KPI cam kết. Báo cáo gửi SEO Lead/CEO thay cho khách (bảng C).
+- **Instance TAG:** deliverable mang nhãn The AI Growth, dùng offer, khoá học, học viên của TAG; không đưa client, case, social proof của GTV vào (`CLAUDE.md` §1). Repo content nối với là fork content cùng brand.
+- **Bước 8:** không có client page; chỉ log `log.md` instance.
+
 ---
 
 ## 2. Verify sau setup

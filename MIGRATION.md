@@ -1,5 +1,5 @@
 ---
-master_version: v2026.10.3
+master_version: v2026.10.4
 ---
 
 # MIGRATION — Cập nhật instance lên version master mới
@@ -15,6 +15,15 @@ master_version: v2026.10.3
 ---
 
 ## 1. Có gì mới
+
+### v2026.10.4 (2026-10-03) — Instance website nội bộ (GTV, TAG): dòng Entity + biến thể setup
+
+Vincent duyệt 03/10: mở 2 instance cho website gtvseo.com và theaigrowth.io.
+
+- **Luật entity:** `CLAUDE.md` §1 thêm ngoại lệ duy nhất cho instance website TAG; `10-client-management/CLAUDE.md` hàng cấm số 4 đổi thành "nhãn theo dòng `Entity`".
+- **Template:** `index.md` bảng A thêm dòng `Entity` (mặc định GTV SEO Agency).
+- **Setup:** `SETUP.md` mục 1.1 (biến thể website nội bộ: không hợp đồng, KPI từ OKR công ty, ghi chú #1/#12/#30/#32/#33).
+- **Port sang instance:** GHI ĐÈ `CLAUDE.md`, `10-client-management/CLAUDE.md`, `SETUP.md`. Instance client cũ không cần thêm dòng `Entity` (thiếu dòng = GTV SEO Agency). Không đổi knowledge pack, skill, tool.
 
 ### v2026.10.3 (2026-10-02) — Onpage: MX nâng cấp định dạng (chấm riêng) + batch report dạng bảng nhiệt HTML
 
