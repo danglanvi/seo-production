@@ -2,12 +2,12 @@
 
 Mỗi deliverable của 13 workstream có template chuẩn ở đây. Naming khi dùng: `<CLIENT>_<slug>_v<N>.<ext>` — clone template về đúng WS folder rồi điền, KHÔNG sửa template gốc (muốn nâng cấp template → vá ở master qua MIGRATION).
 
-## Template cấp 1 (35 file)
+## Template cấp 1 (37 file)
 
 | Nhóm | Template |
 |---|---|
 | Chiến lược & kế hoạch | `okrs.md` · `keyword-research.md` (#4, v2026.09.3) · `topical-map.md` · `traffic-plan.md` · `content-plan-matrix.md` (có mục 2b information gain + fan-out) · `structure-brief.md` |
-| Audit & QC | `audit-toan-dien.md` (full 6 hạng mục) · `audit-technical.md` · `audit-content.md` · `audit-entity.md` · `audit-offsite.md` (lẻ, v2026.09.3) · `gap-analysis.md` · `qc-report.md` |
+| Audit & QC | `audit-toan-dien.md` (full 6 hạng mục) · `audit-technical.md` · `audit-content.md` · `audit-entity.md` · `audit-offsite.md` (lẻ, v2026.09.3) · `gap-analysis.md` · `qc-report.md` · `qp-intake.md` (phiếu đầu vào Lead điền trước khi gọi chẩn đoán QP) · `qp-chan-doan.md` (hồ sơ chẩn đoán Query Processing, đi kèm JSON + deck của skill `query-processing-diagnosis`, v2026.10.5) |
 | Onpage · Entity · Offpage | `onpage-batch.md` · `entity-plan.md` (#13, gate G-ENT — WS 14) · `internal-link-plan.md` · `backlink-campaign.md` · `gate-offpage-decision.md` · `textlink` (xem skill) |
 | GEO | `geo-baseline.md` |
 | CRO (WS 13, v2026.09.3 → v2026.09.4) | `conversion-path.md` (#34) · `measurement-plan.md` + `tracking-qa.md` (#34, gate G1 — skill `cro-measurement-plan`) · `evidence-backlog.md` (#34/#35, khi >5 finding) · `ux-feature-brief.md` (#35, spec 10 mục component) · `heatmap-recording-review.md` (#35/#36, log sửa lỗi / rollout / A/B) |

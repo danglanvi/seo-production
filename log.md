@@ -292,3 +292,13 @@ Luật ghi:
 - Gắn tag `v2026.10.3` cho commit 5d303a9 (master thiếu tag từ v2026.08.1).
 - Files touched: CLAUDE.md, 10-client-management/CLAUDE.md, index.md, SETUP.md, MIGRATION.md, log.md
 - Công đoạn: — · WS: —
+
+## [2026-10-12] refactor | v2026.10.5 — Skill query-processing-diagnosis (chẩn đoán QP bộ keyword cam kết) — Vincent duyệt — @claude
+
+- Vì sao: đóng gói quy trình đợt chẩn đoán 10 dự án GTV (10/2026) để team chạy lại ở gate #22, audit #24, #29 mà không phụ thuộc workspace GTV, và bàn giao kết quả cho team content.
+- Mới: `skills/query-processing-diagnosis` v1.2 (SKILL.md quy trình chuẩn 8 pha có ngân sách tool call, 5 reference, 7 script + assets, fixture `examples/`, `evals/` 10 ca hành vi + 54 test offline), `03-audits/ranking/README.md` (hướng dẫn Lead), `_TEMPLATES/qp-intake.md`, `_TEMPLATES/qp-chan-doan.md`.
+- Tối ưu so với đợt 10/2026 (11–32 script riêng mỗi dự án, hàng trăm tool call): `qp_ranks.py` (bo, runs, table, terms), `qp_scaffold.py` điền sẵn số, `qp_build.py` verify số trên deck với bảng hạng, quét chữ dễ lộ điều khoản trên bản web, sinh file bàn giao content và bảng con số → nguồn.
+- Sửa theo review nội bộ 12/10: mốc so sánh rỗng không còn tạo "Đang lan" giả (table dừng mã 2, có `--no-compare`); project một domain có lần chạy mới nghi thiếu thì dừng hỏi Lead (mã 3); đọc CSV dấu phẩy, gộp nhiều trang export, đọc cột Volume, `--targets` đếm keyword lệch URL kế hoạch; pha A đọc AGENT.md, nội quy trạm, cheat-sheet; nội quy trạm `03-audits/CLAUDE.md` thêm chẩn đoán QP; bỏ dữ liệu khách khỏi skill (ca eval ẩn danh, demo của deck training trong `assets/base.js`).
+- Kiểm: 54 test offline PASS; chạy lại export thật của hai dự án (nhiều domain và một domain) ra đúng số đã đối chiếu tay; `qp_render.py check` OK cả 11 JSON đợt 10/2026; audit 0 slide tràn.
+- Files touched: skills/query-processing-diagnosis/, 03-audits/ranking/README.md, 03-audits/README.md, 03-audits/CLAUDE.md, _TEMPLATES/qp-intake.md, _TEMPLATES/qp-chan-doan.md, _TEMPLATES/README.md, CLAUDE.md, README.md, COMMANDS.md, MIGRATION.md, _REFERENCE/runtime-workstream-matrix.md, _REFERENCE/folder-map.md, _REFERENCE/project-sync.md, 02-raw/knowledge/cheat-sheets/ws03-audit.md, log.md
+- Công đoạn: 22, 24, 29 · WS: 03

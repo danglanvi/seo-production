@@ -47,6 +47,7 @@ Công đoạn phụ trách: **2, 5, 6◇, 7 (plan), 22◇, 24, 27, 29** (◇ = d
 | `technical-seo-audit` | Audit technical tầng site, công đoạn 5, 27 |
 | `competitor-seo-gap-analysis` | Công đoạn 2 — gap theo page type |
 | `content-refresh` | Decay detection từ T6 trở đi (công đoạn 24, 29) |
+| `query-processing-diagnosis` | Bộ keyword cam kết đã có hạng: gate 22, công đoạn 24, 29, hoặc keyword cam kết đứng hạng/rơi. Ra JSON + deck + hồ sơ ở `ranking/` |
 
 Luật nạp 80/20: chỉ nạp skill đúng loại audit đang làm; `references/` nạp TỪNG file theo pointer trong SKILL.md; checklist chỉ nạp đúng file: `../sop/05-audit-checklist.md` + `../sop/06-self-checklist/tier-3-audit-configuration.md` + `../sop/06-self-checklist/tier-3-technical-advance.md` — không quét cả `knowledge/`.
 

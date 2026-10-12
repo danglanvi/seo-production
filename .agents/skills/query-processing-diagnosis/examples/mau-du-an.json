@@ -1,0 +1,738 @@
+{
+ "schema": "qp-project/1",
+ "slug": "den-hoc-demo",
+ "name": "Đèn Học Demo",
+ "name_lines": [
+  "Đèn Học Demo"
+ ],
+ "domain": "denhoc.example",
+ "lead": "Lead mẫu",
+ "_note": "Dữ liệu minh hoạ để kiểm renderer. Không phải dự án thật. Không nạp file này khi chạy production.",
+ "measure": {
+  "has_rank": true,
+  "tool": "SpySERP",
+  "project": "000000",
+  "engine": "GM1",
+  "engine_label": "Google Mobile, Hà Nội",
+  "date": "09/10/2026",
+  "compare_date": "11/09/2026",
+  "depth": 50
+ },
+ "status_row": {
+  "set": "60 kw (GM1)",
+  "now": "Top 3/5/10 = 6/11/22"
+ },
+ "kpi": {
+  "target": "Mốc mẫu: 8/15/30",
+  "gap": "Top 10 thiếu 8",
+  "risk": "Vừa",
+  "beat_stats": [
+   [
+    "−8",
+    "Top 10 so với mốc mẫu"
+   ]
+  ]
+ },
+ "headline": {
+  "template": "đèn học [đối tượng]",
+  "fact": "Trang danh mục giữ 9 keyword, 6 trong Top 10."
+ },
+ "cover": {
+  "query": "đèn học chống cận cho bé",
+  "tokens": [
+   {
+    "t": "đèn học",
+    "r": "sản phẩm",
+    "k": "known"
+   },
+   {
+    "t": "chống cận",
+    "r": "thuộc tính",
+    "k": "op"
+   },
+   {
+    "t": "cho bé",
+    "r": "đối tượng",
+    "k": "new"
+   }
+  ],
+  "rep": "đèn học chống cận",
+  "rep_sub": "12 keyword cam kết đi theo query đại diện này"
+ },
+ "idea": {
+  "n_kw": 60,
+  "n_tpl": 6,
+  "hub_url": "/den-hoc/",
+  "hub_n": 18,
+  "hub_top10": 9,
+  "mechanism": "Google gom các cách gõ thành cụm. Tâm cụm là query đại diện (US8645407B2). Giả thuyết: trang khớp query đại diện nhận relevance cho cả họ.",
+  "effect": "Đẩy đúng trang danh mục có thể kéo nhiều keyword cùng lúc. Một lỗi trên trang đó cũng làm cả họ rơi.",
+  "src": "Dữ liệu minh hoạ · GM1 · median 3 lần 06–09/10/2026."
+ },
+ "beat_stats": [
+  [
+   "60",
+   "keyword cam kết"
+  ],
+  [
+   "6/11/22",
+   "Top 3/5/10 (median)"
+  ]
+ ],
+ "templates": {
+  "title": "6 template: <g>đèn học [đối tượng]</g> đáng đẩy nhất",
+  "src": "Dữ liệu minh hoạ · gom bằng rules.json.",
+  "items": [
+   {
+    "id": "doituong",
+    "label": "đèn học [đối tượng]",
+    "n": 14,
+    "now": {
+     "t3": 3,
+     "t10": 4,
+     "t20": 3,
+     "t50": 2,
+     "out": 2
+    },
+    "ago": {
+     "t3": 2,
+     "t10": 2,
+     "t20": 4,
+     "t50": 3,
+     "out": 3
+    },
+    "status": "ok",
+    "status_label": "Đã mở",
+    "note": "Biến thể cho bé đã Top 3"
+   },
+   {
+    "id": "thuoctinh",
+    "label": "đèn học [thuộc tính]",
+    "n": 12,
+    "now": {
+     "t3": 2,
+     "t10": 3,
+     "t20": 3,
+     "t50": 2,
+     "out": 2
+    },
+    "ago": {
+     "t3": 1,
+     "t10": 2,
+     "t20": 3,
+     "t50": 3,
+     "out": 3
+    },
+    "status": "up",
+    "status_label": "Đang lan",
+    "note": "Top 10 tăng từ 3 lên 5"
+   },
+   {
+    "id": "hang",
+    "label": "đèn học [hãng]",
+    "n": 10,
+    "now": {
+     "t3": 1,
+     "t10": 2,
+     "t20": 3,
+     "t50": 2,
+     "out": 2
+    },
+    "ago": {
+     "t3": 1,
+     "t10": 2,
+     "t20": 3,
+     "t50": 2,
+     "out": 2
+    },
+    "status": "mid",
+    "status_label": "Kẹt",
+    "note": "Nhiều keyword đứng 11–20"
+   },
+   {
+    "id": "gia",
+    "label": "đèn học [mức giá]",
+    "n": 8,
+    "now": {
+     "t3": 0,
+     "t10": 1,
+     "t20": 2,
+     "t50": 2,
+     "out": 3
+    },
+    "ago": {
+     "t3": 0,
+     "t10": 1,
+     "t20": 1,
+     "t50": 2,
+     "out": 4
+    },
+    "status": "mid",
+    "status_label": "Kẹt",
+    "note": "Chưa có trang giá riêng"
+   },
+   {
+    "id": "cauhoi",
+    "label": "đèn học [câu hỏi]",
+    "n": 9,
+    "now": {
+     "t3": 0,
+     "t10": 1,
+     "t20": 1,
+     "t50": 2,
+     "out": 5
+    },
+    "ago": {
+     "t3": 0,
+     "t10": 0,
+     "t20": 1,
+     "t50": 2,
+     "out": 6
+    },
+    "status": "no",
+    "status_label": "Chưa có hạng",
+    "note": "Blog chưa có đoạn trả lời"
+   },
+   {
+    "id": "khac",
+    "label": "khác",
+    "n": 7,
+    "now": {
+     "t3": 0,
+     "t10": 0,
+     "t20": 1,
+     "t50": 2,
+     "out": 4
+    },
+    "ago": {
+     "t3": 0,
+     "t10": 0,
+     "t20": 1,
+     "t50": 2,
+     "out": 4
+    },
+    "status": "no",
+    "status_label": "Chưa có hạng",
+    "note": "Keyword lẻ"
+   }
+  ]
+ },
+ "grid": {
+  "title": "Lưới hạng: biến thể nào <g>đã thắng</g>",
+  "src": "Dữ liệu minh hoạ.",
+  "tabs": [
+   {
+    "id": "doituong",
+    "base": "đèn học",
+    "slot": "[đối tượng]",
+    "chips": [
+     {
+      "label": "cho bé",
+      "kw": "đèn học cho bé",
+      "now": 2,
+      "ago": 4
+     },
+     {
+      "label": "cho học sinh",
+      "kw": "đèn học cho học sinh",
+      "now": 5,
+      "ago": 9
+     },
+     {
+      "label": "cho sinh viên",
+      "kw": "đèn học cho sinh viên",
+      "now": 12,
+      "ago": 15
+     },
+     {
+      "label": "cho người lớn",
+      "kw": "đèn học cho người lớn",
+      "now": null,
+      "ago": null,
+      "gap": true
+     }
+    ],
+    "read": "Biến thể cho bé đã Top 3. Các biến thể anh em đứng 5–15.",
+    "act": "Thêm khối theo đối tượng trên trang danh mục.",
+    "topic": "T2 · P1 · M"
+   },
+   {
+    "id": "thuoctinh",
+    "base": "đèn học",
+    "slot": "[thuộc tính]",
+    "chips": [
+     {
+      "label": "chống cận",
+      "kw": "đèn học chống cận",
+      "now": 3,
+      "ago": 6
+     },
+     {
+      "label": "led",
+      "kw": "đèn học led",
+      "now": 8,
+      "ago": 12
+     },
+     {
+      "label": "tích điện",
+      "kw": "đèn học tích điện",
+      "now": 14,
+      "ago": 20
+     },
+     {
+      "label": "kẹp bàn",
+      "kw": "đèn học kẹp bàn",
+      "now": null,
+      "ago": null,
+      "gap": true
+     }
+    ],
+    "read": "Chống cận đã Top 3. Kẹp bàn có trang nhưng chưa có hạng.",
+    "act": "Kiểm trang kẹp bàn ở trạm Retrieve.",
+    "topic": "T1 · P0 · S"
+   },
+   {
+    "id": "hang",
+    "base": "đèn học",
+    "slot": "[hãng]",
+    "chips": [
+     {
+      "label": "hãng A",
+      "kw": "đèn học hãng A",
+      "now": 9,
+      "ago": 11
+     },
+     {
+      "label": "hãng B",
+      "kw": "đèn học hãng B",
+      "now": 13,
+      "ago": 13
+     },
+     {
+      "label": "hãng C",
+      "kw": "đèn học hãng C",
+      "now": 18,
+      "ago": 22
+     },
+     {
+      "label": "hãng D",
+      "kw": "đèn học hãng D",
+      "now": null,
+      "ago": null
+     }
+    ],
+    "read": "Các hãng đứng 9–18.",
+    "act": "Chốt một URL cho mỗi hãng.",
+    "topic": "T3 · P1 · M"
+   }
+  ]
+ },
+ "canonical": {
+  "rows": [
+   {
+    "query": "đèn học chống cận",
+    "google": "/den-hoc/ #3",
+    "problem": "Không có vấn đề.",
+    "decision": "Giữ URL danh mục.",
+    "tag": "giữ"
+   },
+   {
+    "query": "đèn học hãng A",
+    "google": "/blog/top-den-hoc/ #9",
+    "problem": "Google trả bài blog thay cho trang hãng.",
+    "decision": "Dồn link ngữ cảnh về trang hãng A.",
+    "tag": "T3"
+   },
+   {
+    "query": "đèn học kẹp bàn",
+    "google": "ngoài 50",
+    "problem": "Trang có trên site nhưng chưa có hạng.",
+    "decision": "Kiểm noindex và canonical.",
+    "tag": "T1",
+    "new": true
+   }
+  ],
+  "rules": [
+   "Giữ URL Google đang chọn nếu đã Top 10.",
+   "Chỉ gom khi có bằng chứng hai URL tranh nhau."
+  ],
+  "flip": {
+   "label": "Khi Google lật URL",
+   "steps": [
+    "Ghi hai URL và ngày lật.",
+    "Kiểm canonical và anchor trỏ về mỗi URL.",
+    "Chọn URL theo loại trang của SERP.",
+    "Chờ 14 ngày rồi đọc median."
+   ]
+  },
+  "src": "Dữ liệu minh hoạ."
+ },
+ "serp": {
+  "src": "Dữ liệu minh hoạ.",
+  "cards": [
+   {
+    "query": "đèn học chống cận",
+    "meta": "Minh hoạ · VN · 10/2026",
+    "rows": [
+     {
+      "p": 1,
+      "type": "Danh mục",
+      "cls": "cat",
+      "domain": "site1.example",
+      "dr": ""
+     },
+     {
+      "p": 2,
+      "type": "Danh mục",
+      "cls": "cat",
+      "domain": "site2.example",
+      "dr": ""
+     },
+     {
+      "p": 3,
+      "type": "Sản phẩm",
+      "cls": "prod",
+      "domain": "site3.example",
+      "dr": ""
+     },
+     {
+      "p": 4,
+      "type": "Bài list",
+      "cls": "list",
+      "domain": "site4.example",
+      "dr": ""
+     },
+     {
+      "p": 5,
+      "type": "Danh mục",
+      "cls": "cat",
+      "domain": "site5.example",
+      "dr": ""
+     },
+     {
+      "p": 6,
+      "type": "Video",
+      "cls": "vid",
+      "domain": "site6.example",
+      "dr": ""
+     }
+    ],
+    "verdict": "Thương mại: Google muốn trang danh mục.",
+    "so": "Vì vậy: đẩy /den-hoc/, không đẩy PDP."
+   },
+   {
+    "query": "đèn học hãng nào tốt",
+    "meta": "Minh hoạ · VN · 10/2026",
+    "rows": [
+     {
+      "p": 1,
+      "type": "Danh mục",
+      "cls": "cat",
+      "domain": "site1.example",
+      "dr": ""
+     },
+     {
+      "p": 2,
+      "type": "Danh mục",
+      "cls": "cat",
+      "domain": "site2.example",
+      "dr": ""
+     },
+     {
+      "p": 3,
+      "type": "Sản phẩm",
+      "cls": "prod",
+      "domain": "site3.example",
+      "dr": ""
+     },
+     {
+      "p": 4,
+      "type": "Bài list",
+      "cls": "list",
+      "domain": "site4.example",
+      "dr": ""
+     },
+     {
+      "p": 5,
+      "type": "Danh mục",
+      "cls": "cat",
+      "domain": "site5.example",
+      "dr": ""
+     },
+     {
+      "p": 6,
+      "type": "Video",
+      "cls": "vid",
+      "domain": "site6.example",
+      "dr": ""
+     }
+    ],
+    "verdict": "So sánh: bài list và danh mục.",
+    "so": "Vì vậy: bảng so sánh trên trang danh mục."
+   },
+   {
+    "query": "đèn học bao nhiêu lux",
+    "meta": "Minh hoạ · VN · 10/2026",
+    "rows": [
+     {
+      "p": 1,
+      "type": "Danh mục",
+      "cls": "cat",
+      "domain": "site1.example",
+      "dr": ""
+     },
+     {
+      "p": 2,
+      "type": "Danh mục",
+      "cls": "cat",
+      "domain": "site2.example",
+      "dr": ""
+     },
+     {
+      "p": 3,
+      "type": "Sản phẩm",
+      "cls": "prod",
+      "domain": "site3.example",
+      "dr": ""
+     },
+     {
+      "p": 4,
+      "type": "Bài list",
+      "cls": "list",
+      "domain": "site4.example",
+      "dr": ""
+     },
+     {
+      "p": 5,
+      "type": "Danh mục",
+      "cls": "cat",
+      "domain": "site5.example",
+      "dr": ""
+     },
+     {
+      "p": 6,
+      "type": "Video",
+      "cls": "vid",
+      "domain": "site6.example",
+      "dr": ""
+     }
+    ],
+    "verdict": "Thông tin: bài hướng dẫn.",
+    "so": "Vì vậy: đoạn trả lời dưới heading trên blog."
+   }
+  ]
+ },
+ "matrix": {
+  "src": "Dữ liệu minh hoạ.",
+  "rows": [
+   {
+    "name": "đèn học [đối tượng]",
+    "topic": "T2",
+    "stages": {
+     "B3": 2,
+     "B2": 1
+    },
+    "stat": "14 kw · Top 10 = 7",
+    "diag": "Trang danh mục chỉ phủ biến thể cho bé.",
+    "why": {
+     "B3": "Thiếu khối cho học sinh, sinh viên.",
+     "B2": "H1 thiếu mảnh đối tượng."
+    },
+    "fix": "Thêm khối theo đối tượng."
+   },
+   {
+    "name": "đèn học [thuộc tính]",
+    "topic": "T1",
+    "stages": {
+     "B7": 2
+    },
+    "stat": "12 kw · Top 10 = 5",
+    "diag": "Trang kẹp bàn đặt noindex.",
+    "why": {
+     "B7": "Trang noindex nên không được retrieve."
+    },
+    "fix": "Gỡ noindex trang kẹp bàn."
+   },
+   {
+    "name": "đèn học [hãng]",
+    "topic": "T3",
+    "stages": {
+     "B4": 2,
+     "B3": 1
+    },
+    "stat": "10 kw · Top 10 = 3",
+    "diag": "Blog và trang hãng tranh nhau.",
+    "why": {
+     "B4": "Google trả blog thay trang hãng.",
+     "B3": "Anchor hãng trỏ hai URL."
+    },
+    "fix": "Chốt một URL cho mỗi hãng."
+   },
+   {
+    "name": "đèn học [mức giá]",
+    "topic": "T4",
+    "stages": {
+     "B3": 2
+    },
+    "stat": "8 kw · Top 10 = 1",
+    "diag": "Không có khối giá.",
+    "why": {
+     "B3": "Trang không phủ biến thể giá."
+    },
+    "fix": "Thêm bảng theo mức giá."
+   },
+   {
+    "name": "đèn học [câu hỏi]",
+    "topic": "T5",
+    "stages": {
+     "B6": 2,
+     "B8": 2
+    },
+    "stat": "9 kw · Top 10 = 1",
+    "diag": "Blog không có đoạn trả lời ngắn.",
+    "why": {
+     "B6": "Heading không phải câu hỏi.",
+     "B8": "Câu trả lời nằm cuối bài."
+    },
+    "fix": "Đặt đoạn trả lời ngay dưới heading."
+   }
+  ]
+ },
+ "priority": {
+  "src": "Dữ liệu minh hoạ.",
+  "rows": [
+   {
+    "id": "T1",
+    "template": "đèn học [thuộc tính]",
+    "evidence": "Trang kẹp bàn noindex",
+    "why": "Lỗi Retrieve chặn cả nhóm keyword.",
+    "n_kw": 4,
+    "stages": "B7",
+    "pri": "P0",
+    "when": "Tuần 1"
+   },
+   {
+    "id": "T2",
+    "template": "đèn học [đối tượng]",
+    "evidence": "Cho bé Top 3, anh em 5–15",
+    "why": "Trang đã thắng một biến thể.",
+    "n_kw": 6,
+    "stages": "B3 · B2",
+    "pri": "P1",
+    "when": "Tuần 1–2"
+   },
+   {
+    "id": "T3",
+    "template": "đèn học [hãng]",
+    "evidence": "Blog tranh trang hãng",
+    "why": "Chốt URL trước khi thêm nội dung.",
+    "n_kw": 5,
+    "stages": "B4",
+    "pri": "P1",
+    "when": "Tuần 2"
+   },
+   {
+    "id": "T4",
+    "template": "đèn học [mức giá]",
+    "evidence": "Chưa có khối giá",
+    "why": "Việc nội dung lớn, làm sau.",
+    "n_kw": 4,
+    "stages": "B3",
+    "pri": "P2",
+    "when": "Sau kỳ đo"
+   }
+  ]
+ },
+ "measure_slide": {
+  "intro": "Dán regex vào bộ lọc query của GSC để đọc cả họ.",
+  "why": "Google xử lý cả họ query, nên đọc theo họ ổn định hơn đọc từng keyword.",
+  "regex": [
+   {
+    "name": "đèn học [đối tượng]",
+    "rx": "(?i)đèn học (cho )?(bé|học sinh|sinh viên)"
+   },
+   {
+    "name": "đèn học [thuộc tính]",
+    "rx": "(?i)đèn học (chống cận|led|tích điện|kẹp bàn)"
+   },
+   {
+    "name": "đèn học [hãng]",
+    "rx": "(?i)đèn học (hãng )?[a-z]+"
+   }
+  ],
+  "timeline": [
+   {
+    "d": "Tuần 0",
+    "t": "Chụp baseline, mở nhật ký thay đổi theo URL."
+   },
+   {
+    "d": "+14 ngày",
+    "t": "Đọc median các lần chạy hợp lệ."
+   }
+  ],
+  "rule": {
+   "label": "Luật đọc số",
+   "text": "Bỏ lần chạy thiếu dữ liệu. Đọc median, không đọc một ngày."
+  },
+  "src": "Dữ liệu minh hoạ."
+ },
+ "plan": {
+  "who": "Lead mẫu",
+  "period": "12–23/10",
+  "title": "Kế hoạch hành động",
+  "rows": [
+   {
+    "when": "13/10",
+    "task": "Gỡ noindex trang kẹp bàn.",
+    "who": "Dev",
+    "done": "Trang trả index, đã gửi URL Inspection."
+   },
+   {
+    "when": "14/10",
+    "task": "Chụp baseline hạng và GSC cho 3 template.",
+    "who": "Lead",
+    "done": "File baseline lưu trong _work."
+   },
+   {
+    "when": "15–17/10",
+    "task": "Thêm khối theo đối tượng trên trang danh mục.",
+    "who": "Content",
+    "done": "Trang có 3 khối mới, không rút khối cũ."
+   },
+   {
+    "when": "20/10",
+    "task": "Dồn anchor hãng A về trang hãng.",
+    "who": "Lead",
+    "done": "Anchor trỏ đúng một URL."
+   },
+   {
+    "when": "23/10",
+    "task": "Lưu regex đo vào GSC.",
+    "who": "Lead",
+    "done": "3 bộ lọc đã lưu."
+   }
+  ],
+  "cards": [
+   {
+    "label": "Nhắc",
+    "text": "Trước kỳ đo, trang đang giữ Top 3 chỉ thêm, không rút."
+   },
+   {
+    "label": "Nội bộ",
+    "text": "Mốc mẫu thiếu 8 keyword Top 10.",
+    "internal": true
+   }
+  ],
+  "src": "Dữ liệu minh hoạ."
+ },
+ "flags": [
+  {
+   "slide": "Canonical",
+   "text": "Dòng kẹp bàn cần URL Inspection."
+  }
+ ],
+ "guides": {},
+ "gloss": {
+  "denhoc.example": "Domain minh hoạ."
+ }
+}

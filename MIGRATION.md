@@ -1,5 +1,5 @@
 ---
-master_version: v2026.10.4
+master_version: v2026.10.5
 ---
 
 # MIGRATION — Cập nhật instance lên version master mới
@@ -15,6 +15,16 @@ master_version: v2026.10.4
 ---
 
 ## 1. Có gì mới
+
+### v2026.10.5 (2026-10-12) — Skill chẩn đoán Query Processing cho bộ keyword cam kết
+
+Vincent duyệt 12/10: đóng gói quy trình của đợt chẩn đoán 10 dự án (10/2026) thành skill dùng lại cho gate #22, audit #24, #29, và bàn giao kết quả cho team content.
+
+- **Skill mới:** `skills/query-processing-diagnosis` v1.2. Đọc hạng SpySERP (CSV export dấu `;` hoặc `,`, một hay nhiều file, hoặc JSON chuẩn hoá) bằng median các lần chạy hợp lệ, gom query template, URL Google chọn, SERP, trang thật, ma trận 8 trạm, topic ưu tiên, kế hoạch 2 tuần. Đầu ra: JSON + deck HTML + hồ sơ + file bàn giao content `<CLIENT>_qp-handoff-content_v<N>.md`. Quy trình chuẩn 8 pha, một điểm dừng hỏi Lead, ngân sách 25–35 tool call mỗi dự án. Thiếu mốc so sánh 4 tuần thì dừng (không còn trạng thái "Đang lan" giả); project một domain có lần chạy mới nghi thiếu thì hỏi Lead. Script đóng gói trong skill: `qp_ranks.py` (bo, runs, table, terms), `qp_scaffold.py` (JSON nháp có sẵn mọi số), `qp_build.py` (check + verify số với bảng hạng + dựng + quét bản web + bàn giao content + audit trong một lệnh), `qp_render.py`, `site_check.py`, `audit.py` + `cdp.mjs` (audit cần Node ≥22 và Chrome, tuỳ chọn). Checklist QC QP-01…QP-18 (P0 8) nằm trong skill.
+- **Folder mới:** `03-audits/ranking/` (README + nơi lưu chẩn đoán). **Template mới:** `_TEMPLATES/qp-intake.md` (phiếu đầu vào Lead điền trước khi gọi agent) và `_TEMPLATES/qp-chan-doan.md` (hồ sơ), tổng 37 template. `03-audits/ranking/README.md` là hướng dẫn cho Lead: chuẩn bị máy, export SpySERP, điền phiếu, câu lệnh, nhận gì, sau khi nhận.
+- **Sửa theo:** `CLAUDE.md` §4 (folder map, số template và skill), `README.md`, `COMMANDS.md` (lệnh `chẩn đoán QP <client>`), `_REFERENCE/runtime-workstream-matrix.md` (hàng Audit và Keyword research), `_REFERENCE/folder-map.md`, `_REFERENCE/project-sync.md` (chẩn đoán QP trong danh sách dữ liệu chia sẻ; giữ giống bản ở repo content), `03-audits/README.md`, `03-audits/CLAUDE.md` (Input/Output, vòng tự kiểm mục 5, luật nạp skill), `_TEMPLATES/README.md`, cheat-sheet `02-raw/knowledge/cheat-sheets/ws03-audit.md`.
+- **Repo content đi kèm:** Content Production bản vá 12/10/2026 kéo `03-audits/ranking/*.md` qua `project_sync.py` và dùng file bàn giao ở research, outline, update (`_REFERENCE/query-processing.md` của repo content). Instance SEO cần commit và push file bàn giao để repo content kéo được.
+- **Port sang instance:** GHI ĐÈ `skills/query-processing-diagnosis` và mirror, `_TEMPLATES/`, `_REFERENCE/project-sync.md`, các file sửa theo ở trên (`03-audits/CLAUDE.md` có phần riêng của instance thì chỉ thêm đúng các dòng mới); THÊM `03-audits/ranking/README.md`. Không đổi `index.md`, không đổi deliverable. Instance đã có chẩn đoán QP làm tay (ví dụ đợt 10/2026 lưu ở workspace GTV): giữ nguyên, lần chẩn đoán sau dùng skill.
 
 ### v2026.10.4 (2026-10-03) — Instance website nội bộ (GTV, TAG): dòng Entity + biến thể setup
 
@@ -239,7 +249,7 @@ Bản đầu tiên của hệ SEO Production. Không có instance cũ để migr
 | Skills | `skills/` + mirror `.claude/skills/` + `.agents/skills/` |
 | Knowledge pack | `02-raw/knowledge/` toàn bộ |
 | Screenshots infra | `02-raw/screenshots/README.md` (CHỈ README — ảnh là data) |
-| WS infra | `README.md` + **`CLAUDE.md` + `AGENTS.md` (nội quy trạm)** của MỌI workstream folder (`00-client-context/` → `12-feedback-lessons/`) + `03-audits/qc/README.md` |
+| WS infra | `README.md` + **`CLAUDE.md` + `AGENTS.md` (nội quy trạm)** của MỌI workstream folder (`00-client-context/` → `12-feedback-lessons/`) + `03-audits/qc/README.md` + `03-audits/ranking/README.md` |
 | Config | `config/` (`mcp.json.example`) |
 | Tooling | `tools/` (`sync-skills.sh` — dựng lại mirror skill khi chạy standalone · `content_sync.py` · `project_sync.py` · `onpage_report_html.py`) |
 

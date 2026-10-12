@@ -23,7 +23,7 @@ SEO Production/                      (instance: PROJECTS/<client-slug>/)
 │   ├── knowledge/            ← SOP + checklist + cheat-sheets (READ-ONLY, vá ở master qua MIGRATION)
 │   └── screenshots/          ← own-site/ · competitors/ · serp-ai/ · tools/ (§8)
 │
-├── 03-audits/                ← WS Audit · qc/ = kho QC report toàn dự án · full/ toàn diện · technical/ content/ entity/ offsite/ audit lẻ
+├── 03-audits/                ← WS Audit · qc/ = kho QC report toàn dự án · full/ toàn diện · technical/ content/ entity/ offsite/ audit lẻ · ranking/ chẩn đoán bộ keyword cam kết
 ├── 04-structure-ux-cro/      ← WS Structure (cấu trúc lock #11 — CRO chuyển sang 13-cro/)
 ├── 05-content-plan/          ← WS Content plan (plan + tracking — KHÔNG chứa bài viết) · keyword-research/ · content-tracking/ (đấu nối fork, tools/content_sync.py)
 ├── 06-onpage-internal-link/  ← WS Onpage & IL

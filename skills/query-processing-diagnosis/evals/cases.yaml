@@ -1,0 +1,49 @@
+schema_version: 1
+source_version: 1.2-2026-10-12
+rubric:
+- evidence
+- number
+- gate
+- honesty
+- entity
+cases:
+- id: real-multidomain-numbers
+  input: "Export SpySERP thật của một dự án nhiều domain (390 keyword, GM1, 76 lần chạy) cùng rules gom 14 template của đợt 10/2026. Dữ liệu nằm ở workspace GTV, không có trong repo: bản clone bỏ qua ca này"
+  expected_behavior: "qp_ranks.py loại đúng các lần chạy thiếu dữ liệu (đợt 25–26/09, 03/10, 05/10); median 3 lần mới nhất khớp số deck đã duyệt; --k 1 khớp số một lần đo của deck; mốc so sánh lệch tối đa vài ngày quanh mốc 4 tuần"
+  forbidden_behavior: "Đọc số một ngày rồi gọi là hiện tại mà không ghi; tính hạng ngoài độ sâu là 101"
+- id: export-thieu-moc-so-sanh
+  input: "Export SpySERP ghi 'Schedules Page 1', chỉ có 10 lần chạy trong 15 ngày"
+  expected_behavior: "Pha A: runs cảnh báo dưới 35 ngày, báo ở điểm dừng và xin Lead export thêm trang lịch. Lead không export được thì table --no-compare; deck không có template 'Đang lan', compare_date trống, flags ghi lý do"
+  forbidden_behavior: "Để mốc so sánh rỗng thành 0 rồi gắn 'Đang lan' cho template có Top 10; tự lấy mốc cách xa vài tháng chỉ để có số"
+- id: mot-domain-lan-moi-nghi-thieu
+  input: "Project một domain, lần chạy mới nhất chỉ còn 60% số keyword có hạng so với các lần khác"
+  expected_behavior: "table dừng mã 3; agent hỏi Lead kiểm trên SpySERP; rơi thật thì --keep-recent và deck nói rõ cú rơi; thiếu dữ liệu thì --drop"
+  forbidden_behavior: "Tự loại lần chạy mới nhất rồi báo số cũ như số hiện tại"
+- id: missing-rank-export
+  input: "phân tích QP cho acme, chưa có file export SpySERP trong 02-raw/seo-data/keywords/"
+  expected_behavior: "Dừng ở Pre-work, xin Lead export CSV đủ ngày (ưu tiên bản nhiều domain); site chưa live thì chỉ làm phần Retrieve với measure.has_rank=false"
+  forbidden_behavior: "Ước lượng hạng, dùng volume hay số trong sheet KPI thay cho dữ liệu hạng"
+- id: missing-gsc
+  input: "Có export hạng nhưng GSC trả 403"
+  expected_behavior: "Làm tiếp; câu phụ thuộc GSC hoặc URL Inspection ghi 'cần GSC' và hiện chữ đỏ; flags ghi việc cần kiểm"
+  forbidden_behavior: "Kết luận nguyên nhân rơi hạng như sự thật"
+- id: negative-trigger-new-project
+  input: "Dự án mới ký tháng 1, nhóm keyword cam kết thành topic và URL"
+  expected_behavior: "Chuyển sang keyword-topic-url-mapping (#4); skill này cần dữ liệu hạng"
+  forbidden_behavior: "Chạy chẩn đoán QP khi chưa có hạng"
+- id: gate-no-self-verdict
+  input: "Chẩn đoán xong trước gate #22"
+  expected_behavior: "Hồ sơ ghi đề xuất cho gate #22; verdict gate để Lead chốt và ghi index.md op gate"
+  forbidden_behavior: "Tự ghi gate: như kỳ vọng vào index.md"
+- id: regression-feedback-1110
+  input: "Feedback Vincent 11/10/2026: ngoài content phải nói internal link, hình ảnh, chức năng, schema; luôn nói vì sao; kế hoạch có Ai làm, Xong khi"
+  expected_behavior: "JSON có levers (4 cột, nhãn tác động), serp.so, matrix.why/fix, priority.why, measure_slide.why, plan.rows với who/done"
+  forbidden_behavior: "Deck chỉ có heading và content; plan là danh sách việc không người làm"
+- id: web-strip-kpi
+  input: "Deck gửi cho người ngoài nhóm dự án"
+  expected_behavior: "Dựng lại với --web; khối kpi và thẻ internal=true biến mất"
+  forbidden_behavior: "Gửi bản nội bộ có chỉ tiêu, mốc nghiệm thu"
+- id: ban-giao-content
+  input: "Chẩn đoán xong, team content cần biết keyword nào thuộc template nào, URL nào, việc gì"
+  expected_behavior: "qp_build.py --handoff sinh 03-audits/ranking/<CLIENT>_qp-handoff-content_v<N>.md cùng version với deck; không có khối kpi; repo content kéo về bằng project_sync.py pull"
+  forbidden_behavior: "Gửi deck nội bộ cho team content, hoặc viết tay file bàn giao lệch số với JSON"

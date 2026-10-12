@@ -41,6 +41,7 @@ Mỗi finding trong audit report phải đủ 4 thành phần — thiếu 1 là 
 | `../00-client-context/kpi-commitments.md` — keyword + KPI cam kết | Phân loại action FULL URL + priority + owner + deadline |
 | Audit report kỳ trước + `../12-feedback-lessons/lessons/lessons-ws03.md` | Input verdict cho gate ◇ #6/#22 — người có tên cột Duyệt chốt |
 | Deliverable trạm khác + checklist ma trận M (khi QC) | QC report `qc/QC-<##>-<slug>-<YYYYMMDD>.md` theo `../_TEMPLATES/qc-report.md` |
+| Export SpySERP + phiếu `../_TEMPLATES/qp-intake.md` (chẩn đoán bộ keyword cam kết: #22, #24, #29) | `ranking/<CLIENT>_qp-chan-doan_v<N>` (JSON + deck HTML + hồ sơ theo `../_TEMPLATES/qp-chan-doan.md`) + `ranking/<CLIENT>_qp-handoff-content_v<N>.md` (bàn giao team content). Hướng dẫn Lead: `ranking/README.md` |
 
 File đã tồn tại → tăng version, không đè. Screenshot dùng làm evidence phải nằm trong `../02-raw/screenshots/` đúng protocol §8 (đúng sub-folder, naming, log op `capture`) TRƯỚC khi dẫn vào report — nhúng bằng relative path, không copy ảnh vào folder này, không dẫn ảnh chỉ tồn tại trong chat.
 
@@ -67,6 +68,7 @@ Audit report cũng là deliverable — Auditor tự chấm role `self` trước 
 2. Audit chuyên sâu (#5, #27, #29): `../02-raw/knowledge/sop/06-self-checklist/tier-3-audit-configuration.md` (T3-O1..O3 + T3-W1..W5; page flagship target ≥50/66) + `../02-raw/knowledge/sop/06-self-checklist/tier-3-technical-advance.md`.
 3. Theo sự kiện (cùng thư mục `06-self-checklist/`): rớt hạng / Google update → `tier-3-ranking-drop-runbook.md` · hack/mã độc → `checklist-xu-ly-ma-doc.md` rồi `checklist-khoi-phuc-seo-ranking.md` · dự án local → `tier-1-gbp-local.md`.
 4. Done-criteria hàng Audit ma trận M: scope đủ 6 hạng mục (toppage · cấu trúc · entity · backlink · technical · content) + mọi action gắn FULL URL/owner/deadline + mỗi finding đủ 4 thành phần luật finding.
+5. Chẩn đoán Query Processing bộ keyword cam kết (`ranking/`): tự chấm `../skills/query-processing-diagnosis/references/checklist-qc.md` (QP-01…QP-18). Scope 6 hạng mục ở mục 4 chỉ áp cho audit toàn diện, không áp cho chẩn đoán QP. Luật finding 4 thành phần vẫn áp, ghi ở hồ sơ mục 2b (bằng chứng, điều kiện bác bỏ, URL đầy đủ, người làm và hạn); deck chỉ mang bản rút gọn.
 
 Tự kiểm PASS → submit QC theo §7. Tự kiểm FAIL → sửa cho xong rồi mới trình — không trình kèm ghi chú "biết là còn thiếu".
 
@@ -75,7 +77,7 @@ Tự kiểm PASS → submit QC theo §7. Tự kiểm FAIL → sửa cho xong r�
 ## Luật nạp 80/20 của trạm
 
 - Checklist: nạp ĐÚNG file theo việc đang làm (danh sách ở Vòng tự kiểm) — không quét cả `../02-raw/knowledge/`.
-- Skill theo loại audit — nạp 1-2 skill đúng việc, không nạp cả cụm: `semantic-content-audit` (content/bài, T3-W2/W3) · `technical-seo-audit` (technical tầng site, #5/#27) · `competitor-seo-gap-analysis` (#2 — gap theo page type) · `content-refresh` (decay từ T6: #24/#29) · `seo-logfile-analysis` (#27) · `seo-drift-tracker` (QA sau deploy) · `hreflang-planner` / `local-seo-audit` / `map-pack-intelligence` chỉ khi dự án đúng đặc thù.
+- Skill theo loại audit — nạp 1-2 skill đúng việc, không nạp cả cụm: `semantic-content-audit` (content/bài, T3-W2/W3) · `technical-seo-audit` (technical tầng site, #5/#27) · `competitor-seo-gap-analysis` (#2 — gap theo page type) · `content-refresh` (decay từ T6: #24/#29) · `seo-logfile-analysis` (#27) · `seo-drift-tracker` (QA sau deploy) · `query-processing-diagnosis` (bộ keyword cam kết đã có hạng: #22, #24, #29) · `hreflang-planner` / `local-seo-audit` / `map-pack-intelligence` chỉ khi dự án đúng đặc thù.
 - `references/` của skill: nạp TỪNG file theo pointer trong SKILL.md. Không nạp `examples/`, `evals/`, `CHANGELOG`.
 - Nạp nhanh trước khi làm: cheat-sheet `../02-raw/knowledge/cheat-sheets/ws03-audit.md`. QC chính thức vẫn chấm theo checklist đầy đủ — cheat-sheet không thay checklist.
 

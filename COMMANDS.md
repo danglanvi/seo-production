@@ -30,6 +30,7 @@ Nội quy chung: root `CLAUDE.md` (4 thao tác §2, pre-work §3) + `AGENT.md`.
 |---|---|---|---|
 | `audit toàn diện` | #5 (T1) / #27 (T7, kèm logfile): audit 6 hạng mục theo `sop/05-audit-checklist.md` + tier-3 → phân loại action full URL + owner/deadline | Lead | `audit toàn diện quý 1` |
 | `audit định kỳ T<k>` | Audit theo nhịp bảng C: #24 (T6) / #29 (T8-T9 tactic nâng cao); chuẩn bị input cho gate #22 khi tới kỳ | Lead / Executive | `audit định kỳ T6` |
+| `chẩn đoán QP <client>` / `vì sao keyword cam kết chưa lên` | Skill `query-processing-diagnosis` (#22, #24, #29 hoặc lẻ): đọc hạng SpySERP bằng median lần chạy hợp lệ → gom template → URL Google chọn → SERP → trang thật → ma trận 8 trạm → topic ưu tiên + kế hoạch 2 tuần → JSON + deck HTML + hồ sơ + file bàn giao team content ở `03-audits/ranking/`. Chuẩn bị: export SpySERP CSV đủ 35 ngày (đủ các trang lịch) vào `02-raw/seo-data/keywords/` + điền phiếu `_TEMPLATES/qp-intake.md` (hướng dẫn: `03-audits/ranking/README.md`) | Lead | `chẩn đoán QP acme theo phiếu 03-audits/ranking/_work/acme_qp-chan-doan_v1/intake.md` |
 
 Nội quy trạm: `03-audits/CLAUDE.md` + `03-audits/README.md` + cheat-sheet `02-raw/knowledge/cheat-sheets/ws03-audit.md`.
 

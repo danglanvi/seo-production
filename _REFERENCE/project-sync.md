@@ -9,7 +9,7 @@
 | Kho tri thức khách `00-context/kb/` (sổ fact, catalog, thuật ngữ, câu hỏi mở) | Content | SEO: `00-client-context/kb-snapshot/<ngày>/` |
 | Trạng thái bài, bài đã humanize | Content | SEO: `05-content-plan/content-tracking/` (`content-status.md`, `delivered/`) |
 | Hồ sơ khách, Marketing Foundation, KPI cam kết | SEO (`00-client-context/`) | Content: `00-context/seo-snapshot/<ngày>/00-client-context/` |
-| OKRs, cấu trúc URL, topical map / content plan / brief, internal link plan, GEO (prompt, baseline), entity (Brand Info Pack, entity plan), audit content | SEO | Content: `00-context/seo-snapshot/<ngày>/…` |
+| OKRs, cấu trúc URL, topical map / content plan / brief, internal link plan, GEO (prompt, baseline), entity (Brand Info Pack, entity plan), audit content, chẩn đoán Query Processing bộ keyword cam kết (hồ sơ + file bàn giao content ở `03-audits/ranking/`) | SEO | Content: `00-context/seo-snapshot/<ngày>/…` |
 | Hợp đồng, giá (`hop-dong-cam-ket.md`) | SEO | Không chia sẻ |
 
 ## 2. Lệnh
@@ -34,5 +34,6 @@
 ## 4. Repo content dùng snapshot SEO thế nào
 
 - Topical map, content plan, brief: bản trong snapshot SEO mới nhất là nguồn chủ. `01-topical-plan/` của fork là bản làm việc của team content; lệch thì theo snapshot và báo team SEO.
+- Chẩn đoán Query Processing: file `03-audits/ranking/<CLIENT>_qp-handoff-content_v<N>.md` bản mới nhất trong snapshot cho biết keyword cam kết thuộc template nào, Google đang trả URL nào, topic nào đẩy keyword đó và trạm nào hỏng. Cách dùng ở research, outline và update: `_REFERENCE/query-processing.md` của repo content. Trạm B4, B5, B7 là việc của team SEO; team content chỉ nhận việc B2, B3, B6, B8.
 - Entity (Brand Info Pack): tên pháp lý, NAP, câu định nghĩa thương hiệu lấy từ snapshot `14-entity/`, không tự viết lại.
 - KPI cam kết và Marketing Foundation (persona, thuật ngữ, yêu cầu evidence) đọc ở snapshot `00-client-context/`.
