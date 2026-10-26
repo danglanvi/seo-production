@@ -2,7 +2,7 @@
 name: wp-security-hardening
 description: "Ứng cứu sự cố và hardening site WordPress khi có quyền vào server (SSH + WP-CLI): backup, tìm IOC, cách ly, đổi credentials, siết server và site, kiểm, báo cáo việc chờ duyệt. Dùng khi site bị xâm nhập, có mã độc, cần rà bảo mật định kỳ hoặc vá OS, PHP."
 metadata:
-  version: "1.7"
+  version: "1.7.1"
 ---
 
 # wp-security-hardening — ứng cứu và siết bảo mật WordPress
@@ -156,6 +156,7 @@ Bản tốt nhất phải có:
 
 ## Changelog
 
+- v1.7.1 (2026-10-26): `backup_pull.sh` kéo bằng `rsync -rlt` thay `-a` rồi `chmod -R u+rwX,go-rwx` thư mục đích. Lần kéo đầu từ site khoá học mẫu lỗi `fstatat: Permission denied` vì thư mục trên server mang mode 600 và `-a` chép mode đó về máy. openrsync của macOS không có `--chmod`.
 - v1.7 (2026-10-25): sec-1, sec-4, sec-6, sec-7, sec-8, sec-9, sec-10. `references/checklist-hardening.md` mục 1 trỏ dòng Status hygiene trong Bảng ngưỡng của `seo-logfile-analysis` cho luật 410 và 404. Script `apply_server_block.sh` (backup md5, diễn tập, mã HTTP trước và sau, `rollback.sh`), `preflight_remote.sh`, `verify_backup.sh`; sửa `backup_pull.sh`, `site-backup.sh`, `backup-cnf.php`; probe URL ngẫu nhiên phải 404. Reference mới `ap-config-song.md`, `va-os-php.md`, `xoa-an-toan.md`. Bước 0 thêm preflight, `--no-tablespaces`, dump một phần `--no-create-info --replace`. Thêm Phân việc model, Tự phản biện, quét lộ secret ở Bước 6. Test offline `scripts/tests/test_sec_scripts.py`. Nguồn: `Deliverables/AI-Internal/Web-Skill-Review-2026-10/web-skill-review_bao-cao_v1.md`.
 - v1.6 (2026-10-24): `ung-cuu-su-co.md` mục 1: log OLS xoay vòng `.gz`, cột mã trạng thái khác nhau giữa các log trên cùng server, dòng "max children" không có giờ, PHP warning ở `lsws/logs/error.log`. Anti-patterns: awk cột cứng, đếm bằng `seo-logfile-analysis/scripts/log_health.py`. Nguồn: `Deliverables/GTV-Brand/GTV-Website/perf-20261020/toi-uu-khong-nang-vps-2310/dot1-2410/d1a/kiem-doc-lap.md`, HANDOFF gtvseo.com mục Bẫy.
 - v1.5 (2026-10-19): chặn PHP trong `languages` và `upgrade` ngoài `uploads`, kèm biến thể path-info. Probe trong `exposure_default.txt` chỉ nhận 403: trước đây nhận cả 404, 410 nên site có theme trả 410 cho path lạ vẫn qua kiểm dù chưa có rule (đo 19/10 trên một site nội bộ). Ghi production đi qua `wp-staging-deploy`.

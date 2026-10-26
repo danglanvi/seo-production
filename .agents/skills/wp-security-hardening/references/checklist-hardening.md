@@ -111,6 +111,7 @@ Hosting dùng chung (không có root): bỏ mục 6 và các dòng cần vhost. 
 - pure-ftpd của aaPanel là script init.d: tắt bằng `systemctl stop pure-ftpd` và `update-rc.d pure-ftpd disable`. Bật lại: `update-rc.d pure-ftpd enable`.
 - `tar` trả mã 1 khi file đổi lúc đang đọc (Wordfence, cache). Script có `set -o pipefail` phải coi mã 1 là đạt, nếu không bản backup tuần không bao giờ hoàn tất.
 - File plist của launchd là XML. Đường dẫn có dấu `&` (ví dụ tên thư mục workspace) phải viết thành `&amp;`, nếu không `launchctl` từ chối nạp. Mẫu `cai-lich-pull-mac.command` đã thoát ký tự và chạy `plutil -lint`.
+- `rsync -a` chép mode thư mục của server về máy. Thư mục mode 600 (root vẫn đọc được) làm user thường không mở được thư mục đích, rsync báo `fstatat: Permission denied` (26/10/2026). Bản v1.7.1 dùng `rsync -rlt` rồi `chmod`. openrsync của macOS không có `--chmod`.
 - `backup_pull.sh` bản trước v1.7 chỉ dùng `date -j` (chỉ có trên macOS) và báo thành công dù server không có `rsync` (18/10/2026). Bản v1.7 thử `date -d` rồi `date -j`, thoát 1 khi kéo lỗi.
 - `mysqldump` thiếu `--no-tablespaces` báo lỗi khi user WordPress không có quyền PROCESS (gặp 3 lần, 10/2026). Server không có `zstd` mà script vẫn nén bằng `zstd` ra file 0 byte (16/10/2026): chạy `scripts/preflight_remote.sh` trước.
 - `wp db export` gọi `mysqldump` qua `proc_open`. PHP CLI chặn `proc_open` trong `disable_functions` thì lệnh hỏng: dump bằng `mysqldump` qua SSH.

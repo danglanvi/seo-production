@@ -20,7 +20,8 @@ to_epoch() { date -d "$1" +%s 2>/dev/null || date -j -f '%Y-%m-%d %H:%M:%S' "$1"
 echo "$(date '+%F %T') bắt đầu kéo về $DEST"
 if $SSH_CMD "$ALIAS" 'command -v rsync >/dev/null 2>&1'; then
 	rc=0
-	rsync -a --partial --timeout=120 -e "$SSH_CMD" "$ALIAS:$SRC/" "$DEST/" || rc=$?
+	# -rlt, không -a: thư mục trên server có thể mang mode 600 (root vẫn đọc được). Chép nguyên mode về máy thì user thường không mở được thư mục (26/10/2026). openrsync của macOS không có --chmod.
+	rsync -rlt --partial --timeout=120 -e "$SSH_CMD" "$ALIAS:$SRC/" "$DEST/" || rc=$?
 	if [ "$rc" -ne 0 ]; then echo "LỖI: rsync thoát mã $rc. Backup chưa được kéo." >&2; exit 1; fi
 else
 	echo "THAY THẾ: server không có rsync. Kéo bằng tar qua SSH."
@@ -30,6 +31,7 @@ else
 	set -o pipefail
 	if [ "${prc[0]}" -ne 0 ] || [ "${prc[1]}" -ne 0 ]; then echo "LỖI: kéo bằng tar thất bại (mã ${prc[0]}, ${prc[1]})." >&2; exit 1; fi
 fi
+chmod -R u+rwX,go-rwx "$DEST"
 LAST=$(cat "$DEST/LAST_OK_db" 2>/dev/null || echo "")
 NOW=$(date +%s); THEN=0
 [ -n "$LAST" ] && THEN=$(to_epoch "$LAST")

@@ -1,5 +1,5 @@
 ---
-master_version: v2026.10.33
+master_version: v2026.10.34
 ---
 
 # MIGRATION — Cập nhật instance lên version master mới
@@ -15,6 +15,13 @@ master_version: v2026.10.33
 ---
 
 ## 1. Có gì mới
+
+### v2026.10.34 (2026-10-26) — Kéo backup về máy không chép mode thư mục của server
+
+- **Vì sao:** lần cài lịch kéo backup đầu tiên cho site khoá học mẫu (26/10) lỗi `fstatat: Permission denied`. Thư mục backup trên server mang mode 600 (root vẫn đọc được), và `rsync -a` chép mode đó về máy.
+- **wp-security-hardening 1.7.1:** `templates/backup-tu-dong/backup_pull.sh` kéo bằng `rsync -rlt`, rồi `chmod -R u+rwX,go-rwx` thư mục đích. openrsync của macOS không có `--chmod`. Checklist mục 7 thêm bẫy này.
+- **Kiểm:** kéo thật 2,7 GB từ server mẫu: 9 bản DB và 2 bản file, `verify_backup.sh` đạt. `test_sec_scripts.py` đạt.
+- **Port sang instance:** GHI ĐÈ `skills/wp-security-hardening` và mirror. Máy đã cài lịch kéo bằng bản cũ: nếu thư mục đích báo lỗi quyền, chạy `chmod -R u+rwX` trên thư mục đó rồi chạy lại `backup_pull.sh` một lần.
 
 ### v2026.10.33 (2026-10-25, bổ sung 26/10) — Đợt dựng skill sau rà soát web 16–24/10
 

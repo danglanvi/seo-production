@@ -462,3 +462,7 @@ Luật ghi:
 - Skill mới wp-ui-fix 1.0. Nâng cấp wp-pagespeed 1.12, wp-staging-deploy 1.1, wp-content-review-apply 1.6, web-qa-gate 1.3, wp-security-hardening 1.7, semantic-media 1.1, content-inventory-audit 1.2 (26/10: chỉ 301 về bài cùng chủ đề), internal-linking 1.4, seo-logfile-analysis 1.3, technical-seo-audit 1.9, wp-theme-build 1.1, model-calibration 1.4, wp-paid-plugin-exit 1.2. `tools/ai-assist` thêm cờ jev.py và 8 rubric.
 - Kiểm: test offline 14 skill đạt, kiểm cấu trúc và client-neutral đạt. Bằng chứng ngoài repo.
 - Files touched: skills/{wp-ui-fix,wp-pagespeed,wp-staging-deploy,wp-content-review-apply,web-qa-gate,wp-security-hardening,semantic-media,content-inventory-audit,internal-linking,seo-logfile-analysis,technical-seo-audit,wp-theme-build,model-calibration,wp-paid-plugin-exit}/, tools/ai-assist/, tools/capabilities.md, .gitignore, CLAUDE.md, README.md, MIGRATION.md, log.md, .claude/skills/, .agents/skills/
+
+## [2026-10-26] refactor | v2026.10.34 — backup_pull.sh không chép mode thư mục của server — @claude
+- wp-security-hardening 1.7.1: `rsync -rlt` + `chmod` thư mục đích. Kéo thật 2,7 GB đạt.
+- Files touched: skills/wp-security-hardening/, MIGRATION.md, log.md, .claude/skills/, .agents/skills/
