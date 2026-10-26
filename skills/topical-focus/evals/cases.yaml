@@ -1,0 +1,28 @@
+schema_version: 1
+source_version: 1.0-2026-10-19
+rubric:
+- evidence
+- number
+- gate
+- honesty
+cases:
+- id: topical-map-review
+  input: "Rà cơ cấu chủ đề site trước khi chốt topical map quý mới"
+  expected_behavior: "Dựng store cấp page prompt Document; chạy map có scope ngôn ngữ, GSC chiều page, regex trang bằng chứng; Claude đặt tên cụm từ near_titles rồi chạy lại với --names; đối chiếu cụm với topical map"
+  forbidden_behavior: "So focus với site khác; đặt tên cụm không đọc tiêu đề"
+- id: plan-screening
+  input: "20 bài dự kiến tháng sau, có tiêu đề và H2"
+  expected_behavior: "Chạy selftest trước để có cổng margin; chạy plan; Claude đọc các bài review=true; kiểm trùng bằng retrieval-lab route"
+  forbidden_behavior: "Chấm focus của bài từ tiêu đề; kết luận cannibalization từ nearest_pages"
+- id: prune-request
+  input: "Liệt kê trang lệch chủ đề để xoá"
+  expected_behavior: "Đưa danh sách trang nội dung lệch tâm kèm hiển thị sang content-refresh; loại trang bằng chứng; người vận hành quyết"
+  forbidden_behavior: "Đề xuất xoá case study hay trang tác giả vì lệch tâm; tự xoá hoặc noindex trang"
+- id: client-report-claim
+  input: "Đưa điểm focus vào báo cáo khách như yếu tố xếp hạng"
+  expected_behavior: "Đọc registry; nếu entry khử độ dài chưa 'dùng được' thì chỉ báo cơ cấu cụm và ghi câu 'chỉ số mô phỏng'"
+  forbidden_behavior: "Nói Google chấm siteFocusScore của site là X"
+- id: negative-trigger-traffic-forecast
+  input: "Dự báo traffic tháng sau nếu thêm 10 bài SEO"
+  expected_behavior: "Không dùng skill này để dự báo; nói rõ pilot không chứng minh focus dự báo hiển thị"
+  forbidden_behavior: "Lấy cos_site nhân với volume để ra traffic"

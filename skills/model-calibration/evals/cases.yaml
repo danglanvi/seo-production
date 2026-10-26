@@ -1,0 +1,44 @@
+schema_version: 1
+source_version: 1.4-2026-10-25
+rubric:
+- evidence
+- number
+- gate
+- honesty
+cases:
+- id: multiclass-no-class-threshold
+  input: "Rubric Jev 4 lớp, 50 mẫu gold, không lớp nào đạt precision 0,9 có Wilson đủ"
+  expected_behavior: "Dùng conf_gate trong kết quả; ghi registry cổng confidence; dưới cổng Claude đọc"
+  forbidden_behavior: "Hạ target cho tới khi có ngưỡng; tin confidence cao mà không xem bảng theo dải"
+- id: gold-after-model
+  input: "Người vận hành muốn lấy nhãn Jev làm gold cho nhanh"
+  expected_behavior: "Từ chối; gold gán trước khi xem nhãn model; ca sửa gold sau khi đọc ca lệch phải có note lý do"
+  forbidden_behavior: "Sửa gold cho khớp model"
+- id: proxy-pooled-only
+  input: "Proxy tương quan rõ trên toàn bộ dòng nhưng chưa chạy --group"
+  expected_behavior: "Chạy lại với --group theo query hoặc theo trang; chỉ ghi 'dùng được' khi CI theo nhóm nằm trên 0"
+  forbidden_behavior: "Đưa số pooled vào báo cáo khách như bằng chứng"
+- id: new-industry-client
+  input: "Khách ngành y tế, dùng ngưỡng của site mẫu agency SEO"
+  expected_behavior: "Coi defaults là điểm khởi đầu, gán gold 40 mẫu của khách rồi hiệu chuẩn; báo cáo ghi 'bản nháp' tới khi xong"
+  forbidden_behavior: "Dùng thẳng ngưỡng defaults cho báo cáo khách"
+- id: gold-sheet-from-jev-out
+  input: "Site mẫu: đã có jev_out.jsonl và jev_in.jsonl của rubric category-pick, cần 60 mẫu gold cho câu primary"
+  expected_behavior: "Chạy gold-sheet --pred --question primary --content jev_in.jsonl --n 60, chạy thử rồi --out --write; phiếu chia đều 6 dải confidence, có nội dung state, không có nhãn hay confidence model; gán xong mới gold-merge"
+  forbidden_behavior: "Viết script tạm dựng phiếu; in nhãn Jev vào phiếu; dựng phiếu không có --content nên chỉ có id"
+- id: pipeline-recall-regression-1910
+  input: "Chuỗi Jev lọc rồi GLM trích, gold 60 mục có 22 mục thật; chuỗi bắt 15, sót 7"
+  expected_behavior: "Chạy pipeline --stages jev,glm; báo cáo chép report_line (recall 0,682, sót 7, precision) và missed_by_stage; verdict 'recall thấp', không giao như đã lọc xong"
+  forbidden_behavior: "Chỉ báo độ đúng của Jev; coi recall của bước Jev là recall của chuỗi"
+- id: threshold-no-holdout-regression-1910
+  input: "Ngưỡng chọn trên chính 53 trang gold, người vận hành muốn ghi registry làm cổng cho báo cáo"
+  expected_behavior: "Ghi entry draft, threshold null, giá trị ở draft_values; dựng holdout ≥ 40 mẫu mới bằng gold-sheet --exclude-gold rồi chạy lại với --holdout; chỉ dùng làm cổng khi status ready"
+  forbidden_behavior: "Dùng draft_values làm cổng; lấy lại gold hiệu chuẩn làm holdout"
+- id: pipeline-missing-stage-output
+  input: "Muốn đo chuỗi Jev → GLM nhưng chỉ có đầu ra Jev, chưa có đầu ra bước GLM"
+  expected_behavior: "Dừng; dựng file {id, jev, glm} từ đầu ra hai bước trước khi chạy pipeline; ghi rõ chưa đo được recall của chuỗi"
+  forbidden_behavior: "Báo recall của chuỗi từ đầu ra Jev; coi bước vắng là giữ mục"
+- id: deterministic-rule-not-calibration
+  input: "Kiểm URL trả 404 hay 410 sau khi gỡ bài"
+  expected_behavior: "Không dùng skill này; việc có luật tất định (mã HTTP), chuyển skill kiểm kỹ thuật"
+  forbidden_behavior: "Dựng phiếu gold và hiệu chuẩn ngưỡng cho mã HTTP"

@@ -1,0 +1,46 @@
+{
+ "name": "first-screen",
+ "version": "2026-10-19.1",
+ "questions": {
+  "answer_visible": {
+   "type": "noul",
+   "instructions": "state has a search query and one screenshot of the first screen of a web page on desktop, before any scrolling. Does the first screen show a paragraph or a list that directly answers the query, such as a definition, a short answer or a summary? A headline, a slogan, buttons or a menu alone are not an answer."
+  },
+  "price": {
+   "type": "noul",
+   "instructions": "Does the first screen show a price, a price range, a package with its price or a pricing table for the service or product that the page discusses? A price inside an advertisement does not count."
+  },
+  "form": {
+   "type": "noul",
+   "instructions": "Does the first screen show a form with input fields, such as name, phone or email, that the visitor can fill in? A button that opens a form is not a form."
+  },
+  "trust": {
+   "type": "noul",
+   "instructions": "Does the first screen show proof from others: a customer testimonial, client logos, star ratings, review counts, awards, partner badges or press logos? Numbers the company states about itself alone do not count."
+  },
+  "byline": {
+   "type": "noul",
+   "instructions": "Does the first screen show an author name or a publish or update date for the content?"
+  },
+  "media": {
+   "type": "noul",
+   "instructions": "Does the first screen show a visual that carries information: a video player, a video thumbnail, a chart, an infographic, a diagram, or a screenshot of data, a report or a software tool? A decorative photo, a portrait, a logo, a banner or a generic illustration does not count."
+  },
+  "toc": {
+   "type": "noul",
+   "instructions": "Does the first screen show a table of contents that lists the sections of the page?"
+  },
+  "covered": {
+   "type": "noul",
+   "instructions": "Does a popup, a notification prompt, a cookie banner, a chat window or an advertisement lie on top of the page on the first screen and hide part of it? Floating contact buttons at the edge of the screen and fixed header or footer bars do not count."
+  },
+  "centerpiece": {
+   "type": "box",
+   "instructions": "the main content block that answers the search query in the website screenshot, or the main headline block when no answer is visible"
+  },
+  "primary_cta": {
+   "type": "box",
+   "instructions": "the most prominent call-to-action button in the website screenshot"
+  }
+ }
+}

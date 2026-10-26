@@ -24,6 +24,9 @@ node_modules/
 __pycache__/
 .cache/
 
+# ===== Index vector (skill site-vector-index): vector + HTML lớn, dựng lại được =====
+03-audits/_vector-index/
+
 # ===== KHÔNG ignore (để đời sau không thêm nhầm) =====
 # .claude/skills/   — mirror committed, bắt buộc có trong repo
 # .agents/skills/   — mirror committed, bắt buộc có trong repo
@@ -36,6 +39,10 @@ __pycache__/
 02-raw/contracts-proposals/*.pdf
 02-raw/seo-data/**/*.xlsx
 09-reporting/samples/*.pdf
+
+# ── Server log chứa IP người dùng: không commit (seo-logfile-analysis 1.3, aapanel-ols.md §2) ──
+02-raw/logfiles/*
+!02-raw/logfiles/README.md
 
 # ===== Bản xem HTML sinh từ batch report (tools/onpage_report_html.py) =====
 *.view.html

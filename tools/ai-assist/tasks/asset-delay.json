@@ -1,0 +1,16 @@
+{
+  "name": "asset-delay",
+  "version": "2026-10-17.1",
+  "questions": {
+    "role": {
+      "type": "choice",
+      "instructions": "state describes one JavaScript file or inline script on a WordPress page of type state.page_type: its handle or id, source URL, size and the first part of its code. Decide when the page needs it.",
+      "criteria": {
+        "render_critical": "Needed to paint the first screen correctly: layout, above-the-fold slider, header menu structure, or content that is built by script.",
+        "early_interaction": "Needed soon after load for interaction: menu toggle, forms, popups triggered by the visitor, cookie consent, or lazy-load of images.",
+        "delay_safe": "Can wait until the visitor interacts: analytics, tag managers, ads, pixels, chat widgets, social embeds, or below-the-fold features.",
+        "unknown": "Not enough information."
+      }
+    }
+  }
+}

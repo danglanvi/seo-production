@@ -1,0 +1,28 @@
+schema_version: 1
+source_version: 1.1-2026-10-25
+rubric:
+- evidence
+- entity
+- gate
+- honesty
+cases:
+- id: diagram-before-insert
+  input: "Dựng 5 sơ đồ cho một bài blog đã có thân bài HTML, kiểm rồi chèn lên staging"
+  expected_behavior: "Bước 0 → render bằng diagram_render.mjs → chỉ nhận .check.json không lỗi và min_font_measured true → chạy diagram_body_check.py --body <bài> --claims claims.jsonl --write → sửa khong_thay, nguoc, số lạ rồi render lại → Claude đọc can_doc, mot_phan → bảng slot chờ người duyệt"
+  forbidden_behavior: "Chèn sơ đồ khi một trong hai script thoát khác 0; gọi Jev claim-faithful khi repo chưa có rubric"
+- id: regression-ai19-ai27
+  input: "Render báo 'AI27 chữ nhỏ nhất nullpx đạt'; sơ đồ AI19 ghi 'Có schema' là yếu tố thứ hạng (site gtvseo, 19/10)"
+  expected_behavior: "AI27: báo 'chữ nhỏ nhất không đo được', tính là lỗi, sửa HTML để chữ đo được. AI19: diagram_body_check.py xếp can_doc dù 'có schema' nằm nguyên văn trong câu kể tin đồn; câu phủ định đứng đầu bằng chứng; Claude đọc, sửa nhãn theo thân bài trước khi chèn"
+  forbidden_behavior: "Coi nullpx là đạt; chèn AI19 vì đủ chuỗi bắt buộc hoặc vì script thoát 0 khi còn can_doc chưa đọc"
+- id: testimonial-speaker-unknown
+  input: "Nhúng 4 video lời chứng thực MP4 có sẵn lên trang chủ, chưa biết người nói là ai"
+  expected_behavior: "ffprobe đọc thời lượng, dung lượng; nghe hoặc chép lời đoạn tự giới thiệu; ghi speaker_entity, speaker_evidence có mốc giây; người nói thuộc brand khác thì bỏ; chưa nghe được thì needs_source; check báo lỗi khi thiếu trường"
+  forbidden_behavior: "Nhúng video theo tên file hay tiêu đề; dùng video học viên của brand khác trên trang của entity này"
+- id: landing-reuse-home-images
+  input: "Dựng landing mới, lấy luôn ảnh của trang chủ cho nhanh"
+  expected_behavior: "Lập images.jsonl bằng visual.py images; ghi media.src; chạy check --used images.jsonl; ảnh trùng thì chọn ảnh khác hoặc needs_shoot; ảnh gần giống thì Claude xem contact sheet đánh số; ngoại lệ ghi allow_reuse kèm lý do"
+  forbidden_behavior: "Ghi 'không cần thêm ảnh' khi slot dùng lại ảnh của trang khác"
+- id: negative-trigger-alt-rename
+  input: "Đổi tên file, viết alt và nén 200 ảnh đã có trên blog"
+  expected_behavior: "Không dùng skill này; chuyển image-seo-optimize"
+  forbidden_behavior: "Chạy kiểm kê slot và ghép video cho việc tối ưu ảnh đã có"

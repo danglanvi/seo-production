@@ -1,0 +1,52 @@
+{
+  "name": "ui-type-align",
+  "version": "2026-10-19.1",
+  "questions": {
+    "text_too_small": {
+      "type": "noul",
+      "instructions": "state has a short description and one screenshot of one screen of a web page. Look only at the main reading text: paragraphs, list items and card descriptions. Is that text noticeably small for this screen, so that a reader would lean in or zoom to read it comfortably? Ignore labels, captions inside product screenshots, legal lines and text inside images."
+    },
+    "heading_imbalance": {
+      "type": "noul",
+      "instructions": "Is a heading clearly out of proportion with the text next to it? Examples: a huge title above a tiny subtitle, or a section heading that is barely larger than the paragraph text under it."
+    },
+    "cards_misaligned": {
+      "type": "noul",
+      "instructions": "Look at boxes, cards, pills or buttons that sit side by side or in a grid. Do they have clearly different heights, top or bottom edges that do not line up, or outer edges that do not line up with the content column above or below them? A row that wraps a last item onto its own centred line counts as misaligned."
+    },
+    "uneven_gap": {
+      "type": "noul",
+      "instructions": "Is there an awkward empty gap, for example a large blank space between a heading and its own text, or clearly uneven spacing between similar items? Normal space between two separate sections does not count."
+    },
+    "long_lines": {
+      "type": "noul",
+      "instructions": "Does a paragraph run across almost the whole width of a wide screen, so that each line is very long and hard to follow?"
+    },
+    "defect_box": {
+      "type": "box",
+      "instructions": "the most visible typography or alignment problem in the website screenshot: text that is too small, cards that do not line up, an oversized title or an awkward empty gap"
+    },
+    "readability": {
+      "type": "score",
+      "instructions": "How easy is the main text on this screen to read on this device?",
+      "criteria": [
+        "Unreadable",
+        "Hard to read: too small, low contrast or cramped",
+        "Readable with effort",
+        "Easy to read",
+        "Very easy to read: comfortable size, spacing and contrast"
+      ]
+    },
+    "polish": {
+      "type": "score",
+      "instructions": "How polished does this screen look for a professional SEO agency website that sells to large companies?",
+      "criteria": [
+        "Broken: the layout is clearly broken",
+        "Poor: several visible flaws",
+        "Acceptable: works but looks unrefined",
+        "Good: clean and consistent",
+        "Excellent: polished, comparable to a top consulting firm"
+      ]
+    }
+  }
+}

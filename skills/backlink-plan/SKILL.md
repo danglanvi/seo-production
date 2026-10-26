@@ -2,7 +2,7 @@
 name: backlink-plan
 description: "Lập kế hoạch backlink toàn diện — DECISION layer của bộ skill backlink. Use when: (1) 'lập plan backlink cho [domain/client]', 'backlink recommend', 'nên đi link vào đâu', 'chọn target URL + anchor text'."
 metadata:
-  version: "1.2"
+  version: "1.3.1"
 ---
 
 # Backlink Plan — Decision Layer
@@ -21,6 +21,8 @@ DATA `backlink-research` → **DECISION ✅ skill này** → EXECUTION `textlink
 - `$RESEARCH` — research file từ `backlink-research` (hoặc data tương đương user cấp: profile/gap/anchors/velocity). Thiếu → chạy `backlink-research` trước, không plan chay.
 - `$SITE_CONTEXT` — cấu trúc site + internal link map (cây phân tầng) + trạng thái content ("content/structure đã chuẩn chưa?")
 
+**Công cụ:** `scripts/plan_tools.py` (thư viện chuẩn) có 3 lệnh: `velocity`, `quickwins`, `check`. Test: `tests/test_plan_tools.py`. Dữ liệu Ahrefs lấy qua connector theo `backlink-research/references/ahrefs-mcp.md`.
+
 **Optional:** `$MONEY_PAGES` (URLs SEO mong muốn — không có thì skill tự đề xuất "URLs tốt để target" từ data) · `$BUDGET` (VND/tháng) · `$RATIO` (override anchor prior) · `$TIMELINE` · `$RISK_LEVEL` (conservative default / moderate / aggressive — quyết định method mix)
 
 ## Workflow 7 bước
@@ -35,7 +37,7 @@ Từ `$SITE_CONTEXT` + research:
 1. **Money-page link-gap test** (đã có ở research §5): đối thủ **0 quality links vào money page** → KHÔNG link thẳng money page → route **supporting content**; gap = N RDs → climb cost, cân economics (gap quá đắt → đổi target/cluster).
 2. **Chọn trang "lăng kính"** (Vincent): tầng thấp trong cấu trúc, intent cụ thể, cạnh tranh thấp, internal link dày 2 chiều (lên cha + xuống con) → sức mạnh tán xạ kéo cả cluster. Không có internal link 2 chiều → yêu cầu fix internal trước khi bắn.
 3. **Site mới** (chưa đủ authority nền): homepage trước với pillow anchors (brand/naked/generic), gate sau 5-10 bài content.
-4. **Ưu tiên theo cơ hội**: trang có keyword đang rank **vị trí 4-20, volume ≥100** = quick win.
+4. **Ưu tiên theo cơ hội**: trang có keyword đang rank **vị trí 4-20, volume ≥100** = quick win. Ahrefs `site-explorer-organic-keywords` (where `best_position` 4–20, `volume` ≥ 100) → `plan_tools.py quickwins --file <json> --out <W>/quickwins.md`. Kiểm mã HTTP và canonical của mọi URL trước khi chọn: Ahrefs còn giữ URL đã 410 hoặc 301. Lệnh loại khỏi bảng các URL có chữ hoa trong path hoặc `%20`: thường là breadcrumb danh mục Ahrefs ghi thành URL.
 Output: bảng target — URL | vai trò (home/supporting/category/money) | lý do chọn | keyword pos 4-20 | quota link.
 
 ### Bước 2 — Anchor plan per target
@@ -53,7 +55,8 @@ Chọn theo mục tiêu + `$RISK_LEVEL` + budget (evidence 2026: digital PR #1; 
 - **Entity/foundational** (social, profile, citations) → tách sang Entity campaign, KHÔNG trộn (quyết định GTV 2021).
 
 ### Bước 4 — Velocity & timeline
-- Nhịp chuẩn = **RD/tháng trung bình của đối thủ** (research §2); site mới → bắt đầu ½ nhịp đó (Floate).
+- Nhịp chuẩn = **RD mới không spam còn sống/tháng của đối thủ, lấy trung vị** (research §2); site mới → bắt đầu ½ nhịp đó (Floate).
+- Lấy số: Ahrefs `site-explorer-referring-domains` (`is_spam` false, `traffic_domain` > 0, `first_seen` 12 tháng, `history=all_time`) → `plan_tools.py velocity --file <rdnew_*.json>... --mine <domain> --since <YYYY-MM> --until <YYYY-MM> [--new-site]`. Không dùng `refdomains-history` (số ròng, gồm spam) và không dùng trung bình (tháng bùng kéo lệch).
 - Đơn vị vận hành = **tháng**; trình tự trong tháng: free/foundational trước → paid sau (Vincent); kỳ vọng kết quả 1-6 tháng — ghi rõ vào plan để quản trị kỳ vọng client.
 
 ### Bước 5 — Budget
@@ -74,7 +77,31 @@ Chọn theo mục tiêu + `$RISK_LEVEL` + budget (evidence 2026: digital PR #1; 
 ## 7. Risk log: exact cap, footprint rules, velocity cap, disavow policy (chỉ khi negative rõ)
 ## Handoff: textlink PR → skill textlink-analyzer (kèm quota + ratio per target); outreach → team
 ```
-Kèm **CSV/sheet** mỗi dòng 1 link dự kiến: `Domain/nguồn | Dạng (free/guest/niche-edit/PR) | Giá | Target URL | Anchor type | Anchor (3 phần) | Tháng | Trạng thái` — đúng format file plan Vincent dùng (video 2021 + sheet Rạng Đông).
+Kèm **CSV/sheet** mỗi dòng 1 link dự kiến: `Domain/nguồn | Dạng (free/guest/niche-edit/PR) | Giá | Target URL | Anchor type | Anchor (3 phần) | Tháng | Trạng thái` — đúng format file plan Vincent dùng (video 2021 + sheet Rạng Đông). Thêm cột `DR` khi đã biết nguồn.
+
+Chạy `plan_tools.py check --csv <plan.csv> --stage <1|2|3> --out <W>/anchor-check.md` trước khi trình. Lệnh kiểm khung giai đoạn, trần exact, anchor non-brand lặp trong tháng và luật DR nguồn. Có FAIL thì sửa CSV.
+
+### Tự phản biện trước khi trình
+
+Bản tốt nhất phải có:
+
+- [ ] Gate cite money-page link-gap test của research §5. Nguồn lỗi: research gtvseo.com 19/10/2026 chưa có §5, gate không đủ evidence.
+- [ ] Nhịp lấy từ RD mới không spam còn sống, trung vị. Nguồn lỗi: `refdomains-history` của gtvseo.com +133 RD/tháng gồm spam; seovip.vn có khoảng 250 RD mới trong 3 ngày 10/2025.
+- [ ] Mọi target URL trả 200 và tự canonical. Nguồn lỗi: 8 URL Ahrefs ghi đang rank của gtvseo.com trả 410 hoặc 301 (19/10/2026).
+- [ ] `plan_tools.py check` không FAIL. Exact ≤ 8–10% ở cả plan và từng target. Nguồn: `references/anchor-ratio-framework.md`.
+- [ ] Nguồn dưới DR40 chỉ nhận brand, generic, naked. Nguồn: luật Vincent 2021 và Floate 2026.
+- [ ] Mỗi dòng budget có đơn giá × số lượng × nguồn giá. Nguồn: nội quy trạm 07-offpage.
+- [ ] Có điều kiện dừng hoặc đổi hướng. Nguồn: anti-pattern "link mãi cho keyword không nhúc nhích".
+
+## Phân việc model
+
+| Năng lực | Việc | Quyết định |
+|---|---|---|
+| Code (`plan_tools.py`) | nhịp, quick win, kiểm anchor theo khung | dùng |
+| Claude | gate, chọn target sau khi đọc trang, anchor 3 phần, co-occurrence, budget | dùng |
+| EmbeddingGemma | từ khoá exact/partial có trong trang đích (luật 4 của framework) | chưa: cần store của site; dùng `site-vector-index` khi plan có trên 30 dòng |
+| Jev | độ tự nhiên của anchor 3 phần | chưa: chưa có rubric và gold |
+| GLM Flash | — | không cần |
 
 ## Behavior Gates
 
@@ -93,8 +120,14 @@ Kèm **CSV/sheet** mỗi dòng 1 link dự kiến: `Domain/nguồn | Dạng (fre
 - Đưa PBN/parasite/mô hình stack vào plan khi `$RISK_LEVEL` chưa là aggressive hoặc chưa có SEO Lead xem và SEO Director chốt.
 - PBN order ngoài, parasite hoặc link rẻ số lượng lớn trỏ thẳng money page.
 - Plan không có điều kiện dừng — link mãi cho keyword không nhúc nhích thay vì quay lại sửa content.
+- Lấy nhịp từ RD ròng hoặc trung bình tháng khi đối thủ có tháng bùng spam.
 
 ## References & wiki
 
 - [references/anchor-ratio-framework.md](references/anchor-ratio-framework.md) — **canonical anchor framework** (GTV prior + SERP-consensus workflow + Authority-Aggression; textlink-analyzer trỏ về đây)
 - Wiki: [[Link Building]] · [[TrustRank]] · [[Internal Linking Rules and Strategy]] (lăng kính/tán xạ) · [[sources/backlink-a-z-video-vincent-2021]] · [[sources/research-2026-07-backlink-methods]]
+
+## Changelog
+
+- v1.3.1 (2026-10-19): `quickwins` loại URL lạ (chữ hoa trong path, `%20`) khỏi bảng target, liệt kê riêng. Nguồn: phiên Logfile đối chiếu log gtvseo.com, các URL /SEO/... là breadcrumb.
+- v1.3.0 (2026-10-19): `scripts/plan_tools.py` (velocity, quickwins, check) và test offline; nhịp chuẩn đổi sang trung vị RD mới không spam còn sống; tự phản biện; phân việc model. Lượt thử dữ liệu gtvseo.com và 4 agency.

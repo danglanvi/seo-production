@@ -158,12 +158,13 @@ Người ghi feedback/lesson giữ nguyên credit `@alias` khi lesson được g
 
 | Hạng mục | Claude Code | Codex | Antigravity | Ghi chú |
 |---|---|---|---|---|
-| 19 skill delivery (`skills/`) | ✅ | ✅ | ✅ | Skill tool-dependent cần dependency bên dưới; thiếu thì chạy fallback + ghi rõ giới hạn dữ liệu |
+| Skill delivery (`skills/`, 42 skill) | ✅ | ✅ | ✅ | Skill tool-dependent cần dependency bên dưới; thiếu thì chạy fallback + ghi rõ giới hạn dữ liệu |
 | `gtv-client-report` | ✅ CHỈ Claude Code | ❌ | ❌ | Không nằm trong `.agents/skills/`. Task báo cáo client BẮT BUỘC chạy Claude Code (thường là Lead) |
+| `wp-content-review-apply` | ✅ CHỈ Claude Code | ❌ | ❌ | Trang duyệt Duyệt/E là artifact claude.ai có database. Không nằm trong `.agents/skills/` |
 | MCP (ahrefs, firecrawl, ga4, gsc, google-sheets...) | Theo cấu hình máy | Theo cấu hình máy | Theo cấu hình máy | `.mcp.json` KHÔNG commit — ai có API key tự tạo từ `config/mcp.json.example` |
 | Slash command | Quét `.claude/skills/` khi mở đúng folder repo | Gọi skill theo `.agents/skills/` bằng ngôn ngữ tự nhiên | Gọi skill theo `.agents/skills/` bằng ngôn ngữ tự nhiên | Codex/Antigravity không có slash command — mô tả việc là đủ |
 
-Dependency của nhóm skill tool-dependent: node/pagespeed, dataforseo, image-read, python, firecrawl/web, ahrefs, ai-search. Máy thiếu dependency nào thì skill tương ứng tự hạ cấp sang fallback và PHẢI ghi rõ giới hạn dữ liệu trong output.
+Dependency của nhóm skill tool-dependent: node/pagespeed, dataforseo, image-read, python, firecrawl/web, ahrefs, ai-search; nhóm `wp-*` thêm SSH + WP-CLI vào server của site, Chrome, key Jev (`OPENROUTER_JEV_API_KEY`) và venv EmbeddingGemma (`tools/ai-assist/README.md`). Máy thiếu dependency nào thì skill tương ứng tự hạ cấp sang fallback và PHẢI ghi rõ giới hạn dữ liệu trong output.
 
 ---
 

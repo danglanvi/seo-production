@@ -2,7 +2,7 @@
 name: backlink-research
 description: "Backlink research toàn diện — DATA layer của bộ skill backlink (research → plan → thực thi). Use when: (1) 'research backlink [domain/keyword]', 'phân tích backlink đối thủ', 'link gap analysis', 'backlink audit', 'đối thủ lấy link ở đâu'."
 metadata:
-  version: "2.1"
+  version: "2.2"
 ---
 
 # Backlink Research — Data Layer
@@ -30,26 +30,31 @@ Thu thập + phân tích **toàn bộ data nền** cho quyết định backlink:
 Path A — DataForSEO Backlinks API (PRIORITY — user cấp key/data hoặc chạy qua API)
   → references/dataforseo-backlinks-api.md: endpoint map + fields + cost notes
 Path B — Ahrefs (MCP hoặc export UI)
+  → references/ahrefs-mcp.md: công cụ cho từng bước + unit + bẫy 250 dòng
 Path C — CSV export bất kỳ (user paste/gửi file)
 ```
+
+Script `scripts/bl_research.py` (thư viện chuẩn) tính bảng gap, anchor, velocity từ file Ahrefs đã lưu. Test: `tests/test_bl_research.py`.
 Cost-aware mọi path: báo số call dự kiến trước; bulk endpoints (`bulk_ranks`, `bulk_spam_score`, `bulk_referring_domains`) cho danh sách lớn thay vì gọi lẻ.
 
 ## Workflow 7 bước
 
-### Bước 0 — Scope & confirm
-Báo: target, competitor set, path, money pages có/không, số call dự kiến, output location. Chờ confirm.
+### Bước 0 — kiểm tool
+Chạy "python3 tools/capabilities.py check --need 'python3,ahrefs?'" từ root repo. Nếu thiếu tool bắt buộc, dừng và báo tên tool. Nếu thiếu tool tuỳ chọn, dùng fallback ghi trong "tools/capabilities.md".
+
+Scope và confirm: báo target, competitor set, path, money pages có/không, số call dự kiến, output location. Chờ confirm.
 
 ### Bước 1 — Profile overview (mình + từng đối thủ)
 `summary/live` per domain: rank, backlinks, **referring_domains** (+main domains, IPs, subnets — đa dạng thật hay farm), **backlinks_spam_score**, broken, **referring_links_attributes** (dofollow/nofollow/sponsored/ugc ratio), links_types, TLDs, countries. Bảng so sánh 1 nhìn ra vị thế.
 
 ### Bước 2 — Velocity
-`timeseries_summary/live` + `timeseries_new_lost_summary/live` 12 tháng: RD mới/mất per tháng per domain → **nhịp RD/tháng của đối thủ** = input chuẩn velocity cho plan (nguyên tắc Floate 2016→2026: match nhịp đối thủ, không bung).
+`timeseries_summary/live` + `timeseries_new_lost_summary/live` 12 tháng: RD mới/mất per tháng per domain → **nhịp RD/tháng của đối thủ** = input chuẩn velocity cho plan (nguyên tắc Floate 2016→2026: match nhịp đối thủ, không bung). Path B: `bl_research.py velocity --file rd_history.json --out <W>/velocity.md`. Số này là RD ròng, gồm spam. Ghi tỷ lệ spam của Bước 4 cạnh nhịp.
 
 ### Bước 3 — Link gap
-`domain_intersection/live` (mình + competitors): domain trỏ **≥2 đối thủ nhưng KHÔNG trỏ mình** = gap chính. Per gap domain: rank, spam score (`bulk_spam_score` — **prior yếu, không phải verdict**), loại site (news/blog/directory/tool — đoán từ domain + spot-check), link tới đối thủ nào/trang nào/anchor gì. Screening theo [references/spam-filter-criteria.md](references/spam-filter-criteria.md): verdict `KEEP / REVIEW / REJECT` — REJECT cần **≥2 tín hiệu máy đồng thời** (M1-M6), nghi ngờ → REVIEW (giữ + đánh dấu); relevance theo `$SOURCE_CONTEXT` **trước** DR (Theme > Trust — [[Link Building]]).
+`domain_intersection/live` (mình + competitors): domain trỏ **≥2 đối thủ nhưng KHÔNG trỏ mình** = gap chính. Per gap domain: rank, spam score (`bulk_spam_score` — **prior yếu, không phải verdict**), loại site (news/blog/directory/tool — đoán từ domain + spot-check), link tới đối thủ nào/trang nào/anchor gì. Screening theo [references/spam-filter-criteria.md](references/spam-filter-criteria.md): verdict `KEEP / REVIEW / REJECT` — REJECT cần **≥2 tín hiệu máy đồng thời** (M1-M6), nghi ngờ → REVIEW (giữ + đánh dấu); relevance theo `$SOURCE_CONTEXT` **trước** DR (Theme > Trust — [[Link Building]]). Path B: `bl_research.py gap --mine <rd mình> --comp <rd đối thủ>... --out <W>/gap.md` gắn M1 (Ahrefs spam) và M2 (không organic); Theme vẫn do Claude xét.
 
 ### Bước 4 — Anchor consensus (nền cho plan)
-`anchors/live` cho: mình + top đối thủ (+ nếu có `$KEYWORDS`: top 5-10 URL đang rank). Phân loại 8 nhóm (exact/partial/brand/brand+KW/naked/generic/synonym/title) → bảng **consensus per SERP**: "top 5 đang ở X% brand / Y% exact". Đây là input quyết định của anchor plan (SERP-consensus-first — Floate 2026: "Mimic the winners"); flag lệch của mình vs consensus.
+`anchors/live` cho: mình + top đối thủ (+ nếu có `$KEYWORDS`: top 5-10 URL đang rank). Phân loại 8 nhóm (exact/partial/brand/brand+KW/naked/generic/synonym/title) → bảng **consensus per SERP**: "top 5 đang ở X% brand / Y% exact". Đây là input quyết định của anchor plan (SERP-consensus-first — Floate 2026: "Mimic the winners"); flag lệch của mình vs consensus. Path B: `bl_research.py anchors --file <anchors_*.json>... --mine <domain> --keywords "..." --out <W>/anchors.md`. Script bỏ anchor spam khỏi tỷ lệ và tách nhóm `chu_de` (anchor chủ đề không chứa từ khoá đã khai); synonym và title do Claude đọc trong nhóm này.
 
 ### Bước 5 — Money-page link-gap test (nếu có $MONEY_PAGES)
 Per money page dự kiến: export backlink của **money page tương ứng ở top 5 đối thủ** (`backlinks/live` mode URL / `page_intersection/live`) → đếm **unique quality RDs** (lọc theo [references/spam-filter-criteria.md](references/spam-filter-criteria.md) — chỉ trừ REJECT; REVIEW vẫn đếm kèm dấu *) → delta vs trang mình = **climb cost**. Ghi observation: "đối thủ 0 quality links vào money page" (→ plan sẽ route supporting content) hoặc "gap = N RDs DR30+" — KHÔNG tự kết luận build hay không (việc của plan).
@@ -71,6 +76,16 @@ Per money page dự kiến: export backlink của **money page tương ứng ở
 ```
 **Location:** gốc instance SEO Production do người dùng chọn; thư mục đích `07-offpage/backlink-research/`. Nếu đang ở master, xác định instance trước; không ghi dữ liệu client vào master. Lưu `<slug>_backlink-research_v<N>.md` (tăng version nếu đã có); ghi ngày pull, đường dẫn nguồn và caveats. Chốt folder đích ở Bước 0 từ ngữ cảnh đã rõ, chỉ hỏi khi thiếu. Trả link file để `backlink-plan` nhận làm input; tóm tắt chat không thay artifact.
 
+## Phân việc model
+
+| Năng lực | Việc | Quyết định |
+|---|---|---|
+| Code (`bl_research.py`) | gap, tín hiệu M1–M2, nhóm anchor, velocity | dùng: không cần model |
+| Claude | Tầng 2 của tiêu chí spam, Theme của tên miền gap, đọc nhóm anchor `chu_de`, quan sát | dùng |
+| Jev | Theme của trang nguồn gap | chưa: chưa có gold. Trang nguồn là nội dung công khai nên đủ điều kiện gửi Jev khi cần |
+| EmbeddingGemma | Theme trang nguồn so với trang đích | chưa: cần crawl trang nguồn. Nhánh backlink của `link-relevance` đã đo cách này trên link đang có |
+| GLM Flash | — | không cần: skill không trích câu |
+
 ## Behavior Gates
 
 - **#1 Think Before:** confirm scope + cost trước khi gọi API.
@@ -87,6 +102,7 @@ Per money page dự kiến: export backlink của **money page tương ứng ở
 - Bỏ Bước 2 velocity — plan không có nhịp chuẩn sẽ bung link sai tốc độ.
 - Pull từng domain lẻ khi có bulk endpoint (đốt cost).
 - Quên `referring_links_attributes` — thiếu dofollow/sponsored ratio là thiếu nửa bức tranh.
+- Đọc linkable assets theo thứ tự RD khi hồ sơ nhiễm spam → mạng spam đẩy nhiều trang lên cùng 1.000–2.000 RD (pilot 19/10/2026).
 
 ## References & wiki
 
@@ -96,6 +112,7 @@ Per money page dự kiến: export backlink của **money page tương ứng ở
 
 ## Changelog
 
+- **v2.2 (2026-10-19):** Path B Ahrefs MCP chạy thật: `references/ahrefs-mcp.md`, `scripts/bl_research.py` (gap, anchors, velocity), test offline, Bước 0 kiểm tool, Phân việc model. Lượt thử gtvseo.com với 4 agency.
 - 2026-09-12: output file trong deal/instance đã chọn, bàn giao path cho backlink-plan; giữ gate scope/cost và evidence.
 
 - **v2.1 (2026-07-04):** thêm `references/spam-filter-criteria.md` (research 07/2026: Mueller/SpamBrain neutralize, DataForSEO 18 signals thuần technical, Semrush false positives, Floate Link Vetting, Ahrefs no-score-by-design) — screening Bước 3/5 chuyển sang verdict KEEP/REVIEW/REJECT, spam score hạ xuống prior yếu; anti-pattern mới "loại chỉ vì tool flag".

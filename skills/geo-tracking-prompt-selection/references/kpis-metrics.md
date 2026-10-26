@@ -5,7 +5,7 @@
 | KPI | Description | Target | Tracking Frequency |
 |-----|-------------|--------|-------------------|
 | **Brand Mention** | Times brand appears in AI responses — **ChatGPT + Google AI (AI Mode/Gemini/AIO) là kênh bắt buộc**, Perplexity/Copilot/Claude bổ sung (29/08/2026) | >60% BOFU prompts trên cả 2 kênh bắt buộc | Weekly-2 weeks nội bộ (polling ≥3 lần/prompt — GE-33) |
-| **AI Citations** | Citation count — Ahrefs `site-explorer-ai-responses-count` + Brand Radar (tách found vs cited) · GSC Generative AI (Beta) impressions | Increasing trend (directional) | Weekly |
+| **AI Citations** | Citation từ prompt theo Ahrefs `site-explorer-ai-responses-count` (lệnh `geo_kpi.py ahrefs`, không dùng `all_platforms`) · GSC Generative AI (Beta) impressions | Increasing trend (directional) | Weekly |
 | **Share of Voice** | % mention vs competitors — theo topic, tách engine | >30% SOV | Monthly |
 | **Information Accuracy** | AI describes brand correctly | >90% accurate | Monthly |
 | **AI Referral + AI CVR vs Organic CVR** | Sessions + conversion rate kênh GA4 "AI Assistant" so với Organic Search (mục § GA4 bên dưới) | Directional — không nghiệm thu | Monthly |
@@ -159,7 +159,7 @@ Track same metrics for 5-7 competitors:
 | **AIClicks.io** | Cross-platform | Brand vs competitor, source identification |
 | **Semrush** | AI citations | Position tracking with AI Overviews |
 | **Microsoft Clarity AI Citations** | Grounding-query visibility (free) | Branded vs non-branded grounding queries + Share of Authority by query type (official feature 03/08/2026). Caveats: branded-classification methodology unpublished; coverage leans Bing/Copilot ecosystem — verify before client commitments |
-| **Ahrefs — AI responses + Brand Radar** (GTV có MCP) | Citation + mention count per engine (AIO / ChatGPT / AI Mode / Gemini / Perplexity / Copilot) | `site-explorer-ai-responses-count` (số AI responses cite site — nguồn đo AIO hợp lệ theo HĐ GTV), nhóm `brand-radar-*` (mentions overview/history, cited pages, SoV). ⚠ Tách **cited** (hiện link) vs **found** (retrieve không link) — 2 metric riêng; mọi số kèm ngày query + nhãn directional. Map tool → ô báo cáo: `gtv-client-report/references/data-paths.md` §1 |
+| **Ahrefs — AI responses + Brand Radar** (GTV có MCP) | Citation + mention count per engine (AIO / ChatGPT / AI Mode / Gemini / Perplexity / Copilot) | `site-explorer-ai-responses-count` (số AI responses cite site — nguồn đo AIO hợp lệ theo HĐ GTV), nhóm `brand-radar-*` (mentions overview/history, cited pages, SoV; cần addon Brand Radar, kiểm 19/10/2026 tài khoản chưa có). `all_platforms` cộng cả AIO theo từ khoá SERP (`google_ai_overviews_keywords`), nên KPI lấy tổng các nền tảng chạy prompt. ⚠ Tách **cited** (hiện link) vs **found** (retrieve không link) — 2 metric riêng; mọi số kèm ngày query + nhãn directional. Map tool → ô báo cáo: `gtv-client-report/references/data-paths.md` §1 |
 | **GSC → Performance → Generative AI features (Beta)** | Impressions/clicks từ AIO + AI Mode (official, free) | Bề mặt có nhưng không join được với query/click của performance report; số nhiễm bot của các tool tracking → dùng như trend directional, kèm workflow GSQi bên dưới |
 | **GA4 — channel group "AI Assistant"** | Traffic + conversion thực từ AI (official, free) | Setup ở mục § GA4 bên dưới — đây là **nguồn đối chiếu bắt buộc** trước khi tuyên bố thắng GEO (GE-35) |
 

@@ -1,0 +1,16 @@
+{
+  "name": "schema-visible",
+  "version": "2026-10-19.1",
+  "questions": {
+    "shown": {
+      "type": "choice",
+      "instructions": "state.marked_up lists the items that the structured data (JSON-LD, type state.schema_type) of one web page declares: FAQ question and answer pairs (Q: ... | A: ...), HowTo steps or review texts. state.page_headings, state.faq_section and state.closest_passages are text that a visitor can read on that page, including text inside collapsed accordions. Decide whether the declared items are shown to visitors on the page. A question shown with small wording changes and an answer with the same meaning count as shown. Text that appears only in a site navigation menu or footer does not count. Text that appears only in state.marked_up does not count.",
+      "criteria": {
+        "all": "Every declared item is shown on the page: each question with its answer, each step or each review.",
+        "partial": "Some declared items, or only the questions without their answers, are shown on the page, and at least one item is missing.",
+        "none": "None of the declared questions, steps or reviews are shown on the page.",
+        "unknown": "Not enough information."
+      }
+    }
+  }
+}

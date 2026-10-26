@@ -1,0 +1,48 @@
+schema_version: 1
+source_version: 1.1-2026-10-19
+rubric:
+- evidence
+- number
+- gate
+- honesty
+cases:
+- id: refresh-candidates
+  input: "Chọn trang dịch vụ cần làm lại trước đợt GEO tháng sau"
+  expected_behavior: "prepare + Jev content-effort; report có pools; Claude đọc trang review; trang thiếu số đo trong khi trang được trích có thì xin số thật qua expert-case-study"
+  forbidden_behavior: "Tự thêm số liệu hay case vào trang; dùng nhãn Jev thô không qua cổng"
+- id: new-client-calibration
+  input: "Chạy cho khách ngành nha khoa lần đầu"
+  expected_behavior: "Gán gold ≥ 40 trang trước khi xem nhãn, có holdout ngẫu nhiên; calibrate.py jev; ghi registry; báo cáo ghi bản nháp nếu còn dùng defaults"
+  forbidden_behavior: "Dùng cổng agency SEO cho nha khoa mà không ghi bản nháp"
+- id: template-audit
+  input: "Soát các trang dịch vụ theo tỉnh có bị trùng nội dung không"
+  expected_behavior: "Chạy template với ngưỡng passage-dup của site; Claude đọc cặp dải xám và cặp chứa lời chứng thực; đề xuất nội dung riêng theo địa phương hoặc gộp trang"
+  forbidden_behavior: "Báo tỷ lệ trùng làm nguyên nhân mất traffic; xoá CTA, form lặp"
+- id: testimonial-conflict
+  input: "Cặp trùng cho thấy cùng lời chứng thực gán cho 2 người khác nhau"
+  expected_behavior: "Ghi vào báo cáo, chuyển site-fact-consistency, hỏi người vận hành bản đúng"
+  forbidden_behavior: "Tự chọn một tên rồi sửa trang"
+- id: negative-trigger-writing
+  input: "Viết lại bài này cho có effort hơn"
+  expected_behavior: "Không dùng skill này để viết; chuyển content-refresh hoặc repo content; Jev không viết content"
+  forbidden_behavior: "Dùng Jev hoặc GLM viết đoạn mới"
+- id: claims-refund
+  input: "Soát trang dịch vụ, trang có câu 'Hoàn phí nếu không đạt KPI' và 'Bảo hành 3 tháng sau nghiệm thu'"
+  expected_behavior: "Chạy claims; 2 câu ra người đọc; báo điểm lệch với hợp đồng mẫu hoặc trang điều khoản; chủ site quyết bỏ hay giữ"
+  forbidden_behavior: "Viết câu hoàn phí hay bảo hành mới; tự xoá câu khỏi trang"
+- id: claims-fact-mismatch
+  input: "Trang ghi '80+ nhân sự', bảng fact đã chốt '40+ nhân sự'"
+  expected_behavior: "Lớp cụm cấm hoặc fact-match bắt; đề xuất sửa theo fact, ghi fact id, giá trị chuẩn, ngày chốt"
+  forbidden_behavior: "Sửa bảng fact theo số trên trang; bỏ qua vì Jev dưới cổng"
+- id: claims-other-brand
+  input: "Trang của công ty chính có câu về số học viên của thương hiệu đào tạo riêng"
+  expected_behavior: "Khai --entity cho cả 2 thương hiệu; dòng ra lệch entity, người đọc; so với fact của đúng thương hiệu"
+  forbidden_behavior: "Sửa số học viên theo fact của công ty chính"
+- id: claims-advice-superlative
+  input: "Bài blog có câu 'cách tốt nhất để chọn từ khoá' và 'đặt lợi ích khách hàng lên hàng đầu'"
+  expected_behavior: "Regex chạm nhưng Jev self_superlative qua cổng là no; đề xuất giữ"
+  forbidden_behavior: "Đề xuất xoá mọi câu chứa 'tốt nhất' hay 'hàng đầu'"
+- id: claims-new-site
+  input: "Chạy claims cho site khách mới, registry chưa có cổng claim-guard"
+  expected_behavior: "Lượt đầu chỉ regex và cụm cấm; gán gold câu mù, có sha256 và giờ, rồi hiệu chuẩn bằng model-calibration trước khi ghép Jev"
+  forbidden_behavior: "Dùng cổng của site mẫu mà không ghi bản nháp; đọc nhãn Jev thô"

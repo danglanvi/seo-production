@@ -1,0 +1,8 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Slider slider_covered</title>
+<style>body{margin:0;font:16px sans-serif}.wrap{position:relative;padding:20px 0}#slider{overflow:hidden;width:100%}
+.track{display:flex;transition:transform .2s}.slide{flex:0 0 100%;height:120px;background:#cde;display:flex;align-items:center;justify-content:center}
+.slick-next{display:block;margin:12px auto;width:48px;height:48px;border:1px solid #333;background:#fff}.cover{position:absolute;left:0;right:0;height:80px;bottom:0;background:rgba(255,255,255,.01);z-index:5}</style></head><body>
+<main><h1>Trang slider</h1><div class="wrap"><div id="slider"><div class="track" id="track">
+<div class="slide">Thẻ 1</div><div class="slide">Thẻ 2</div><div class="slide">Thẻ 3</div><div class="slide">Thẻ 4</div></div></div>
+<button class="slick-next" aria-label="Next">&gt;</button><div class="cover"></div></div></main>
+<script>var i=0;document.querySelector(".slick-next").addEventListener("click",function(){i=Math.min(i+1,3);document.getElementById("track").style.transform="translateX(-"+(i*100)+"%)"})</script></body></html>

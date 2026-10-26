@@ -1,0 +1,14 @@
+{
+ "name": "image-fit",
+ "version": "2026-10-19.1",
+ "questions": {
+  "alt_matches": {
+   "type": "noul",
+   "instructions": "state has one image from a web page, its alt text and the heading and text of the section that holds the image. Does the alt text describe what the image actually shows, so that a person who cannot see the image would know its content? An alt text that only repeats a keyword or the page title, or names something the image does not show, does not describe the image."
+  },
+  "fits_section": {
+   "type": "noul",
+   "instructions": "Does the image show something that belongs to the topic of the section, such as a screenshot, chart, diagram, example or photo of the thing the section explains? A generic stock photo, a decorative picture or an image about another topic does not fit."
+  }
+ }
+}

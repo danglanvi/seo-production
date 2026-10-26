@@ -47,6 +47,7 @@ Website nào cũng có click; ít website đo được **outcome** (lead đạt 
 - [ ] Mỗi metric ghi đủ tử số · mẫu số · đơn vị · population · cửa sổ · dedup; outcome offline không join được → hai số riêng.
 - [ ] Có bảng `parameter → scope → cần đăng ký? → quota còn lại`; `form_start` chỉ một nguồn phát; regex kênh AI là allowlist hostname có neo (full match) đã test positive/negative.
 - [ ] Ca QA không thuộc cơ chế của site ghi N/A + lý do; gate G1 PASS = mọi ca P0 của cơ chế primary PASS.
+- [ ] Kiểm GTM có bị hoãn không (loader hẹn giờ, LiteSpeed "Delay JS", WP Rocket delay). Trang chuyển đổi (thanh toán, cảm ơn) và URL quảng cáo (`gclid`, `fbclid`, `utm_*`) phải nạp GTM ngay. Sự kiện quan trọng đẩy qua `dataLayer` từ code trang: GTM nạp sau vẫn xử lý. Trigger click tự động của GTM (Just Links, All Elements) bỏ lỡ cú click đầu tiên trước khi GTM nạp, nên event gọi/Zalo ghi "có thể thiếu cú click đầu" hoặc đẩy `dataLayer` từ trang.
 - [ ] Không parameter nào chứa SĐT, email, tên, nội dung field, CV.
 - [ ] Kết quả QA chưa chạy ghi "plan"; đã chạy ghi ngày, người, môi trường, PASS/FAIL từng ca.
 - [ ] Không hứa độ chính xác %; ngưỡng lệch là quyết định của dự án, có lý do.
@@ -61,8 +62,10 @@ Website nào cũng có click; ít website đo được **outcome** (lead đạt 
 - Nút Zalo là plugin không có `<a>` → trigger Click URL không bắt. Làm đúng: inspect DOM, dùng Click Classes/ID hoặc All Elements có điều kiện.
 - Báo "CVR kênh AI gấp 4×" từ 30 session. Làm đúng: nhãn directional, so cùng cửa sổ, ghi điểm mù.
 - Đòi ngưỡng lệch GA4–CRM ≤5% cho mọi site. Làm đúng: ngưỡng theo dự án, ghi nguyên nhân lệch (consent, dedup, window, attribution).
+- Hoãn GTM rồi vẫn đo gọi/Zalo bằng trigger Just Links. Làm đúng: trang chuyển đổi nạp GTM ngay; event gọi/Zalo đẩy `dataLayer` từ code trang (trang khoá học TAG 18/10/2026: JS trang đẩy `contact_click` khi bấm `tel:` và Zalo, GTM hoãn 5 s hoặc tới thao tác đầu).
 
 ## Changelog
 
+- v1.2 (2026-10-18): gate và anti-pattern kiểm GTM bị hoãn: trang chuyển đổi, URL quảng cáo nạp ngay; trigger click tự động bỏ lỡ cú click đầu trước khi GTM nạp (từ đợt hoãn GTM của theaigrowth.io).
 - v1.1 (2026-09-13): vá theo review Astra F01–F05/F08/F09 — thành công = nghiệp vụ (không HTTP 200), listener WPForms jQuery, metric tử/mẫu/đơn vị tường minh, regex kênh AI full match + allowlist có neo, quota GA4, dedup không dựa localStorage, QA có N/A + gate theo cơ chế primary, kênh AI 13/05/2026 + điểm mù đúng phạm vi.
 - v1.0 (2026-09-13): tạo mới từ wiki Inbound Marketing (measurement, patterns, ai-referral) theo plan CRO add-on đã duyệt 12/09.

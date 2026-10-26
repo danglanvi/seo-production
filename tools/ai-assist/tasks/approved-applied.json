@@ -1,0 +1,18 @@
+{
+  "name": "approved-applied",
+  "version": "2026-10-20.1",
+  "questions": {
+    "status": {
+      "type": "choice",
+      "instructions": "An editor approved a text change for one field of a web page. state.field names the field (seo_title, meta, h1, text, faq, cta and so on). state.before is the old text, state.approved is the approved new text, and state.live is the closest passage found on the live page today (it may be empty or from the wrong part of the page). Text may be Vietnamese or English. Template variables such as %currentyear%, separators, a trailing site name, HTML tags, line breaks and punctuation differences do not count as differences. Decide whether the approved text is live.",
+      "criteria": {
+        "applied": "state.live contains the approved text with the same wording, apart from the ignored differences.",
+        "partly_applied": "Part of the approved text is live, but a clear part of it is still missing or still shows the old wording.",
+        "not_applied": "state.live still shows the old text, or a passage that clearly corresponds to the old text, and not the approved text.",
+        "different_text": "state.live shows a third version that matches neither the old text nor the approved text, for example a later rewrite.",
+        "not_found": "state.live is empty or is about something else, so neither the old nor the approved text can be found.",
+        "unknown": "Cannot tell from the given text."
+      }
+    }
+  }
+}

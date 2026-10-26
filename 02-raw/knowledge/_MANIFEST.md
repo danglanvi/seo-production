@@ -51,7 +51,7 @@ Hàng #6 (README.md) đã RE-SYNC 2026-07-19 (bản v3.1 — registry toàn hệ
 | 28 | tier-1-social-google-stack.md | sop/06-self-checklist/ | WS06 — entity offsite: social + Google Stack | 2026-07-19 |
 | 29 | tier-1-offpage-backlink.md | sop/06-self-checklist/ | WS07 — #20, 25◇, 26 per batch (P0 7); OF-05 khung T.T.T bản 2026, OF-08 mở rộng cho mô hình stack từ 02.10 | 2026-10-02 |
 | 30 | tier-1-traffic-users.md | sop/06-self-checklist/ | WS07 — T8-T9 ⚠ Director duyệt (kèm baseline thông số 19.7; Phụ lục B hình thức không dùng theo leak 28.9) | 2026-09-28 |
-| 31 | tier-1-geo.md | sop/06-self-checklist/ | WS08 — #14, 21, 28 (guardrail llms.txt/schema ≠ lever) | 2026-07-19 |
+| 31 | tier-1-geo.md | sop/06-self-checklist/ | WS08 — #14, 21, 28 (guardrail llms.txt/schema ≠ lever) | 2026-07-19 (vá GE-26 + 1 anti-pattern 2026-10-19 theo kho gốc v2.0.4; phần còn lại của v2.0.3 chưa sync) |
 | 32 | tier-1-gbp-local.md | sop/06-self-checklist/ | WS03/WS08 — dự án local, vận hành GBP hằng tháng | 2026-07-19 |
 | 33 | quality-content-ai.md | sop/06-self-checklist/ | WS05 — vận hành content AI 6 phase (pointer về tier-1) | 2026-07-19 |
 | 34 | common-ai-errors.md | sop/06-self-checklist/ | WS05 — error catalog 28 lỗi QC/edit bài AI | 2026-07-19 |

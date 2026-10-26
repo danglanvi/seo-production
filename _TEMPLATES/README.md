@@ -2,7 +2,7 @@
 
 Mỗi deliverable của 13 workstream có template chuẩn ở đây. Naming khi dùng: `<CLIENT>_<slug>_v<N>.<ext>` — clone template về đúng WS folder rồi điền, KHÔNG sửa template gốc (muốn nâng cấp template → vá ở master qua MIGRATION).
 
-## Template cấp 1 (37 file)
+## Template cấp 1 (38 file)
 
 | Nhóm | Template |
 |---|---|
@@ -12,7 +12,7 @@ Mỗi deliverable của 13 workstream có template chuẩn ở đây. Naming khi
 | GEO | `geo-baseline.md` |
 | CRO (WS 13, v2026.09.3 → v2026.09.4) | `conversion-path.md` (#34) · `measurement-plan.md` + `tracking-qa.md` (#34, gate G1 — skill `cro-measurement-plan`) · `evidence-backlog.md` (#34/#35, khi >5 finding) · `ux-feature-brief.md` (#35, spec 10 mục component) · `heatmap-recording-review.md` (#35/#36, log sửa lỗi / rollout / A/B) |
 | Reporting | `bao-cao-thang.md` · `report-config.example.yaml` (copy → `09-reporting/report-config.yaml`) |
-| Client & vận hành | `kick-off.md` (có 3b Kỳ vọng & giới hạn) · `meeting-note.md` · `escalation-note.md` · `hop-dong-cam-ket.md` · `handover-checklist.md` (có trigger tái ký + bàn giao PIC + feedback khách) |
+| Client & vận hành | `wp-server.md` (hồ sơ máy chủ WordPress → `00-client-context/wp-server.md`, v2026.10.7) · `kick-off.md` (có 3b Kỳ vọng & giới hạn) · `meeting-note.md` · `escalation-note.md` · `hop-dong-cam-ket.md` · `handover-checklist.md` (có trigger tái ký + bàn giao PIC + feedback khách) |
 | Self-improving | `feedback-entry.md` · `lessons-workstream.md` · `retro-pha.md` |
 
 ## Subfolder

@@ -2,7 +2,7 @@
 name: gtv-client-report
 description: "Sinh báo cáo client GTV theo mẫu Account chuẩn — layer REPORTING: chỉ render kết quả. Use when: (1) 'viết báo cáo tháng cho [client]', 'làm report KPI tháng thứ [n]'; (2) 'báo cáo quý / review OKRs quý [n] cho [client]'; (3) 'báo cáo nghiệm thu / báo cáo tháng cuối [client]'."
 metadata:
-  version: "1.1"
+  version: "1.1.1"
 ---
 
 # GTV Client Report
@@ -157,5 +157,6 @@ Như vậy, GTV SEO đã hoàn thành …% KPI theo cam kết tháng thứ <n> c
 
 ## Changelog
 
+- **v1.1.1 (2026-10-19):** `references/data-paths.md` dòng GEO AI responses: KPI AIO theo từ khoá đọc `google_ai_overviews_keywords`, không báo `all_platforms`. Đồng bộ `geo-tracking-prompt-selection` 1.6.
 - **v1.1 (2026-07-07):** chốt mẫu chế độ QUÝ (5 section: OKRs review + % hoàn thành, thứ hạng 3 tháng + Δ, KPI lũy kế, GEO quý, trọng tâm) và quy ước hàng GEO đủ 5 hàng khớp menu KPI (kèm cách gộp chỉ tiêu ngưỡng ≥2/4 vào trung bình) — do Claude tự đề xuất theo ủy quyền Vincent, chưa qua account dùng thật; hiệu chỉnh sau báo cáo thật đầu tiên.
 - **v1.0 (2026-07-07):** khởi tạo — nền từ 2 docx mẫu báo cáo tháng/tháng cuối của Account, workbook `1. BÁO CÁO KẾT QUẢ.xlsx` (9 sheet), GUIDELINE thiết lập folder báo cáo, [[kpi-commitment-template]] và điều khoản nghiệm thu công khai trong [[contract-playbook]]. Chế độ QUÝ và hàng GEO chưa có mẫu canonical — chờ mẫu thật để tinh chỉnh v1.1.

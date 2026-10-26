@@ -1,0 +1,17 @@
+{
+  "name": "entity-desc",
+  "version": "2026-10-19.2",
+  "notes": "Nhất quán mô tả entity: đoạn ở nguồn ngoài, hồ sơ hoặc câu trả lời AI mô tả brand là gì và làm gì có khớp mô tả chính thức không. Số, năm, giá, thứ hạng, tên khách do code và rubric company-fact-claim xử lý. Bản .2: đoạn có nhãn định vị ngoài canon thì là different, kể cả khi đoạn cũng nêu dịch vụ trong canon.",
+  "questions": {
+    "services": {
+      "type": "choice",
+      "instructions": "state.canon is the official description of state.brand: what kind of company it is and its main services. state.passage is a text from another website, a profile page or an answer of an AI assistant that mentions state.brand; state.aliases are other names for the same company. The passage may be Vietnamese or English. Compare only what state.passage says state.brand is or does with state.canon. Ignore numbers, years, prices, rankings, awards and client names; other checks cover them. A passage that names fewer services than state.canon is consistent. A passage that adds a positioning, a business type or a main service that state.canon does not contain is different, even when it also names services from state.canon. A broad label such as 'digital marketing agency', 'SEO and digital marketing' or 'inbound marketing' is a positioning. A method that state.brand uses inside its SEO work, such as entity, topical authority, a content model or conversion optimisation, is not a positioning. Judge only state.brand, not other companies in the passage.",
+      "criteria": {
+        "consistent": "What the passage says state.brand is or does fits state.canon, even if it names fewer services or uses other words, and it adds no positioning or main service outside state.canon.",
+        "different": "The passage gives state.brand a positioning, business type or main service that state.canon does not contain, alone or next to services from state.canon, or an older label. Example: it calls state.brand an inbound marketing agency or places it in digital marketing when state.canon describes an SEO and GEO agency.",
+        "not_described": "The passage names state.brand but does not say what kind of company it is or what it does, for example it gives only a rank, a contact detail, a number, a client name or a link.",
+        "unknown": "The passage is unclear about state.brand."
+      }
+    }
+  }
+}

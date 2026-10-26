@@ -1,0 +1,46 @@
+{
+  "site": "example.vn",
+  "env": "staging",
+  "base": "https://stg.example.vn",
+  "canonical_host": "stg.example.vn",
+  "resolve": null,
+  "cookie": null,
+  "widths": [360, 768, 1366],
+  "urls": [
+    {"name": "home", "path": "/", "schema": ["Organization", "WebSite"]},
+    {"name": "dich-vu", "path": "/dich-vu/", "schema": ["Service"]},
+    {"name": "bai-viet", "path": "/blog/bai-mau/", "schema": ["Article"]},
+    {"name": "lien-he", "path": "/lien-he/", "form": true}
+  ],
+  "http": [
+    {"path": "/wp-login.php", "expect": 404},
+    {"path": "/xmlrpc.php", "expect": 403},
+    {"path": "/khong-ton-tai-qa/", "expect": 404}
+  ],
+  "redirects": [
+    {"from": "/trang-cu/", "to": "/dich-vu/", "code": 301}
+  ],
+  "tracking": {
+    "expect": ["GTM-XXXXXXX"],
+    "block_extra": []
+  },
+  "plugins": {
+    "staging": "plugins_staging.json",
+    "production": "plugins_production.json",
+    "ignore": []
+  },
+  "axe": {"fail_impacts": ["critical", "serious"], "ignore": []},
+  "focus": {"max": 80},
+  "ui_visual": {
+    "tiles": "all",
+    "tiles_max": 12,
+    "site_note": "Website: a Vietnamese service company. Intentional fixed elements: the sticky header at the top; floating contact buttons at the bottom right. Vietnamese text is expected."
+  },
+  "registry": "00-client-context/model-calibration.json",
+  "form_live": {
+    "page": "lien-he",
+    "data": "form_live_data.json",
+    "form": null,
+    "success": "Cảm ơn"
+  }
+}

@@ -29,7 +29,7 @@ date: "{{YYYY-MM-DD}}"
 2. Cluster có **Contextual Border**; cluster ↔ cluster CHỈ qua **Contextual Bridge**. Pillar ↔ cluster: bidirectional.
 3. **Signals flow TO Core**: Outer→Core, Trending→Core, Home→Quality→Core — link flow target = trang quan trọng hơn.
 4. Anchor = **seed query của target page**; ≤3 lần cho 1 anchor text; có semantic lead-in ở đoạn trước; pass **6/6 Anchor Text Rules**.
-5. Max 1 link per heading section (ngoại lệ list entities cùng type → flag `list-exception`); khoảng cách 2 link ≥1 heading trong Main Content; 5-10 IL/bài.
+5. Max 1 link per heading section (ngoại lệ list entities cùng type → flag `list-exception`); khoảng cách 2 link ≥1 heading trong Main Content. Không quota số link mỗi bài.
 6. **Rule 59** — chọn target theo semantic distance (shared process/attributes), không chỉ gần bề mặt topical.
 7. **Rule 60** — mỗi outbound link cách source tối đa 1 semantic step; link xa hơn → chèn annotation text giải thích bridge.
 8. **Link-less Connection**: contextual vector đã đủ / không có lead-in tự nhiên / link phá reading flow → ghi `no-link, rely on contextual vector`, không ép link.

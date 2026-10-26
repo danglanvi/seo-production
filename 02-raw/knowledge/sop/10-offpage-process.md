@@ -1,7 +1,7 @@
 ---
 type: sop
 status: draft
-last_updated: 2026-10-02
+last_updated: 2026-10-13
 sources:
   - raw/_ingested/gtv-training-backlink-that-truyen-v6.md
   - raw/_ingested/Quy trình SEO PSP - All In One/2. QUY TRÌNH SEO Project/10. Quy Trinh Offpage SEO/2. Quy trình lập kế hoạch Link building - chưa có.xlsx
@@ -15,6 +15,7 @@ sources:
   - raw/_ingested/Quy trình SEO PSP - All In One/2. QUY TRÌNH SEO Project/11. Các phương pháp index link/Index link - Entity Mastermind.docx
 related:
   - "[[Link Building]]"
+  - "[[sources/link-building-outreach-ai-search-dejan-2026]]"
   - "[[TrustRank]]"
   - "[[PageRank]]"
   - "[[Authority Stacking]]"
@@ -66,6 +67,18 @@ Xương sống vận hành là bộ 3 skill; SOP này quy định handoff và va
 3. **Budget & khách:** Account trình budget offpage cho khách tại Gate T6 (mục 3) — dựa trên plan section 5; Account KHÔNG tự điều chỉnh method mix/velocity (việc của SEO Lead Project).
 4. **Nhịp review:** research refresh mỗi quý hoặc khi SERP biến động; plan review milestone hàng tháng (điều kiện dừng/đổi hướng ghi sẵn trong plan section 6).
 5. **Content offpage** (bài guest post / bài cho site vệ tinh) đi qua pipeline content bình thường (Phase 3 draft + skill SCW), target [[Phantom Keywords]], onpage như bài SEO thật — Content làm, SEO Lead Project duyệt.
+6. **Gate QA link trước khi đăng** (thêm 13/10/2026, Vincent duyệt) — áp cho guest post, niche edit và textlink báo đặt trong thân bài. Người viết hoặc SEO Executive chấm 6 bước trên bản nháp; SEO Lead Project duyệt batch. Xong khi bài đạt đủ 6/6; bước nào không đạt thì sửa bài trước khi gửi nhà cung cấp.
+
+   | # | Kiểm | Đạt khi |
+   |---|---|---|
+   | 1 | Vị trí | Link khách nằm ở một đỉnh "link desire": câu nêu nguồn, câu đưa claim, hoặc tên người đọc muốn tra |
+   | 2 | Link khác | Bài có link ra nguồn thật khác, không chỉ 1–3 link báo/gov đặt cho đủ công thức |
+   | 3 | Mục đích | Link khách phục vụ một trong 10 mục đích của link biên tập: ghi công, nguồn số liệu, giải nghĩa thuật ngữ, đào sâu, chỉ rõ đối tượng, ví dụ, hành động (mua, đăng ký, tải), quan hệ, bằng chứng, quảng bá |
+   | 4 | Trang đích | Link trỏ trang mạnh nhất cho vị trí đó (bài hoặc trang dịch vụ cụ thể), không mặc định homepage |
+   | 5 | Anchor | Anchor khớp cách host tự đặt anchor; không chèn từ khoá đích nếu host không viết như vậy |
+   | 6 | Phép thử mù | Người không biết khách là ai đọc bài và không đoán được link nào là link trả tiền |
+
+   Vì sao: link nằm sai chỗ người đọc cần thì ai đọc cũng đoán được "ai muốn cái link này"; Google có thể bỏ qua link đó mà không báo. Link sidebar, footer, trang chủ báo không qua được bước 1 và 6; các dạng này giữ tier như §4 và ghi rủi ro vào risk log. Nguồn: [[sources/link-building-outreach-ai-search-dejan-2026]], [[Link Building]]. Skill `textlink-analyzer` v1.1.0 chấm gate này cho link đặt trong thân bài.
 
 *[Legacy giữ: cấu trúc B1→B10 của quy trình 2022 (chọn URL target → đếm RD đối thủ → anchor → research domain → chọn nguồn → hoạch định plan → content nâng cao → timeline → triển khai → index) chính là tiền thân của pipeline này — B1-B5 nay là DATA, B6-B8 là DECISION, B9-B10 là EXECUTION + mục 5. Nâng cấp 2026: tách vai trò cứng 3 layer, thêm gate, mọi số liệu chạy bằng API thay vì đếm tay Ahrefs Top Pages.]*
 
@@ -205,6 +218,7 @@ Mục này áp cho hạng mục Traffic users ở T8 → hết T9 của timeline
 
 ## Changelog
 
+- **2026-10-13 v1.3** — §2 thêm luật handoff 6 "Gate QA link trước khi đăng" (6 bước theo Dejan Petrovic 2026, Vincent duyệt 13/10/2026) cho guest post, niche edit, textlink báo đặt trong thân bài; skill `textlink-analyzer` lên v1.1.0 để chấm gate. Không đổi tier, timeline, đo lường.
 - **2026-10-02 v1.2** — đồng bộ với tài liệu training "Bí thuật backlink thất truyền" bản 6 (Vincent duyệt). §1.6 đổi sang khung T.T.T bản 2026 (thang điểm Theme 35, Traffic 35, Trust 30; bản 2025 giữ làm legacy). §4: người duyệt tier ⚠ là SEO Lead xem trước, SEO Director chốt mọi phương án; textlink báo trên từng URL bài giữ ở tier ✅, textlink trang chủ/chuyên mục/sitewide sang tier ⚠ (mặc định T2); luật PBN hai trường hợp; thêm dòng mô hình stack; link wheel giữa các domain rời vào tier ⛔. §5 trỏ sang đo ba tầng. Chi tiết mô hình ở SOP 12 mới. Chưa chạm sop/09.
 - **2026-09-28 v1.1** — thêm mục "Tín hiệu người dùng (click)" vào §4 theo việc V61 của wiki Google Leak Decoded: Traffic users giữ ở tier ⚠ (SEO Director duyệt bằng văn bản), click bot, proxy và gói click không rõ nguồn vào tier ⛔ kèm lý do theo leak. Checklist Traffic users thêm Phụ lục B.
 - **2026-07-19 v1.0** — hợp nhất legacy 2020-2025 + hệ skill backlink 3 layer. Nguồn legacy đọc đủ: Checklist Boosting Linkjuice (16 sheets), Tiêu chuẩn Triển khai backlinks (2020), Link building GTV (2022 + bản đào tạo), Research & đánh giá backlinks (2025), Quy trình lập kế hoạch Link building, Hướng dẫn Syndication, folder 11 (Index Blog comment + Index link Entity Mastermind). Quyết định chính: gate 90%-chưa-cần đứng đầu quy trình; anchor trỏ canonical framework duy nhất; tactic legacy giữ nguyên nhưng gắn tier ✅/⚠/⛔ + người duyệt; index workflow bỏ tool chết giữ nguyên lý; spam-discount rule thành bước bắt buộc của đo lường.

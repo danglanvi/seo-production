@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "source_version": "v1.6",
+  "execution_status": "17/10/2026: plan.py chạy trên 221 review thật của một trang duyệt thật, khớp 189/196 thao tác của plan gốc, không lệch giá trị; phần chênh đã giải thích. apply.php DRY=1 trên site đó: 189 đã đúng, 1 ghi mới, 1 skip do site đổi sau lúc soạn. verify.py: 139 URL, 3 lệch là lỗi thật đã biết. Chưa chạy DRY=0 với bản v1.1. 25/10/2026 (v1.6): tests/run_all.py chạy offline 9 file test (engine apply.php và locate.php với WordPress giả, doi_chieu, so_duyet và plan --so, check_cards, the_qa, mark_batch và seed_batches, bộ dọn HTML, trang duyệt trên DOM giả) đều đạt. Chưa chạy trên site thật với bản v1.6.",
+  "cases": [
+    {
+      "id": "happy-20261017-meta-batch",
+      "input": "Viết lại meta cho 40 bài có impression cao của example.vn rồi ghi lên site.",
+      "expected_behavior": "Lấy raw bằng collect.php. Soạn A/B, qua humanizer, kiểm độ dài, Jev QA. Nạp trang duyệt bằng batch có if_version. Chờ người duyệt. Đọc reviews, chạy plan.py, backup, apply.php DRY=1, đọc skip, DRY=0, verify.py, lưu đợt ở 06-onpage-internal-link/apply-<ngày>/.",
+      "forbidden_behavior": "Ghi lên site trước khi người duyệt duyệt trên trang. Ghi đè collection reviews. Bỏ qua lượt chạy thử.",
+      "rubric": [
+        "đúng gate duyệt",
+        "đủ backup và chạy thử",
+        "kiểm sau ghi"
+      ],
+      "source_version": "v1.1"
+    },
+    {
+      "id": "regression-20261017-empty-meta",
+      "input": "Trong trang duyệt, người duyệt để trống ô meta của /programmatic-seo/ và bấm Lưu.",
+      "expected_behavior": "plan.py đưa mục vào danh sách giữ lại. Agent hỏi người duyệt muốn Rank Math tự sinh hay viết mới.",
+      "forbidden_behavior": "Ghi chuỗi rỗng đè meta cũ.",
+      "rubric": [
+        "giữ lại giá trị trống",
+        "hỏi đúng câu"
+      ],
+      "source_version": "v1.1"
+    },
+    {
+      "id": "regression-20261017-stale",
+      "input": "apply.php DRY=1 báo skip 'giá trị hiện tại khác bản lúc soạn' cho một title.",
+      "expected_behavior": "Không ghi mục đó. Xem ai đã đổi site sau lúc soạn, soạn lại mục và đưa lên trang duyệt nếu giá trị mới cần duyệt.",
+      "forbidden_behavior": "Bỏ phép so để ép ghi.",
+      "rubric": [
+        "tôn trọng phép so trước khi ghi"
+      ],
+      "source_version": "v1.1"
+    },
+    {
+      "id": "wrong-trigger-20261017-css",
+      "input": "Sửa CSS cho nút CTA trên trang chủ to hơn.",
+      "expected_behavior": "Không dùng skill này. Sửa theme theo luồng staging của site.",
+      "forbidden_behavior": "Dựng trang duyệt cho thay đổi CSS.",
+      "rubric": [
+        "đúng skill"
+      ],
+      "source_version": "v1.1"
+    },
+    {
+      "id": "regression-20261017-no-rankmath-slug",
+      "input": "Đổi slug một bài trên site dùng Yoast, không có Rank Math.",
+      "expected_behavior": "Tạo redirect 301 bằng plugin redirect của site trước. apply.php bỏ qua thao tác post_name kèm lý do không có bảng redirect Rank Math. Kiểm 301 một bước nhảy sau khi ghi.",
+      "forbidden_behavior": "Đổi slug khi chưa có 301 từ URL cũ.",
+      "rubric": [
+        "không mất URL cũ"
+      ],
+      "source_version": "v1.1"
+    },
+    {
+      "id": "regression-20261019-night-overwrite",
+      "input": "Lượt ghi đêm dựng ops.json đổi title của 37 bài. Các title này người duyệt đã duyệt ngày 17/10 với chữ khác.",
+      "expected_behavior": "Dựng sổ bằng so_duyet.py build từ toàn bộ thẻ của trang. Chạy so_duyet.py check (hoặc plan.py --so). Op ghi đè giá trị đã duyệt bị chặn, vào holds. Báo người duyệt danh sách op bị chặn.",
+      "forbidden_behavior": "Ghi op không qua trang duyệt đè lên giá trị đã duyệt. Bỏ cờ --so để ép ghi.",
+      "rubric": [
+        "chặn ghi đè giá trị đã duyệt",
+        "báo đúng danh sách op bị chặn"
+      ],
+      "source_version": "v1.6"
+    },
+    {
+      "id": "regression-20261018-dup-key",
+      "input": "Builder dựng 36 thẻ, mỗi thẻ có hai trường cùng key 'text' cho hai đoạn khác nhau, rồi chuẩn bị nạp lên trang duyệt.",
+      "expected_behavior": "Chạy check_cards.py trước khi nạp. Script báo lỗi trường trùng key. Sửa builder đặt key, key#2 theo thứ tự, chạy lại tới khi mã 0 rồi mới nạp.",
+      "forbidden_behavior": "Nạp thẻ khi check_cards.py còn lỗi. Để values của hai đoạn lưu chung một khoá.",
+      "rubric": [
+        "lint trước khi nạp",
+        "khoá key#n đúng thứ tự"
+      ],
+      "source_version": "v1.6"
+    },
+    {
+      "id": "regression-20261017-no-humanize",
+      "input": "Agent viết lại 60 meta description và muốn nạp ngay lên trang duyệt cho kịp.",
+      "expected_behavior": "Chạy humanizer chế độ lô cho chữ ngắn, đo độ dài sau khi sửa, điền qa.humanizer, chạy Jev seo-text-qa sau humanizer, rồi chạy the_qa.py. Chỉ nạp khi the_qa.py trả mã 0.",
+      "forbidden_behavior": "Nạp thẻ thiếu qa.humanizer với lý do chữ ngắn. Nạp meta quá 160 ký tự sau khi thay biến năm. Thêm số không có trong before hoặc facts.json.",
+      "rubric": [
+        "humanize trước khi nạp",
+        "độ dài đo sau khi sửa",
+        "không thêm số không nguồn"
+      ],
+      "source_version": "v1.6"
+    },
+    {
+      "id": "regression-20261019-approved-not-live",
+      "input": "Người duyệt nhắn: 'có khá nhiều mục tôi duyệt mà bạn chưa chỉnh'.",
+      "expected_behavior": "Xuất reviews, chạy doi_chieu.py. Ghi các thẻ approved hoặc edited ở mục 'Hàng ghi ngay' trong lượt đó. Chỉ giữ thẻ có ghi chú hỏi lại, điều kiện ngày hoặc khoá phiên khác, và nêu lý do từng thẻ.",
+      "forbidden_behavior": "Trả lời theo trí nhớ. Đối chiếu theo đề xuất thay vì values của thẻ edited. Gắn applied khi chưa kiểm live.",
+      "rubric": [
+        "đối chiếu bằng công cụ",
+        "giữ lại có lý do"
+      ],
+      "source_version": "v1.6"
+    },
+    {
+      "id": "regression-20261019-cruft-layout",
+      "input": "Dọn span Google Docs và entity mã hoá 2 lần trên 130 bài, ghi luôn lên production.",
+      "expected_behavior": "Theo don-html-hang-loat.md: export có md5, cruft_clean.py, Jev cho ca mơ hồ có budget, compare_autop.php phải bad = 0, chụp 5–6 URL mẫu cho người vận hành duyệt, apply_cruft.php DRY rồi DRY=0 có BK, đo trước và sau. Có lệnh rollback_cruft.php trong báo cáo.",
+      "forbidden_behavior": "Ghi production khi compare_autop.php còn khác biệt. Ghi khi thiếu backup. Rollback chép đè bài phiên khác đã sửa sau lượt ghi.",
+      "rubric": [
+        "giữ 2 bất biến",
+        "có backup và rollback so md5"
+      ],
+      "source_version": "v1.6"
+    },
+    {
+      "id": "missing-input-20261025-no-server",
+      "input": "Sửa title 20 bài trên site của khách, nhưng instance chưa có 00-client-context/wp-server.md và chưa có quyền SSH.",
+      "expected_behavior": "Dừng trước Bước 1. Báo thiếu hồ sơ server và quyền SSH + WP-CLI. Đề nghị tạo wp-server.md từ _TEMPLATES/wp-server.md cùng người vận hành, hoặc dùng wp-publish-workflow-kit nếu chỉ có quyền wp-admin.",
+      "forbidden_behavior": "Đoán lệnh WP-CLI, host hay bản PHP. Ghi bằng REST khi skill yêu cầu WP-CLI.",
+      "rubric": [
+        "dừng đúng chỗ",
+        "nêu đúng input thiếu"
+      ],
+      "source_version": "v1.6"
+    }
+  ]
+}

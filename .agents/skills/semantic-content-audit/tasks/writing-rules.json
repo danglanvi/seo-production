@@ -1,0 +1,26 @@
+{
+  "name": "writing-rules",
+  "version": "2026-10-19.1",
+  "questions": {
+    "answer_first": {
+      "type": "noul",
+      "instructions": "state.heading is a heading of a public web page and state.text is the paragraph right after it, mostly in Vietnamese. Does the first sentence of state.text fail to answer what the heading asks or names? Answer yes when the first sentence is background, a story, a rhetorical question, a promise to explain later, or about something else. Answer no when the first sentence directly answers or defines it, for example heading 'X là gì?' and first sentence 'X là ...', or heading 'Cách làm X' and first sentence giving the method or the main steps."
+    },
+    "hedging": {
+      "type": "noul",
+      "instructions": "state.text is one paragraph of a public web page, mostly in Vietnamese. Does the paragraph state a fact or an instruction with uncertainty that is not needed, using words such as 'có thể', 'có lẽ', 'dường như', 'hầu như', 'tương đối', 'khá' where the writer could state the fact directly? Answer no when the uncertainty words describe a real option, condition or possibility, or when the paragraph has no such words."
+    },
+    "fluff": {
+      "type": "noul",
+      "instructions": "state.text is one paragraph of a public web page, mostly in Vietnamese. Does the paragraph contain at least one sentence that adds no information: generic filler, a cliché opening or closing (for example 'Trong thời đại công nghệ số ngày nay...', 'Hãy cùng tìm hiểu nhé!'), praise without facts, or a sentence that only repeats an earlier sentence in other words? Answer no when every sentence adds a fact, step, example, reason or condition."
+    },
+    "vague_quantity": {
+      "type": "noul",
+      "instructions": "state.text is one paragraph of a public web page, mostly in Vietnamese. Does the paragraph use a vague amount or degree (for example 'nhiều', 'một số', 'rất lớn', 'đáng kể', 'nhanh chóng', 'hàng loạt') where a specific number, unit, time or measurement is expected and would help the reader? Answer no when the paragraph gives the numbers, or when the topic does not need a measurement."
+    },
+    "plural_no_example": {
+      "type": "noul",
+      "instructions": "state.text is one paragraph of a public web page, mostly in Vietnamese, possibly followed by the list it introduces. Does the paragraph mention a plural group of things (for example 'nhiều công cụ', 'các yếu tố', 'một số lỗi', 'các nền tảng') without naming at least one concrete member of that group in the same paragraph or list? Answer no when the members are named, or when there is no plural group."
+    }
+  }
+}

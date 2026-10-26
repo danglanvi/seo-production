@@ -1,0 +1,13 @@
+regex	ten	ly_do
+universal analytics|google analytics ua\b|\bGA3\b|\bUA-\d	Universal Analytics	Universal Analytics ngừng xử lý dữ liệu 01/07/2023 → GA4
+google optimize	Google Optimize	Google Optimize ngừng 30/09/2023
+\bbard\b	Bard	Bard đổi tên Gemini 08/02/2024
+\bSGE\b|search generative experience	SGE	SGE đổi thành AI Overviews 14/05/2024
+\bFID\b|first input delay	FID	FID bị INP thay trong Core Web Vitals 12/03/2024
+google my business|\bGMB\b	Google My Business	Google My Business đổi tên Google Business Profile 11/2021
+data studio	Data Studio	Data Studio đổi tên Looker Studio 10/2022
+mobile[- ]friendly test|kiểm tra thân thiện với thiết bị di động	Mobile-Friendly Test	Mobile-Friendly Test ngừng 01/12/2023
+google\+|google plus	Google+	Google+ đóng 02/04/2019
+rel=.?prev|rel=.?next	rel=prev/next	Google không dùng rel=prev/next từ 03/2019
+google webmaster tools?|webmaster tools	Webmaster Tools	Webmaster Tools đổi tên Search Console 05/2015
+url parameters? tool|công cụ tham số url	URL Parameters	Công cụ URL Parameters ngừng 26/04/2022

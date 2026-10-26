@@ -1,0 +1,21 @@
+{
+  "name": "rewrite-keep",
+  "version": "2026-10-19.1",
+  "notes": "Kiểm an toàn khi viết lại: bản mới của một đoạn chữ công khai còn giữ đủ fact của bản cũ không, và có thêm fact hay lời hứa mới không. Chỉ nhận chữ công khai của trang (bản cũ, bản mới). Không gửi GSC, hợp đồng, email. Số, tên và cụm cam kết do code so trước; Jev đọc phần nghĩa.",
+  "questions": {
+    "facts": {
+      "type": "choice",
+      "instructions": "state.old is a text that is on a public web page (state.page) now. state.new is the rewrite that will replace it. The text may be Vietnamese or English. A fact is a number, a year, a duration, a price, a name of a client, person, place, product or service, a condition of a service, or a step of a process. Praise, ranking words and adjectives such as 'leading', 'best', 'top', 'hàng đầu', 'tốt nhất', 'uy tín', 'chuyên nghiệp' are not facts. Compare the facts of state.old with state.new. Removing praise, ranking words or adjectives keeps the facts.",
+      "criteria": {
+        "kept": "Every fact of state.old is still in state.new with the same meaning. The wording, the order or the sentence form can be different, and state.new can add facts.",
+        "dropped": "state.new leaves out at least one fact of state.old: a number, a name, a service, a condition or a step.",
+        "changed": "state.new keeps a fact of state.old but gives it a different value or meaning, for example another number, another year, another name or another scope.",
+        "unknown": "The two texts are not about the same thing, or the change is not clear."
+      }
+    },
+    "added": {
+      "type": "noul",
+      "instructions": "state.old is a text on a public web page (state.page). state.new is its rewrite. Does state.new state a fact that state.old does not contain: a number, a year, a name of a client or person, a result, or a promise to the buyer such as a guarantee, a refund or a warranty? Answer yes for any such new fact or promise. Answer no when state.new only removes words, changes wording, or repeats facts that state.old already has."
+    }
+  }
+}

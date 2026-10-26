@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trang tham chiếu mẫu</title>
+<!-- Trang mẫu cho test_measure_ref.py. Cột chữ 680px, chữ 18px/1.7, mục lục nav.toc dính top 24px.
+     Script cuối trang chặn scrollTo và scrollBy như thư viện cuộn mượt. Dưới 800px: mục lục ẩn sau nút "Mục lục", thanh CTA dính đáy. -->
+<style>
+  body { margin: 0; font-family: Georgia, serif; color: #222; }
+  header.site { position: sticky; top: 0; height: 56px; background: #fff; border-bottom: 1px solid #ddd; }
+  .wrap { display: flex; gap: 48px; justify-content: center; padding: 32px 24px; }
+  aside.toc-col { width: 240px; }
+  nav.toc { position: sticky; top: 24px; font: 15px/1.5 Arial, sans-serif; }
+  nav.toc ol { margin: 0; padding-left: 18px; }
+  .entry { width: 680px; }
+  .entry p { margin: 0 0 24px; font-size: 18px; line-height: 1.7; }
+  .entry h1 { font: 700 40px/1.2 Arial, sans-serif; }
+  .entry h2 { font: 700 28px/1.3 Arial, sans-serif; margin-top: 48px; }
+  .toc-btn, .cta-bar { display: none; }
+  @media (max-width: 799px) {
+    .wrap { display: block; padding: 16px; }
+    aside.toc-col { width: auto; }
+    nav.toc { display: none; }
+    .toc-btn { display: block; margin: 0 0 16px; }
+    .entry { width: auto; }
+    .entry p { font-size: 17px; }
+    .cta-bar { display: block; position: fixed; left: 0; right: 0; bottom: 0; height: 56px; background: #f60; color: #fff; text-align: center; line-height: 56px; }
+  }
+</style>
+</head>
+<body>
+<header class="site">Logo</header>
+<div class="wrap">
+  <aside class="toc-col">
+    <button class="toc-btn" type="button" aria-controls="toc" aria-expanded="false">Mục lục</button>
+    <nav class="toc" id="toc" aria-label="Mục lục">
+      <ol>
+        <li><a href="#muc-1">Mục một</a></li>
+        <li><a href="#muc-2">Mục hai</a></li>
+        <li><a href="#muc-3">Mục ba</a></li>
+        <li><a href="#muc-4">Mục bốn</a></li>
+      </ol>
+    </nav>
+  </aside>
+  <article class="entry">
+    <h1>Tiêu đề bài tham chiếu</h1>
+    <h2 id="muc-1">Mục một</h2>
+    <p>Đoạn văn thứ nhất của trang mẫu có đủ độ dài để script coi là chữ thân bài. Câu này lặp lại để đoạn có nhiều dòng ở bề rộng cột 680 điểm ảnh và cỡ chữ 18 điểm ảnh, nhờ đó phép đếm ký tự mỗi dòng có nghĩa.</p>
+    <p>Đoạn văn thứ hai tiếp tục nội dung mẫu. Script nhóm các đoạn dài theo phần tử cha, rồi chọn nhóm có nhiều chữ nhất làm cột chữ. Phần tử cha ở đây là thẻ article có class entry.</p>
+    <h2 id="muc-2">Mục hai</h2>
+    <p>Đoạn văn thứ ba giúp trang đủ cao để cuộn. Trang này chặn hàm scrollTo và scrollBy, giống thư viện cuộn mượt, nên chỉ lệnh wheel mới làm trang chạy xuống dưới được.</p>
+    <p>Đoạn văn thứ tư thêm chiều cao cho trang. Mục lục bên trái dính ở mép trên 24 điểm ảnh khi người đọc cuộn xuống, và test kiểm vị trí đó sau khi cuộn.</p>
+    <h2 id="muc-3">Mục ba</h2>
+    <p>Đoạn văn thứ năm của trang mẫu. Ở bề rộng điện thoại, mục lục ẩn sau nút Mục lục và trang hiện một thanh đăng ký dính ở đáy màn hình.</p>
+    <p>Đoạn văn thứ sáu của trang mẫu. Nội dung chỉ để lấp chỗ, không mang ý nghĩa gì thêm ngoài việc giữ cho trang cao hơn khung nhìn nhiều lần.</p>
+    <h2 id="muc-4">Mục bốn</h2>
+    <p>Đoạn văn thứ bảy của trang mẫu. Thêm một đoạn nữa để chiều cao trang vượt xa khung nhìn ở cả bề rộng máy tính lẫn bề rộng điện thoại.</p>
+    <p>Đoạn văn thứ tám và cũng là đoạn cuối của trang mẫu. Sau đoạn này là khoảng trống lớn để lệnh wheel còn chỗ cuộn.</p>
+    <div style="height: 2400px"></div>
+  </article>
+</div>
+<a class="cta-bar" href="/dang-ky/">Đăng ký tư vấn</a>
+<script>
+  window.scrollTo = function () {};
+  window.scrollBy = function () {};
+</script>
+</body>
+</html>

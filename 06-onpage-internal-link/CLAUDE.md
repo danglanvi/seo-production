@@ -38,6 +38,8 @@ Công đoạn phụ trách: **#7 (execute) · #18 · #23** + **khâu đăng/sử
 | Dừng ngay khi P0 fail — trả URL về content kèm lý do | Chấm tiếp P1-P23 khi P0 chưa pass ("chấm nốt cho đủ") |
 | Đề xuất sửa title/meta/heading/bold/alt giữ nguyên nghĩa | Đổi nghĩa content dưới danh nghĩa "tối ưu onpage" |
 | Lập IL theo cluster từ topical map, anchor đa dạng theo intent | Link chéo cluster không qua Contextual Bridge; anchor keyword-stuff |
+| Đặt link ở supplementary content; ở main content chỉ khi link thuộc MC1–MC5 (`skills/internal-linking/references/link-placement.md`) | Link thương mại hoặc link khác cụm ở main content; đổi đích link sai sang trang dịch vụ để giữ link |
+| Chọn dạng mã D1–D6 cho mỗi link và nút (`skills/internal-linking/references/link-js.md`): link hợp ngữ cảnh giữ `<a href>`, kể cả CTA; link JS chỉ cho link giữ lại để tăng chuyển đổi ở vị trí ngữ cảnh không cần link, link phụ ở header/footer và link ngoài làm bằng chứng | Giấu link chủ đề hoặc đường crawl duy nhất tới trang index bằng onclick; dùng `<a href onclick>` hay nofollow để giữ PageRank |
 | Sinh schema + chạy validator trước khi giao | Giao schema chưa validate; coi schema là lever AI citation |
 | Audit trang cũ: dừng ở tier có ≥3 item FAIL, sửa nền trước | Tối ưu nâng cao đè lên nền đang hỏng |
 | Nhắc khi dây chuyền lệch nhịp (ghi report + Ghi chú index) | Im lặng gộp onpage + IL thành một đợt cuối kỳ |
@@ -53,7 +55,7 @@ Tự chấm role `self` đạt hết mới được báo xong — chuẩn chấm
 1. Mở đúng checklist theo việc: mọi batch → `../02-raw/knowledge/sop/08-onpage-checklist.md` (P-series, tier theo kick-off) · làm IL (#18) → thêm `../02-raw/knowledge/sop/03-internal-linking.md` · thực thi schema theo entity plan → `../14-entity/` + `../02-raw/knowledge/sop/04-entity-optimization.md`.
 2. **P0 gate tiên quyết**: URL nào content chưa V-Pass → đánh `P0-FAIL`, DỪNG URL đó, không chấm tiếp — không có ngoại lệ.
 3. Chấm từng item theo ID với evidence cụ thể (quote / số / element) — không chấm gộp nhóm; item không kiểm chứng được ghi `CANNOT-VERIFY`, không tính pass.
-4. IL plan tự soát: orphan = 0 · mỗi bài ≥1 link tới pillar + 2-5 sibling · pillar có link ngược bài mới · anchor descriptive đa dạng, không lặp một anchor cho cùng target.
+4. IL plan tự soát: orphan = 0 · mỗi bài ≥1 link tới pillar + sibling khi có ngữ cảnh chung (không quota) · pillar có link ngược bài mới · anchor descriptive đa dạng, không lặp một anchor cho cùng target · mọi link có cột `Vùng`, `Quan hệ map` và `Dạng mã`, link ở main content ghi mã MC1–MC5, link JS đã qua kiểm đường crawl (`link-js.md` §3 luật 2) · plan hoặc đợt thẻ từ 20 link: chạy Jev `link-placement` (`tools/ai-assist/README.md` §4), Claude đọc dòng dưới ngưỡng.
 5. Schema tự soát: pass validator (Rich Results Test / validator schema.org), đính kết quả vào report.
 6. Dây chuyền tự soát: đối chiếu ngày content xong ↔ ngày onpage ↔ ngày IL với nhịp +10-15 / +15-30 ngày; lệch → ghi rõ trong report.
 7. MX tự soát (chấm riêng, sau khi URL qua Tier 1): mỗi item MX áp dụng có evidence (element hoặc quote); item không có dạng nội dung tương ứng ghi `N/A`; mỗi item FAIL có việc đề xuất + người làm. MX không ảnh hưởng verdict P-series.

@@ -1,0 +1,16 @@
+{
+  "name": "inline-style-residue",
+  "version": "2026-10-19.1",
+  "questions": {
+    "kind": {
+      "type": "choice",
+      "instructions": "state.inline_style is the CSS of a style attribute found inside the body text of a blog post on a company website. The site theme already sets fonts, sizes, colors and spacing for normal text. Decide whether the editor set this style on purpose to format the text, or whether it is leftover code copied from Google Docs, Microsoft Word, a translation tool or another website.",
+      "criteria": {
+        "intentional_format": "The style changes how the text looks in a way a writer would choose on purpose: a highlight or brand color, a larger size for a number or title, bold or italic, centered text, a designed box with background and border.",
+        "paste_residue": "The style only repeats default values or carries layout from another page that has no purpose in the post: a transparent background, a zero width, a fixed pixel width, a line height or margin copied from another site, a color equal to normal body text.",
+        "hidden_text": "The style hides the text from readers, such as display none, zero size, zero opacity or a text color equal to a white background.",
+        "unknown": "The style alone does not show which case applies."
+      }
+    }
+  }
+}

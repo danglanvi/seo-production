@@ -30,6 +30,11 @@ CRO ở GTV là phần tăng giá trị của hợp đồng SEO: mỗi kỳ khá
 
 ## Quy trình
 
+### Bước 0 — kiểm tool
+Chạy "python3 tools/capabilities.py check --need 'curl,chrome?,firecrawl?'" từ root repo. Nếu thiếu tool bắt buộc, dừng và báo tên tool. Nếu thiếu tool tuỳ chọn, dùng fallback ghi trong "tools/capabilities.md".
+
+### Các bước
+
 0. **Phân loại readiness và chọn pattern** — `references/readiness-router.md`: mức (research+fix+rollout | có A/B), cơ chế (gọi/Zalo · form · báo giá · giỏ hàng · apply), 2–4 loại trang; việc rơi sang WS04/technical/copywriting chuyển theo bảng §4b. Ghi vào đầu conversion-path.
 1. **#34 Conversion path + measurement** (T2→T3): cụm intent → landing → bước giữa → điểm chuyển đổi → CTA chính/phụ → event; site-wide CR-01…05; blocker P0 phát hiện ngay ở bước này. Tracking: gọi `cro-measurement-plan`.
 2. **Research** — `references/research-evidence.md`: technical (tái hiện trên iOS/Android/desktop), analytics (funnel có mẫu số, phân đoạn), heuristic theo pattern, recording/heatmap (ở đâu vs vì sao), VOC (sale/support/Zalo). Mỗi finding theo format scorecard.

@@ -1,0 +1,18 @@
+{
+  "name": "gsc-topical-fit",
+  "version": "2026-10-17.1",
+  "questions": {
+    "fit": {
+      "type": "choice",
+      "instructions": "state.site_profile describes what the website sells, its core expertise, its adjacent topics and what counts as off-topic. state.page is one page of that site: url, title, h1, an opening excerpt and the top search queries it receives. Classify how the main topic of the page relates to the site's expertise, following the definitions in state.site_profile. Judge the topic only, not the writing quality.",
+      "criteria": {
+        "service_offer": "A page that sells or describes the site's own services, training, pricing, quote or contact path.",
+        "core_topic": "An article whose main topic is inside the core expertise listed in the site profile.",
+        "adjacent_topic": "An article on a neighbouring topic that the site profile lists as adjacent.",
+        "off_topic": "An article whose main topic the site profile lists as off-topic, or that is outside both the core and the adjacent topics.",
+        "company_info": "About, team, careers, policy, legal, customer story, event or other company information page.",
+        "unknown": "Not enough information."
+      }
+    }
+  }
+}

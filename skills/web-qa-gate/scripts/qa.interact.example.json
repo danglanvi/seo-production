@@ -1,0 +1,23 @@
+{
+  "_ghi_chu": "Chép khối interact vào qa.json của site để bật hạng mục 13 (tương tác) và 14 (bố cục, landmark). Mọi selector và màu dưới đây là ví dụ trung tính, thay bằng giá trị của site. Không khai khối interact thì hai hạng mục này SKIP.",
+  "interact": {
+    "menu_toggle": {"selector": null, "widths": [390]},
+    "sliders": [
+      {"page": "home", "selector": ".hero-slider", "next": null, "items": ".slick-slide", "widths": [360, 390]}
+    ],
+    "changed_selectors": [
+      {"page": "home", "selector": "a.elementor-button", "states": ["hover", "focus", "active", "visited"], "min_contrast": null}
+    ],
+    "kit_button_colors": {"selectors": ["a.elementor-button"], "colors": ["#0b5fff", "#ff7a00"], "tolerance": 4, "widths": [390, 1366], "non_cta": []},
+    "grids": {"selectors": [], "widths": [390, 1366]},
+    "count_claims": [
+      {"page": "home", "heading": "#ly-do-heading", "cards": "#ly-do-grid .card", "pattern": "(\\d+)"}
+    ],
+    "cta_selectors": [],
+    "pairs": [
+      {"name": "trang chủ VI và EN", "vi": "/", "en": "/en/"}
+    ],
+    "landmarks": {"menu_selector": null, "widths": [390, 1366]}
+  },
+  "og": {"min_width": 1200}
+}

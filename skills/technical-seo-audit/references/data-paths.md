@@ -66,7 +66,35 @@ npm run audit -- <URL> --keyword <kw> --deep [--render] [--json]
 
 ## Path B — Screaming Frog CLI headless (tự động — engine crawl chính)
 
-**Điều kiện:** máy có SF + license active. Đã verify trên máy Vincent 07/2026: **SF v23.3**, binary CLI tại `/Applications/Screaming Frog SEO Spider.app/Contents/MacOS/ScreamingFrogSEOSpiderLauncher`. Claude TỰ chạy crawl + parse — user không cần export tay.
+**Điều kiện:** máy có SF + license active. Bản đã chạy thật: **SF 24.3** trên máy chạy audit (18/10/2026, 2.023 URL trong 3 phút); bản 23.3 chạy từ 07/2026. Binary CLI tại `/Applications/Screaming Frog SEO Spider.app/Contents/MacOS/ScreamingFrogSEOSpiderLauncher`. Claude TỰ chạy crawl + parse — user không cần export tay.
+
+**Lệnh đã chạy thật 18/10/2026 (SF 24.3, config mặc định):**
+
+```bash
+"$SF" --headless --crawl https://<domain>/ --save-crawl --output-folder <folder> --overwrite \
+  --export-tabs "Internal:All,Response Codes:Internal Client Error (4xx),Response Codes:Internal Server Error (5xx),Response Codes:Internal Redirection (3xx),Response Codes:Internal Redirect Chain,Response Codes:External Client Error (4xx),Page Titles:Over X Pixels,Meta Description:Over X Pixels,H1:Missing,Images:Missing Alt Text,Images:Missing Size Attributes,Canonicals:Non-Indexable Canonical,Directives:Noindex,Links:Internal Nofollow Outlinks,Content:Soft 404 Pages,Sitemaps:Orphan URLs,Structured Data:Validation Errors,Validation:Multiple <head> Tags" \
+  --bulk-export "Response Codes:Internal & External:Client Error (4xx) Inlinks,Response Codes:Internal & External:Redirection (3xx) Inlinks,Images:Images Missing Alt Text Inlinks"
+```
+
+- Tên tab hợp lệ: `"$SF" --help export-tabs`, `--help bulk-export`, `--help save-report`.
+- Hai file bulk export inlinks 3xx/4xx là input của Bước 3c (`link_sources.py summarize`).
+- Config crawl `.seospiderconfig` là Java serialization: không sửa bằng script. Embeddings, semantic similarity, AI prompt, Store HTML và crawl analysis tự động phải bật trong GUI, `File > Configuration > Save As`, rồi truyền `--config`. Config mặc định chạy headless không có Link Score và Near Duplicates.
+- Licence nằm ở `~/.ScreamingFrogSEOSpider/licence.txt`. Không in licence ra log.
+
+### Bẫy khi chạy headless (SF 24.3, 18/10/2026)
+
+- Kiểm bản cài: `/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" "/Applications/Screaming Frog SEO Spider.app/Contents/Info.plist"`.
+- Kiểm licence: so hash của `licence.txt` với hash của licence người vận hành đưa. Không in key.
+- Không đọc, `grep`, `cat` hay `strings` thư mục `~/.ScreamingFrogSEOSpider/` (prefs, config). Thư mục này giữ token API của connector. Lọc `grep -v token` không đủ: ngày 18/10, một lệnh đọc cấu hình SF đã in token Ahrefs ra output.
+- Headless không chạy Crawl Analysis, nên Link Score trống. Thêm `Links:All Inlinks` vào `--bulk-export` (tên đã chạy thật trên SF 24.3), rồi tính PageRank nội bộ:
+
+  ```bash
+  python3 skills/technical-seo-audit/scripts/pagerank.py --internal <folder>/internal_all.csv \
+    --inlinks <folder>/all_inlinks.csv --out <folder>/pagerank_internal.tsv
+  ```
+
+  Báo cáo ghi bộ lọc nút (HTML 200 Indexable) và số nút cạnh hạng PageRank. Lấy hạng từ file đã lưu, không từ lượt tính tạm. Ngày 18/10, lượt tính tạm dùng 389 trang HTML, còn file lưu có 357 trang index được.
+- macOS không có lệnh `timeout`. Giới hạn thời gian bằng `perl -e 'alarm N; exec @ARGV' <lệnh>`, hoặc chạy nền.
 
 ### Setup một lần (3 bước — user làm trong GUI)
 
@@ -87,7 +115,7 @@ caffeinate -i "$SF" --crawl https://client.vn --headless \
 
 **Vận hành:**
 - 🔴 **Mặc định FULL crawl — KHÔNG đặt giới hạn URL** trừ khi user yêu cầu (quyết định Vincent 07/2026). Trước khi chạy: báo scope + tốc độ + ước tính thời gian, chờ xác nhận (Bước 0 SKILL.md — crawl chạm server thật).
-- 🔴 **Tốc độ mặc định: 2 threads / 2–3 URL/giây** (đặt trong config profile). Bài học 10/07/2026 (chanlongpickleball): SF default 5 threads chạy 31 URL/s → shared hosting LiteSpeed VN chặn kết nối hàng loạt ở 29% crawl; crawl GUI cùng ngày cũng dính 64% Connection Timeout. Shared hosting VN rate-limit crawler là PHỔ BIẾN — chậm mà xong hơn nhanh mà gãy (~3.400 URL @ 3 URL/s ≈ 20 phút).
+- 🔴 **Tốc độ mặc định: 2 threads / 2–3 URL/giây** (đặt trong config profile). Bài học 10/07/2026 (site khách shared hosting): SF default 5 threads chạy 31 URL/s → shared hosting LiteSpeed VN chặn kết nối hàng loạt ở 29% crawl; crawl GUI cùng ngày cũng dính 64% Connection Timeout. Shared hosting VN rate-limit crawler là PHỔ BIẾN — chậm mà xong hơn nhanh mà gãy (~3.400 URL @ 3 URL/s ≈ 20 phút).
 - **Dấu hiệu bị server chặn giữa crawl:** log SF flood `ConnectException`/`Connection Timeout` trên mọi worker cùng lúc → queue còn lại chết nhanh → SF exit 0 nhưng output folder RỖNG (kèm Derby "No current connection"). Xử lý: đợi server hồi (vài phút — verify bằng curl), giảm tốc độ, chạy lại.
 - 🔴 **Completeness check sau mọi crawl/export** (kể cả crawl user đưa): đếm `Status Code = 0` trong response_codes (SF status: Connection Timeout / Blocked by robots.txt / No Response). Timeout % cao = crawl KHÔNG hoàn chỉnh → mọi kết luận đếm được (orphan, số ảnh, duplicate) phải ghi caveat "**cận dưới**", không phát biểu như số cuối.
 - Chạy **nền** (background) + bọc `caffeinate -i` chống máy sleep. Trong lúc crawl: làm các khu vực không cần crawl (curl, robots, sitemap, PSI, log).

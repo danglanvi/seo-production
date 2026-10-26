@@ -1,0 +1,10 @@
+{
+  "name": "diff-impact",
+  "version": "2026-10-19.1",
+  "questions": {
+    "significant": {
+      "type": "noul",
+      "instructions": "state.element is one SEO element of a public web page (title = title tag, meta = meta description, h1 = main heading, text = a body text block). state.old is its value in the earlier snapshot and state.new its value in the later snapshot, in Vietnamese or English. Does the change alter what a search engine or a reader learns from this element? Answer yes when the new value: removes or replaces the main topic or main keyword; names a different entity, brand, product, service, place or person; adds, removes or changes a fact, price, date, promise, guarantee or claim; changes the language; or changes the page purpose (for example a guide becomes a sales message). Answer no when the topic, main keyword, entities and facts stay the same and only the wording, word order, spelling, separators, brand suffix, or a descriptive word without new facts changed."
+    }
+  }
+}

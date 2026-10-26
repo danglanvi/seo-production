@@ -20,12 +20,12 @@ Mọi URL publish đạt chuẩn onpage Tier 1 (/23), internal link chạy theo 
 
 1. **P0 Gate:** content chưa V-Pass → KHÔNG onpage, trả về Content. Không có ngoại lệ.
 2. **Meta (P1-P5):** URL 3-5 từ đúng folder topical map · Title 50-60 ký tự, keyword 3 từ đầu, KHÁC H1+URL · Meta 150-160 ký tự có CTA · CTR hook Title ↔ detail Meta · H1 cùng predicate với Title, 1 H1 duy nhất.
-3. **Heading (P6-P7):** H2 keyword chính / H3 variations + entity MỚI / H4 entity cụ thể; entity đứng đầu heading; câu đầu sau heading khớp format heading.
-4. **Body (P8-P16):** Topical Coverage ≥70% facts/entities top 10 (yếu tố mạnh nhất) · mỗi paragraph ≥1 E-A-V · macro terms xuyên suốt, micro terms theo section · bold câu trả lời ~5-8/1800 chữ · keyword chính trong 100 chữ đầu VÀ 100 chữ cuối.
-5. **Link (P17-P18):** Contextual Bridge Main→Supplement, 5-10 IL/bài, anchor khớp Title đích · external 2-4 link .edu/.gov/Wikipedia, new tab, KHÔNG link đối thủ.
-6. **Ảnh (P19-P20):** filename keyword gạch ngang không dấu · alt 8-15 từ có keyword + context · Caption ≠ Alt · `.webp` <150KB, lazy, W/H explicit.
-7. **Technical (P21-P23):** Semantic HTML5 (`<main>`, `<article>`, heading hierarchy sạch) · CTA/form/filter hoạt động + Mobile UX · chạy Prompt Tối Ưu Onpage 2 bước (extract → audit coverage ≥70%).
-8. **IL khi publish:** bài link TỚI pillar (≥1) + 2-5 sibling; pillar update link NGƯỢC lại; cross-cluster CHỈ qua Contextual Bridge; anchor descriptive theo intent trang đích, không keyword-stuff.
+3. **Heading (P6-P7):** H2 attribute chính, không nhồi keyword / H3 variations + entity MỚI / H4 entity cụ thể; entity đứng đầu heading; câu đầu sau heading khớp format heading.
+4. **Body (P8-P16):** Topical Coverage đủ attribute/entity MANDATORY của top 10 (yếu tố mạnh nhất) · mỗi paragraph ≥1 E-A-V · macro terms xuyên suốt, micro terms theo section · bold câu trả lời, không quota · Central Entity + keyword chính trong 100 chữ đầu.
+5. **Link (P17-P18):** Contextual Bridge Main→Supplement, vị trí theo link-placement (Main chỉ MC1–MC5), dạng mã theo link-js, không quota số link, anchor = seed query của trang đích · trích nguồn bằng tên trong câu, không quota link ngoài, KHÔNG link đối thủ.
+6. **Ảnh (P19-P20):** filename tả nội dung ảnh, gạch ngang không dấu · alt tả đúng ảnh + context, không nhồi keyword · Caption ≠ Alt · `.webp` <150KB, lazy, W/H explicit.
+7. **Technical (P21-P23):** Semantic HTML5 (`<main>`, `<article>`, heading hierarchy sạch) · CTA/form/filter hoạt động + Mobile UX · chạy Prompt Tối Ưu Onpage 2 bước (extract → audit đủ attribute MANDATORY).
+8. **IL khi publish:** bài link TỚI pillar (≥1) + sibling cùng cluster khi có ngữ cảnh chung (không quota); pillar update link NGƯỢC lại; cross-cluster CHỈ qua Contextual Bridge; anchor descriptive theo intent trang đích, không keyword-stuff.
 9. **IL audit tháng:** orphan pages = 0 · pillar >50 inbound cùng cluster → tách sub-pillar · cross-cluster không qua bridge → fix hoặc tạo bridge.
 10. **Entity (sop/04):** schema đúng type cho Central Entity + sameAs Wikipedia/Wikidata/social · Entity Home page có URL canonical · Author bio Person schema · NAP nhất quán · mỗi attribute E-A-V có long-form definitive answer, không conflicting statement giữa các page.
 

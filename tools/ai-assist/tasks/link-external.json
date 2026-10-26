@@ -1,0 +1,20 @@
+{
+  "name": "link-external",
+  "version": "2026-10-19.1",
+  "questions": {
+    "kind": {
+      "type": "choice",
+      "instructions": "state.page is one page of a Vietnamese SEO agency website. state.link describes one clickable element on that page that opens another website: its visible text (anchor), the kind of element, the page area (header, footer, main content, author box, sidebar, floating bar), the section heading above it and the surrounding text. state.target gives the external URL and its domain. Decide the main job of this external link for the reader. Judge from the anchor, the surrounding text, the page area and the target domain. Do not judge the quality of the source.",
+      "criteria": {
+        "citation": "Supports a claim, a number, a quote or a definition in the surrounding sentence by pointing to the source: a study, an official document or guideline, a news or blog article, a statistics page, a source quoted by the author.",
+        "author_profile": "Opens the personal profile of an author or a staff member: LinkedIn, Facebook or X profile of a person, a personal website, a speaker or expert page about that person.",
+        "proof": "Shows third-party evidence about the company itself: press articles about the company, reviews and ratings, Google Maps listing, awards, certificates, business registration or trust badges such as DMCA.",
+        "social": "Opens an official social channel or chat of the company: its Facebook page, YouTube channel, LinkedIn company page, Instagram, X, TikTok, Zalo, Messenger, WhatsApp. Also share buttons that post the current page to a social network.",
+        "tool": "Opens a tool, software, product page or service that the reader needs to use or try in order to follow a step in the text, for example Google Search Console, a keyword tool, a plugin page, a download page.",
+        "client_site": "Opens the website of a client of the company, usually inside a case study or a client story.",
+        "other": "Any other external link: a sister company or partner site, a course on another domain, an image or a file host, an unrelated page.",
+        "unknown": "Not enough information."
+      }
+    }
+  }
+}

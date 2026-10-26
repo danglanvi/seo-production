@@ -1,0 +1,13 @@
+{
+  "name": "fact-match",
+  "version": "2026-10-19.2",
+  "questions": {
+    "fact": {
+      "type": "choice",
+      "instructions": "state.sentence is one sentence, or one cut of a table, from a public page (state.page) on the website of state.owner. It contains at least one number. state.before and state.after are context only. Each choice except 'none' is one fact from the owner's fact sheet, written as 'entity: metric: canonical value'. Every fact is a company-level total or attribute, so a figure for one client, one project, one course or one period is a different quantity. Pick the fact that describes the same subject and the same kind of quantity as one number in state.sentence, even when the numbers differ. Choose none when every number in state.sentence describes something else, for example a result of one client or of another company, a price, a package, a part of a total, a step, a date or a different metric.",
+      "criteria": {
+        "none": "No listed fact describes the same subject and the same kind of quantity as a number in the sentence."
+      }
+    }
+  }
+}

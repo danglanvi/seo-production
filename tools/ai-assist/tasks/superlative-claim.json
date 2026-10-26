@@ -1,0 +1,19 @@
+{
+  "name": "superlative-claim",
+  "version": "2026-10-18.1",
+  "questions": {
+    "target": {
+      "type": "choice",
+      "instructions": "state.snippet is a passage from state.page on the website of state.site_profile. The marker ⟦...⟧ wraps one superlative or ranking phrase, such as 'hàng đầu', 'tốt nhất', 'uy tín nhất', 'duy nhất', 'số 1', 'top 1', 'dẫn đầu' or 'đầu tiên'. The character ¶ separates layout blocks. The passage may be Vietnamese or English. Decide what the marked phrase ranks or praises.",
+      "criteria": {
+        "owner": "The phrase ranks or praises the website owner: the company itself, its team, experts or founder, its services, courses, methods, technology, process or quality. Example: the company is a leading agency, has the best experts or uses the most advanced method.",
+        "client_or_partner": "The phrase ranks or praises the company's clients, students, partners or the brands it worked with. Example: leading brands trust the company.",
+        "other_entity": "The phrase ranks or praises another entity: Google or another search engine, a tool, a platform, a competitor, an industry, a country or a market.",
+        "generic_wording": "The phrase is ordinary wording inside advice or explanation and ranks nothing. Example: the best way to do something, at least, the best result for a website, the first step.",
+        "result_promise": "The phrase offers the buyer a ranking position or a result as part of the service. Example: bring the website to top 1 on Google, the fastest growth for your business.",
+        "quote": "The phrase sits inside a testimonial or review written by a customer or a student.",
+        "unknown": "The passage does not show what the phrase ranks or praises."
+      }
+    }
+  }
+}

@@ -193,6 +193,13 @@ For detailed implementation guides, see:
 - `references/heading-hierarchy.md` - Hướng dẫn heading structure
 - `references/ai-optimization.md` - Tối ưu cho LLM citations
 
+## Quy trình
+
+### Bước 0 — kiểm tool
+Chạy "python3 tools/capabilities.py check --need 'curl,firecrawl?'" từ root repo. Nếu thiếu tool bắt buộc, dừng và báo tên tool. Nếu thiếu tool tuỳ chọn, dùng fallback ghi trong "tools/capabilities.md".
+
+Sau đó rà theo mục Checklist bên dưới.
+
 ## Checklist
 
 ### ✅ Heading Structure

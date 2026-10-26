@@ -31,6 +31,8 @@ Nội quy chung: root `CLAUDE.md` (4 thao tác §2, pre-work §3) + `AGENT.md`.
 | `audit toàn diện` | #5 (T1) / #27 (T7, kèm logfile): audit 6 hạng mục theo `sop/05-audit-checklist.md` + tier-3 → phân loại action full URL + owner/deadline | Lead | `audit toàn diện quý 1` |
 | `audit định kỳ T<k>` | Audit theo nhịp bảng C: #24 (T6) / #29 (T8-T9 tactic nâng cao); chuẩn bị input cho gate #22 khi tới kỳ | Lead / Executive | `audit định kỳ T6` |
 | `chẩn đoán QP <client>` / `vì sao keyword cam kết chưa lên` | Skill `query-processing-diagnosis` (#22, #24, #29 hoặc lẻ): đọc hạng SpySERP bằng median lần chạy hợp lệ → gom template → URL Google chọn → SERP → trang thật → ma trận 8 trạm → topic ưu tiên + kế hoạch 2 tuần → JSON + deck HTML + hồ sơ + file bàn giao team content ở `03-audits/ranking/`. Chuẩn bị: export SpySERP CSV đủ 35 ngày (đủ các trang lịch) vào `02-raw/seo-data/keywords/` + điền phiếu `_TEMPLATES/qp-intake.md` (hướng dẫn: `03-audits/ranking/README.md`) | Lead | `chẩn đoán QP acme theo phiếu 03-audits/ranking/_work/acme_qp-chan-doan_v1/intake.md` |
+| `pagespeed <site>` / `so tốc độ staging` | Skill `wp-pagespeed` (site WordPress có quyền server): đọc `00-client-context/wp-server.md` → template từ DB → PSI trung vị 3 lượt + ảnh chụp baseline → chẩn đoán 7 lớp → plan chờ duyệt → sửa từng lớp có A/B, rollback → nghiệm thu. Evidence `03-audits/technical/pagespeed-<ngày>/` | Lead / Coder | `pagespeed example.vn ưu tiên mobile` |
+| `rà bảo mật <site>` / `site bị chèn mã độc` | Skill `wp-security-hardening`: backup có hash → kiểm từ ngoài + dấu bám trụ + sàng file (checksum → scanner → EmbeddingGemma → Jev → Claude đọc) → cách ly (không xoá) → hardening theo lớp → kiểm → báo cáo `03-audits/technical/security-<YYYY-MM>/`. Rà định kỳ chỉ đọc, việc sửa chờ duyệt | Lead | `rà bảo mật example.vn, chưa sửa gì` |
 
 Nội quy trạm: `03-audits/CLAUDE.md` + `03-audits/README.md` + cheat-sheet `02-raw/knowledge/cheat-sheets/ws03-audit.md`.
 
@@ -60,6 +62,7 @@ Nội quy trạm: `05-content-plan/CLAUDE.md` + `05-content-plan/README.md` + ch
 | `internal link plan cluster <x>` | #18: IL semantic theo `sop/03-internal-linking.md` + `_TEMPLATES/internal-link-plan.md`; done-criteria orphan = 0 | Lead | `internal link plan cluster máy lọc nước` |
 | `chấm MX batch <n>` | Nâng cấp định dạng MX1–MX6 (sơ đồ, bảng, biểu đồ, screenshot/video, khối tương tác): chấm riêng, không tính /23 · /31 · /39, ghi mục 7 của batch report kèm việc đề xuất + người làm (`06-onpage-internal-link/CLAUDE.md`) | Executive / Lead | `chấm MX batch 3` |
 | `xem batch <file> dạng HTML` | `python3 tools/onpage_report_html.py <batch-report.md>` → bảng nhiệt URL × item, sắp xếp theo điểm, lọc theo item FAIL, kèm bảng MX và AX; file `.md` vẫn là bản gốc | Mọi người | `xem batch ACME_onpage-batch-t3_v1.md dạng HTML` |
+| `ghi lên site <đợt>` / `dựng trang duyệt` | Skill `wp-content-review-apply` (CHỈ Claude Code, site có quyền server): nạp đề xuất vào trang duyệt Duyệt/E → người duyệt duyệt → `plan.py` → backup → `apply.php` chạy thử → ghi → `verify.py`. Lưu đợt ở `06-onpage-internal-link/apply-<ngày>/`. Chỉ có REST: `wp-publish-workflow-kit` | Lead / Executive | `dựng trang duyệt meta 40 bài impression cao` |
 
 Nội quy trạm: `06-onpage-internal-link/CLAUDE.md` + `06-onpage-internal-link/README.md` + cheat-sheet `ws06-onpage-il.md`.
 

@@ -1,5 +1,5 @@
 ---
-master_version: v2026.10.5
+master_version: v2026.10.33
 ---
 
 # MIGRATION — Cập nhật instance lên version master mới
@@ -15,6 +15,327 @@ master_version: v2026.10.5
 ---
 
 ## 1. Có gì mới
+
+### v2026.10.33 (2026-10-25, bổ sung 26/10) — Đợt dựng skill sau rà soát web 16–24/10
+
+- **Vì sao:** rà 9 ngày làm web trên site agency mẫu và site khoá học mẫu (16–24/10) ra 26 đơn vị dựng mới hoặc nâng cấp skill. Người duyệt chốt 24/10. Bản này gồm 14 skill của repo, bản sao công cụ Jev, bảng kiểm tool và `.gitignore`.
+- **Skill mới wp-ui-fix 1.0:** sửa lỗi giao diện site WordPress đang chạy. Truy nguồn CSS bằng `match.mjs --css` và `css_sources.sh`. Sửa theme có backup bằng `theme_patch.py`. Đo thang chữ bằng `type_probe.mjs` và `type_check.py`. Chụp phần tử và so trước, sau bằng `shot_el.mjs` và `so_sanh.py`. Có 3 reference và 47 test offline. Instance có thể tạo `00-client-context/ui-rules.md`. Thiếu file này thì skill dùng thang mặc định.
+- **wp-pagespeed 1.12:** biến `WPS` cho đường dẫn script, Bước 0b đọc lộ trình site, parity staging bằng `diff -rq`, `BASELINE.md`. Script mới: `psi_decide.py`, `psi_cls_dump.py`, `lh_local.mjs`, `lam_nong.sh`, `ls_exclusions_check.py`, `psi_con_tru.py`, `fallback_faces.py`, `fa_subset/`, `img_variants.py`, `img_display_width.mjs`, `img_width_report.py`. `psi_run.py` chạy `--jobs 2`, có `--detach`, từ chối chạy tiền cảnh quá 8 phút. `psi_ab.py` tự gắn noindex, khoá ngưỡng, có `--split-bench` và `--apply`.
+- **wp-staging-deploy 1.1:** `stg_env.sh`, `stg_tunnel.sh`, `stg_get.sh` (che chuỗi host, tunnel tự nối lại, giữ mã thoát của `SSH`). Bước 6 quét lộ bằng `stg_leak_check.sh`. Bước 3 kiểm trùng tên hàm. Thêm bẫy URL tuyệt đối và opcache.
+- **wp-content-review-apply 1.6:** `apply.php` thêm op `text`, `fix`, `el_rm`, `el_restore`, field `usermeta` và `option`, `FAIL_ON_SKIP`. Script mới: `locate.php`, `doi_chieu.py`, `so_duyet.py`, `the_qa.py`, `check_cards.py`, `kiem_trang_duyet.mjs`, `mark_batch.py`, `seed_batches.py` và bộ dọn HTML hàng loạt. Luật "duyệt tới đâu áp tới đó" ở Bước 4. Trường có khối `qa`, chữ ngắn chạy humanizer chế độ lô. Reference mới `thao-tac-ghi.md`, `don-html-hang-loat.md`.
+- **web-qa-gate 1.3:** hạng mục 13 tương tác (`interact_probe.mjs`: menu bấm thật, slider chạm thật), 14 bố cục và landmark (`landmarks.mjs`), 15 OG. Cờ mới `--cache both`, `--tabs`, `--resume`, `--sample`, `--plan`, `--page-timeout`. Thêm `chrome_cleanup.mjs`, checklist form gửi thật, chế độ cổng trước production, audit đầu workstream và kiểm độc lập.
+- **wp-security-hardening 1.7:** `apply_server_block.sh` (backup md5, diễn tập, mã HTTP trước và sau, `rollback.sh`), `preflight_remote.sh`, `verify_backup.sh`. Sửa `backup_pull.sh`, `site-backup.sh`, `backup-cnf.php`: từ chối dump rỗng, dùng gzip khi thiếu zstd. Probe URL ngẫu nhiên phải trả 404. Reference mới `ap-config-song.md`, `va-os-php.md`, `xoa-an-toan.md`.
+- **semantic-media 1.1:** sửa `minFont` null ở `diagram_render.mjs` (thêm `diagram_checks.mjs`). `diagram_body_check.py` so chữ sơ đồ với thân bài. Luật 8 kiểm người nói của video lời chứng thực. Luật 9 và `check --used` chặn ảnh trùng giữa các trang.
+- **content-inventory-audit 1.2:** nhánh B đổi cây chuyên mục (`build_tax_plan.py`, `taxonomy_rollout.php`, `export_tax_redirects.php`, `references/cay-chuyen-muc.md`). Nhánh C vòng đời URL (`pick_target.py`, `wayback_cdx.py`, `chain_check.py`, `bo-bai.md` mục 4). 410 chỉ cho danh sách bỏ đã duyệt. Dump phải gồm mọi `post_type` và mọi `post_status`. Bản 1.2 (người duyệt chốt 26/10): chỉ 301 về bài cùng chủ đề, không có bài phù hợp thì 410. `pick_target.py` báo `loi` khi đích là chuyên mục, thẻ hoặc archive, vì 301 về trang chuyên mục bị Google coi là soft 404.
+- **internal-linking 1.4:** 4 script stdlib có test offline: `the_link.py`, `link_code_audit.py`, `bridge_candidates.py`, `anchor_gsc.py`. Thêm `references/scripts.md` và Bước 4d.
+- **seo-logfile-analysis 1.3:** `verify_googlebot.py` lọc dải IP trước rDNS, bỏ đuôi `googleusercontent.com`, mã thoát 0–3. `log_checks.py` kiểm uploads, redirect, 404 và 410 theo nhóm. Reference mới `aapanel-ols.md`.
+- **technical-seo-audit 1.9:** reference `index-chuyen-muc-rank-math.md` và `gsc-ghi.md`. Script `index_probe.py`, `pagerank.py`, mu-plugin tạm `robots-public-test.php`. Checklist 3.6 thêm ngoại lệ phân trang giả.
+- **wp-theme-build 1.1:** Bước 1b đo trang tham chiếu bằng `measure_ref.mjs`. `contrast.py` nhận chữ gradient. Reference mới `bang-mau-token.md`.
+- **model-calibration 1.4:** lệnh `gold-sheet`, `gold-merge`, `pipeline`, `cosine --gold`. Cổng holdout: entry thiếu holdout ghi `status: draft` và `threshold: null`. Reference mới `phieu-gold-va-holdout.md`.
+- **wp-paid-plugin-exit 1.2:** ACF → SCF bước 3 thêm bẫy SCF lọc `<script>` trong `the_field()`. Mu-plugin `allow_unsafe_html`. Số thẻ `<script>` và mã GTM giữa lượt ACF và lượt SCF phải trùng ở mọi URL.
+- **tools/ai-assist:** `jev.py` thêm `--dry-run`, `--preflight-only`, `--no-preflight`, `--max-consecutive-errors`, `--min-image-side`, mã thoát 2 (input hỏng) và 3 (dừng sớm). Script tự đệm ảnh có cạnh ngắn dưới 320 px và chặn ảnh thiếu trước khi gọi API. `tasks/` chép thêm 8 rubric client-neutral, từ 17 lên 25 file. README thêm bảng cờ, bảng mã thoát và dòng `ui-type-align`.
+- **tools/capabilities.md:** thêm `fonttools`, `lighthouse` và cột skill cho `wp-ui-fix`.
+- **.gitignore:** chặn `02-raw/logfiles/*` vì log server chứa IP. Giữ `02-raw/logfiles/README.md`.
+- **Sync mirror:** `tools/sync-agent-skills.rb` của workspace không chép `__pycache__`, `.pytest_cache`, `.pyc` vào mirror. Script standalone `tools/sync-skills.sh` của repo chưa đổi.
+- **Kiểm:** test offline đạt ở cả 14 skill. Ví dụ: wp-ui-fix 47, internal-linking 36, wp-staging-deploy 36, technical-seo-audit 31, web-qa-gate 13, `jev.py` 56. Kiểm cấu trúc và client-neutral của `skill-creator` đạt cả 14 skill. Bằng chứng ngoài repo.
+- **Port sang instance:** THÊM `skills/wp-ui-fix`. GHI ĐÈ 13 thư mục skill còn lại và mirror. Instance có rule 301 về chuyên mục: chạy `chain_check.py --terms` để liệt kê, rồi đổi đích sang bài cùng chủ đề hoặc 410 qua trang duyệt. GHI ĐÈ `tools/ai-assist/jev.py` và README. Chép rubric mới vào `tools/ai-assist/tasks/` bằng `cp -n`, để giữ rubric instance đã chỉnh. Script backup đã cài trên server và lịch kéo backup trên máy Lead vẫn là bản cũ. Cập nhật theo `wp-security-hardening` `references/ap-config-song.md`, có diễn tập, và xin duyệt riêng vì đây là config sống.
+
+### v2026.10.32 (2026-10-24) — Model mặc định là Opus mới nhất, bài học đợt nhiều lane 23–24/10
+
+- **Vì sao:** Vincent chốt 24/10: repo dùng Opus mới nhất, không ghim ID phiên bản. Đợt sửa nhiều lane trên site agency mẫu 23–24/10 gặp lỗi thật ở PageSpeed, ACF→SCF, ảnh gửi Jev, log OLS và ghi nội dung.
+- **`.claude/settings.json`:** thêm `"model": "opus"`. Alias `opus` luôn trỏ tới bản Opus mới nhất. Effort giữ `high`.
+- **wp-pagespeed 1.11:** backup theo version v0/v1, rollback về v0, cách ly file mới. Không bật A/B bằng tham số trong mu-plugin production. Tách lượt PSI theo `benchmarkIndex`. `checklist-theo-lop.md`: ảnh hero desktop trùng, preload Montserrat.
+- **wp-paid-plugin-exit 1.1:** ACF→SCF bước 5–7: render-diff ≥350 URL có chuẩn hoá honeypot WPForms, md5 `get_fields()`, đếm admin, reset `acf_version` khi rollback, theo dõi ≥20 phút.
+- **web-qa-gate 1.2:** `pad_image` thu ảnh về ≤0,8 MP và ≤1.568 px mỗi cạnh, đệm lên 320 px và tỉ lệ cao/rộng 0,3. Jev trả http_400 ngoài giới hạn này. `hang-muc.md` thêm §12 chữ dễ đọc.
+- **wp-security-hardening 1.6:** `ung-cuu-su-co.md` §1: log web `.gz`, `log_health.py`, cột trạng thái khác nhau giữa các vhost OLS, log lỗi OLS.
+- **wp-content-review-apply 1.5:** kiểm điều kiện ngày trong nguồn duyệt. Thẻ mới thay thẻ cũ thì rebase. Đánh `appliedAt` chỉ sau khi kiểm live.
+- **seo-logfile-analysis 1.2:** script `log_health.py` đếm 4xx/5xx theo khung giờ, nhận cột từ dòng mẫu. **hreflang-planner 1.2:** mục 3d nút chuyển ngôn ngữ, không tự chuyển hướng theo IP hay Accept-Language.
+- **Kiểm:** test offline `web-qa-gate` 13/13, `log_health.py` 3/3. `log_health.py` chạy trên 249.105 dòng log thật, khớp số đếm bằng awk. Bằng chứng ngoài repo.
+- **Port sang instance:** GHI ĐÈ `.claude/settings.json` và 7 thư mục skill trên cùng mirror. Instance đã đổi `effortLevel` thì giữ giá trị của instance.
+
+### v2026.10.31 (2026-10-21) — Bài học đo tràn, biến thể cache và object cache
+
+- **Vì sao:** đợt tối ưu site agency mẫu 20–21/10 gặp lỗi thật. Phép đo tràn bỏ sót lỗi do `isMobile` và UA `HeadlessChrome`. Lượt PSI bằng `?utm_source=` ghi bản `noindex` vào cache URL sạch của trang chủ. Lệnh ghi Elementor xoá CSS toàn site.
+- **web-qa-gate 1.1:** `browser_probe.mjs` không bật cờ `mobile` của CDP. `references/hang-muc.md` mục 1 thêm 6 bẫy đo tràn. Mục 9: canonical chỉ đọc một bản cache, kiểm 5 biến thể bằng `cache_variants.py`.
+- **wp-pagespeed 1.10:** script mới `scripts/cache_variants.py` (robots, canonical, nhãn cache ở 5 biến thể của URL sạch). `psi_run.py` từ chối URL có `utm_*`, `fbclid`, `gclid`, `_ga`. `shot.mjs` không bật cờ `mobile` và ghi `vw`; `shot_cmp.py` so `scrollWidth` với `vw`. `checklist-theo-lop.md` lớp 1: biến thể cache, làm nóng, object cache, lsphp, RAM. Lớp 4: kết quả `font-display: optional`.
+- **wp-content-review-apply 1.4:** `apply.php` xoá object cache trước khi purge trang, và sinh lại CSS Elementor của từng tài liệu thay cho `files_manager->clear_cache()`. Bước 6 thêm `cache_variants.py`. `references/ghi-an-toan.md` thêm luật SQL thô khi bật object cache, CRLF, staging clone cũ, nhiều phiên cùng ghi, rollback so md5.
+- **Kiểm:** test offline `web-qa-gate` 13/13 đạt. Fixture local cho `browser_probe.mjs` và `shot.mjs`: bản cũ bỏ sót hoặc báo sai, bản mới đúng. `cache_variants.py` chạy trên server giả và 2 URL production chỉ đọc. `php -l apply.php` sạch.
+- **Port sang instance:** GHI ĐÈ 3 thư mục skill trên và mirror. Baseline `shot.mjs` cũ của instance chụp lại bằng bản mới trước khi so.
+
+### v2026.10.30 (2026-10-19) — Nối dữ liệu Ahrefs cho bộ backlink và đo trích dẫn AI
+
+- **Vì sao:** các skill backlink và GEO ghi "dùng Ahrefs" nhưng không có lệnh đọc kết quả connector. Lượt thử trên site mẫu tìm ra nhịp link, verdict spam và KPI citation tính sai.
+- **link-relevance 1.1:** nhánh backlink chấm T.T.T từ dữ liệu Ahrefs. Verdict KEEP, REVIEW, REJECT theo tín hiệu máy M1–M3. REJECT cần ít nhất 2 tín hiệu. Script `scripts/backlinks.py`, test `tests/test_backlinks.py`. Ngưỡng Theme đọc từ registry entry `backlink-theme` (`lo`, `hi`, `pass`).
+- **backlink-research 2.2:** `scripts/bl_research.py` có 3 lệnh: `gap`, `anchors`, `velocity`. Thêm `references/ahrefs-mcp.md` (tool theo bước, unit, bẫy trần 250 dòng).
+- **backlink-plan 1.3.1:** `scripts/plan_tools.py` có 3 lệnh: `velocity` (trung vị RD mới không spam còn sống, không dùng `refdomains-history`), `quickwins`, `check` (kiểm anchor plan, exit 1 khi FAIL). `quickwins` loại URL có chữ hoa trong path hoặc `%20` (breadcrumb Ahrefs ghi thành URL) khỏi bảng target.
+- **textlink-analyzer 1.2.0:** `scripts/textlink.py` có 3 lệnh: `filter`, `enrich`, `allocate`. Tên đối thủ vào `neg`. Script cảnh báo term ngắn dễ trùng nghĩa sau khi bỏ dấu.
+- **geo-tracking-prompt-selection 1.6:** lệnh `geo_kpi.py ahrefs` tách citation từ prompt khỏi AI Overviews theo từ khoá. KPI AI Citations không dùng `all_platforms`. Brand Radar cần addon riêng.
+- **tools/capabilities.md:** fallback của `ahrefs` ghi rõ cách dùng connector của runtime.
+- **gtv-client-report 1.1.1:** `references/data-paths.md` ghi trường Ahrefs cho KPI AIO theo từ khoá (`google_ai_overviews_keywords`), không dùng `all_platforms`.
+- **Kiểm:** test offline của 5 skill đạt. Lượt thử chạy trên dữ liệu Ahrefs thật của site mẫu và 4 đối thủ.
+- **Port sang instance:** GHI ĐÈ 6 thư mục skill trên, mirror và `tools/capabilities.md`. Instance muốn dùng ngưỡng Theme riêng thì hiệu chuẩn rồi thêm entry `backlink-theme` vào `00-client-context/model-calibration.json`. Không có entry thì script dùng ngưỡng mặc định.
+
+### v2026.10.29 (2026-10-19) — Bước 0 kiểm tool cho 21 skill, chuẩn câu Bước 0
+
+- **Vì sao:** việc chung 3 của chương trình lớp model yêu cầu mọi skill audit và build có "Bước 0 — kiểm tool". Lệnh kiểm cấu trúc của `skill-creator` đòi dòng ngay sau heading là câu mẫu chạy `tools/capabilities.py check --need`. 5 skill mới của v2026.10.28 viết lệnh trong code block nên trượt kiểm.
+- **Thêm Bước 0 (21 skill):** wp-pagespeed, visual-serp-lab, link-relevance, site-vector-index, retrieval-lab, model-calibration, local-seo-audit, map-pack-intelligence, cro-audit, competitor-seo-gap-analysis, site-migration-checklist, visual-semantic-seo, semantic-html-optimization, entity-seo-plan, schema-markup-generator, programmatic-seo-builder, internal-linking, gtv-weekly-report, wp-security-hardening, wp-content-review-apply, image-seo-optimize. Skill có danh sách bước ngay sau heading nhận thêm heading "### Các bước". Skill không có heading quy trình nhận "## Quy trình" ngay trước phần các bước. `image-seo-optimize` đổi heading "Workflow 6 bước" thành "Quy trình 6 bước".
+- **Đổi Bước 0 sang câu mẫu (5 skill):** wp-staging-deploy, wp-theme-build, wp-paid-plugin-exit, semantic-media, blog-interactive-tools.
+- **Sửa script:** `semantic-media/scripts/media_match.py` tắt ghi bytecode trước khi import `svi.py`, để không sinh `__pycache__` trong `site-vector-index`.
+- **Kiểm:** 103 khối Bước 0 trong workspace đạt lệnh kiểm cấu trúc. Mọi danh sách `--need` chạy được, không có id lạ.
+- **Port sang instance:** GHI ĐÈ 26 thư mục skill trên và mirror. Không đổi script khác, không đổi template.
+
+### v2026.10.28 (2026-10-19) — 5 skill WordPress và media mới, nâng cấp bảo mật, sửa trực tiếp, ảnh
+
+- **Vì sao:** việc staging, deploy, dựng theme, bỏ plugin trả phí, media theo mục và công cụ trong bài đã chạy thật trên 2 site nội bộ 16–19/10 nhưng nằm rải trong thư mục dự án. Probe PHP trong `uploads` nhận cả 410 nên bỏ sót site thiếu rule.
+- **Skill mới:**
+  - `wp-staging-deploy` v1.0: làm mới staging, tunnel, gộp 3 phía có backup và lệnh rollback (`merge3.py`), regen CSS Elementor từng tài liệu, purge theo URL. Lượt thử dry trên server thật: plan trùng script cũ 15/15 file.
+  - `wp-theme-build` v1.0: khung theme classic tự code, template khoá học, mẫu blog, form lead; `parity.py` kiểm ảnh (cả trang ≤3%, màn đầu ≤1%), mã HTTP và chữ.
+  - `wp-paid-plugin-exit` v1.0: Elementor Pro sang widget free, ACF Pro sang SCF, Permalink Manager sang `permalink-uris.php` (xuất bản đồ bằng `pm_export.php`, xử lý tiền tố WPML). Converter chạy lại khớp 18/18 lượt đổi cũ.
+  - `semantic-media` v1.0: `media_match.py` (EmbeddingGemma xếp video cho slot, kiểm luật plan), `diagram_render.mjs` (render và kiểm chữ sơ đồ), `watermark.py`, mẫu YouTube facade + VideoObject. Tái tạo top 8 cũ 83/83.
+  - `blog-interactive-tools` v1.0: chèn shortcode trước heading neo với điều kiện MD5, rollback, mẫu 8 công cụ JS thuần. Phát lại khớp 8/8 vị trí.
+- **Skill sửa:**
+  - `wp-security-hardening` v1.5: chặn PHP trong `languages`, `upgrade` và biến thể path-info. Probe chỉ nhận 403.
+  - `wp-content-review-apply` v1.3: chế độ sửa trực tiếp (`sua_truc_tiep.py`, nút E trên bản HTML của trang, xuất `edits` chuẩn NFC, `k#n` cho chữ lặp); bẫy mạng nội dung.
+  - `image-seo-optimize` v1.2.2: phân vai trỏ sang `semantic-media`, `visual-serp-lab`. `wp-pagespeed` v1.9.1: trỏ sang `wp-staging-deploy`.
+- **Tool:** `tools/capabilities.md` thêm dòng `ffmpeg` và thêm skill vào dòng `ssh`, `wp-cli`, `node`, `chrome`, `axe`, `pillow`, `gemma`, `gsc`.
+- **Port sang instance:** THÊM 5 thư mục skill mới, GHI ĐÈ 4 thư mục skill sửa, `tools/capabilities.md` và mirror. Instance có site WordPress: kiểm lại probe bảo mật bằng `exposure_check.sh`.
+
+### v2026.10.27 (2026-10-19) — Sửa sau kiểm độc lập đợt 2, áp quyết định Vincent, parser log OpenLiteSpeed
+
+- **Vì sao:** kiểm độc lập đợt 2 tìm ra description quá 280 ký tự, cổng chưa có holdout, Bước 0 sai chỗ và tên khách trong master. Vincent chốt thêm luật gửi bản nháp cho Jev, vai trò 2 ngưỡng SERP và cách dùng định tuyến Gemma. Log thật của OpenLiteSpeed không parse được.
+- **Quyết định Vincent (19/10):**
+  - `content-quality-lab` v1.2.3: cờ `--own-site` cho `rewrite` và `claims --text`. Bản nháp chưa đăng của site chính đơn vị vận hành được gửi Jev. Bản nháp site khách không gửi Jev.
+  - `serp-clustering` v1.1.1, `keyword-topic-url-mapping` v1.3.1, `semantic-content-network` v1.0.1: 4/10 URL chung để xếp keyword vào cụm khi lập plan, 6/10 để gộp 2 URL đang có.
+  - `keyword-topic-url-mapping` v1.3.1, `query-processing-diagnosis` v1.3.1: định tuyến Gemma trên trang tiền chỉ là danh sách cần đọc (top-1 trùng URL Google 29,3%).
+- **Sửa theo kiểm độc lập:**
+  - `geo-answer-lab` v1.1.1, `topical-focus` v1.1.1, `technical-seo-audit` v1.8.2: description còn dưới 280 ký tự. `topical-focus` ghi rõ nhãn khoảng trống dưới 0,86 là ứng viên Claude đọc. `technical-seo-audit` bỏ tên khách thật khỏi master.
+  - `hreflang-planner` v1.1.1: ngưỡng `sec_cov` < 0,82 về nháp, report không tự loại cặp.
+  - `geo-fanout-research` v1.1.1, `geo-content-optimization` v1.4.1, `seo-drift-tracker` v1.1.1: Bước 0 nằm đúng mục "Quy trình", `python3` bắt buộc.
+  - `seo-logfile-analysis` v1.1.1: `log_clusters.py` đọc log OpenLiteSpeed (dòng bọc nháy đơn, trường proxy trước IP). Thêm 6 bot: GoogleOther, Applebot, Meta, Bytespider, Amazonbot, CCBot. Log gtvseo.com 06–19/10 parse 48.803/48.803 dòng.
+- **Port sang instance:** GHI ĐÈ các thư mục skill trên và mirror. Không đổi registry hay calibration-defaults.
+
+### v2026.10.26 (2026-10-19) — Jev chấm luật viết theo đoạn, phân loại diff, cặp hreflang, logfile theo cụm chủ đề
+
+- **Vì sao:** audit luật viết, phân loại diff sau deploy và kiểm cặp VI–EN vẫn do Claude đọc toàn bộ. Logfile chưa được đối chiếu với cụm chủ đề của site.
+- **Skill sửa:**
+  - `semantic-content-audit` v2.3: rubric Jev `writing-rules` chấm 4 luật theo đoạn (answer_first, fluff, vague_quantity, plural_no_example). AUC 0,83–0,90 nhưng không câu nào đạt cổng tự chốt 0,95: Jev chỉ xếp đoạn cho Claude đọc. Information gain dùng dấu hiệu effort của `content-quality-lab`, không dùng embedding.
+  - `seo-drift-tracker` v1.1: code chốt diff tất định; Jev rubric `diff-impact` xếp "đáng kể" từ p 0,65 (46/47 đúng). Nhãn "vô hại" của Jev không dùng.
+  - `seo-logfile-analysis` v1.1: gom URL bot đã crawl theo cụm của `topical-focus`, so với cụm lõi. Logfile chỉ xử lý trên máy, không gửi Jev. Chưa thử trên logfile thật.
+  - `hreflang-planner` v1.1: EmbeddingGemma đo độ phủ section của cặp VI–EN. Cặp có `sec_cov` dưới 0,82 là không tương đương (28/29 đúng). Không có ngưỡng nhận: Claude đọc phần còn lại.
+- **Tool:** `tools/capabilities.md` thêm skill vào dòng `jev`, `numpy`, `gemma`, `bs4`.
+- **Port sang instance:** GHI ĐÈ 4 thư mục skill trên, `tools/capabilities.md` và mirror. Registry của instance hiệu chuẩn theo skill `model-calibration`.
+
+### v2026.10.25 (2026-10-19) — Đo phủ subquery theo section, bỏ ngưỡng 0,80/0,90, phát hiện intent dịch chuyển
+
+- **Vì sao:** ngưỡng 0,80/0,90 lấy từ bge/AirOps không phân biệt được trang được AI trích (39,6% so với nền 34,2% trên dữ liệu site mẫu). Chấm biến thể và mức phủ subquery vẫn do Claude tự chấm.
+- **Skill sửa:**
+  - `geo-fanout-research` v1.1: `scripts/fanout_cover.py` chấm từng subquery với từng section bằng EmbeddingGemma. So tương đối trong cùng top 10: AUC dev 0,674, holdout 0,683. Không có ngưỡng "đã phủ" tuyệt đối: Claude ra verdict.
+  - `geo-content-optimization` v1.4.0: bỏ ngưỡng 0,80/0,90, đọc ngưỡng từ registry. Chưa có ngưỡng thì ghi "chưa hiệu chuẩn, Claude đọc".
+  - `content-refresh` v1.1: `scripts/intent_shift.py` đo độ lệch của trang so với tâm top 3 SERP. Độ lệch tương quan với vị trí GSC (Spearman 0,545, n = 25). Chưa có ngưỡng REWRITE: Claude đọc top 3 SERP.
+- **Tool:** `tools/capabilities.md` thêm skill vào dòng `gemma`, `numpy`, `ahrefs`. `tools/ai-assist/calibration-defaults.json` thêm `geo-fanout-coverage` và `geo-variant-margin`.
+- **Port sang instance:** GHI ĐÈ 3 thư mục skill trên, `tools/capabilities.md`, `tools/ai-assist/calibration-defaults.json` và mirror. Không đổi `index.md`, deliverable, template, SOP.
+
+### v2026.10.24 (2026-10-19) — Title theo pixel, gom keyword trước bằng Gemma, định tuyến query → URL
+
+- **Vì sao:** công cụ cũ báo title bị cắt ở 580 px, quá chặt so với SERP thật. Gom cụm kéo SERP cho mọi cặp keyword. Định tuyến query → URL làm tay.
+- **Skill sửa:**
+  - `seo-onpage` v1.5.0: `scripts/serp_pixel.py` đo title và meta theo pixel (Arial 20 px, thiếu Pillow thì dùng bảng `arial_widths.json`). Mốc cắt title đo trên SERP đã lưu là 688 px, đúng 138/140 holdout. Phần cụm thiếu và cụm GSC trỏ sang `ngram-semantic-gap`.
+  - `serp-clustering` v1.1: EmbeddingGemma gom trước. Cặp có cosine dưới 0,90 là chắc khác cụm, không kéo SERP (holdout 0/186 sai). Không có ngưỡng chắc cùng cụm: gộp vẫn do SERP quyết.
+  - `keyword-topic-url-mapping` v1.3 và `query-processing-diagnosis` v1.3: định tuyến query → URL qua `retrieval-lab route`; `query-processing-diagnosis` có `scripts/gsc_route.py`, query GSC chỉ xử lý trên máy.
+- **Tool:** `tools/capabilities.md` thêm skill vào dòng `pillow`, `gemma`, `numpy`. `tools/ai-assist/calibration-defaults.json` thêm entry `serp-clustering-prefilter`.
+- **Port sang instance:** GHI ĐÈ 4 thư mục skill trên, `tools/capabilities.md`, `tools/ai-assist/calibration-defaults.json` và mirror. Không đổi `index.md`, deliverable, template, SOP.
+
+### v2026.10.23 (2026-10-19) — N-gram, mạng nội dung, kiểm kê bài, khoảng trống chủ đề, viết lại an toàn
+
+- **Vì sao:** workstream site mẫu 15–19/10 có nhiều script rời cho N-gram, mạng nội dung (SCN) và dọn danh mục. Query GSC từng được gửi cho Jev, trái luật "Jev chỉ nhận nội dung công khai".
+- **Skill mới:**
+  - `ngram-semantic-gap` v1.0: `ngram.py` 7 lệnh. Cấp site và cấp GSC đếm cụm 1–3 tiếng, cấp trang 2–4 tiếng (Vincent chốt 19/10).
+  - `semantic-content-network` v1.0: `scn.py` 6 lệnh, checklist SCN đủ 6 việc, gộp chỉ sau kiểm SERP.
+  - `content-inventory-audit` v1.0: `inventory.py` 5 lệnh và 2 script WP-CLI. Jev `category-pick` từ 0,9 tự ghi, 0,6–0,9 Claude đọc, dưới 0,6 người quyết. Luật bỏ bài: nháp + 410/301.
+- **Skill sửa:**
+  - `technical-seo-audit` v1.8.1: Bước 0; nguồn link hỏng (`link_sources.py`, `find_sources.php`); schema khớp nội dung hiển thị (`schema_visible.py`, rubric `schema-visible`); nhánh GSC chỉ gửi Jev chữ trang, không gửi query.
+  - `geo-tracking-prompt-selection` v1.5: đo mốc và đo lại ngày 14, 30, 60 (`geo_kpi.py`).
+  - `topical-focus` v1.1: khoảng trống chủ đề so với đối thủ (`competitor_titles.py`, `topical.py gap`), cosine EmbeddingGemma.
+  - `geo-answer-lab` v1.1: nhất quán mô tả entity (`entity_desc.py`, rubric `entity-desc`).
+  - `content-quality-lab` v1.2.1: lệnh `rewrite` (rubric `rewrite-keep`); `claims --text` không gửi Jev chữ nháp.
+  - `web-qa-gate` v1.0: Bước 0 đặt danh sách id trong nháy đơn.
+- **Tool:**
+  - `tools/ai-assist/jev.py` dừng khi trường khai trong `must_be_empty` của rubric có dữ liệu. `tasks/gsc-cannibal-pair.json` khai `shared_queries`.
+  - `tools/ai-assist/README.md`: `gsc-intent-match` không dùng với dữ liệu GSC.
+  - `calibration-defaults.json` thêm 6 entry: `schema-visible`, `gsc-cannibal-pair` chế độ chữ, `topical-gap`, `entity-desc`, `rewrite-keep` ×2.
+- **Port sang instance:** GHI ĐÈ 9 thư mục skill trên, `tools/ai-assist/{jev.py,README.md,calibration-defaults.json,tasks/gsc-cannibal-pair.json}`, `README.md`, `CLAUDE.md` và mirror. Registry `00-client-context/model-calibration.json` của instance giữ nguyên; instance mới hiệu chuẩn theo skill `model-calibration`.
+
+### v2026.10.22 (2026-10-19) — Cổng kiểm sau khi ghi lên site, chặn claim, kiểm tool ở Bước 0
+
+- **Vì sao:** đợt 15–18/10 trên site mẫu gặp lỗi tràn ngang bị che, form không khởi tạo ở 768 px, GTM gửi hit thật lúc chụp, staging thiếu plugin của production. Audit 17/10 thấy 3 phiên bản câu hoàn phí và nhiều số lệch bảng fact. Agent hay chạy việc khi máy thiếu tool.
+- **Skill mới:** `web-qa-gate` v1.0: `qa_gate.py run` kiểm 11 hạng mục (tràn ngang 3 bề rộng, axe, focus, form, tracking, plugin, HTTP, redirect, canonical, schema, Jev `ui-visual`), ra `report.json` + `report.md`. Chặn GA/GTM/Meta khi QA. Form mặc định chỉ kiểm cấu trúc; gửi thật cần `--submit-live` + `WEB_QA_SUBMIT_LIVE`, production cần duyệt từng lượt. Jev `ui-visual` chưa có câu đạt ngưỡng: Claude xem ảnh.
+- **Skill sửa:** `content-quality-lab` v1.1: lệnh `quality.py claims` 3 lớp (regex; Jev `claim-guard` 2026-10-19.2; bảng fact: cụm cấm + EmbeddingGemma + Jev `fact-match` 2026-10-19.2). Cần `facts.json` của chủ site và cổng trong registry.
+- **Tool mới:** `tools/capabilities.md` (bảng 29 tool: id, lệnh kiểm, cách cài, fallback, skill dùng), `tools/capabilities.py` (`check --need 'a,b?'`, `list`, `key`, `gws-auth`; không in giá trị key), `tools/tests/test_capabilities.py`. Skill audit và build gọi lệnh này ở "Bước 0 — kiểm tool". Đặt danh sách id trong nháy đơn, vì zsh coi "?" là ký tự glob.
+- **Luật:** `CLAUDE.md` §0 thêm bước tự chấm plan theo checklist "Bản tốt nhất phải có" của skill trạm; §4 ghi `capabilities.py`.
+- **Tool:** `tools/ai-assist/calibration-defaults.json` thêm 6 cổng nháp `claim-guard` và `fact-match`.
+- **Port sang instance:** GHI ĐÈ 2 skill trên, `tools/capabilities.*`, `tools/tests/test_capabilities.py`, `tools/ai-assist/calibration-defaults.json`, `CLAUDE.md` và mirror. Không đổi `index.md`, deliverable, template, SOP.
+
+### v2026.10.21 (2026-10-19) — Bỏ chuẩn đếm số không theo Semantic SEO
+
+- **Vì sao:** Vincent yêu cầu rà mọi chuẩn trong skill và checklist ngày 19/10/2026. Các quota dưới đây không có nguồn Koray hay Google, hoặc đếm keyword thay cho attribute và ngữ cảnh. Checklist giờ chấm theo attribute, Central Entity và ngữ cảnh của đoạn.
+- **Checklist onpage** (`02-raw/knowledge/sop/08-onpage-checklist.md`, cheat-sheet `ws06-onpage-il.md`, skill `seo-onpage` v1.4.3 + `references/p-series-checklist.md`):
+  - P18 bỏ quota 2–4 link .edu/.gov. Bài nêu tên nguồn trong câu chứa claim (`internal-linking` link-js D6). Link ngoài chỉ đặt khi người đọc phải mở trang đó, dạng D5.
+  - P17 bỏ quota 5-10 link mỗi bài và luật anchor khớp Title đích. Anchor là seed query hoặc biến thể của trang đích.
+  - P16 bỏ keyword ở 100 chữ cuối và trong H2. P6 bỏ luật H2 chứa keyword chính.
+  - P3, P8 bỏ ngưỡng ~70%. P8 chấm theo attribute MANDATORY của consensus top 10.
+  - P14 bỏ quota bold. P19 đặt tên file theo nội dung ảnh. P20 bỏ ngưỡng 8-15 từ của alt.
+  - T3-P1 bỏ ngưỡng 110% facts. T3-P5 bỏ density. T3-P6 chỉ dùng Flesch cho tiếng Anh.
+- **Internal link** (`sop/03-internal-linking.md`, `sop/11-publish-wp.md`, `06-onpage-internal-link/CLAUDE.md`, `_TEMPLATES/internal-link-plan.md`, skill `internal-linking` v1.3.1): bỏ quota 2-5 link tới sibling và 5-10 link mỗi bài. Bài link tới sibling khi đoạn có ngữ cảnh chung.
+- **Tier 1, Tier 2** (`sop/06-self-checklist/`): bỏ quota 1-2 câu hỏi tu từ mỗi section. Link plan của content team bỏ luật anchor khớp title và "Main tối đa 0-2 link", thay bằng `link-placement` (Main chỉ MC1–MC5).
+- **Skill khác:** `geo-content-optimization` v1.3.3 bỏ keyword ở 100 chữ cuối. `visual-semantic-seo` v3.7.1 ghi rõ goldmine factor chấm title candidate, bỏ quota nhắc brand 5-7 lần, bỏ Flesch ≥60 cho tiếng Việt, bỏ số từ cố định theo funnel, xoá ví dụ số liệu GTV không có nguồn. `image-seo-optimize` v1.2.1 bỏ ngưỡng 8-15 từ của alt. `backlink-plan` v1.2.1, `textlink-analyzer` v1.1.1, `ws07-offpage.md`, `_TEMPLATES/gate-offpage-decision.md` đổi nhãn "LSI" thành "đồng nghĩa/biến thể".
+- **Dạng mã của CTA (Vincent chốt chiều 19/10):** `internal-linking` v1.3.2. Ngữ cảnh quyết định dạng mã. CTA hợp ngữ cảnh giữ link thật (D1). Link JS (D3) chỉ cho link giữ lại để tăng chuyển đổi ở vị trí ngữ cảnh không cần link, hoặc nút tới trang noindex. Sửa `link-js.md` §2 (3 bước chọn), `link-placement.md` dòng MC4, `06-onpage-internal-link/CLAUDE.md` dòng dạng mã.
+- **Filter trang danh mục ecommerce (Vincent chốt chiều 19/10):** `internal-linking` v1.3.3 thêm `link-js.md` §7 theo phân tích faceted navigation của Koray. Filter có demand làm trang đích, link thật. Filter không demand và sắp xếp dùng checkbox hoặc button, không sinh URL mà Google thấy. Link sản phẩm, phân trang, breadcrumb giữ link thật. `technical-seo-audit` v1.8.1: mục 3.7 checklist trỏ tới §7. Instance ecommerce (minh-tuan-mobile) áp khi chạy link plan hoặc audit trang danh mục.
+- **Chưa đổi, chờ Vincent quyết:** trần ~12 fact mỗi trang của `semantic-content-writing` (Vincent duyệt 22/08), "≥3 EAV/100 từ", luật burstiness 3 loại câu mỗi đoạn, P5 H1 60-70 ký tự, P11 "synonyms ≥3-4", T2-P2 "60% above fold". `06-onpage-internal-link/WP-PUBLISH-KIT_upgrade-spec_v1.md` B4 còn ghi "Validate alt 8-15 từ" (mức warning).
+- **Port sang instance:** GHI ĐÈ `02-raw/knowledge/sop/` (03, 06, 08, 11), `02-raw/knowledge/cheat-sheets/` (ws06, ws07), `06-onpage-internal-link/CLAUDE.md`, `_TEMPLATES/internal-link-plan.md`, `_TEMPLATES/gate-offpage-decision.md`, 7 skill trên và mirror. QC report cũ giữ nguyên. QC mới chấm theo checklist mới. Không đổi `index.md`, deliverable.
+
+### v2026.10.20 (2026-10-19) — Dạng mã của link: link thật hay link JS
+
+- **Vì sao:** Vincent chốt 19/10/2026 cách code link theo 2 site của Koray (morethanpanel.com, sutliffstout.com, kiểm mã nguồn 9 trang). Link chủ đề và link tới trang cần xếp hạng giữ `<a href>`. Nút chuyển đổi tới trang không cần xếp hạng, link phụ lặp ở header/footer và link ngoài làm bằng chứng dùng link JS (onclick). Trích nguồn trong thân bài nêu tên nguồn bằng chữ, không đặt link.
+- **Skill sửa:** `internal-linking` v1.3: thêm `references/link-js.md` (mã D1–D6, 9 luật bắt buộc gồm giữ đường crawl, không dùng dạng lai, bàn phím, đo lường, staging), Bước 4c, cột `Dạng mã` trong link plan (`references/link-plan-template.md`), 3 anti-pattern. `link-placement.md` và `anchor-rules.md` thêm dòng trỏ luật mới.
+- **Luật trạm:** `06-onpage-internal-link/CLAUDE.md` thêm 1 dòng ĐƯỢC/KHÔNG ĐƯỢC và cột `Dạng mã` ở Vòng tự kiểm bước 4.
+- **Chưa đổi:** P18 của `seo-onpage` (2–4 link ngoài mỗi bài) vênh với D6, chờ Vincent chốt. Repo chưa có rubric Jev `link-purpose`, `link-external`: Claude gắn mục đích theo `link-js.md` §2.
+- **Port sang instance:** GHI ĐÈ `skills/internal-linking` và mirror (`.claude/skills/`, `.agents/skills/`), `06-onpage-internal-link/CLAUDE.md`. Link plan đang làm dở: thêm cột `Dạng mã` cho dòng chưa đặt link. Không đổi `index.md`, deliverable, template, SOP.
+
+### v2026.10.19 (2026-10-19) — Ảnh trong bài và màn đầu của trang
+
+- **Vì sao:** Đợt C của lớp model. Pilot trên site mẫu đo ảnh và màn đầu bằng Jev ảnh và EmbeddingGemma ảnh, có gold gán mù:
+  - Ảnh: điểm gộp p `alt_matches` + 2 × cos ảnh–alt gắn cờ alt không tả ảnh, đúng 42/44 ca trên gold 80 ảnh. Jev `fits_section` ở ngưỡng 0,7 đạt precision 98,3%.
+  - Màn đầu: Jev đúng 95–100% trên gold 85 cặp cho 7 đặc điểm. Riêng `answer_visible` dự báo trang được AI trích trong cùng pool (AUC 0,644). 7 đặc điểm còn lại chưa có tín hiệu.
+- **Skill mới:** `visual-serp-lab` v1.0: `visual.py images`, `fetch`, `embed`, `jev-in`, `pairs`, `media` (cổng `alt-score`, `image-fit`), `shoot`, `layout` (rubric `first-screen`). Rubric Jev `image-fit` và `first-screen` 2026-10-19.1.
+- **Tool:** `tools/ai-assist/calibration-defaults.json` thêm cổng `first-screen` (8 câu) và `image-fit` `fits_section`. Không có default cho `alt-score`: thang cos ảnh–chữ khác theo site.
+- **Port sang instance:** GHI ĐÈ skill trên, `tools/ai-assist/calibration-defaults.json` và mirror. Không đổi `index.md`, deliverable, template, SOP.
+
+### v2026.10.18 (2026-10-19) — Độ khớp anchor và trang đích
+
+- **Vì sao:** Đợt C của lớp model. Pilot trên 3.123 link nội bộ của site mẫu kiểm độ khớp anchor với 2 nguồn:
+  - Định tuyến GSC: margin Gemma của "anchor: đoạn" dự báo link trỏ đúng URL Google chọn cho query bằng anchor, AUC trong cụm 0,91.
+  - Gold 130 link gán mù: điểm gộp Jev + Gemma đạt AUC 0,95 trên holdout mới. Rubric cũ `link-placement` chỉ đạt 0,82 cho việc này.
+- **Skill mới:** `link-relevance` v1.0: `links.py prepare` (code gắn cờ đích lỗi, trang chuyên mục, anchor trùng query GSC, một anchor nhiều đích; margin Gemma), `sample` (phiếu gold mù), `validate`, `decide` (cổng `anchor-score`). Rubric Jev `anchor-target` 2026-10-19.1.
+- **Skill sửa:** `model-calibration` v1.3: `cosine --grid LO:HI:STEP` cho điểm ngoài dải 0,50–0,995.
+- **Tool:** `tools/ai-assist/calibration-defaults.json` thêm cổng `anchor-score` 0,52.
+- **Port sang instance:** GHI ĐÈ 2 skill trên, `tools/ai-assist/calibration-defaults.json` và mirror. Không đổi `index.md`, deliverable, template, SOP.
+
+### v2026.10.17 (2026-10-19) — Độ tập trung chủ đề, dấu hiệu effort của trang, khối chữ lặp
+
+- **Vì sao:** Đợt C của lớp model. Pilot trên site mẫu kiểm từng chỉ số với kết quả thật trước khi đưa vào skill.
+  - Dấu hiệu "số đo từ dự án thật" do Jev gán dự báo trang được AI trích trong cùng pool tìm kiếm: AUC 0,73.
+  - Khoảng cách tới tâm site không dự báo hiển thị khi đã khử độ dài bài, nên `topical-focus` chỉ dùng để đọc cơ cấu chủ đề và gán bài vào cụm.
+  - Information gain đo bằng embedding không có tín hiệu, nên đã bỏ.
+- **Skill mới (2):**
+  - `topical-focus` v1.0: `topical.py map` (tâm site, bán kính, cụm KMeans có sàn kích thước, trang lệch tâm, trang bằng chứng tách riêng), `selftest` (cổng gán cụm từ tiêu đề + H2), `plan` (gán bài dự kiến vào cụm).
+  - `content-quality-lab` v1.0: `quality.py prepare`, `validate`, `report` (rubric Jev `content-effort` 2026-10-19.4, so trang mình với trang được trích cùng pool), `template` (passage gần trùng giữa các trang, ngưỡng `passage-dup`).
+- **Skill sửa:** `model-calibration` v1.2: `proxy --control` (Spearman riêng phần), chế độ `auc` (AUC trong từng nhóm, ghi registry), lưới ngưỡng cosine 0,01.
+- **Tool:** `tools/ai-assist/calibration-defaults.json` thêm cổng `content-effort` (original_data 0,75 · first_hand 0,85).
+- **Port sang instance:** GHI ĐÈ 3 skill trên, `tools/ai-assist/calibration-defaults.json` và mirror. Không đổi `index.md`, deliverable, template, SOP.
+
+### v2026.10.16 (2026-10-19) — Lớp model cho SEO: index vector, hiệu chuẩn, câu trả lời AI, truy xuất
+
+- **Vì sao:** Các workstream trước tự embed và tự đặt ngưỡng ở từng việc. Ngưỡng không có bằng chứng theo site, và chỉ số mô phỏng chưa được kiểm với kết quả thật. Pilot trên site mẫu (19/10): Jev chấm câu trả lời AI đạt 94–96% ở cổng confidence; định tuyến query → URL bằng embedding trùng URL Google chọn 75,6%, baseline từ khoá 49,9%.
+- **Skill mới (4):**
+  - `site-vector-index` v1.1: `extract.py` tách page, section, passage, anchor; `svi.py` dựng index, query, centroid, cặp gần trùng, so 2 store.
+  - `model-calibration` v1.1: `calibrate.py` hiệu chuẩn nhãn Jev (ngưỡng theo lớp, cổng confidence), ngưỡng cosine, kiểm proxy bằng Spearman theo nhóm + bootstrap. Registry theo site ở `00-client-context/model-calibration.json`.
+  - `geo-answer-lab` v1.0: thu câu trả lời AI, regex + vị trí bằng code, rubric Jev `ai-answer-brand` v3, GLM trích câu phản đối, báo cáo brand × engine.
+  - `retrieval-lab` v1.0: `retrieval.py` xếp passage theo query, định tuyến query → URL so với GSC, kiểm proxy bằng AUC.
+- **Tool mới:** `tools/ai-assist/glm.py` (GLM Flash chỉ trích câu nguyên văn). `tools/ai-assist/calibration-defaults.json` thêm cổng ai-answer-brand v3.
+- **Infra:** `.gitignore` thêm `03-audits/_vector-index/`.
+- **Knowledge pack:** `sop/06-self-checklist/tier-1-geo.md` GE-26 thêm cách xử lý khi AI nghi ngờ vì brand tự xếp hạng: giữ bài top list, viết khách quan + EEAT, giải nghi ngờ bằng offsite consensus (GE-28…32). Thêm 1 dòng anti-pattern. Port: GHI ĐÈ file này.
+- **Port sang instance:** GHI ĐÈ 4 skill, `tools/ai-assist/`, `.gitignore` và mirror. Instance tạo `00-client-context/model-calibration.json` khi hiệu chuẩn lần đầu. Không đổi `index.md`, deliverable, template, SOP.
+
+### v2026.10.15 (2026-10-19) — CLS do critical CSS thiếu font và mục lục chờ JS
+
+- **Vì sao:** Sau đợt đổi font và tắt plugin dựng trang trên site mẫu, CLS desktop bài viết lên 0,53. Ba nguyên nhân: critical CSS dựng trước khi đổi font, LiteSpeed gom `<style>` chứa `@font-face` vào file tải async, mục lục Fixed TOC chờ JS mới vào luồng trang.
+- **Skill sửa:** `wp-pagespeed` v1.8: `checklist-theo-lop.md` lớp 5 thêm 2 bẫy critical CSS; lớp 6 thêm mục lục Fixed TOC và cách thử CSS sửa CLS bằng CDP `Fetch`.
+- **Port sang instance:** GHI ĐÈ `skills/wp-pagespeed` và mirror. Không đổi `index.md`, deliverable, template, SOP.
+
+### v2026.10.14 (2026-10-18) — Kết quả A/B font trên PSI, plugin còn bật sau khi đổi theme
+
+- **Vì sao:** Đợt tối đa điểm tiếp theo trên cùng site: A/B trên PSI cho thấy các cách chỉnh font không giảm CLS mà còn đổi lấy LCP. Sau cutover, một plugin mục lục còn bật chèn danh sách thô vào mọi bài; staging tắt plugin này nên không lộ.
+- **Skill sửa:**
+  - `wp-pagespeed` v1.7: `psi_ab.py build` gộp trang của nhiều spec. `do-dac.md` đọc CLS từ JSON khi A/B, kiểm tính năng máy PSI bằng `console.error`. Lớp 4 ghi kết quả A/B font (tên `local()` bold khớp, chia face theo độ đậm, preload, `font-display: optional`).
+  - `site-migration-checklist` v1.3: so plugin đang bật giữa staging và production; kiểm plugin front-end bằng DOM; quét `<style>`, `<script>`, ảnh hotlink trong nội dung cũ.
+- **Port sang instance:** GHI ĐÈ 2 skill trên và mirror. Không đổi `index.md`, deliverable, template, SOP.
+
+### v2026.10.13 (2026-10-18) — CLS do JS đổi bố cục, font dự phòng trên PSI, ảnh blog, công cụ đo CLS
+
+- **Vì sao:** Vincent nhận xét 18/10/2026: 3 trang khoá học và trang blog chưa tối ưu xong. Đo đủ trang con tìm ra CLS 0,92 ở trang thanh toán, ảnh PNG 944 KB ở một bài. Bài học đã chạy thật trên production một site WordPress.
+- **Skill sửa:**
+  - `wp-pagespeed` v1.6: Bước 1 đo mọi trang con của template. Bước 3 kiểm CLS mà PSI gán cho font. Lớp 3 bản 720w cho hero, logo, `sizes` ảnh thân bài, ảnh đại diện WebP giữ OG. Lớp 4 stack font thiếu face dự phòng. Lớp 6 trạng thái trang trong `<head>`, forced reflow bằng `ResizeObserver`. Lớp 7 TBT trang chuyển đổi. Script mới `cls_trace.mjs`, `featured_webp.sh`; tài liệu cho `psi_ab.py`, `gtm_delay_check.mjs`, `templates/gtm-delay-loader.php`.
+  - `wp-security-hardening` v1.4: bẫy `context` mới của vhost OpenLiteSpeed không kế thừa header bảo mật và Basic Auth.
+  - `geo-content-optimization` v1.3.1, `technical-seo-audit` v1.7.1: ngoại lệ `/llms.txt` cho audit của PSI, không tính là đòn bẩy GEO.
+  - `cro-measurement-plan` v1.2: kiểm GTM bị hoãn, trigger click tự động bỏ lỡ cú click đầu.
+- **Port sang instance:** GHI ĐÈ 5 skill trên và mirror. Không đổi `index.md`, deliverable, template, SOP.
+
+### v2026.10.12 (2026-10-18) — Hoãn GTM có hẹn giờ, hạng mục "Duyệt web bằng tác nhân"
+
+- **Vì sao:** Vincent yêu cầu 18/10/2026 tối đa TBT và hạng mục "Duyệt web bằng tác nhân" của PSI, duyệt hoãn GTM ("2s hoặc khi có thao tác, hoặc bạn thấy cái nào ổn"). Bài học đã chạy thật trên production một site WordPress.
+- **Skill sửa:** `wp-pagespeed` v1.5:
+  - `references/checklist-theo-lop.md` lớp 7: hoãn 2 s không có tác dụng, cách chọn mốc theo lúc Lighthouse dừng ghi trace, nạp ngay cho URL quảng cáo và trang chuyển đổi, bẫy `cdp.mjs` tự cuộn. Lớp 5: bẫy axe với `content-visibility`.
+  - File mới `references/agentic-browsing.md`.
+  - `scripts/psi_run.py` thêm `--categories`.
+- **Port sang instance:** GHI ĐÈ `skills/wp-pagespeed` và mirror. Không đổi `index.md`, deliverable, template, SOP.
+
+### v2026.10.11 (2026-10-18) — Nghiệm thu đợt 2: đo lại lượt chậm, tắt plugin thừa, 2 công cụ mới
+
+- **Vì sao:** Vincent yêu cầu 18/10/2026: tắt plugin chấm sao còn sót sau khi đổi theme, và cập nhật skill từ việc đã làm trong phiên.
+- **Skill sửa:**
+  - `wp-pagespeed` v1.4: `references/do-dac.md` thêm luật đo lại khi một URL có từ 2/3 lượt chậm, so trước và sau trong cùng buổi, mỗi cột báo cáo một công cụ, grep key trong evidence. Script mới `scripts/deploy_theme_files.sh` (chép file theme lẻ có backup, lint PHP, owner, purge). `references/tool-call-thua.md` thêm 2 dòng.
+  - `wp-security-hardening` v1.3: `references/checklist-hardening.md` mục 4 thêm quy trình tắt plugin hết chức năng và luật cách ly theme, plugin không dùng; mục 7 thêm bẫy plist `&amp;`, `date -j`. Mẫu mới `templates/backup-tu-dong/cai-lich-pull-mac.command`.
+  - `site-migration-checklist` v1.2: `references/wp-tu-quan.md` thêm kiểm plugin front-end sau khi đổi theme, mục 5 mới "Sau khi ổn định" (cách ly theme cũ). Mục "Bẫy đã gặp" thành mục 6.
+- **Port sang instance:** GHI ĐÈ `skills/wp-pagespeed`, `skills/wp-security-hardening`, `skills/site-migration-checklist` và mirror. Không đổi `index.md`, deliverable, template, SOP.
+
+### v2026.10.10 (2026-10-18) — Tốc độ đợt 2 và siết server của site WordPress thứ hai
+
+- **Vì sao:** Vincent duyệt "làm full" đợt tốc độ theme và bảo mật server ngày 18/10/2026, và cho tự nâng cấp skill từ bài học trong phiên. Bài học đã chạy thật trên production.
+- **Skill sửa:**
+  - `wp-pagespeed` v1.3 (`references/checklist-theo-lop.md`): cache trình duyệt 1 năm và luật đổi tên ảnh; bản 640w cho ảnh màn hình đầu và bẫy lightbox đọc `currentSrc`; `local()` nào khớp trên máy đo PSI, họ dự phòng Roboto cho Android, CLS do chữ đổi dòng; thứ tự `unicode-range` vi sau latin-ext; `content-visibility` cho trang dài và cách tắt khi nhảy `#mục`; forced reflow của thanh tiến độ cuộn.
+  - `wp-security-hardening` v1.2: checklist chặn web `mu-plugins/`, HSTS ở vhost, backup tự động; bẫy `bind-address` của aaPanel, tắt pure-ftpd init.d, `tar` mã 1 với `pipefail`, phần việc panel để chủ site làm. Mẫu mới `templates/backup-tu-dong/`.
+- **Port sang instance:** GHI ĐÈ `skills/wp-pagespeed`, `skills/wp-security-hardening` và mirror (`.claude/skills/`, `.agents/skills/`). Không đổi `index.md`, deliverable, template, SOP.
+
+### v2026.10.9 (2026-10-18) — Vị trí internal link: đúng ngữ cảnh, ưu tiên supplementary content, bám topical map
+
+- **Vì sao:** Vincent yêu cầu 18/10/2026: internal link và contextual bridge chỉ đặt ở đúng ngữ cảnh, ưu tiên supplementary content, chỉ đặt ở main content khi thật sự cần, bám topical map (root → seed → node) và mô hình topic cluster; bổ sung vào skill và luật trạm, dò bằng Jev. Luật rút từ audit 161 link trên một site WordPress thật.
+- **Skill sửa:** `internal-linking` v1.2: thêm `references/link-placement.md` (5 trường hợp được đặt link ở main content MC1–MC5, bảng quan hệ topical map → vùng, cách xác định main và supplementary content, kiểm hàng loạt bằng Jev), Bước 4b, 2 cột `Vùng` và `Quan hệ map` trong link plan (`references/link-plan-template.md`).
+- **Tool:** rubric mới `tools/ai-assist/tasks/link-placement.json` (3 câu `zone`, `fit`, `need`); `tools/ai-assist/README.md` §4 thêm dòng ngưỡng.
+- **Luật trạm:** `06-onpage-internal-link/CLAUDE.md` thêm 1 dòng ĐƯỢC/KHÔNG ĐƯỢC và mục kiểm vị trí ở Vòng tự kiểm bước 4.
+- **Port sang instance:** GHI ĐÈ `skills/internal-linking` và mirror (`.claude/skills/`, `.agents/skills/`), `tools/ai-assist/README.md`, `06-onpage-internal-link/CLAUDE.md`; THÊM `tools/ai-assist/tasks/link-placement.json`. Link plan đang làm dở: thêm 2 cột mới cho dòng chưa đặt link. Không đổi `index.md`, deliverable.
+
+### v2026.10.8 (2026-10-18) — Bài học đợt nghiệm thu tốc độ và đổi theme site WordPress thứ hai: font, tracking, đổi tên ảnh, đưa trang tĩnh vào WordPress
+
+- **Vì sao:** Vincent duyệt 18/10/2026: đưa bài học đã chạy thật khi đổi theme một site WordPress (cutover, đưa 13 trang landing tĩnh vào WordPress, đổi tên 271 ảnh, nghiệm thu PSI) vào master, viết chung cho mọi dự án.
+- **Skill sửa:**
+  - `wp-pagespeed` v1.2: lớp 4 bỏ luật preload font, thêm bẫy `document.fonts.load()` trong `<head>` (PSI chờ ~2,35 s mới vẽ), bẫy font dự phòng `local('Arial')` trên PSI, quy trình tự host Google Fonts; lớp 7 thêm bảng đánh đổi khi hoãn GTM; `references/do-dac.md` mục 3 A/B trên PSI, cách đọc LCP mô phỏng có GTM, lượt chậm ngẫu nhiên; `references/tool-call-thua.md` thêm 7 dòng. Script mới `gfonts_selfhost.py`, `font_same.mjs`, `gtm_inventory.py`.
+  - `image-seo-optimize` v1.2: Mode D đổi tên ảnh đã đăng (`references/doi-ten-anh-da-dang.md`, `templates/mu-plugin-301-anh.php`, `scripts/anh_cach_ly.sh`); luật tên riêng viết đủ.
+  - `site-migration-checklist` v1.1: `references/wp-tu-quan.md` (đưa trang tĩnh vào WordPress giữ URL, switch có rollback tự động, bẫy OpenLiteSpeed giữ `.htaccess`, kiểm giờ đầu).
+  - `schema-markup-generator` v1.0.2: `references/rank-math-wp.md` (filter `rank_math/json_ld`, node Article, Person mồ côi, `primaryImageOfPage`, ảnh OG theo ID).
+- **Repo content đi kèm:** Content Production bản vá 18/10/2026 sửa luật tên file ở skill `media-brief` cho khớp `image-seo-optimize`.
+- **Port sang instance:** GHI ĐÈ `skills/wp-pagespeed`, `skills/image-seo-optimize`, `skills/site-migration-checklist`, `skills/schema-markup-generator` và mirror (`.claude/skills/`, `.agents/skills/`). Không đổi `index.md`, deliverable, template, SOP.
+
+### v2026.10.7 (2026-10-17) — Bộ skill WordPress có quyền server: tốc độ, bảo mật, ghi nội dung qua trang duyệt + nhánh GSC API
+
+Vincent duyệt 17/10: đóng gói quy trình đã chạy thật trên 2 site WordPress (16–17/10/2026) thành skill dùng cho mọi dự án có quyền SSH + WP-CLI vào server của site. Skill viết chung, không gắn site cụ thể; thông tin riêng của từng site nằm trong hồ sơ server của instance.
+
+- **Skill mới:**
+  - `wp-pagespeed` v1.1: PSI trung vị 3 lượt, mô phỏng Chrome cho staging có Basic Auth, chẩn đoán và sửa theo 7 lớp có A/B, ảnh chụp so chức năng, rollback. 12 script (`psi_run.py`, `psi_table.py`, `perf_probe.mjs`, `probe_table.py`, `shot.mjs`, `shot_cmp.py`, `fontmap.mjs`, `ccss_gen.mjs`, `webp_gen.py`, `htaccess_webp.py`, `templates.php`, `_chrome.mjs`) + mẫu mu-plugin ưu tiên ảnh LCP.
+  - `wp-security-hardening` v1.1: ứng cứu sự cố (IOC, sàng file checksum → scanner → EmbeddingGemma → Jev → Claude đọc, cách ly không xoá, gỡ mã tiêm không tạo revision) và rà định kỳ. Script `exposure_check.sh`, `persistence.sh`, `sitecheck.sh`; mẫu `mu-plugin-security.php`; checklist theo lớp có bảng lệnh cho OpenLiteSpeed, Apache, Nginx.
+  - `wp-content-review-apply` v1.1 (CHỈ Claude Code): trang duyệt Duyệt/E (artifact có database, mẫu `templates/trang-duyet.html`) → `plan.py` → `apply.php` chạy thử rồi ghi bằng WP-CLI → `verify.py`. Chặn đổi slug khi site không có bảng redirect Rank Math; purge theo plugin cache đang có.
+- **Skill sửa:** `technical-seo-audit` v1.7 (nhánh GSC 90 ngày qua API, `references/gsc-90-ngay.md`; bảng phân vai trỏ sang 3 skill mới); `seo-onpage` v1.4.2 và `internal-linking` v1.1.1 (bước ghi lên site qua `wp-content-review-apply`).
+- **Tool mới:** `tools/ai-assist/` (`jev.py`, `emb.py`, `scan_files.py`, 10 rubric trong `tasks/`, README có bảng ngưỡng đã hiệu chuẩn) và `tools/gsc/gsc.sh` (GSC API qua OAuth của `gws`). Key Jev đặt ở `.agent-secrets/.env` của repo (đã gitignore). Thiếu key hoặc venv EmbeddingGemma thì skill để Claude đọc thay và ghi giới hạn.
+- **Template mới:** `_TEMPLATES/wp-server.md` (hồ sơ máy chủ WordPress → `00-client-context/wp-server.md`), tổng 38 template. Hồ sơ chỉ ghi tên biến secret, không ghi giá trị.
+- **Sửa theo:** `CLAUDE.md` §4 (số template, skill, tool) và §11 (dự án có quyền server dùng `wp-content-review-apply` thay kit publish), `README.md`, `COMMANDS.md` (lệnh `pagespeed <site>`, `rà bảo mật <site>`, `ghi lên site <đợt>`), `SYNC.md` §8, `tools/sync-skills.sh` (thêm skill claude-only), `_REFERENCE/runtime-workstream-matrix.md` (hàng Audit, Onpage & IL), `_REFERENCE/folder-map.md`, `03-audits/technical/README.md`, `_TEMPLATES/README.md`, `00-client-context/CLAUDE.md` (thêm `wp-server.md` vào Output của trạm).
+- **Port sang instance:** GHI ĐÈ `skills/technical-seo-audit`, `skills/seo-onpage`, `skills/internal-linking` và mirror; THÊM `skills/wp-pagespeed`, `skills/wp-security-hardening`, `skills/wp-content-review-apply` và mirror (`wp-content-review-apply` không vào `.agents/skills/`), `tools/ai-assist/`, `tools/gsc/`, `_TEMPLATES/wp-server.md`; GHI ĐÈ các file sửa theo ở trên (`CLAUDE.md` có phần riêng của instance thì chỉ thêm đúng các dòng mới). Instance có quyền server: tạo `00-client-context/wp-server.md` cùng người vận hành. Không đổi `index.md`, deliverable.
+
+### v2026.10.6 (2026-10-13) — Offpage: gate QA link trước khi đăng (SOP 10 v1.3) + textlink-analyzer v1.1.0
+
+Vincent duyệt 13/10: đưa gate kiểm vị trí đặt link của Dejan Petrovic (2026) vào quy trình offpage, sau đợt ingest Clippings 10/2026 của wiki Semantic SEO.
+
+- **SOP 10 v1.3** (`02-raw/knowledge/sop/10-offpage-process.md`): §2 thêm luật handoff 6 "Gate QA link trước khi đăng" cho guest post, niche edit, textlink báo đặt trong thân bài. 6 bước: vị trí ở đỉnh link desire, có link khác ra nguồn thật, đúng 1 trong 10 mục đích, trang đích mạnh nhất, anchor khớp cách host viết, phép thử mù. Người viết hoặc SEO Executive chấm, SEO Lead Project duyệt batch; chưa đạt 6/6 thì sửa bài trước khi gửi nhà cung cấp. Link sidebar, footer, trang chủ giữ tier cũ và ghi rủi ro vào risk log. Không đổi tier, timeline, đo lường.
+- **Skill `textlink-analyzer` v1.1.0:** thêm Bước 5b chấm gate QA; bảng plan thêm cột `Vị trí đặt` và `Gate QA`; link sidebar ghi `n/a (sidebar)` và đưa rủi ro vào Caveats.
+- **Port sang instance:** GHI ĐÈ `02-raw/knowledge/sop/10-offpage-process.md`, `skills/textlink-analyzer/` và mirror (`.claude/skills/`, `.agents/skills/`). Không đổi `index.md`, deliverable, template.
 
 ### v2026.10.5 (2026-10-12) — Skill chẩn đoán Query Processing cho bộ keyword cam kết
 

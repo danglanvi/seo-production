@@ -7,14 +7,19 @@ Template deliverable của skill `internal-linking`. File output: `<project>_Int
 ## 1. Schema bảng link plan (section 3 của deliverable)
 
 ```markdown
-| # | Source URL | Target URL | Vị trí gợi ý (section) | Anchor đề xuất | Direction type | Lý do (rule ID) | Flag |
-|---|---|---|---|---|---|---|---|
-| 1 | /outer/bai-a | /core/dich-vu-x | H2 "…" — paragraph post-answer | "dịch vụ X cho …" | Outer→Core | GR4, AR6, POS-2 | — |
-| 2 | /cluster-a/pillar | /cluster-a/bai-moi | Section liên quan cuối pillar | "…" | pillar↔cluster | SOP03-C3 | — |
-| 3 | /cluster-a/bai-b | /cluster-b/bai-c | — | — | bridge required | SOP03-N1 | cần tạo/đi qua bridge |
-| 4 | /info/bai-d | /commercial/so-sanh-y | Last heading section | "so sánh Y" | funnel-forward | IF-1, AR3 | — |
-| 5 | /bai-e | /bai-f | — | — | no-link | LLC (điều kiện 1+4) | no-link candidate |
+| # | Source URL | Target URL | Vị trí gợi ý (section) | Vùng (SC / MC1–MC5) | Quan hệ map | Dạng mã | Anchor đề xuất | Direction type | Lý do (rule ID) | Flag |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | /outer/bai-a | /core/dich-vu-x | H2 "Kết luận" — câu mời cuối đoạn | SC | outer_ve_core | D1 | "dịch vụ X cho …" | Outer→Core | GR4, AR6, POS-2 | — |
+| 2 | /cluster-a/pillar | /cluster-a/bai-moi | H2 tóm tắt chủ đề của bài mới | MC2 | xuong_node | D1 | "…" | pillar↔cluster | SOP03-C3 | — |
+| 3 | /cluster-a/bai-b | /cluster-b/bai-c | — | — | khac_cum | — | — | bridge required | SOP03-N1 | cần tạo/đi qua bridge |
+| 4 | /info/bai-d | /commercial/so-sanh-y | Last heading section | SC | khac_cum | D1 | "so sánh Y" | funnel-forward | IF-1, AR3 | — |
+| 5 | /bai-e | /bai-f | — | — | cung_cum | — | — | no-link | LLC (điều kiện 1+4) | no-link candidate |
+| 6 | /info/bai-g | /form-tu-van | Nút "Nhận tư vấn" cuối bài | SC | outer_ve_core | D3 | "Nhận tư vấn" | Outer→Core | link-js §2 D3 | trang form noindex |
 ```
+
+**Cột `Vùng` và `Quan hệ map`:** giá trị và luật chọn ở `references/link-placement.md` §2–3. Link ở MC không có mã MC1–MC5 thì chuyển xuống SC hoặc bỏ.
+
+**Cột `Dạng mã`:** D1–D6 theo `references/link-js.md` §2. D1 là link thật `<a href>`. D2 là link tới form trên cùng trang. D3, D4, D5 là link JS. D6 là trích nguồn bằng chữ, không link. Link JS phải qua kiểm đường crawl ở `references/link-js.md` §3 luật 2.
 
 **Giá trị hợp lệ cột `Direction type`:** `Outer→Core` · `pillar↔cluster` · `cluster→pillar` · `bridge` · `funnel-forward` · `home→quality-node` · `trending→core` · `sibling` · `no-link`.
 
@@ -49,13 +54,13 @@ Orphans: N · Over-linked pillars: N · Bypass bridge: N · ≥150 links: N · L
 
 ## 3. Rule ID → citation map (Evidence gate — mỗi dòng plan truy được nguồn)
 
-**Đây là nguồn threshold DUY NHẤT của skill** — mọi con số (150, 50, 3, 1, 2-5, 3-5…) nằm trong cột Nội dung, đúng số + đúng nguồn, không chế thêm. Koray verbatim: *"There is no specific, and optimum internal link count for a specific content piece"* — no magic number (paraphrase).
+**Đây là nguồn threshold DUY NHẤT của skill** — mọi con số (150, 50, 3, 1, 3-5…) nằm trong cột Nội dung, đúng số + đúng nguồn, không chế thêm. Koray verbatim: *"There is no specific, and optimum internal link count for a specific content piece"* — no magic number (paraphrase).
 
 | Rule ID | Nội dung | Nguồn |
 |---|---|---|
 | GR4 | Signals flow TO Core (Outer→Core, Trending→Core, Home→Quality→Core) | `sop/01-topical-map.md` §Golden Rules #4 + Bước 20; [[Link Flow]] |
 | SOP03-P1 | Pillar ↔ cluster bidirectional; cluster ↔ cluster chỉ qua bridge | `sop/03-internal-linking.md` §Nguyên tắc |
-| SOP03-C1..C5 | Checklist bài mới: ≥1 link tới pillar (C1) · 2-5 siblings (C2) · pillar link ngược (C3) · bridge anchor contextual (C4) · anchor descriptive khớp intent (C5) | `sop/03` §Checklist |
+| SOP03-C1..C5 | Checklist bài mới: ≥1 link tới pillar (C1) · sibling có ngữ cảnh chung, không quota (C2) · pillar link ngược (C3) · bridge anchor contextual (C4) · anchor descriptive khớp intent (C5) | `sop/03` §Checklist |
 | SOP03-A2 | Over-linked pillar: >50 inbound từ cùng cluster → sub-pillar | `sop/03` §Audit định kỳ |
 | SOP03-N1 | Cross-cluster không qua bridge → fix hoặc tạo bridge | `sop/03` §Audit định kỳ |
 | RL-1 | <150 internal links/page, mobile = desktop | [[Internal Linking Rules and Strategy]] §Core Rules; [[Semantic Content Network]] 14 Rules #4 |

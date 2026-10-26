@@ -1,0 +1,28 @@
+{
+  "name": "claim-guard",
+  "version": "2026-10-19.2",
+  "questions": {
+    "guarantee": {
+      "type": "noul",
+      "instructions": "state.sentence is one sentence, or one cut of a table, from a public page (state.page) on the website of state.owner, written in state.lang (vi = Vietnamese, en = English). state.before and state.after are the neighbouring sentences, for context only. Judge state.sentence. Does it promise or guarantee the buyer a result on behalf of state.owner: money back or a refund, a ranking or a top position, a share of keywords in the top 10, traffic, leads, sales, a KPI, or a result kept for a period after delivery? The promise counts with or without words like 'cam kết', 'đảm bảo' or 'guarantee'. Examples of yes: 'Hoàn phí nếu không đạt KPI', 'Cam kết Top 10 các Keywords', '70 - 80% Top 10' in a service package, 'website của bạn sẽ là nguồn trích dẫn số 1', 'Bảo hành 3 tháng sau nghiệm thu', 'tăng traffic x3 sau 6 tháng'. Answer no when the sentence says that state.owner does not guarantee a result, describes a process or a report without promising a result, describes what another company, a tool or Google does, gives general advice, or states only a price or a duration."
+    },
+    "self_superlative": {
+      "type": "noul",
+      "instructions": "state.sentence is one sentence, or one cut of a table, from a public page (state.page) on the website of state.owner. state.before and state.after are context only. Does state.sentence rank or praise state.owner itself (the company, its team, experts, founder, services, courses, methods or results) as the best, leading, number one, top, first, only, pioneering, most trusted or dominant, or as better than other companies, without naming an independent source for that ranking? Answer no when the ranking is about another entity (a client brand, Google, a tool, an industry), when the words are ordinary wording in advice ('cách tốt nhất để', 'ưu tiên hàng đầu'), when the sentence promises the buyer's website a ranking, or when it sits inside a customer testimonial."
+    },
+    "unsourced_stat": {
+      "type": "noul",
+      "instructions": "state.sentence is one sentence, or one cut of a table, from a public page (state.page) on the website of state.owner. state.before and state.after are context only. Does state.sentence present a statistic, a percentage, a growth figure or a measured effect as a general fact or a typical outcome (about users, a market, a method, a tool or results in general) without naming its source (a study, a company, a dataset, or a named client project with its period) in the sentence or the neighbouring sentences? Examples of yes: '75% người dùng không xem trang 2', 'AI giúp giảm 70% thời gian viết bài', 'doanh nghiệp làm SEO tăng trưởng gấp 3 lần'. Answer no when the number is a count or a rate about state.owner itself (years, projects, staff, students, KPI rate), a price, a package size, a duration, a date, an address, a phone number or a step number, a promise to the buyer, or a statistic whose source is named, for example 'Theo Backlinko, ...'."
+    },
+    "subject": {
+      "type": "choice",
+      "instructions": "state.sentence is one sentence, or one cut of a table, from a public page (state.page) on the website of state.owner. state.before and state.after are context only. Whom or what is state.sentence about?",
+      "criteria": {
+        "owner": "state.owner itself: the company, its team, founder, services, packages, courses, methods, results or promises; 'we' or 'chúng tôi' written by state.owner.",
+        "other_company": "Another named company, agency, brand, tool or platform, for example an agency in a list of agencies or a software product.",
+        "client": "A client, student or partner of state.owner, their project or their words in a testimonial.",
+        "general": "General advice, an explanation, an example, a market or industry fact, or the reader's own website and business."
+      }
+    }
+  }
+}

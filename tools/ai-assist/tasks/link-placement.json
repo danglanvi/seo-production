@@ -1,0 +1,35 @@
+{
+  "name": "link-placement",
+  "version": "2026-10-18.1",
+  "questions": {
+    "zone": {
+      "type": "choice",
+      "instructions": "state.page is one page of a Vietnamese SEO agency website: its title, its type (article, service page, category page) and, when known, the ordered list of its H2 sections. state.link_location says which section holds one paragraph. Decide whether that section belongs to the page's main content or to its supplementary content. Main content is the part that directly answers the central question promised by the title, or, on a service page, presents the service itself: definition, explanation, mechanism, steps, criteria, what the service includes and how it is delivered. Supplementary content comes after or beside that central answer: side topics, related or deeper topics, the company's own offer on an informational article, case studies and testimonials, FAQ, conclusion, next steps, contact. Judge the section, not the paragraph's writing.",
+      "criteria": {
+        "main": "The section answers the central question of the page or presents the central offer of a service page.",
+        "supplementary": "The section is a side topic, a related topic, the company's offer on an informational page, proof, FAQ, conclusion, next steps or contact.",
+        "unknown": "Not enough information about the page or the section."
+      }
+    },
+    "fit": {
+      "type": "choice",
+      "instructions": "state.link_location.paragraph contains one link written as [anchor](url). state.target describes the linked page of the same website: URL, title, a short summary and its headings. Decide whether the paragraph's own topic matches the target page, so that a reader of this paragraph would naturally want to open the target next. Judge the topical connection of this paragraph only, not the whole page and not the writing quality.",
+      "criteria": {
+        "natural_bridge": "The paragraph itself talks about the target page's main topic, and the anchor names that topic.",
+        "needs_clause": "The paragraph is close to the target's topic, but the link only makes sense because of an added bridging sentence or clause.",
+        "weak_fit": "The paragraph shares words with the target but means something else, or the link pushes a commercial page into a paragraph about another subject.",
+        "no_fit": "The paragraph is about a different topic.",
+        "unknown": "Not enough information."
+      }
+    },
+    "need": {
+      "type": "choice",
+      "instructions": "Using the same paragraph and target, decide how much the reader needs this link at this exact point of the page. Ignore where the paragraph sits; judge only the paragraph and the target.",
+      "criteria": {
+        "essential": "The paragraph cannot be fully understood or acted on without the target: the target defines a term the paragraph relies on and does not explain itself, is the broader parent topic the paragraph belongs to, or is the next step the paragraph itself asks the reader to take, such as contacting the company.",
+        "optional": "The target is related reading, a deeper subtopic, a side topic, another location or a commercial offer; the paragraph is complete without it.",
+        "unknown": "Not enough information."
+      }
+    }
+  }
+}

@@ -33,6 +33,9 @@ Map slide + luật từng format: `references/weekly-catchup-format.md` (TUẦN 
 
 ## Workflow 5 pha
 
+### Bước 0 — kiểm tool
+Chạy "python3 tools/capabilities.py check --need 'python3,requirements,gcp-sa,playwright?,chrome?'" từ root repo. Nếu thiếu tool bắt buộc, dừng và báo tên tool. Nếu thiếu tool tuỳ chọn, dùng fallback ghi trong "tools/capabilities.md".
+
 ### Pha 0 — RESOLVE
 1. Đọc config + nội quy trạm `09-reporting/CLAUDE.md` (mục Chế độ TUẦN) + `00-client-context/kpi-commitments.md` (chỉ để biết ranh giới cam kết — KHÔNG render bảng nghiệm thu).
 2. Chọn nhịp:

@@ -1,0 +1,42 @@
+/* Lớp sửa chữ trực tiếp (nút E). Gom từ công cụ sửa trang của một site nội bộ, 17/10/2026. */
+.ed-root *{animation:none!important;transition:none!important}
+.ed-btn{position:fixed;left:16px;bottom:96px;z-index:99998;width:46px;height:46px;border-radius:50%;border:1px solid rgba(91,44,232,.4);background:#fff;color:#5B2CE8;font:800 18px/1 system-ui,-apple-system,'Segoe UI',sans-serif;box-shadow:0 6px 18px rgba(15,23,42,.2);cursor:pointer}
+.ed-btn:hover{transform:translateY(-2px)}
+.ed-btn[aria-pressed=true]{background:#5B2CE8;color:#fff;border-color:#5B2CE8}
+.ed-badge{position:absolute;top:-6px;right:-6px;min-width:20px;height:20px;padding:0 5px;box-sizing:border-box;border-radius:10px;background:#F59E0B;color:#111827;font:700 12px/20px system-ui,sans-serif}
+.ed-badge:empty{display:none}
+.ed-hint{position:fixed;left:72px;bottom:104px;z-index:99998;background:#0F172A;color:#fff;font:600 13px/1.3 system-ui,sans-serif;padding:8px 11px;border-radius:8px;box-shadow:0 6px 18px rgba(15,23,42,.25)}
+.ed-hint[hidden]{display:none}
+.ed-panel{position:fixed;left:16px;bottom:154px;z-index:99999;width:350px;max-width:calc(100vw - 32px);max-height:calc(100vh - 176px);overflow:auto;box-sizing:border-box;background:#fff;border:1px solid #E2E8F0;border-radius:14px;box-shadow:0 18px 48px rgba(15,23,42,.24);padding:14px;font:13px/1.45 system-ui,-apple-system,'Segoe UI',sans-serif;color:#0F172A;text-align:left}
+.ed-panel[hidden]{display:none}
+.ed-panel h6{margin:0 0 4px;font:700 15px/1.3 system-ui,sans-serif;color:#0F172A}
+.ed-panel p{margin:0 0 10px;color:#475569;font-size:13px}
+.ed-n{color:#5B2CE8;font-weight:700}
+.ed-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.ed-panel button{flex:1 1 auto;min-width:96px;padding:8px 10px;border-radius:9px;border:1px solid #E2E8F0;background:#F8FAFC;color:#0F172A;font:600 13px/1.2 system-ui,sans-serif;cursor:pointer}
+.ed-panel button:hover{border-color:#C4B5FD;background:#F5F3FF}
+.ed-panel button.pri{flex-basis:100%;background:linear-gradient(92deg,#9900EF,#5B2CE8);border-color:transparent;color:#fff;font-size:14px;padding:11px}
+.ed-panel button.warn:hover{border-color:#FCA5A5;background:#FEF2F2;color:#B91C1C}
+.ed-panel details{border-top:1px solid #E2E8F0;padding:8px 0 2px}
+.ed-panel summary{cursor:pointer;font-weight:600;color:#334155;list-style:revert}
+.ed-panel label{display:block;margin:8px 0 4px;color:#475569}
+.ed-panel input[type=text],.ed-panel textarea{width:100%;box-sizing:border-box;font:13px/1.5 system-ui,sans-serif;padding:7px 9px;border-radius:8px;border:1px solid #CBD5E1;color:#0F172A;background:#fff}
+.ed-panel textarea{min-height:72px;resize:vertical}
+.ed-panel .ed-chk{display:flex;align-items:center;gap:7px;margin-top:8px;cursor:pointer}
+.ed-cnt{float:right;color:#64748B}.ed-cnt.over{color:#DC2626}
+.ed-list{list-style:none;margin:6px 0 0;padding:0}
+.ed-list li{padding:6px 0;border-bottom:1px solid #F1F5F9;cursor:pointer}
+.ed-list del{color:#94A3B8}.ed-list ins{color:#B45309;text-decoration:none}
+.ed-msg{margin-top:8px;color:#15803D;min-height:18px}
+.ed-msg.err{color:#B91C1C}
+html.ed-on [data-b]{cursor:text;caret-color:#E11D48;-webkit-user-select:text!important;user-select:text!important;outline:1px dashed rgba(91,44,232,.4);outline-offset:3px;border-radius:2px}
+html.ed-on [data-b]:hover{outline-color:rgba(91,44,232,.85);background:rgba(91,44,232,.04)}
+html.ed-on [data-b]:focus{outline:2px solid #5B2CE8;background:rgba(91,44,232,.06)}
+html.ed-on [data-b].ed-done{outline:2px solid #F59E0B;background:rgba(245,158,11,.1)}
+[data-b].ed-flash{outline:4px solid #E11D48!important;outline-offset:3px}
+html.ed-show [hidden]:not(.ed-panel):not(.ed-hint){display:block!important;outline:1px dashed #F59E0B}
+html.ed-show dialog{display:block;position:static;margin:24px auto}
+[data-ed=select]{display:flex!important;flex-wrap:wrap;gap:6px;height:auto!important;padding:8px!important;background:#fff}
+[data-ed=option]{display:inline-block;border:1px dashed #94A3B8;border-radius:6px;padding:2px 8px}
+.ed-ph{padding:18px;border:2px dashed #CBD5E1;border-radius:12px;color:#64748B;text-align:center}
+@media (max-width:600px){.ed-panel{left:8px;width:calc(100vw - 16px);bottom:150px}.ed-hint{bottom:100px}}

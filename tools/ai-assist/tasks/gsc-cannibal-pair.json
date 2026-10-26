@@ -1,0 +1,19 @@
+{
+  "name": "gsc-cannibal-pair",
+  "version": "2026-10-17.2",
+  "must_be_empty": [
+    "shared_queries"
+  ],
+  "questions": {
+    "relation": {
+      "type": "choice",
+      "instructions": "state.page_a and state.page_b are two pages of state.site that may compete in search. state.shared_queries lists search queries for which Google showed both pages; the list is empty when the pair was found only by text similarity. Each page has url, title, h1 and opening text. Compare the main question each page answers and decide how the two pages relate for a searcher. Use unknown only when the page texts are missing or unreadable.",
+      "criteria": {
+        "duplicate_intent": "Both pages answer the same main question for the same searcher, so they compete; one should absorb the other or be rewritten to a clearly different angle.",
+        "parent_child": "One page is the broad hub, pillar or main service page and the other is a narrower subtopic, location, price, comparison or case page that belongs under it; both can stay if they link to each other.",
+        "different_intent": "The pages serve different searcher needs and only share some words.",
+        "unknown": "Not enough information."
+      }
+    }
+  }
+}

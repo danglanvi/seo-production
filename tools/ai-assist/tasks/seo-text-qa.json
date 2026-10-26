@@ -1,0 +1,14 @@
+{
+  "name": "seo-text-qa",
+  "version": "2026-10-17.1",
+  "questions": {
+    "spelling": {
+      "type": "noul",
+      "instructions": "state.text is one SEO title, H1, meta description or paragraph for a page on state.site, written in state.lang (vi = Vietnamese, en = English). Brand and product names listed in state.brands, and names such as GEO, AI Overviews, Google AI Mode, ChatGPT, Gemini, Perplexity, Rank Math, Topical Authority, Programmatic SEO are correct as written. Does the text contain a spelling mistake: a misspelled word or brand name, a Vietnamese word written without the diacritics it clearly needs (for example 'Tim hiểu' instead of 'Tìm hiểu'), or the same word typed twice in a row?"
+    },
+    "missing_word": {
+      "type": "noul",
+      "instructions": "state.text is one SEO title, H1, meta description or paragraph, written in state.lang (vi = Vietnamese, en = English). Is a word clearly missing or broken, so that a phrase cannot be read as intended (for example 'checklist ưu Onpage' where 'tối ưu' is meant, or an English sentence whose verbs do not agree, such as 'has served clients and bringing results')? Short title fragments, colons and lists are normal and are not missing words."
+    }
+  }
+}

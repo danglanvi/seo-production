@@ -1,0 +1,26 @@
+{
+  "name": "gsc-intent-match",
+  "version": "2026-10-17.1",
+  "questions": {
+    "match": {
+      "type": "choice",
+      "instructions": "state.query is a Google search query, usually Vietnamese and sometimes without diacritics. state.page is the page of state.site that Google showed for that query: url, title, h1, meta description and opening text. Decide whether this page is the right page on the site to satisfy what the searcher wants.",
+      "criteria": {
+        "serves": "The main topic of the page is the topic of the query, and the page type fits the need: a service or price page for a query about hiring or choosing a provider, an explanation or guide for a query about learning.",
+        "partial": "The page covers the query topic only as a subtopic or one section, or covers the right topic with a page type that does not fit the need.",
+        "mismatch": "The page is mainly about a different topic than the query.",
+        "unknown": "Not enough information."
+      }
+    },
+    "intent": {
+      "type": "choice",
+      "instructions": "Classify what the person searching state.query most likely wants.",
+      "criteria": {
+        "informational": "Learn a concept, definition, method, tool usage or how-to.",
+        "commercial": "Find, compare, price or hire a provider, service, agency, course or paid tool.",
+        "navigational": "Reach a specific brand, website or person by name.",
+        "unknown": "Not enough information."
+      }
+    }
+  }
+}

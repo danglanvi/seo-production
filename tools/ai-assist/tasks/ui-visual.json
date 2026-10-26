@@ -1,0 +1,56 @@
+{
+  "name": "ui-visual",
+  "version": "2026-10-17.2",
+  "questions": {
+    "cut_off": {
+      "type": "noul",
+      "instructions": "state has a short description and one screenshot of one screen of a web page. Is any text, button or image cut off at the left or right edge of the screenshot, or clipped inside its own box (for example a button label running out of its button)? Content cut by the top or bottom edge of the screenshot is not cut off: the page continues there when scrolling."
+    },
+    "fixed_covers": {
+      "type": "noul",
+      "instructions": "Does a fixed element (the sticky header, a sticky table-of-contents bar, the bottom bar or the floating chat buttons) cover part of a button, card, form or text on the page, or does page content show through such an element?"
+    },
+    "overlap": {
+      "type": "noul",
+      "instructions": "Do two parts of the page layout overlap so that text or a control is hidden or hard to read? Do not count fixed elements, and do not count a menu, panel or dialog that the description says is open."
+    },
+    "empty_control": {
+      "type": "noul",
+      "instructions": "Is there a button, pill or box with no visible label, or text with almost the same color as its background?"
+    },
+    "media_problem": {
+      "type": "noul",
+      "instructions": "Is an image, chart, video thumbnail or icon broken, missing, stretched, badly cropped or blurry?"
+    },
+    "spacing": {
+      "type": "noul",
+      "instructions": "Do elements touch each other, look misaligned with their neighbours, or have clearly uneven gaps?"
+    },
+    "defect_box": {
+      "type": "box",
+      "instructions": "the most visible layout problem in the website screenshot: cut-off text, a covered button, an empty button, overlapping elements or a broken image"
+    },
+    "polish": {
+      "type": "score",
+      "instructions": "How polished does this screen look for a professional education and training website?",
+      "criteria": [
+        "Broken: the layout is clearly broken",
+        "Poor: several visible flaws",
+        "Acceptable: works but looks unrefined",
+        "Good: clean and consistent",
+        "Excellent: polished, comparable to a top publisher"
+      ]
+    },
+    "readability": {
+      "type": "score",
+      "instructions": "How easy is the main text on this screen to read on this device?",
+      "criteria": [
+        "Unreadable",
+        "Hard to read: too small, low contrast or cramped",
+        "Readable with effort",
+        "Easy to read",
+        "Very easy to read: comfortable size, spacing and contrast"
+      ]
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "name": "404-triage",
+  "version": "2026-10-17.2",
+  "questions": {
+    "kind": {
+      "type": "choice",
+      "instructions": "state.path is a URL path that returned HTTP 404 on state.site, with state.hits requests in the access log. state.site_profile describes the real content of the site. Classify what kind of request this is. A path counts as content_url only if its words fit the site profile; generic paths that scanners try on every site are probes.",
+      "criteria": {
+        "content_url": "An old page, post, category, service, course or event URL whose words match the site profile, which real visitors or search engines may still want.",
+        "broken_link": "A real page path with an extra segment that looks like a broken relative link, such as a phone number, email or a repeated path appended to it.",
+        "missing_asset": "A missing image, stylesheet, script, font, video or document file.",
+        "attack_probe": "A vulnerability scan or a generic path tried on many sites: admin panels, config files, backups, shells, directory listings, or generic names like old, shop, demo, about, impressum, years.",
+        "junk": "A malformed URL, spam query or tracking artifact with no real content behind it.",
+        "unknown": "Not enough information."
+      }
+    }
+  }
+}

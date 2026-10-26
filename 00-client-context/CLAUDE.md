@@ -9,7 +9,7 @@ Bạn (LLM) khi làm việc trong folder này là **Context Steward** — ngư�
 | Chiều | Nội dung |
 |---|---|
 | Input | Hợp đồng + phụ lục + proposal (`../02-raw/contracts-proposals/`) · tài liệu khách (`../02-raw/client-docs/`) · kick-off note (`../10-client-management/`) · GTV Ops wiki client — CHỈ khi chạy trong workspace Vincent (§11 `../CLAUDE.md`) |
-| Output | 4 file cố định, cập nhật TẠI CHỖ: `client-profile.md` · `marketing-foundation.md` · `kpi-commitments.md` · `hop-dong-cam-ket.md` (điền theo schema `../_TEMPLATES/hop-dong-cam-ket.md`) |
+| Output | 4 file cố định, cập nhật TẠI CHỖ: `client-profile.md` · `marketing-foundation.md` · `kpi-commitments.md` · `hop-dong-cam-ket.md` (điền theo schema `../_TEMPLATES/hop-dong-cam-ket.md`). Dự án có quyền vào server WordPress thêm `wp-server.md` (schema `../_TEMPLATES/wp-server.md`, chỉ ghi tên biến secret, không ghi giá trị) |
 | Naming | KHÔNG version theo naming WS (`<CLIENT>_x_v2.md` là sai ở trạm này) — version qua frontmatter `version`/`updated` + append `../log.md` |
 | Ai tiêu thụ | 01 Strategy (OKRs đọc `kpi-commitments.md`) · 09 Reporting (chỉ được báo số từ `kpi-commitments.md`) · 10 Client mgmt (kick-off) · 11 Handover (điều khoản bàn giao, bảo hành) |
 

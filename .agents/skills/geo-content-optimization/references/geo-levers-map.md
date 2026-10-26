@@ -82,7 +82,7 @@ Citation stats = moving target. Bảng nguồn chính để report cite đúng:
 | **+17,3% citation chỉ bằng tái cấu trúc, không đổi chữ** (6 engine) | Yu et al. arXiv 2603.29979 — đọc qua Surfer, **C→B**, cần đọc primary | 03/2026 |
 | **~90% fan-out gom vào ≤4 cluster; ~27% sub-query ổn định giữa các lần chạy**; +161% cite khi rank nhiều sub-query | Batch 40 wiki (Google AI Mode) — **A** cơ chế / Surfer — **C** (+161%) | 08/2026 |
 | AIO trigger %; 2,15 ngày; 0,95 stability; 13,7% overlap | [[AI Overviews]] | 2025-2026 |
-| Snippet phẳng rank 1→10; 6,5 snippets/query; representativeness 0,92/<0,80; 200-300 từ | Dejan | 2026 (chưa ingest wiki) |
+| Snippet phẳng rank 1→10; 6,5 snippets/query; representativeness đo bằng model tiếng Anh (mốc của nghiên cứu không dùng làm ngưỡng Gemma); 200-300 từ | Dejan | 2026 (chưa ingest wiki) |
 | 128 tokens; 2s timeout; 80/20 intent/topic; 300 từ window; lọc title+meta+URL ~40-50 URL → fetch 10-20 | McSweeney ([[ChatGPT Pipeline]]) | đơn nguồn — label "reverse-engineered estimate" (≈) |
 
 **Lớp phát hành:** cột nhãn A/B/C/D theo [[syntheses/geo-evidence-register-2026-08]]. Report nội bộ dùng đủ; tài liệu public / gửi khách chỉ in **whitelist** của register (58%/14% · 38%+44,2% · 26-50% · schema ≈ 0 · llms.txt không dùng · 2,15 ngày…), **không in** 8-12 / 7,61 / +115% / "+40%" / cosine 0,90 / 375 từ / 128 token / 2s / Gecko-Jetstream. Refresh theo `/seo-lint` quý (hạn 31/10/2026).

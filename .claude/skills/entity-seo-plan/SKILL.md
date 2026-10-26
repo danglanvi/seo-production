@@ -16,6 +16,11 @@ Deliverable: `14-entity/<CLIENT>_entity-plan_v<N>.md` theo `_TEMPLATES/entity-pl
 
 ## Quy trình 5 bước
 
+### Bước 0 — kiểm tool
+Chạy "python3 tools/capabilities.py check --need 'curl,firecrawl?,ahrefs?'" từ root repo. Nếu thiếu tool bắt buộc, dừng và báo tên tool. Nếu thiếu tool tuỳ chọn, dùng fallback ghi trong "tools/capabilities.md".
+
+### Các bước
+
 | Bước | Làm gì | Bằng chứng |
 |---|---|---|
 | 1. Audit hiện trạng | Knowledge Panel có/không · `site:` + brand query · schema hiện có (Rich Results Test) · NAP rải rác ở đâu (footer, liên hệ, GBP, social, directory) · Wikidata/Wikipedia · AI engine hỏi "X là gì" có cite domain không | bảng EN-01…16 trạng thái ĐẠT/KHÔNG + screenshot `02-raw/screenshots/own-site/` |

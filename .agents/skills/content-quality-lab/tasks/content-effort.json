@@ -1,0 +1,28 @@
+{
+  "name": "content-effort",
+  "version": "2026-10-19.4",
+  "questions": {
+    "effort": {
+      "type": "score",
+      "instructions": "state.text is the main text of one public web page (title first), written in state.lang (vi = Vietnamese, en = English), possibly cut at the end. Judge only the text. How much effort and real knowledge does the content show, compared with a page a writer could produce by rewriting other articles?",
+      "criteria": [
+        "Generic: definitions, lists or claims that any writer could copy from other pages; no specific example, number or experience",
+        "Some specifics: a few concrete steps, examples or numbers, but most of the page is general information",
+        "Substantial: detailed steps, named examples, specific numbers or comparisons that need real knowledge of the topic",
+        "High effort: original data, first-hand tests, project results, expert analysis or a tool that other pages could not simply copy"
+      ]
+    },
+    "original_data": {
+      "type": "noul",
+      "instructions": "state.text is the main text of one public web page, published by the company or author named in it. Does the page report measured results or data from the publisher's own project, test, survey or research, for example 'traffic of project X grew from 45,000 to 2.2 million visits in 12 months', 'we tested 12 tools and 3 failed', 'our study of 10,000 pages found...'? Answer no when the only numbers are: counts of projects, clients, years or staff; prices or price ranges; promised or typical results ('saves 30-50%'); statistics quoted from other sources; or results that the page attributes to other companies (as in a list of agencies)."
+    },
+    "first_hand": {
+      "type": "noul",
+      "instructions": "state.text is the main text of one public web page. Does the author or the publishing company describe work they did themselves: their own project, client case study, test, mistake or setup, with what they did or what happened (for example 'after 12 months of our SEO work for client X, traffic grew...', 'I asked ChatGPT this question and got...')? Answer no for general explanations, descriptions of a service process in general or future terms ('our team will audit your site'), opinions about other companies, and quoted customer testimonials."
+    },
+    "named_sources": {
+      "type": "noul",
+      "instructions": "state.text is the main text of one public web page. Does the page name at least one specific external source for its claims, such as a study, an official documentation page, a named expert or a named dataset? Links shown only as 'source' without a name do not count."
+    }
+  }
+}

@@ -55,7 +55,7 @@ Luật chọn: tầng thấp trong cấu trúc, intent cụ thể, cạnh tranh 
 ## 4. Anchor — mô hình 3 giai đoạn (trần Exact ≤8-10% MỌI giai đoạn)
 
 1. Giai đoạn trust hiện tại: {{1|2|3}} — căn cứ research §1; nghi ngờ giữa 2 giai đoạn → chọn giai đoạn thấp hơn.
-2. Khung tổng AN TOÀN/TỪ KHÓA: GĐ1 ~70/30 · GĐ2 40-50/50-60 · GĐ3 35-45/55-65; phần từ khóa tăng bằng Partial/LSI/Brand+KW, KHÔNG bằng Exact.
+2. Khung tổng AN TOÀN/TỪ KHÓA: GĐ1 ~70/30 · GĐ2 40-50/50-60 · GĐ3 35-45/55-65; phần từ khóa tăng bằng Partial/đồng nghĩa/Brand+KW, KHÔNG bằng Exact.
 3. SERP consensus tinh chỉnh trong khung ("mimic the winners"); Authority-Aggression: nguồn <DR40 chỉ brand/generic/naked, exact chỉ ở DR60-85+ editorial đúng theme.
 4. Phân bổ chi tiết 8 loại per target → điền ở backlink-campaign, theo `skills/backlink-plan/references/anchor-ratio-framework.md`.
 

@@ -1,0 +1,35 @@
+{
+  "name": "ai-answer-brand",
+  "version": "2026-10-19.3",
+  "notes": "v3: chỉ chạy trên cặp regex đã thấy brand (regex khớp Jev 1.080/1.080 ở việc có mặt). Vị trí trong danh sách tính bằng code (mention_order), nên role gộp top_pick + shortlisted thành recommended. Bỏ sentiment 5 lớp (đúng 64% trên 50 mẫu gold); thay bằng objection yes/no, rồi trích câu bằng model trích xuất.",
+  "questions": {
+    "role": {
+      "type": "choice",
+      "instructions": "state.question is what a user asked an AI assistant, usually in Vietnamese. state.answer is the full answer of the assistant, in Markdown, with links. state.brand is one company, and state.aliases are other names for the same company. Decide how the answer treats state.brand. Judge only state.brand, not other companies. If state.question itself names state.brand or one of state.aliases, choose subject unless the answer clearly tells the reader to choose state.brand over the other options, then choose recommended.",
+      "criteria": {
+        "recommended": "The answer suggests state.brand as an option to hire, contact, compare or evaluate, alone or in a list of options.",
+        "subject": "state.question names state.brand, and the answer describes or compares state.brand because the user asked about it, without a clear instruction to choose it.",
+        "source_only": "The answer uses a page of state.brand only as a source of information, for example a definition or a statistic, and does not suggest the reader hire or choose state.brand.",
+        "mentioned_other": "The answer names state.brand for another reason: an example, a warning, or a company the reader should check carefully.",
+        "absent": "The answer does not name state.brand or any of state.aliases.",
+        "unknown": "The answer is unclear about state.brand."
+      }
+    },
+    "proof": {
+      "type": "choice",
+      "instructions": "Decide what kind of support the answer gives when it talks about state.brand. Choose the strongest kind present, in this order: third_party, named_results, self_description, none.",
+      "criteria": {
+        "third_party": "Support that comes from another organization: reviews on another site, press, rankings or awards by others, client statements, or a certification or partner status that another organization grants, for example Google Partner.",
+        "named_results": "Specific client names, case studies or numbers attributed to state.brand, taken from state.brand's own pages.",
+        "self_description": "Only a description of the services, method, prices or positioning of state.brand, without client names, cases, numbers or third-party support.",
+        "none": "No support, only the name.",
+        "absent": "The answer does not name state.brand.",
+        "unknown": "Not enough information."
+      }
+    },
+    "objection": {
+      "type": "noul",
+      "instructions": "state.question is what a user asked an AI assistant. state.answer is the answer. state.brand is one company, state.aliases are other names for it. Does the answer say something specific to state.brand that the reader should doubt, check or resolve before hiring it? Count: a doubt about a claim or proof of state.brand, a weakness or limit of state.brand, or an open question about the scope, price or results of state.brand. Do not count: a general caution that the answer gives for all companies in the same words, a note about which customers state.brand suits, or plain facts."
+    }
+  }
+}

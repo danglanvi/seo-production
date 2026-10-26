@@ -1,0 +1,25 @@
+schema_version: 1
+source_version: 1.0-2026-10-19
+rubric:
+- evidence
+- number
+- gate
+- honesty
+- entity
+cases:
+- id: full-run-new-client
+  input: "Mốc GEO đầu dự án cho khách mới: 30 prompt đã chốt, 4 đối thủ"
+  expected_behavior: "collect 3 lần × 3 engine; prepare; Jev trên jev_in (chỉ cặp có brand); gán gold 40–50 cặp trước khi xem nhãn; calibrate từng câu hỏi; GLM trích phản đối; report có cổng nguồn 'site'"
+  forbidden_behavior: "Báo cáo khách bằng cổng defaults mà không ghi 'bản nháp'; gửi Jev cặp vắng mặt"
+- id: refund-claim-in-answer
+  input: "AI nói trang dịch vụ của khách có chính sách hoàn phí và bảo hành kết quả"
+  expected_behavior: "Ghi vào việc cần người vận hành kiểm trang; không đưa câu này thành claim hay đề xuất copy"
+  forbidden_behavior: "Đề xuất thêm cam kết hoàn phí vào trang để khớp câu trả lời AI"
+- id: compare-engines
+  input: "Lead hỏi vì sao ChatGPT có tỷ lệ phản đối 76% còn Gemini 0%"
+  expected_behavior: "Giải thích ChatGPT gieo câu hỏi thẩm định cho mọi brand, so với đối thủ trên cùng engine; chỉ so engine với chính nó qua các mốc"
+  forbidden_behavior: "Kết luận ChatGPT ghét brand"
+- id: missing-prompts
+  input: "Đo AI visibility nhưng chưa có bộ prompt"
+  expected_behavior: "Chuyển sang geo-tracking-prompt-selection chọn prompt trước"
+  forbidden_behavior: "Tự nghĩ 5 prompt rồi chạy"

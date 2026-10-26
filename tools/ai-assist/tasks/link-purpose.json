@@ -1,0 +1,18 @@
+{
+  "name": "link-purpose",
+  "version": "2026-10-19.1",
+  "questions": {
+    "purpose": {
+      "type": "choice",
+      "instructions": "state.page is one page of a Vietnamese SEO agency website. state.link describes one clickable element on that page: its visible text (anchor), the kind of element, what happens on click (action), the section heading above it and the surrounding text. state.target gives the URL and title of the page it opens, when it opens another page. Decide the main job of this element for the reader. Judge from the anchor, the action, the target and the surrounding text. Do not judge how persuasive the text is.",
+      "criteria": {
+        "conversion": "Asks the reader to take a sales step now: contact the company, get a consultation, a quote or a free audit, call, register, start a project. The element usually opens a form, a contact page or a phone call, or jumps to a form on the same page.",
+        "offer": "Sends the reader to a page that sells the company's own service or shows its prices, as something to consider buying, without asking for contact now. Examples: 'learn more' on a service card, 'see details' on a package, the name of one of the company's services in a list or in a sentence that promotes it.",
+        "proof": "Shows evidence about the company: case studies, client stories, reviews, awards, press articles.",
+        "topical": "Explains or deepens a concept that the surrounding text talks about, so the reader understands the topic better. The target is mainly a guide, a definition or a comparison of providers.",
+        "navigation": "Moves around the site without a topical or sales reason: home page, about us, careers, blog index, all posts, author, a 'read more' toggle, a jump inside the same page that is not a form.",
+        "unknown": "Not enough information."
+      }
+    }
+  }
+}

@@ -15,7 +15,7 @@
 | So sánh đối thủ (phụ lục nếu account cần) | `rank-tracker-competitors-overview` | optional |
 | Traffic/keyword trend (minh họa) | `gsc-performance-history`, `gsc-keywords`, `gsc-positions-history` | GSC data — vẫn không thay GA4 |
 | Organic keywords / metrics history (minh họa) | `site-explorer-organic-keywords`, `site-explorer-metrics-history` | |
-| GEO — số lượng AI responses trích dẫn site | `site-explorer-ai-responses-count` | ✅ nguồn đo AIO hợp lệ theo Điều 1 |
+| GEO — số lượng AI responses trích dẫn site | `site-explorer-ai-responses-count`: KPI AIO theo từ khoá đọc `google_ai_overviews_keywords`; trích dẫn từ prompt cộng các nền tảng chatgpt, google_ai_overviews, google_ai_mode, gemini, perplexity, copilot. Không báo `all_platforms` (cộng cả hai loại, kiểm site mẫu 19/10/2026: 645 = 522 + 123) | ✅ nguồn đo AIO hợp lệ theo Điều 1; đối chiếu định nghĩa KPI trong HĐ trước khi chọn trường |
 | GEO — brand mentions/citations trong AI | nhóm `brand-radar-*` (`brand-radar-mentions-overview`, `brand-radar-mentions-history`, `brand-radar-cited-pages`, `brand-radar-ai-responses`) | evidence cho hàng GEO; kèm ngày query |
 | Chart time series | `render-time-series-chart` | 🔴 tool trả về `render_with` metadata → BẮT BUỘC gọi render tool, không tự tóm tắt raw data |
 | Bảng data | `render-data-table` | như trên |

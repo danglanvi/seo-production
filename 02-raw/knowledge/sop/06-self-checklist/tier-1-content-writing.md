@@ -229,7 +229,7 @@ Danh sách đầy đủ Nuke Words EN + VN: xem Checklist [LINK Nuke Words List]
 
 1. Contractions tự nhiên (EN: don't, it's; VN: từ rút gọn khẩu ngữ phù hợp tone).
 2. Direct address: 'bạn'/'you'; 'tôi'/'I' cho kinh nghiệm cá nhân; tránh 'chúng tôi' trừ khi đại diện tổ chức.
-3. 1-2 câu hỏi tu từ mỗi section để tạo engagement và break pattern.
+3. Không chèn câu hỏi tu từ theo quota. Chỉ dùng câu hỏi khi câu sau trả lời ngay. Không lặp heading thành câu hỏi (chunk-audit "rhetorical restart").
 4. Không lặp cấu trúc câu liên tiếp ('Nước giúp... Nước hỗ trợ... Nước cải thiện...') — đổi chủ ngữ, cấu trúc, độ dài.
 5. Paragraph lengths đa dạng (1-2 câu nhấn mạnh / 3-4 câu giải thích / 5-6 câu chi tiết). Specific examples thay generic claims.
 

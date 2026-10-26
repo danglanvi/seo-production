@@ -46,6 +46,9 @@ Lớp WHY: GBP listing = một [[Entity Home]] cấp local cho [[Central Entity]
 
 ## Workflow
 
+### Bước 0 — kiểm tool
+Chạy "python3 tools/capabilities.py check --need 'curl,firecrawl?,dataforseo?'" từ root repo. Nếu thiếu tool bắt buộc, dừng và báo tên tool. Nếu thiếu tool tuỳ chọn, dùng fallback ghi trong "tools/capabilities.md".
+
 ### Bước 0 — Đọc references + phân loại business type (gate cứng, chờ xác nhận)
 
 1. Đọc [references/gbp-checklist.md](references/gbp-checklist.md) + [references/location-page-checklist.md](references/location-page-checklist.md).

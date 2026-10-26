@@ -1,0 +1,11 @@
+{
+  "name": "category-pick",
+  "version": "2026-10-18.1",
+  "questions": {
+    "primary": {
+      "type": "choice",
+      "instructions": "state describes one blog post on state.site, a Vietnamese SEO & GEO agency blog: state.title, state.url_path, state.description and state.headings (the post's H2 headings). Each option is a blog category with its scope. Pick the one category a reader would browse to find this post, judged by the main topic of the whole post, not by one section. Prefer the most specific category that fits. Pick a tools category only when the post is mainly about one software tool or a list of tools. Pick the parent SEO category only when the post covers many SEO areas and no narrower SEO category fits better.",
+      "criteria": {}
+    }
+  }
+}

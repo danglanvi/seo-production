@@ -2,7 +2,7 @@
 name: content-refresh
 description: "Phát hiện và xếp hạng content decay sau publish từ data hiệu suất theo cửa sổ. Use when: (1) 'kiểm tra content decay [site]', 'bài nào đang rớt traffic', 'rà bài cần refresh [site/cluster]'; (2) 'traffic bài [URL] giảm, có cần update không'; (3) audit quý content sau publish."
 metadata:
-  version: "1.0"
+  version: "1.1"
 ---
 
 # Content Refresh — Decay Detection & Update Brief
@@ -24,6 +24,16 @@ Front-end DECAY-DETECTION cho vòng đời content sau publish: đọc data hi�
 | Wiki health check | `seo-lint` — đừng nhầm "decay" wiki với decay content client |
 | Viết lại từ đầu topic đã mất intent | `seo-article` / `seo-content-pipeline` — skill này chỉ gắn route flag REWRITE |
 
+## Phân việc model
+
+| Model | Việc trong skill | Quyết định |
+|---|---|---|
+| EmbeddingGemma 2 | `drift`: tâm top 3 SERP so với trang mình | dùng để xếp thứ tự truy vấn cần đọc SERP: Spearman với vị trí GSC 0,545 [0,156; 0,796], 25 truy vấn (19/10/2026). Chưa có ngưỡng REWRITE (`references/intent-shift.md`) |
+| Code (`intent_shift.py`, gate chain) | Tính tâm, drift, so cửa sổ thời gian | dùng: phép tính phải tất định |
+| Jev | Phân loại loại trang của top 3 | không dùng: chưa có rubric loại trang hiệu chuẩn bằng `model-calibration`. Số GSC không gửi cho Jev |
+| GLM Flash | Trích câu | không dùng: skill không trích câu |
+| Claude | Gate chain, phân loại nguyên nhân, đọc top 3 SERP, viết UPDATE BRIEF | dùng |
+
 ## Input
 
 **Required:**
@@ -44,7 +54,12 @@ Front-end DECAY-DETECTION cho vòng đời content sau publish: đọc data hi�
 
 ## Workflow
 
-### Bước 0 — Scope gate & xác nhận (bắt buộc)
+### Bước 0 — kiểm tool
+Chạy "python3 tools/capabilities.py check --need 'python3,gemma?,gsc?,ahrefs?,firecrawl?'" từ root repo. Nếu thiếu tool bắt buộc, dừng và báo tên tool. Nếu thiếu tool tuỳ chọn, dùng fallback ghi trong "tools/capabilities.md".
+
+- Thiếu `gemma`: bỏ Bước 4a. Claude đọc top 3 SERP của mọi candidate nghi intent shift.
+
+### Bước 0b — Scope gate & xác nhận (bắt buộc)
 
 1. Xác nhận `$SITE`, `$SCOPE`, `$DATA_PATH`, `$BRAND` (entity GTV/TAG/client — không mix).
 2. Hỏi 3 câu gate trước khi đụng data:
@@ -87,6 +102,19 @@ Decision tree đầy đủ: [references/decay-signals.md](references/decay-signa
 
 7 loại: stale facts / SERP intent shift / competitor vượt / thiếu entity-attribute mới / cannibalization / self-inflicted / SERP feature loss — bảng tín hiệu chẩn đoán + DEPTH ở [references/decay-signals.md](references/decay-signals.md), mục 3. DEPTH gợi ý cho pipeline: stale facts = **light**; competitor / entity gap = **medium**; intent shift = **heavy** (thường cần re-outline, không phải refresh nhẹ). Ghi kèm confidence (cao/vừa/thấp) cho mỗi phân loại.
 
+### Bước 4a — Đo intent dịch chuyển (Gemma)
+
+Dùng cho candidate nghi "SERP intent shift". Đọc `references/intent-shift.md`. Đặt `S` = `skills/content-refresh/scripts/intent_shift.py`.
+
+1. Lấy top 10 SERP hiện tại của truy vấn chính và ghi ngày. Ghi `<W>/serp.jsonl`: `{"query", "date", "results": [{"pos", "url", "title", "snippet"}]}`.
+2. Ghi `<W>/pages.jsonl`: `{"query", "url", "title", "meta", "position"}`. URL là trang có lượt hiển thị lớn nhất cho truy vấn trong GSC.
+3. Chạy `~/.venvs/embeddinggemma/bin/python -B -I $S --serp <W>/serp.jsonl --pages <W>/pages.jsonl --out <W>/shift.jsonl --top 3 --exclude-own`.
+4. Đọc ngưỡng REWRITE (rubric `content-refresh-intent-shift`) theo thứ tự: registry của site (`00-client-context/model-calibration.json`) → `tools/ai-assist/calibration-defaults.json`. Nếu chưa có ngưỡng, không truyền `--rewrite-at`.
+5. Xếp truy vấn theo `drift` giảm dần. Claude mở top 3 SERP của truy vấn `drift` cao nhất trước.
+6. Nếu top 3 trả lời một nghĩa khác trang mình, gắn nguyên nhân "SERP intent shift", DEPTH heavy, route REWRITE. Nếu top 3 cùng nghĩa với trang mình, giữ refresh.
+7. Nếu Google đang chọn một URL khác loại trang với truy vấn, ghi lỗi định tuyến URL và chuyển sang skill `retrieval-lab` (chế độ route). Không gắn intent shift.
+8. Lưu `serp.jsonl` có ngày. Lần audit sau, so `drift` của cùng truy vấn qua 2 ngày SERP.
+
 ### Bước 5 — Priority score + Route flag
 
 - **T11 (convention GTV, không phải industry standard):** `Priority = Recovery potential (peak clicks − current clicks, hoặc traffic value) × Ease (KD thấp, structure sound, còn backlinks) × Business relevance`.
@@ -99,6 +127,16 @@ Decision tree đầy đủ: [references/decay-signals.md](references/decay-signa
 1. Present danh sách candidate + route flag → **chờ user duyệt** (execution rule workspace).
 2. Mỗi candidate flag UPDATE → 1 brief theo [references/update-brief-template.md](references/update-brief-template.md). Các flag khác (CONSOLIDATE/RESTORE/AUTHORITY-GAP…) chỉ ghi nhận trong report tổng kèm đề xuất route.
 3. Skill **dừng tại đây** — không diff SERP chi tiết, không section plan (đó là bước 1-2 của 10-update-pipeline).
+
+### Tự phản biện trước khi trình
+Chấm bản nháp theo checklist "Bản tốt nhất phải có". Mục chưa đạt thì sửa, hoặc ghi lý do bỏ. Nếu có output của Codex hay agent khác cho cùng việc, so từng mục và lấy phần tốt hơn trước khi trình Vincent.
+
+Bản tốt nhất phải có:
+- [ ] Route REWRITE vì intent dịch chuyển có ghi chú Claude đã đọc top 3 SERP. Không route chỉ theo `drift`. Nguồn lỗi: hiệu chuẩn 19/10/2026, trang duy nhất được quyết viết lại vì SERP đổi nghĩa chỉ đứng hạng 8/25 theo `drift`.
+- [ ] Lỗi Google chọn sai URL được tách khỏi intent dịch chuyển. Nguồn lỗi: 19/10/2026, 4/7 truy vấn `drift` cao nhất có trang khác loại đang nhận truy vấn (trang bảng giá nhận truy vấn dịch vụ tổng thể, trang địa phương nhận truy vấn dịch vụ SEO AI).
+- [ ] Top N đã bỏ trang của chính site. Nguồn lỗi: SERP 18/10/2026, trang mình nằm trong top 10 ở 23/26 truy vấn; giữ trang mình thì tâm SERP bị kéo về phía trang mình.
+- [ ] Mỗi kết luận dùng SERP có ngày chụp. Nguồn lỗi: 18/10/2026, 11 keyword kéo lại SERP trong ngày có overlap với chính nó chỉ 5–10/10.
+- [ ] Cặp đề xuất CONSOLIDATE có số overlap SERP thật. Nguồn lỗi: audit GSC 17/10/2026 đề xuất gộp 5 cặp trang, SERP 18/10 cho 3/5 cặp trùng 0–1/10.
 
 ## Output
 
@@ -166,6 +204,7 @@ Decision tree đầy đủ: [references/decay-signals.md](references/decay-signa
 ## References & wiki
 
 - [references/decay-signals.md](references/decay-signals.md) — bảng tín hiệu T1-T14 (ngưỡng + cách đo Path A/B/C + nguồn), decision tree gate chain, bảng nguyên nhân → tín hiệu → DEPTH.
+- [references/intent-shift.md](references/intent-shift.md) — đo intent dịch chuyển bằng Gemma (`drift`), số hiệu chuẩn 19/10/2026, giới hạn.
 - [references/update-brief-template.md](references/update-brief-template.md) — skeleton UPDATE BRIEF khớp input 10-update-pipeline (`_TEMPLATES/update.md`).
 - Wiki nền: [[Historical Data]] (6-month lag, engagement polarity, protect HD) · [[Update Score]] (Update Frequency × Update Amount, fake freshness) · [[Traffic Box]] (BCAU re-evaluation, static source) · [[Click Satisfaction]] (CTR/engagement là input decay hợp lệ) · [[GEO]] (URL freshness score, 76,4% top cited update trong 30 ngày, đo AI visibility aggregate).
 - SOP liên quan: `sop/05-audit-checklist.md` (post-publish tracking 7-30 ngày, monthly audit cadence).
@@ -173,4 +212,5 @@ Decision tree đầy đủ: [references/decay-signals.md](references/decay-signa
 
 ## Changelog
 
+- **v1.1 (2026-10-19):** Bước 0 kiểm tool (Scope gate cũ thành Bước 0b). Bước 4a đo intent dịch chuyển: `drift` giữa tâm top 3 SERP và trang mình (`scripts/intent_shift.py`, `references/intent-shift.md`). `drift` tương quan vị trí GSC (Spearman 0,545, 25 truy vấn); chưa có ngưỡng REWRITE vì 15–19/10 chỉ có 1 quyết định viết lại. Thêm phân việc model, tự phản biện, test offline `tests/test_intent_shift.py`.
 - **v1.0 (2026-07-07):** khởi tạo — tổng hợp từ wiki Koray/GTV (Historical Data, Update Score, Traffic Box, Click Satisfaction, GEO) + web research (Ahrefs content-decay, User Growth academy, Animalz ×2, SEO Sherpa cannibalization); ngưỡng T1-T14 đánh dấu đề xuất thực nghiệm; boundary khóa với 10-update-pipeline / semantic-content-audit / backlink-plan.

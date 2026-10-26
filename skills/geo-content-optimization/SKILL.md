@@ -1,8 +1,8 @@
 ---
 name: geo-content-optimization
-description: "Audit + rewrite content ĐÃ publish để được AI engines trích dẫn (AI Overviews, AI Mode, ChatGPT, Perplexity) — operationalize AX1-AX6 của sop/08 và 5 Core Levers của GEO.md thành workflow retrievability: chunk audit self-containment, front-load check, heading-query alignment, AIO."
+description: "Audit + rewrite content ĐÃ publish để được AI engines trích dẫn (AI Overviews, AI Mode, ChatGPT, Perplexity): chunk audit self-containment, front-load, heading-query alignment, AIO counter-positioning theo AX1-AX6 sop/08 và 5 Core Levers GEO."
 metadata:
-  version: "1.3"
+  version: "1.4.1"
 ---
 
 # GEO Content Optimization — Audit & Rewrite cho AI Citation
@@ -28,6 +28,15 @@ Tối ưu content ĐÃ có để thắng ở bước retrieval + chunk selection
 | Backlink / authority signals | → `backlink-research` + `backlink-plan` |
 | Ảnh / visual semantic (AX5 chỉ pass/fail rồi trỏ đi) | → `image-seo-optimize`, `visual-semantic-seo` |
 
+## Phân việc model
+
+| Model | Việc trong skill | Quyết định |
+|---|---|---|
+| EmbeddingGemma 2 | Cos heading và section ↔ subquery; so trang mình với trang trong cùng top 10 | dùng qua skill `geo-fanout-research` Bước 4a: `mean_best` trong top 10 có AUC 0,674 dev, 0,683 holdout (19/10/2026). Không có ngưỡng phủ tuyệt đối, nên Claude ra verdict |
+| Jev | Chấm chunk tự đứng, câu trả lời ở màn đầu | không dùng trong skill này: rubric chunk tự đứng chưa hiệu chuẩn. Màn đầu chấm bằng Jev ở skill `visual-serp-lab` |
+| GLM Flash | Trích facts từ câu trả lời AI ở Bước 4 | không dùng: Claude trích facts của vài câu trả lời. Trích hàng loạt thuộc skill `geo-answer-lab` |
+| Claude | Chunk audit, đọc section cos thấp, counter-positioning, viết rewrite | dùng |
+
 ## Input
 
 **Required:**
@@ -44,7 +53,7 @@ Tối ưu content ĐÃ có để thắng ở bước retrieval + chunk selection
 1. **Content của $TARGET:**
    - Path A (ưu tiên): fetch URL bằng web fetch hoặc Firecrawl → markdown.
    - Path B: user paste toàn văn (giữ nguyên heading structure).
-2. **$RANK_STATUS (gate Bước 0):**
+2. **$RANK_STATUS (gate Bước 0b):**
    - Path A: Ahrefs MCP (`site-explorer-organic-keywords` / `serp-overview`) — báo số call trước khi gọi.
    - Path B: user export GSC / Ahrefs.
    - Path C: user tự xác nhận "bài đã page-one cho query X" — chấp nhận, ghi chú "rank status: user-confirmed".
@@ -69,14 +78,19 @@ Dùng khi chỉ cần biết bài **đứng ở đâu** trên 12 item passage ar
 | GE-23 | Claim quan trọng nằm dưới heading khớp cluster, phát biểu bằng 1 câu quotable (passage verifiability) | — |
 | GE-24 | Freshness thật theo cửa sổ vertical (commercial ~30 ngày); không date-spoofing; không re-stamp năm hàng loạt | — |
 | GE-25 | Blur Test 50% vẫn nhận ra topic + function; info quyết định không giấu trong tab/accordion | — |
-| GE-26 | Page-type fit + guardrail listicle (không tự xếp #1 không phương pháp, không AggregateRating tự làm) | — |
+| GE-26 | Page-type fit + guardrail listicle (không tự xếp #1 không phương pháp, không AggregateRating tự làm · AI nghi ngờ vì brand tự xếp hạng: không gỡ bài; viết top list khách quan + EEAT, giải bằng offsite consensus GE-28…32 (Vincent chốt 19/10/2026)) | — |
 | GE-27 | So với AI answer hiện tại (user paste): facts AIO bỏ sót đã cover? format AIO ưa đã align? | — |
 
 Output: **G-BÀI: PASS/FAIL (item rớt)** + **Bộ BÀI: n/12 (m item để trống)** + 3 item nên sửa trước → ghi Sheet "GEO Checklist GE v2". Gate FAIL hoặc bài cần rewrite để thành Core Source → chạy chế độ full.
 
-## Workflow — chế độ full (6 bước)
+## Quy trình — chế độ full (6 bước)
 
-### Bước 0 — Gate điều kiện nền (G-T1) + pre-flight AI crawler + scope confirm
+### Bước 0 — kiểm tool
+Chạy "python3 tools/capabilities.py check --need 'python3,gemma?,firecrawl?,ahrefs?'" từ root repo. Nếu thiếu tool bắt buộc, dừng và báo tên tool. Nếu thiếu tool tuỳ chọn, dùng fallback ghi trong "tools/capabilities.md".
+
+- Thiếu `gemma`: Bước 3 mục 2 dùng manual proxy trong reference và ghi "chưa đo Gemma".
+
+### Bước 0b — Gate điều kiện nền (G-T1) + pre-flight AI crawler + scope confirm
 
 🔴 **Điều kiện nền (= gate G-T1 của lớp GEO, GE-01·02·03):** page phải indexed + rank được (tối thiểu page-one của MỘT sub-query nào đó). Retrieval rank là predictor mạnh nhất — position 0 trong retrieval set = 58% citation vs position 10 = 14% (Indig 04/2026); "Classic SEO enables AI rankings". Page chưa rank → ROI thấp — mặc định trả về pipeline SEO thường (`/seo-onpage`, topical map); chỉ audit tiếp khi user chấp nhận caveat. Ngoại lệ đã biết (decoupling do fan-out long-tail + freshness): 28,3% cited pages có 0 organic keywords (GEO.md); 36,7% cited URLs ngoài top-100 ([[AI Overviews]]) — exception, không phải kế hoạch mặc định.
 
@@ -106,13 +120,13 @@ Output bước này: bảng chunk × điểm self-containment × verdict (PASS /
 - **First 100-150 từ main content = audition chunk target:** answer-first, không filler — đây là chunk cosine cao nhất đại diện toàn page trước cửa Deep Reading; nếu là nav/junk/vòng vo → page bị loại dù thân bài hay ([[Audition Chunk]]).
 - Manual proxy khi không có embedding: đếm overlap key terms của Semantic Query trong 100-150 từ đầu — **≥5/10 pass, <3/10 rewrite** ([[Audition Chunk]] In Practice — Manual audit).
 - **Best content trong 30% đầu trang:** 44,2% AI citations đến từ first-30% (Indig 02/2026; patent US9940367B1).
-- Keyword chính xuất hiện trong 100 chữ đầu VÀ 100 chữ cuối (sop/08 P16).
+- Central Entity + keyword chính xuất hiện trong 100 chữ đầu (sop/08 P16).
 - ✅ "Kill the storytelling intros" (Indig 02/2026, theo sop/08 AX2) — ⚠ trừ narrative niches (travel/lifestyle): đây là Open Question, không áp máy móc 100%.
 
 ### Bước 3 — Heading-query alignment (AX7 → GE-17; cluster map đầy đủ cho cả topic → skill `geo-fanout-research`)
 
 1. **Fan-out simulation → gom CLUSTER (v1.2 — thay cho "sinh 8-12 sub-queries"):** sinh sub-queries cho mỗi $QUERY theo lens (định nghĩa / so sánh / how-to / chi phí / đối tượng / rủi ro / thay thế…) rồi **gom thành cluster ≤4** — ~90% fan-out gom được vào ≤4 cluster, chỉ ~27% sub-query lặp lại giữa các lần chạy (Batch 40, 08/2026) → **tối ưu theo cluster, không đuổi từng query**. Số fan-out tuyệt đối (8-12, 7,61…) đã hết hạn theo phiên bản model — không in ra deliverable. Mỗi cluster cần ≥1 heading + ≥1 passage tự đứng trong bài; cluster không có heading nào cover → gap. Trang rank cho nhiều sub-query cùng lúc có xác suất cite cao hơn (+161%, Surfer — nhãn C).
-2. **Cosine heading ↔ cluster:** dùng DẢI ≥0,90 / 0,80-0,90 / <0,50 làm thang nội bộ (heading match cosine ≥0,90 → 41% cite vs 30% — Indig × AirOps 04/2026, B), không 1 cutoff (threshold pass/fail chính xác chưa tồn tại). Không có embedding tool → manual proxy trong reference. ⚠ Embedding benchmarks đều đo tiếng Anh (bge-base-en-v1.5, embeddinggemma) — threshold cho tiếng Việt chưa validated, label "estimate" khi áp cho content Việt. 🔒 Con số cosine nằm trong **blacklist register** cho tài liệu public/khách — chỉ dùng nội bộ.
+2. **Cos heading ↔ cluster (EmbeddingGemma 2):** đo bằng skill `geo-fanout-research` Bước 4a (`fanout_cover.py cover` rồi `gaps`). Đọc ngưỡng phủ (rubric `geo-fanout-coverage`) theo thứ tự: registry của site (`00-client-context/model-calibration.json`) → `tools/ai-assist/calibration-defaults.json`. Chưa có ngưỡng hiệu chuẩn: ghi "chưa hiệu chuẩn, Claude đọc", rồi Claude đọc heading và section của subquery cos thấp nhất trước. Hiệu chuẩn 19/10/2026 chưa tìm được ngưỡng phủ tuyệt đối. Phép đo có tín hiệu là so `mean_best` của trang mình với trang khác trong cùng top 10 (AUC 0,674 dev, 0,683 holdout). Mốc cos của nghiên cứu Indig × AirOps đo bằng bge-base-en-v1.5 trên tiếng Anh, không dùng cho Gemma hay content Việt. Không có embedding → manual proxy trong reference. 🔒 Số cos chỉ dùng nội bộ (blacklist register cho tài liệu public/khách).
 3. **Title ↔ fan-out queries:** benchmark cited 0,656 — match sub-questions NỘI BỘ của AI quan trọng hơn match query gốc. ChatGPT gatekeep trên Title + Snippet + URL trước khi mở page (~50% retrieved URLs mới được cite).
 4. **URL slug natural-language:** citation 89,78% vs 81,11% khi không có. Slug đổi được không? (cân nhắc redirect cost — chỉ đề xuất khi page mới/traffic thấp).
 5. **Scope check — không dùng dải số từ / số heading cố định (Vincent 29/08/2026):** heading match trực tiếp query; bài gánh đúng **1 câu hỏi chính** (≥2 câu hỏi chính / ≥2 cluster ngoài Central Search Intent → đề xuất tách page QDP). Độ dài + số heading là hệ quả của loại node trong topical map (quality node / pillar dài hơn leaf node), Section Benchmark đối thủ, search intent, vị trí topical map, bộ query target — bài dài vì node type đòi hỏi **không** phải lỗi GEO; "500-2.000 từ / 7-20 subheading" (Indig) chỉ là quan sát trên tập mẫu, không in ra deliverable như spec.
@@ -145,6 +159,17 @@ Cần $AI_ANSWERS (Path A/B/C ở Input). Có answer thì:
 - Baseline: AI answer hiện tại (nếu có ở Bước 4) + rank status.
 - Nhắc nguyên tắc đo: AIO bề mặt đổi mỗi ~2,15 ngày nhưng semantic stability 0,95 — thắng TOPIC chứ không thắng query, đo aggregate AI Share of Voice; AIO ≠ AI Mode (chỉ 13,7% citation overlap) → track 2 kênh riêng.
 
+### Tự phản biện trước khi trình
+Chấm bản nháp theo checklist "Bản tốt nhất phải có". Mục chưa đạt thì sửa, hoặc ghi lý do bỏ. Nếu có output của Codex hay agent khác cho cùng việc, so từng mục và lấy phần tốt hơn trước khi trình Vincent.
+
+Bản tốt nhất phải có:
+- [ ] Bảng heading ↔ cluster ghi nguồn ngưỡng, hoặc ghi "chưa hiệu chuẩn, Claude đọc". Không dùng dải cos của nghiên cứu tiếng Anh. Nguồn lỗi: bản trước 19/10/2026 dùng dải lấy từ bge-base-en (AirOps); hiệu chuẩn Gemma 19/10 không tìm được ngưỡng phủ tuyệt đối.
+- [ ] Cos của trang chỉ so với trang trong cùng top 10 của query. Nguồn lỗi: pilot 10/2026, AUC ngược chiều (0,35) khi so với URL được trích ngoài top 10.
+- [ ] 100–150 từ đầu trả lời thẳng câu hỏi chính. Nguồn lỗi: pilot 19/10/2026, một trang dịch vụ mở bằng câu dẫn, trong khi 2/4 trang được trích cùng truy vấn trả lời ngay (AUC 0,644).
+- [ ] Số liệu đề xuất thêm là số đo thật có nguồn; thiếu thì ghi `[chưa có bằng chứng]`. Nguồn lỗi: pilot 10/2026, số đo từ dự án thật là tín hiệu mạnh nhất với trích dẫn AI (AUC 0,73).
+- [ ] Bài bị AI nghi ngờ vì tự xếp hạng không bị đề xuất gỡ. Đề xuất top list khách quan có EEAT và offsite consensus GE-28…32. Nguồn lỗi: GE-26, Vincent chốt 19/10/2026.
+- [ ] Mọi số trong report có nguồn và ngày. Tài liệu khách không có số cos hay số trong blacklist register. Nguồn lỗi: register GEO 08/2026 chặn số cos, "+40%" và "+115%".
+
 ## Output
 
 File: `<project>_GEO-Audit_v1.md` (tăng `_v2`, `_v3` nếu trùng) — trả về tài liệu nội bộ «<project>» (ngoài repo, hỏi Lead/Vincent) theo TASK ROUTING.
@@ -175,7 +200,7 @@ File: `<project>_GEO-Audit_v1.md` (tăng `_v2`, `_v3` nếu trùng) — trả v�
 
 ## 3. Alignment (AX3)
 - Fan-out → cluster (≤4): <cluster A: sub-queries…; cluster B…> | cluster chưa có heading cover: <list>
-- Heading↔cluster: <bảng heading → cluster → cosine/proxy → dải>
+- Heading↔cluster: <bảng heading → cluster → cos Gemma (trang mình / tốt nhất top 10) hoặc proxy → verdict Claude; ghi nguồn ngưỡng hoặc "chưa hiệu chuẩn, Claude đọc">
 - Title: <hiện tại> → <đề xuất — so với mean cited 0,656 (tham chiếu, không phải cutoff)> | Slug: <natural-language ✅/❌ + khuyến nghị>
 - AX6 passage verifiability: <n>/<m> claim quan trọng nằm đúng passage + quotable → <PASS/FAIL + claim cần gộp>
 
@@ -207,7 +232,7 @@ File: `<project>_GEO-Audit_v1.md` (tăng `_v2`, `_v3` nếu trùng) — trả v�
 
 ## Behavior Gates
 
-1. **#1 Think Before** — Bước 0 là gate ưu tiên: không rank → mặc định không audit GEO, chỉ tiếp khi user chấp nhận caveat (ngoại lệ decoupling ở Bước 0). Query không thuộc dạng AIO-trigger cao → nói rõ ROI thấp trước khi user quyết. Nếu $QUERIES/$TARGET mơ hồ → hỏi, không tự giả định.
+1. **#1 Think Before** — Bước 0b là gate ưu tiên: không rank → mặc định không audit GEO, chỉ tiếp khi user chấp nhận caveat (ngoại lệ decoupling ở Bước 0). Query không thuộc dạng AIO-trigger cao → nói rõ ROI thấp trước khi user quyết. Nếu $QUERIES/$TARGET mơ hồ → hỏi, không tự giả định.
 2. **#2 Evidence** — MỌI con số trong report truy được về nguồn + ngày (mục "Nguồn số liệu" bắt buộc). Số wiki giữ đúng: 76,4% / 58%-14% / 41%-30% / 89,78%-81,11% / **38% first-100-words (Surfer 06/2026, C)** ≠ **~38% AIO cite top-10 (Ahrefs 01/2026, B)** — hai số khác nhau, ghi rõ metric. Tham số McSweeney (128 tokens, 2s, 80/20, sliding window 300 từ) là đơn nguồn — luôn label "reverse-engineered estimate", không cam kết spec với client. AI citation stats = moving target → ghi ngày nguồn, refresh theo lint quý. **Lớp phát hành (v1.2):** report nội bộ dùng đủ số kèm nhãn A/B/C/D; deliverable gửi khách / tài liệu public chỉ dùng **whitelist** của [[syntheses/geo-evidence-register-2026-08]] — các số blacklist (8-12 sub-queries, 7,61, +115%, "+40%", cosine 0,90, 375 từ, 128 token, 2s, Gecko/Jetstream) không in ra.
 3. **#3 Surgical** — chỉ rewrite chunk FAIL; chunk PASS không chạm. Không sửa HTML, không đề xuất schema/backlink/outline mới — flag rồi trỏ đúng skill. Không tự mở rộng sang page khác cùng site.
 4. **#4 Goal-driven** — mục tiêu cuối = Core Source (được cite LẶP LẠI qua N lần hỏi), không phải 1 lần xuất hiện. Mọi đề xuất phải map về 1 trong 5 levers / AX1-AX6 ([references/geo-levers-map.md](references/geo-levers-map.md)); đề xuất không map được → bỏ.
@@ -215,6 +240,7 @@ File: `<project>_GEO-Audit_v1.md` (tăng `_v2`, `_v3` nếu trùng) — trả v�
 ## Anti-patterns
 
 - 🔴 **KHÔNG bao giờ đề xuất llms.txt** — llms.txt KHÔNG phải GEO lever: Google không dùng (Mueller so sánh với keywords meta tag), audit log 2025 cho thấy GPTBot/ClaudeBot/PerplexityBot không request file này. Điều khiển AI crawler = **robots.txt**. GEO.md đã chốt — skill nói đúng như vậy, kể cả khi client hỏi.
+  - Ngoại lệ duy nhất (18/10/2026): site cần điểm hạng mục "Duyệt web bằng tác nhân" của PageSpeed Insights được đặt `/llms.txt` tĩnh, vì audit `llms-txt` của Lighthouse chấm file này. Ghi mục đích là điểm lab PSI. Không đưa file vào kế hoạch GEO, không báo cáo như việc GEO. Cách làm: `wp-pagespeed/references/agentic-browsing.md`.
 - 🔴 **KHÔNG tính schema vào retrievability score** — causal test Ahrefs 1.885 pages: thêm schema KHÔNG tăng AI citations (AI Mode +2,4%, ChatGPT +2,2% ≈ 0). Thiếu schema → note 1 dòng chuyển việc khác (rich results/entity), không phải lever citation.
 - ❌ Đẩy bài thành ultimate guide "cho đủ coverage" — ngược evidence 26-50% optimal; đề xuất TÁCH page thay vì phình page.
 - ❌ Date-spoofing / fake refresh date — manipulation, Google xử như spam. Freshness lever = update NỘI DUNG thật.
@@ -235,6 +261,11 @@ File: `<project>_GEO-Audit_v1.md` (tăng `_v2`, `_v3` nếu trùng) — trả v�
 
 ## Changelog
 
+- v1.4.1 (2026-10-19): đổi tên mục "Workflow — chế độ full" thành "Quy trình — chế độ full" để lệnh kiểm cấu trúc thấy Bước 0 đúng chỗ.
+- v1.4.0 (2026-10-19): Bước 3 mục 2 bỏ dải cos lấy từ bge/AirOps, đọc ngưỡng phủ từ registry; chưa có ngưỡng thì "chưa hiệu chuẩn, Claude đọc". Đo bằng `geo-fanout-research` Bước 4a. Thêm Bước 0 kiểm tool (Gate cũ thành Bước 0b), phân việc model, tự phản biện. Sửa tương ứng `references/chunk-audit-method.md` và `geo-levers-map.md`.
+- v1.3.3 (2026-10-19): bỏ luật keyword chính trong 100 chữ cuối (P16 mới): chỉ giữ Central Entity + keyword trong 100 chữ đầu.
+- v1.3.2 (2026-10-19): GE-26 thêm cách xử lý khi AI nghi ngờ vì brand tự xếp hạng: giữ bài, top list khách quan + EEAT, offsite consensus GE-28…32.
+- **v1.3.1 (2026-10-18):** ghi ngoại lệ `/llms.txt` cho audit `llms-txt` của PSI (hạng mục "Duyệt web bằng tác nhân"): được đặt, không tính là đòn bẩy GEO.
 - **v1.3 (2026-08-29, phương án C Vincent chốt):** thêm **chế độ spot-check — Bộ BÀI /12 tick-only** (bảng 12 dòng dọn từ `semantic-content-audit` 2.1 Phase 6 về đây; SCA giờ chỉ chấm gate G-BÀI 4 item). Description +(4) trigger spot-check; phân vai cập nhật; Workflow 6 bước = chế độ full. Lý do: lớp GEO (evidence có hạn dùng, /12, rewrite) sống ở skill geo-*, core skill chỉ giữ hook cấu trúc.
 - **v1.2.1 (2026-08-29, feedback Vincent cùng ngày):** Bước 3 mục 5 "Page spec 500-2.000 từ + 7-20 subheadings" → **scope check** (1 trang 1 câu hỏi chính); bỏ dải số từ/số heading cố định — độ dài theo loại node (quality node/pillar dài hơn leaf), benchmark đối thủ, intent, vị trí topical map, bộ query target. `geo-levers-map.md` §5 giữ số Indig làm quan sát, gắn nhãn "không phải spec". Mirror `geo-tracking-optimize-ca` 1.2.1-ca.
 - **v1.2 (2026-08-29, Vincent duyệt 29/08 — đồng bộ body với changelog v1.1 + FINDINGS 22/08 §7):** (1) **Bước 0** = gate G-T1 có tên + **pre-flight AI crawler access** (GE-02: search/user-triggered bot phải mở, training bot là quyết định khách; evidence first-party +111% n=1 nhãn D). (2) **Bước 1 — chuẩn chunk GTV**: bỏ ngưỡng "≤375 từ/H2" (không nguồn) → 4 tầng: 1 heading = 1 facet · L0 40-75 từ · khối ý <~200 từ (`observational`, con số vận hành duy nhất) · mỗi câu tự đứng S-V-O; thêm rule heading tổ tiên có nghĩa (`includeAncestorHeadings`); 128/800/500 token chỉ để hiểu cơ chế. (3) **Bước 3** fan-out → **gom cluster ≤4**, bỏ "8-12" khỏi bước executable + output template; cosine giữ làm thang nội bộ, gắn nhãn blacklist public. (4) **Bước 4** KDD sửa theo primary: Quotation Addition top, "+41%/+28% theo metric proxy GPT-3.5", bỏ "+40%"/"+115%" trần, thêm rule chọn tactic theo domain (GE-21). (5) **Bước 5** thêm **AX6 passage verifiability** (GE-23) thành bước có workflow; +17,3% restructure ROI (Yu et al. 2603.29979, C→B); freshness nuance "content năm cũ không chết" + cửa sổ per-vertical. (6) Phân vai + `semantic-content-audit` (2 skill audit trùng 4 check, chia vai rõ); vị trí G3/G-ENT/Bộ BÀI /12 đưa lên đầu skill; report thêm dòng Bộ BÀI /12 + AI crawler. (7) Behavior gate #2: tách 2 số "38%", thêm **luật lớp phát hành** (whitelist/blacklist register). References: `geo-levers-map.md` (title AX1-AX6, cluster, AX6 row, dải amber rank 11-50, §5 thêm 38%/+17,3%/KDD sửa) + `chunk-audit-method.md` (rubric 5 tiêu chí, bỏ 375, thêm ROI restructure). Mirror `geo-tracking-optimize-ca` 1.2-ca + leak test blacklist.

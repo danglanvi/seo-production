@@ -1,8 +1,8 @@
 ---
 name: technical-seo-audit
-description: "Audit technical SEO tầng SITE theo bộ audit nội bộ GTV/TAG (template xlsx + script crawl/PageSpeed/DataForSEO): index, crawl, redirect, CWV, crawl budget. Use when: 'audit technical [domain]', 'kiểm tra technical SEO [site]', 'site không được index / crawl chậm / redirect loạn', 'check Core Web Vitals'."
+description: "Audit technical SEO tầng SITE theo bộ audit nội bộ GTV/TAG (crawl, PageSpeed, DataForSEO): index, crawl, redirect, CWV, crawl budget. Use when: 'audit technical [domain]', 'kiểm tra technical SEO [site]', 'site không được index / crawl chậm', 'check Core Web Vitals'."
 metadata:
-  version: "1.6"
+  version: "1.9"
 ---
 
 # Technical SEO Audit
@@ -26,6 +26,9 @@ Audit technical SEO **tầng SITE** — chẩn đoán những gì cản Google c
 | Keyword cannibalization / Ranking Signal Dilution | `/seo-topical-map` (outline/topical layer) | Skill này chỉ cung cấp evidence (duplicate title, nhiều URL cùng query) |
 | Audit bài viết đơn lẻ tự động | `tools/seo-audit-tool` | Skill này ở tầng SITE, wrap tool ở tầng URL |
 | Site migration / dịch chuyển domain | `site-migration-checklist` | Skill này chỉ audit hiện trạng HTTPS/redirect, không dẫn migration |
+| Tối ưu PageSpeed theo template, sửa trên server | `wp-pagespeed` (site WordPress có quyền server) | Skill này chấm CWV khu vực 5 và flag nguyên nhân; đo A/B, sửa theo lớp, rollback thuộc skill kia |
+| Mã độc, IOC, hardening (khu vực 2.2 Security) | `wp-security-hardening` | Skill này flag dấu hiệu (GSC Security issues, cloaking, file lộ); ứng cứu và siết bảo mật thuộc skill kia |
+| Ghi sửa title, meta, H1, slug, link lên site | `wp-content-review-apply` | Skill này lập fix list; ghi lên site phải qua trang duyệt của skill kia |
 
 ## Input
 
@@ -45,21 +48,33 @@ Audit technical SEO **tầng SITE** — chẩn đoán những gì cản Google c
 | Path | Điều kiện | Data |
 |---|---|---|
 | **Path A** | $TARGET có project sẵn trong Ahrefs Site Audit (hoặc Semrush — Path A-alt) + chạy được `tools/seo-audit-tool` | Ahrefs `site-audit-*` MCP (site-level) + seo-audit-tool `--deep` (CWV qua PageSpeed API, URL đại diện) — nhanh, không tốn crawl mới |
-| **Path B (engine crawl chính)** | Máy có Screaming Frog + license active (verified v23.3, 07/2026) | Claude TỰ chạy SF `--headless` full-crawl (🔴 tốc độ mặc định 2 threads / 2–3 URL/s — shared hosting hay chặn crawler nhanh) → parse CSV. **B-file (ưu tiên khi có):** user đã crawl GUI → `--load-crawl` file + export, không đụng server. B-manual: user paste export |
+| **Path B (engine crawl chính)** | Máy có Screaming Frog + license active (SF 24.3 headless, chạy thật 18/10/2026) | Claude TỰ chạy SF `--headless` full-crawl (🔴 tốc độ mặc định 2 threads / 2–3 URL/s — shared hosting hay chặn crawler nhanh) → parse CSV. **B-file (ưu tiên khi có):** user đã crawl GUI → `--load-crawl` file + export, không đụng server. B-manual: user paste export |
 | **Path C (đường lùi cuối)** | Chỉ có URL, không tool | Checklist manual: `curl -I`, /robots.txt, /sitemap.xml, view-source vs rendered DOM (hoặc Firecrawl MCP), PageSpeed Insights công khai, `site:` operator |
 
 ⚠️ Path C luôn chạy được — skill không bao giờ chết vì thiếu MCP, nhưng report phải ghi rõ độ phủ thấp hơn.
 
+## Phân việc model
+
+| Model | Việc trong skill | Quyết định |
+|---|---|---|
+| Jev | `schema-visible`: khối FAQ, Q&A, review mà luật chưa chốt có hiện trên trang không. 2 rubric GSC ở chế độ chữ: `gsc-topical-fit`, `gsc-cannibal-pair` | Dùng, đọc qua cổng registry. Jev chỉ nhận chữ công khai của trang (url, title, H1, đoạn mở). Không gửi query, clicks, impressions: chạy `scripts/gsc_pairs.py check` trước mỗi lượt Jev. Không dùng `gsc-intent-match` vì input của rubric này là query GSC. Không dùng cho HowTo (sai 3/3 ở holdout) và cho rating, giá, video (Jev kém so số) |
+| EmbeddingGemma 2 | Chọn cặp bài ứng viên ăn thịt từ khoá ở nhánh GSC (cosine từ 0,905). Query nào nên vào trang nào: `skills/retrieval-lab` chế độ `route`, chạy local | Dùng, chỉ chọn ứng viên. Query GSC chỉ đi vào Gemma local và code (`gsc_pairs.py overlap`). Không dùng cho schema: so khớp nguyên văn và Jev đủ, cosine không tách được "trả lời khác ý" với "cùng chủ đề" |
+| GLM Flash | Trích câu nguyên văn | Không dùng. Skill không có việc trích câu |
+| Claude | Đọc khối dưới cổng, đọc trang dựng bằng JS, quyết định index chuyên mục và phân trang từ số đo `index_probe.py`, chọn priority, viết fix list và falsifiability | Dùng. Không giao Jev quyết định index: quyết định dựa vào số đo (robots, canonical, link chỉ có ở trang 2), không cần chấm chữ |
+
 ## Workflow
 
-### Bước 0 — Scope gate & xác nhận
+### Bước 0 — kiểm tool
+Chạy "python3 tools/capabilities.py check --need 'python3,curl,screaming-frog?,gsc?,jev?,gemma?,ssh?,wp-cli?,pagespeed-api?'" từ root repo. Nếu thiếu tool bắt buộc, dừng và báo tên tool. Nếu thiếu tool tuỳ chọn, dùng fallback ghi trong "tools/capabilities.md".
+
+### Bước 0b — Scope gate & xác nhận
 
 1. Xác nhận entity (client GTV nào / TAG / site nội bộ) — không mix.
 2. Xác nhận `$TARGET`, `$SITE_TYPE`, `$SCOPE`. Thiếu `$SITE_TYPE` → hỏi (ảnh hưởng cách đọc file-type ratio và bloat tolerance).
 3. 🔴 **Crawl budget gate**: site < ~10.000 trang unique → tuyên bố ngay "crawl budget không phải ưu tiên" (Google: crawl budget chỉ đáng lo với site ≥ ~10k–1M+ trang hoặc update rất thường xuyên — developers.google.com/crawling/docs/crawl-budget). Tập trung index hygiene thay vì khuyến nghị crawl budget nặng.
 4. Nếu Path A: **báo số call dự kiến** (~3–6 Ahrefs MCP call: `site-audit-projects` ×1, `site-audit-issues` ×1, `site-audit-page-explorer` ×1–3 + 1 lần chạy seo-audit-tool trên 3–5 URL đại diện) → **chờ user xác nhận** rồi mới gọi.
 5. Nếu Path B: **báo scope crawl** — 🔴 mặc định FULL site, KHÔNG giới hạn URL trừ khi user yêu cầu (quyết định Vincent 07/2026); kèm tốc độ crawl + ước tính thời gian + note server load → **chờ user xác nhận** rồi mới chạy. Site lớn → đề xuất database storage mode + chạy qua đêm theo 2 nhịp (data-paths.md).
-6. Hỏi user có GSC access không (hoặc đã nối GSC vào SF — Path B kéo được URL Inspection data ngay trong crawl). Không có → khu vực Index Coverage sẽ đánh dấu ⬜ THIẾU DATA kèm hướng dẫn lấy report (không bịa — xem Gate #2).
+6. Hỏi user có GSC access không (hoặc đã nối GSC vào SF — Path B kéo được URL Inspection data ngay trong crawl). Kiểm API trước bằng `tools/gsc/gsc.sh sites`: property đã share cho tài khoản Google đang login `gws` trên máy → chạy nhánh GSC 90 ngày ([references/gsc-90-ngay.md](references/gsc-90-ngay.md)). Không có → khu vực Index Coverage sẽ đánh dấu ⬜ THIẾU DATA kèm hướng dẫn lấy report (không bịa — xem Gate #2).
 7. Khi audit chạm item 4.13/1.17: hỏi **chiến lược AI crawler** của client (muốn AI citation → mở bot; muốn opt-out training → chặn là chủ đích) — không giả định.
 
 ### Bước 1 — Nạp khung ground truth
@@ -71,9 +86,11 @@ Audit technical SEO **tầng SITE** — chẩn đoán những gì cản Google c
 ### Bước 2 — Thu data theo Path
 
 - **Path A**: gọi MCP + chạy tool theo [references/data-paths.md](references/data-paths.md). 🔴 WRAP: check deterministic (meta lengths, heading tree, canonical, schema presence, links) đã nằm trong seo-audit-tool Layer 1; CWV lấy từ `--deep` (PageSpeed API); trang JS-heavy → thêm `--render` (Playwright). Skill chỉ **diễn giải output + xếp priority**, không tự chấm lại.
-- **Path B**: chạy SF CLI headless theo data-paths.md — chạy nền + bọc `caffeinate -i` (chống máy sleep); trong lúc crawl làm các khu vực không cần crawl (curl, robots, sitemap, PSI, log). Crawl xong → 🔴 **completeness check** (đếm Status 0/Connection Timeout — cao thì mọi số đếm ghi caveat "cận dưới") → parse CSV bằng script (DuckDB/awk), phân loại vào khu vực. B-file: user có crawl sẵn → `--load-crawl` + export (không đụng server). B-manual: đưa user danh sách export (cột per khu vực trong data-paths.md) → nhận CSV/paste.
+- **Path B**: chạy SF CLI headless theo data-paths.md (SF 24.3, lệnh chạy thật 18/10 có `--bulk-export` inlinks 3xx/4xx cho Bước 3c) — chạy nền + bọc `caffeinate -i` (chống máy sleep); trong lúc crawl làm các khu vực không cần crawl (curl, robots, sitemap, PSI, log). Crawl xong → 🔴 **completeness check** (đếm Status 0/Connection Timeout — cao thì mọi số đếm ghi caveat "cận dưới") → parse CSV bằng script (DuckDB/awk), phân loại vào khu vực. Link Score trống khi chạy headless: tính PageRank nội bộ bằng `scripts/pagerank.py` (data-paths.md mục Bẫy khi chạy headless). B-file: user có crawl sẵn → `--load-crawl` + export (không đụng server). B-manual: đưa user danh sách export (cột per khu vực trong data-paths.md) → nhận CSV/paste.
 - **Path C**: chạy checklist manual per URL mẫu; ghi rõ giới hạn coverage trong report.
+- **Nhánh GSC 90 ngày** (chạy kèm mọi Path khi có quyền API): kéo cửa sổ, chuỗi tuần, query × trang, URL Inspection; chạy `scripts/gsc_clean.py` trước khi đếm (bỏ dòng jump link `#ftoc-…`, cờ bảng bị cắt ở 25.000 dòng); đọc theo luật `num=100` và query bất thường; phân rã nguyên nhân giảm; so query của cặp trang bằng `scripts/gsc_pairs.py overlap` (local); Jev `gsc-topical-fit`, `gsc-cannibal-pair` ở chế độ chữ theo [references/gsc-90-ngay.md](references/gsc-90-ngay.md). Dữ liệu GSC chỉ xử lý local: chạy `gsc_pairs.py check` trên file input trước khi gọi Jev. Manual actions và Security issues: nhờ user kiểm tay trên GSC.
 - Mọi data point ghi kèm **nguồn + ngày lấy** (vd "Ahrefs Site Audit crawl 2026-07-05", "GSC screenshot user cung cấp 2026-07-07").
+- 🔴 **URL sạch khi kiểm robots và canonical.** Không gắn query (`?nc=`, `?utm_*`) để né cache: theme và plugin SEO hay trả noindex cho URL có query. Cần bản chưa cache thì đổi header hoặc User-Agent. Tham số trong `cache-exc_qs` chỉ dùng đo tốc độ, không dùng đo robots. URL có query chỉ dùng để xác nhận noindex. Sau khi purge cache, kiểm 5 biến thể của URL sạch bằng `skills/wp-pagespeed/scripts/cache_variants.py`.
 
 ### Bước 3 — Audit theo 7(+1) khu vực
 
@@ -88,6 +105,8 @@ Chạy checklist từng khu vực theo references/audit-checklist-by-area.md:
 7. **HTTPS & Mobile** — http/https = 2 entity riêng, 12 items HTTPS, mobile parity.
 8. *(chỉ khi site đa ngôn ngữ)* **International/hreflang** — tier-3 SOP mục 10 + 4 nguyên tắc [[syntheses/Multilingual SEO]]; nuance [[Hreflang PageRank Sharing]]: thiếu hreflang có thể là chủ đích khi alternates chưa đủ chất lượng — hỏi trước khi flag ❌.
 
+Site WordPress dùng Rank Math, audit chạm index chuyên mục, thẻ hoặc phân trang (khu vực 2, 3, 4): đọc [references/index-chuyen-muc-rank-math.md](references/index-chuyen-muc-rank-math.md). Đo bằng `scripts/index_probe.py`: lệnh `probe` cho robots, canonical, `<loc>`; lệnh `paged` so trang 1 với trang 2.
+
 Mỗi item chấm **checklist-status** (trung thành mô hình template — KHÔNG bịa thang điểm số):
 
 | Status | Nghĩa |
@@ -96,6 +115,24 @@ Mỗi item chấm **checklist-status** (trung thành mô hình template — KHÔ
 | ⚠️ CẦN XEM | Gần ngưỡng / evidence chưa đủ kết luận |
 | ❌ FAIL | Vi phạm tiêu chí, có evidence |
 | ⬜ THIẾU DATA | Không có data (vd không có GSC) — ghi cách lấy |
+
+### Bước 3c — Nguồn của link hỏng
+
+Với mỗi đích 3xx, 4xx trong crawl, tìm nơi chứa link để sửa tận gốc. Đọc [references/nguon-link-va-schema.md](references/nguon-link-va-schema.md) §1.
+
+1. Đếm và tách lớp: `python3 skills/technical-seo-audit/scripts/link_sources.py summarize --inlinks <3xx inlinks> --inlinks <4xx inlinks> --site <domain> --out-dir <W>/links`.
+2. Nếu có hồ sơ server, chạy `scripts/find_sources.php` bằng WP-CLI với chuỗi trong `patterns.txt`, rồi `link_sources.py sources`. Không có hồ sơ server thì ghi "chưa tìm nguồn trong DB" và dừng nhánh này.
+3. Tìm chuỗi còn thiếu trong file theme, mu-plugin bằng `rg` trên server (chỉ đọc).
+4. Ghi cột "Nguồn" vào fix list: ID bài, template Elementor, menu item, trường ACF, usermeta hoặc file theme.
+
+### Bước 3d — Schema khớp nội dung hiển thị
+
+Kiểm khối schema cần nội dung hiển thị: FAQPage, QAPage, HowTo, Review, AggregateRating, Offer, VideoObject. Đọc [references/nguon-link-va-schema.md](references/nguon-link-va-schema.md) §2.
+
+1. Trích và kiểm tất định: `schema_visible.py extract`.
+2. Gửi khối FAQ, Q&A, review chưa chốt cho Jev: `schema_visible.py prepare` rồi `tools/ai-assist/jev.py --task skills/technical-seo-audit/tasks/schema-visible.json`.
+3. Ghép qua cổng: `schema_visible.py decide --fail-gate <cổng registry>`. Registry chưa có cổng thì bỏ `--fail-gate`: Claude đọc mọi khối chưa chốt.
+4. Đưa khối FAIL vào khu vực Semantic Markup của báo cáo và route sửa markup sang `schema-markup-generator`.
 
 ### Bước 4 — Xếp priority fix
 
@@ -109,6 +146,8 @@ Xếp mọi ❌/⚠️ theo impact (tinh thần case "in ấn catalog" docx §3.
 | **P3 — tối ưu nhỏ** | Brotli, preload, font, ảnh >100KB, minify | HTML chưa minify |
 
 Mỗi fix ghi: lỗi → evidence (URL/số liệu + nguồn) → hành động cụ thể → người làm (dev/SEO/content) → **Falsifiability**: "làm sao biết nếu khuyến nghị này sai?" + leading indicator theo dõi sau fix (metric + nguồn + khung thời gian — vd 301 prefix cũ → GSC Crawl Stats 404 theo prefix giảm ≥80% trong 4 tuần; không giảm = chẩn đoán sai nguồn 404, xét lại).
+
+Fix có 301 hoặc 410: chọn đích theo `skills/content-inventory-audit/references/bo-bai.md` và rubric Jev `redirect-pick` (`tools/ai-assist/tasks/redirect-pick.json`). Skill này không chép quy trình chọn đích. Skill này kiểm phần kỹ thuật của đích: trả 200, index, canonical tự trỏ, không chuỗi redirect. Sau khi ghi, lần lại chuỗi redirect của cả `/page/N/` thuộc chuyên mục cũ.
 
 ### Bước 4b — Whole-site Health Score (0-100)
 
@@ -142,13 +181,26 @@ Khu vực 4 mặc định chỉ VALIDATE. Khi user yêu cầu generate → sinh 
 1. **Lọc URL đủ chuẩn** (tiêu chí = chính checklist 4.1–4.3): chỉ giữ URL HTML 200, indexable, self-canonical. LOẠI: noindex · redirect (3xx) · non-canonical · 4xx/5xx · blocked-by-robots · trang noindex-chủ-đích (thank-you, cart, search nội bộ — 3.8).
 2. **Segment theo loại page** khi site lớn (> ~5.000 URL hoặc cấu trúc rõ): sitemap index + file con product/category/blog/static — đồng thời phục vụ trace tỷ lệ index per khu vực (4.5, 2.10). Giới hạn per file: ≤50.000 URL / ≤50MB (Bảng ngưỡng).
 3. **Bảng diff "crawled-vs-sitemap"** (bắt buộc kèm output): (a) URL indexable trong crawl nhưng THIẾU trong sitemap hiện tại; (b) URL trong sitemap hiện tại nhưng FAIL chuẩn (non-200/noindex/non-canonical/redirect) — mỗi dòng kèm lý do loại.
-4. **Deliverable:** file `sitemap*.xml` + bảng diff → giao dev/CMS review rồi mới upload + submit GSC (4.7). Skill KHÔNG tự đẩy file lên server. `<lastmod>` chỉ ghi khi có ngày thật (CMS/crawl) — không bịa; bỏ `changefreq`/`priority` (Google ignore).
+4. **Deliverable:** file `sitemap*.xml` + bảng diff → giao dev/CMS review rồi mới upload + submit GSC (4.7) theo [references/gsc-ghi.md](references/gsc-ghi.md); người duyệt duyệt từng lần nộp. Skill KHÔNG tự đẩy file lên server. `<lastmod>` chỉ ghi khi có ngày thật (CMS/crawl) — không bịa; bỏ `changefreq`/`priority` (Google ignore).
 
 ### Bước 5 — Render report & trả file
 
 - Render theo skeleton ở mục Output.
 - Đặt tên: `<client>_Technical-SEO-Audit_v1.md` → tài liệu nội bộ «<project>» (ngoài repo, hỏi Lead/Vincent) (tăng `_v2` nếu trùng). Audit nội bộ GTV/TAG → hỏi user nơi trả nếu chưa rõ.
 - Kết report: đề xuất re-audit sau khi fix P0/P1 (validate qua GSC + re-crawl).
+
+### Tự phản biện trước khi trình
+Chấm bản nháp theo checklist "Bản tốt nhất phải có". Mục chưa đạt thì sửa, hoặc ghi lý do bỏ. Nếu có output của Codex hay agent khác cho cùng việc, so từng mục và lấy phần tốt hơn trước khi trình Vincent.
+
+Bản tốt nhất phải có:
+- [ ] Số đếm từ crawl có completeness check (Status 0, timeout) và đã tách nút chia sẻ, widget chat khỏi redirect nội bộ. Nguồn lỗi: crawl 10/07/2026 bị shared hosting chặn ở 29%; site mẫu 18/10, 756/4.544 inlink tới redirect là Zalo và Messenger.
+- [ ] Robots và canonical kết luận từ URL sạch. Phân trang đề xuất index có số link chỉ ở trang 2 từ `index_probe.py paged`. Nguồn lỗi: site agency mẫu 18/10, đề xuất v1 báo 35 trang noindex, thực tế 35/35 index, vì URL đo gắn `?nc=`; lượt so trang 17/10 ra md5 rỗng `d41d8cd9` vì bộ trích hỏng.
+- [ ] Mỗi link hỏng trong fix list có cột nguồn (bài, Elementor, menu, ACF, usermeta, file theme), tìm cả bản `\/` của Elementor. Nguồn lỗi: site mẫu 18/10, chuỗi thường không thấy `_elementor_data`, link tác giả nằm ở usermeta.
+- [ ] Số GSC đã bỏ dòng `#ftoc-…` và đã kiểm cờ 25.000 dòng. Nguồn lỗi: site mẫu 18/10, 6.702/25.000 dòng là jump link, lượt hiển thị một truy vấn bị thổi gấp 4,8 lần.
+- [ ] Schema đã đối chiếu với nội dung hiển thị: FAQ, review, video, giá. Nguồn lỗi: site mẫu 19/10 khai VideoObject nhưng trang không nhúng video.
+- [ ] Input Jev ở nhánh GSC chỉ có chữ công khai của trang, đã qua `gsc_pairs.py check`. Nguồn lỗi: v1.7 gửi `shared_queries` và `top_queries` lấy từ GSC cho Jev.
+- [ ] Đề xuất gộp hoặc 301 từ nhánh GSC đã kiểm SERP. Nguồn lỗi: audit GSC 17/10 đề xuất gộp 5 cặp, 3 cặp có SERP trùng 0–1/10.
+- [ ] Mỗi fix có điều kiện sai và chỉ báo theo dõi; fix ghi lên site đi qua `wp-content-review-apply`. Nguồn lỗi: v1.4, khuyến nghị "tối ưu thêm" không kiểm được.
 
 ## Bảng ngưỡng (whitelist — nguồn bắt buộc)
 
@@ -244,6 +296,7 @@ Khu vực 4 mặc định chỉ VALIDATE. Khi user yêu cầu generate → sinh 
 - ❌ Đưa ngưỡng theo site type (ecom vs blog) như chuẩn đã chốt — đang là Open Question, phải ghi rõ "chưa có ngưỡng GTV chốt".
 - ❌ Audit backlink/content/schema rồi "tiện tay" đề xuất fix — route sang skill anh em.
 - ❌ Kiểm tra/đề xuất llms.txt như audit item — không bot nào request nó (Google không dùng; GPTBot/ClaudeBot/PerplexityBot bỏ qua); kiểm soát AI crawler = robots.txt (wiki [[GEO]], thống nhất guardrail geo-content-optimization).
+  - Ngoại lệ (18/10/2026): `/llms.txt` tĩnh đặt để đạt audit `llms-txt` của hạng mục "Duyệt web bằng tác nhân" trên PSI (skill `wp-pagespeed`). Không chấm file này là audit item SEO hay GEO.
 - ❌ Bán CWV như ranking lever chính — Google coi là tie-breaker (wiki [[Core Web Vitals]] Open Question, chưa có evidence độc lập); frame lợi ích theo [[Cost of Retrieval]].
 - ❌ Flag "thiếu hreflang" thành lỗi mặc định khi alternates chưa đủ chất lượng — hreflang share signal 2 chiều, delay có thể là chủ đích ([[Hreflang PageRank Sharing]]).
 - ❌ Kết luận số đếm (orphan, ảnh, duplicate) từ crawl không hoàn chỉnh mà không ghi caveat — check Status 0/Timeout % trước, số từ crawl thiếu là "cận dưới".
@@ -252,12 +305,25 @@ Khu vực 4 mặc định chỉ VALIDATE. Khi user yêu cầu generate → sinh 
 - ❌ So sánh Health Score giữa 2 kỳ khác Path/coverage/trọng số — score chỉ so sánh được khi cùng điều kiện tính; báo score khi chưa qua data-tier gate.
 - ❌ Generate sitemap từ crawl chưa qua completeness check hoặc từ Path C — sitemap thiếu URL tệ hơn không generate; tự upload sitemap lên server thay vì giao dev review.
 - ❌ Khuyến nghị không falsifiable ("cải thiện chất lượng", "tối ưu thêm") — không có leading indicator đo được thì không vào fix list.
+- ❌ Cộng số GSC theo trang khi còn dòng jump link `#…`; tin bảng query × trang đúng 25.000 dòng là đủ.
+- ❌ Tìm nguồn link chỉ trong `post_content`, bỏ `_elementor_data` (dấu `\/`), menu, ACF, usermeta và file theme.
+- ❌ Tin nhãn Jev `schema-visible` dưới cổng, hoặc gửi Jev khối HowTo, rating, giá.
+- ❌ Gửi query, clicks, impressions của GSC cho Jev (`shared_queries`, `top_queries`, `gsc-intent-match`) → Jev chỉ nhận chữ trang; so query bằng code hoặc Gemma local.
+- ❌ Kết luận robots hoặc canonical từ URL có query (`?nc=`, `?utm_*`) → đo URL sạch, né cache bằng header hoặc User-Agent.
+- ❌ Cho index trang phân trang khi chưa so danh sách trang 2 với trang 1, hoặc đo robots trên staging đang ép noindex toàn site.
+- ❌ Đọc thư mục cấu hình `~/.ScreamingFrogSEOSpider/` → lộ token connector; kiểm licence bằng hash.
+- ❌ Báo hạng PageRank từ lượt tính tạm hoặc không ghi bộ lọc nút → tính bằng `pagerank.py`, ghi số nút.
 
 ## References & wiki
 
 **References trong skill:**
 - [references/audit-checklist-by-area.md](references/audit-checklist-by-area.md) — checklist chi tiết 7(+1) khu vực: check · cách kiểm · tiêu chí ĐẠT · nguồn · priority.
-- [references/data-paths.md](references/data-paths.md) — map Path A (Ahrefs site-audit MCP + seo-audit-tool) / Path B (cột Screaming Frog) / Path C (manual chỉ-có-URL).
+- [references/data-paths.md](references/data-paths.md) — map Path A (Ahrefs site-audit MCP + seo-audit-tool) / Path B (cột Screaming Frog) / Path C (manual chỉ-có-URL). Path B có mục bẫy khi chạy headless và PageRank tự tính.
+- [references/gsc-90-ngay.md](references/gsc-90-ngay.md) — nhánh GSC qua API: lệnh `tools/gsc/gsc.sh`, luật đọc số, bẫy jump link và 25.000 dòng, phân rã nguyên nhân giảm, đợt tụt theo nhóm, cơ hội, 2 rubric Jev chế độ chữ, so query local bằng `gsc_pairs.py` (`tools/ai-assist/`).
+- [references/nguon-link-va-schema.md](references/nguon-link-va-schema.md) — Bước 3c tìm nguồn link hỏng (SF inlinks, `find_sources.php`, `rg` theme) và Bước 3d schema khớp nội dung hiển thị (luật + Jev `schema-visible`, cổng, bẫy bộ trích).
+- [references/index-chuyen-muc-rank-math.md](references/index-chuyen-muc-rank-math.md) — Rank Math: option robots và sitemap của chuyên mục, hàm theme tự noindex, bảng quyết định chuyên mục, thẻ, phân trang, đo bằng `index_probe.py`, thử staging bằng mu-plugin tạm, ghi production, chẩn đoán schema Rank Math tắt.
+- [references/gsc-ghi.md](references/gsc-ghi.md) — nộp sitemap qua API (quyền Full user, PUT trả 204, kiểm `lastSubmitted`), việc API không làm được, bẫy đọc.
+- `scripts/` — `schema_visible.py`, `link_sources.py`, `find_sources.php`, `gsc_clean.py`, `gsc_pairs.py`, `index_probe.py`, `pagerank.py`, `robots-public-test.php` (mu-plugin tạm cho staging); test offline `tests/test_scripts.py`. `tasks/schema-visible.json` — rubric Jev.
 
 **Ground truth nội bộ:**
 - [[sources/seo-audit-template-toan-dien-2025-gtv]] — source page của template 22 sheet (file gốc: `raw/_ingested/SEO Audit Template (audit toàn diện) - Update 3.2025.xlsx`).
@@ -271,11 +337,17 @@ Khu vực 4 mặc định chỉ VALIDATE. Khi user yêu cầu generate → sinh 
 
 ## Changelog
 
+- **v1.9 (2026-10-25, tech-1):** reference `index-chuyen-muc-rank-math.md` (option Rank Math, hàm theme tự noindex, bảng quyết định chuyên mục và phân trang, thử staging, schema tắt) và `gsc-ghi.md` (nộp sitemap bằng service account); script `index_probe.py`, `pagerank.py`, mu-plugin tạm `robots-public-test.php`, 11 test mới; luật URL sạch khi kiểm robots; bẫy SF headless trong `data-paths.md`; checklist 3.6 thêm ngoại lệ phân trang giả; chọn đích 301/410 trỏ sang `content-inventory-audit`.
+- **v1.8.2 (2026-10-19):** rút description còn 267 ký tự. Thay tên khách thật ở changelog v1.2, `references/data-paths.md` và `references/audit-checklist-by-area.md` bằng "site khách shared hosting" để master trung lập.
+- **v1.8.1 (2026-10-19):** mục 3.7 checklist trỏ tới `internal-linking` `link-js.md` §7 (dạng mã link của filter, sắp xếp, phân trang).
+- **v1.8.0 (2026-10-19):** Bước 0 kiểm tool; SF 24.3 headless; Bước 3c nguồn link hỏng (`link_sources.py`, `find_sources.php` có bản `\/` và usermeta); Bước 3d schema khớp nội dung hiển thị (rubric Jev `schema-visible` hiệu chuẩn gold mù 140 khối); `gsc_clean.py` bỏ dòng `#ftoc` và cờ 25.000 dòng; phân việc model; tự phản biện; test offline; nhánh GSC: Jev chỉ nhận chữ trang (`gsc-cannibal-pair`, `gsc-topical-fit` chế độ chữ, kiểm lại trên gold 17/10), so query bằng `gsc_pairs.py` hoặc `retrieval-lab route`, bỏ `gsc-intent-match`.
+- **v1.7.1 (2026-10-18):** ghi ngoại lệ `/llms.txt` cho audit `llms-txt` của PSI (hạng mục "Duyệt web bằng tác nhân"): được đặt, không tính là đòn bẩy GEO.
+- **v1.7 (2026-10-17):** thêm nhánh GSC 90 ngày qua API (`references/gsc-90-ngay.md`, `tools/gsc/gsc.sh`) từ một audit thật 17/10: cửa sổ + chuỗi tuần có mốc cập nhật Google, luật `num=100` và query bất thường, phân rã nguyên nhân giảm, đợt tụt theo nhóm chủ đề, 3 rubric Jev gsc-* có ngưỡng (`tools/ai-assist/`); Bước 0 kiểm `gsc.sh sites` trước khi hỏi export. Sửa title, meta, link sau audit: `wp-content-review-apply`.
 - **v1.6 (2026-08-29, Vincent duyệt 29/08 — FINDINGS 22/08 §6-H):** item **4.13 AI bot access** và **1.17 AI crawler hits** nâng lên **P0 khi GEO Readiness verdict = Chuẩn hoá hoặc HĐ có KPI GEO** (= gate G-T1 GE-02 của `tier-1-geo.md` v2.0.2; search + user-triggered bot bị chặn → dừng lớp GEO trước khi audit chunk), giữ P1/P2 cho dự án SEO thường; thêm evidence first-party +111% pageview kênh AI Assistant sau khi mở bot (n=1, nhãn D, ẩn danh); trỏ bot-purpose matrix canonical `lop-geo-v2.md` §G1; bảng route "AX1-AX5" → AX1-AX7 + ghi rõ 4.13/1.17 là pre-flight input cho `geo-content-optimization` Bước 0.
 - **v1.5 (2026-08-21):** thêm item 1.18 Markdown for Agents (Cloudflare) — ADVANCED/opt-in P3, measure-first (Vincent duyệt 21/08: "bỏ vào checklist cũng được, tuy nhiên cần đo lường độ hiệu quả kỹ hơn"): curl check content negotiation + đếm markdown-requests trong log làm baseline, 2 gate (Content-Signal policy review + fail-silent limits), KHÔNG bán như GEO lever. Nguồn: Batch 39 wiki (Cloudflare official + Suganthan 44-day n=1).
 
 - **v1.4 (2026-07-19):** INTEGRATE từ gap-audit claude-seo (repo 11.7k★, đã phân loại INTEGRATE): (1) **Whole-site Health Score 0-100** (Bước 4b) — điểm khu vực (✅+0,5×⚠️)/(✅+⚠️+❌) × trọng số baseline GTV (điều chỉnh theo dự án), data-tier gate (chỉ Path A/B + completeness check, khu vực >50% ⬜ loại + redistribute), cờ P0 đi kèm score, luật so sánh giữa kỳ T1→T4→T7; (2) **Sitemap GENERATE mode** (`$SITEMAP_MODE=generate`, Bước 4c) — lọc URL theo chuẩn 4.1–4.3 (loại noindex/redirect/non-canonical/4xx-5xx), segment product/category/blog khi site lớn, bảng diff crawled-vs-sitemap bắt buộc, không tự upload; (3) **Falsifiability field** per finding — gate #5 + cột mới trong fix list + leading indicator sau fix. Output skeleton: thêm Health Score (mục 1), cột Điểm khu vực (mục 2), cột Falsifiability (mục 4), mục 7 sitemap. Metadata version đồng bộ lại theo changelog (drift 1.2/1.3 cũ).
 - **v1.3 (2026-07-13, P0 remediation LINT-2026-005):** (1) bỏ blanket claim "AI crawler không render JS" → re-label `observational` (vendor docs không cam kết) ở khu vực 6 + item 6.5; (2) thêm **bot-purpose matrix** search/training/user-triggered (OAI-SearchBot·GPTBot·ChatGPT-User / Claude-SearchBot·ClaudeBot·Claude-User / PerplexityBot·Perplexity-User / Google-Extended) theo crawler docs chính chủ; (3) fix 1.17: Google-Extended không có UA riêng trong log (chỉ là robots token, chặn không ảnh hưởng Google Search) + training-bot hits không phải AI-visibility KPI.
-- **v1.2 (2026-07-10):** đúc kết từ lần chạy thật đầu tiên (chanlongpickleball.com): (1) Path B tốc độ mặc định 2 threads/2–3 URL/s + dấu hiệu server chặn giữa crawl + completeness check bắt buộc (Status 0/Timeout → caveat "cận dưới"); (2) Path **B-file** `--load-crawl` (user crawl GUI, Claude load + export không đụng server — bộ export names verified v23.3); (3) checklist mới: chữ ký PHP session giết cache ở 5.9 (PHPSESSID + Expires 1981 + no-store; nghi phạm YITH/Woo plugins), 404-pattern-theo-prefix = đổi URL structure không 301 ở 1.1, pagination canonical về trang 1 ở 3.6, đọc By Googlebot type + JS/CSS `?ver=` ở 1.6; (4) GSC Crawl Stats qua Google Sheets + gws (strip dòng keyring trước parse) + các phép phân tích chuẩn; (5) PSI có key trong `.agent-secrets/.env`, nuance site-không-CrUX chấm bằng lab ghi rõ nguồn; (6) `tools/gsc/gsc.sh` = Path A+ (pending OAuth consent); (7) anti-patterns mới: số đếm từ crawl thiếu, redirect gộp share links, TTFB lab đơn lẻ.
+- **v1.2 (2026-07-10):** đúc kết từ lần chạy thật đầu tiên (site khách shared hosting, 10/07/2026): (1) Path B tốc độ mặc định 2 threads/2–3 URL/s + dấu hiệu server chặn giữa crawl + completeness check bắt buộc (Status 0/Timeout → caveat "cận dưới"); (2) Path **B-file** `--load-crawl` (user crawl GUI, Claude load + export không đụng server — bộ export names verified v23.3); (3) checklist mới: chữ ký PHP session giết cache ở 5.9 (PHPSESSID + Expires 1981 + no-store; nghi phạm YITH/Woo plugins), 404-pattern-theo-prefix = đổi URL structure không 301 ở 1.1, pagination canonical về trang 1 ở 3.6, đọc By Googlebot type + JS/CSS `?ver=` ở 1.6; (4) GSC Crawl Stats qua Google Sheets + gws (strip dòng keyring trước parse) + các phép phân tích chuẩn; (5) PSI có key trong `.agent-secrets/.env`, nuance site-không-CrUX chấm bằng lab ghi rõ nguồn; (6) `tools/gsc/gsc.sh` = Path A+ (pending OAuth consent); (7) anti-patterns mới: số đếm từ crawl thiếu, redirect gộp share links, TTFB lab đơn lẻ.
 - **v1.1 (2026-07-10):** (1) lớp AI-crawler readiness: check 4.13 robots per-bot + 1.17 log AI hits + ngưỡng TTFB AI gate + note 6.5 "AI không render JS" + anti-patterns llms.txt / CWV tie-breaker; (2) khu vực 8 nạp WHY: [[Hreflang PageRank Sharing]] (gate nuance — delay hreflang chủ đích hợp lệ) + 4 nguyên tắc [[syntheses/Multilingual SEO]] (item 8.5); (3) Path B nâng thành SF CLI headless tự động (v23.3 verified trên máy, 🔴 full-crawl mặc định — không giới hạn URL, quyết định Vincent 07/2026), B-manual thành fallback; (4) Semrush Site Audit MCP = Path A-alt; (5) Fonts 5.8 theo heuristic "4 câu bắt 80%" [[Font File Optimization]]; (6) cite [[Core Web Vitals]] + [[HTML Normalization]] (cross-flag Website Functions); (7) ghi chú Playwright optional (cài 1 lần) + fallback Firecrawl MCP cho rendered DOM.
 - **v1.0 (2026-07-07):** khởi tạo — khung xương từ template audit nội bộ 3.2025 (xlsx 22 sheet) + docx giải thích The AI Growth; cross-ref tier-3-technical-advance SOP làm canonical speed/CWV; lớp WHY từ wiki Koray (CoR, Index Pollution, Status Codes, Ranking Signal Consolidation); cập nhật chuẩn hiện hành từ Google docs (CWV/INP 03-2024, GSC Page indexing taxonomy, sitemap 50MB, redirect ≤10 hops, crawl budget gate ~10k trang, JS rendering 3-phase).

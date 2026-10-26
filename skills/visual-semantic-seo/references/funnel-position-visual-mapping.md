@@ -247,12 +247,14 @@ Each funnel position has **distinct visual emphasis** that prioritizes the right
 
 ## Word Density by Funnel Position
 
-| Position | Word density | Reasoning |
+Độ dài trang theo contextual coverage: đủ attribute mà query network của trang cần trả lời. Không đặt số từ cố định theo funnel. Bảng dưới chỉ là hướng độ sâu tương đối.
+
+| Position | Độ sâu tương đối | Reasoning |
 |---|---|---|
-| TOFU | 5000-10000 words | Education needs depth |
-| MOFU | 2000-4000 words | Decision support, not over-education |
-| BOFU | 1000-2000 words | Friction reduction, action focus |
-| Hybrid | 4000-7000 words | Multi-purpose needs varied density |
+| TOFU | Sâu nhất: đủ attribute để giải thích chủ đề | Education needs depth |
+| MOFU | Vừa: attribute phục vụ so sánh và quyết định | Decision support, not over-education |
+| BOFU | Gọn: attribute phục vụ hành động | Friction reduction, action focus |
+| Hybrid | Theo từng persona zone | Multi-purpose needs varied density |
 
 ---
 
@@ -386,7 +388,7 @@ For each page, verify funnel position alignment:
 - [ ] Hero matches funnel position (illustration/comparison/action)
 - [ ] CTA style matches funnel position (soft/comparison/action)
 - [ ] Element ratios match expected for funnel position
-- [ ] Word density matches expected for funnel position
+- [ ] Độ sâu khớp vị trí funnel (theo attribute, không theo số từ)
 - [ ] Visual pacing matches funnel position
 - [ ] Trust signals appropriate for funnel position
 - [ ] Live functions present where required (BOFU/Hybrid)

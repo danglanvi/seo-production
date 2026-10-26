@@ -64,6 +64,9 @@ Priority = If Gap > 80%: CRITICAL, > 50%: HIGH, > 30%: MEDIUM, else LOW
 
 ## Analysis Workflow
 
+### Bước 0 — kiểm tool
+Chạy "python3 tools/capabilities.py check --need 'python3,firecrawl?,dataforseo?,ahrefs?'" từ root repo. Nếu thiếu tool bắt buộc, dừng và báo tên tool. Nếu thiếu tool tuỳ chọn, dùng fallback ghi trong "tools/capabilities.md".
+
 ### Step 1: Data Collection & Classification
 
 Classify URLs into page types based on URL patterns and content:

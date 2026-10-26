@@ -1,0 +1,29 @@
+{
+  "name": "timeframe-claim",
+  "version": "2026-10-19.1",
+  "questions": {
+    "kind": {
+      "type": "choice",
+      "instructions": "state.sentence is one sentence from state.page on the website of state.site_profile. state.heading is the nearest heading or the FAQ question, and state.context is the surrounding block. When the sentence contains a duration, the marker ⟦...⟧ wraps it. The text may be Vietnamese or English. Decide what kind of time statement the sentence makes.",
+      "criteria": {
+        "result_time": "The sentence says how long it takes, or took, before SEO, GEO or marketing work shows results: rankings, top positions, traffic, leads, revenue, indexing, AI citations or reaching KPIs. Example: SEO needs 3-6 months to show results; after 8 months the website reached top 10.",
+        "contract_term": "The sentence states the length or the minimum length of a contract, a commitment, a warranty, a guarantee or a support period. Example: a 12-month contract; rankings are kept under warranty for 3 months after the project ends.",
+        "service_cycle": "The sentence states the length of a service package, a project, a roadmap, a phase or a delivery schedule, and does not say when results appear. Example: Starter package from 350 million for 8-12 months; phase 1 covers the first 2 months; an audit takes 2-6 weeks.",
+        "other_time": "The sentence contains a duration about something else: years of experience or operation, course length, a free trial, a billing period, how often to repeat a task, history or a personal story.",
+        "not_time": "The sentence states no duration and no timing.",
+        "unknown": "The text does not show what the duration is about."
+      }
+    },
+    "owner": {
+      "type": "choice",
+      "instructions": "Decide whose statement this is. The website owner is the SEO agency described in state.site_profile.",
+      "criteria": {
+        "gtv_offer": "The website owner states its own service terms, or tells buyers how long its service takes or how fast its clients will see results. This includes FAQ answers, package tables and promises on its service pages.",
+        "gtv_case": "A past result or a past timeline of one specific client, case study or project of the website owner, or of the owner's own website.",
+        "general_seo_fact": "General advice or industry knowledge about SEO, GEO, marketing or business that is not a promise by the website owner. Example: SEO usually takes 3-6 months; avoid agencies that promise top 1 in 2 weeks.",
+        "third_party": "The statement is about another company, a tool, a platform, Google, another training provider or a person outside the website owner.",
+        "unknown": "The text does not show whose statement it is."
+      }
+    }
+  }
+}

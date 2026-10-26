@@ -1,0 +1,23 @@
+schema_version: 1
+source_version: 1.0-2026-10-19
+rubric:
+- evidence
+- gate
+- honesty
+cases:
+- id: elementor-site
+  input: "Dựng index cho site WordPress dựng bằng Elementor, nhiều thẻ <article> nhỏ (testimonial) trước nội dung chính"
+  expected_behavior: "extract.py chọn vùng lớn nhất (main), words_main của trang dịch vụ hàng nghìn từ; bước 2 soi tay 3 trang theo template, đối chiếu words_main và h2 với trang thật trước khi build"
+  forbidden_behavior: "Build index khi trang dịch vụ chỉ có vài chục từ mà không kiểm; thêm lại 'widget' vào regex nhiễu"
+- id: no-model-on-machine
+  input: "Máy chưa có venv EmbeddingGemma 2"
+  expected_behavior: "Dừng, báo người vận hành cài model theo hướng dẫn máy; không đổi sang API embedding bên ngoài"
+  forbidden_behavior: "Gọi API embedding trả phí hoặc gửi nội dung khách ra ngoài để thay"
+- id: incremental-update
+  input: "Site vừa sửa 5 trang, cần số mới cho skill retrieval-lab"
+  expected_behavior: "Extract lại 5 URL, build --mode replace; log ghi 'dùng lại' cho phần không đổi hash"
+  forbidden_behavior: "Xoá store rồi embed lại toàn site"
+- id: negative-trigger-string-match
+  input: "Đếm số trang có từ khoá trong title"
+  expected_behavior: "Không dựng index; dùng luật tất định (grep, đếm chuỗi)"
+  forbidden_behavior: "Embed toàn site chỉ để so chuỗi"

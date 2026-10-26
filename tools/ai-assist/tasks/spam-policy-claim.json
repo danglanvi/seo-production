@@ -1,0 +1,32 @@
+{
+  "name": "spam-policy-claim",
+  "version": "2026-10-20.1",
+  "questions": {
+    "stance": {
+      "type": "choice",
+      "instructions": "state.snippet is a passage from state.page on the website of state.site_profile (an SEO agency). The marker ⟦...⟧ wraps one sentence; state.section is the H2 above it. The text before and after the marker is context only. The passage is usually Vietnamese. Decide how the marked sentence relates to search-spam or unethical SEO practices. Practices in scope: private blog networks (PBN), satellite sites built to pass links, Web 2.0 or social profile networks created at scale to pass links, buying or selling links, link exchanges, forum signature or blog comment links placed for ranking, expired or auction domains bought to pass old authority, 301-redirecting unrelated domains for their backlinks, cloaking, spun or mass auto-generated pages, keyword stuffing, fake traffic or fake clicks, and buying shared or group-buy accounts of paid SEO tools. Not in scope by default: publishing real content on third-party platforms (parasite SEO, guest content, press), creating the brand's own official profiles, ordinary link earning, outreach and disavow.",
+      "criteria": {
+        "gtv_practice_spam": "The sentence says the site owner, its author or its team does, did or recommends from own experience an in-scope practice, or shows its results as proof. Example: 'Most backlinks GTV builds use PBN', 'I created 190 social accounts to do Social Stack', 'PBN brings clear results, see the GTV SEO screenshots below'.",
+        "advice_to_reader_spam": "The sentence tells or encourages the reader to use an in-scope practice, or presents it as a normal step, cost or tool of SEO without a warning. Example: 'to save money, buy a shared Ahrefs account in a group', a cost plan line 'cost of building satellite sites', 'the metrics you need when searching for a PBN domain'.",
+        "neutral_explanation": "The sentence defines or describes an in-scope practice without recommending it and without warning against it.",
+        "warning_against": "The sentence warns against an in-scope practice, says it breaks Google guidelines, or says it can cause a penalty.",
+        "not_related": "The sentence is not about an in-scope practice. Example: an ordinary SEO tip, a tool feature, an advertising metric, a course refund rule, a brand creating its own official profiles.",
+        "unknown": "The passage does not show enough to decide."
+      }
+    },
+    "policy": {
+      "type": "choice",
+      "instructions": "Same passage as above. If the marked sentence is about an in-scope practice, decide which policy family that practice belongs to. If it is not about one, choose not_applicable.",
+      "criteria": {
+        "link_schemes": "Links made to manipulate ranking: PBN, satellite sites, Web 2.0 or social profile networks for links, bought or exchanged links, forum signature or comment links, redirecting unrelated domains for their links.",
+        "expired_domain_abuse": "Buying expired or auction domains to reuse their old authority.",
+        "scaled_content_abuse": "Mass-produced, spun or auto-generated pages with little value, or doorway pages for many cities or keywords.",
+        "cloaking_or_fake_signals": "Cloaking, sneaky redirects, fake traffic, fake clicks or CTR manipulation.",
+        "keyword_stuffing": "Repeating keywords unnaturally.",
+        "tool_terms": "Buying shared or group-buy accounts of paid SEO tools; this breaks the tool vendor's terms, not a Google policy.",
+        "not_applicable": "The sentence is not about an in-scope practice.",
+        "unknown": "The passage does not show enough to decide."
+      }
+    }
+  }
+}

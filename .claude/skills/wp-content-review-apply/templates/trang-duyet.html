@@ -1,0 +1,581 @@
+<title>Duyệt nội dung website</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: cột trái dính chứa các phần duyệt, cột phải là danh sách thẻ duyệt; thẻ meta có bản xem trước kiểu kết quả Google. */
+:root {
+  --bg: #f4f4f9;
+  --surface: #ffffff;
+  --surface-2: #eeeef6;
+  --ink: #161a30;
+  --muted: #5f647d;
+  --line: #dddeeb;
+  --accent: #4a3fd1;
+  --accent-ink: #ffffff;
+  --accent-soft: #ebe9ff;
+  --ok: #157a4f;
+  --ok-soft: #e2f3ea;
+  --warn: #9a5c0b;
+  --warn-soft: #faefda;
+  --bad: #b23a33;
+  --bad-soft: #fbe6e4;
+  --serp-title: #1a0dab;
+  --serp-url: #4d5156;
+  --serp-text: #474747;
+  --font-ui: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --r: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1120; --surface: #171a2e; --surface-2: #20243f; --ink: #e8e9f4; --muted: #a2a6c0; --line: #2d3153;
+    --accent: #9b92ff; --accent-ink: #12132b; --accent-soft: #26274e;
+    --ok: #63d29f; --ok-soft: #15342a; --warn: #f0b45c; --warn-soft: #3a2b13; --bad: #ff8c82; --bad-soft: #3e1d1c;
+    --serp-title: #9cc4ff; --serp-url: #bdc1c6; --serp-text: #c9ccd2;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1120; --surface: #171a2e; --surface-2: #20243f; --ink: #e8e9f4; --muted: #a2a6c0; --line: #2d3153;
+  --accent: #9b92ff; --accent-ink: #12132b; --accent-soft: #26274e;
+  --ok: #63d29f; --ok-soft: #15342a; --warn: #f0b45c; --warn-soft: #3a2b13; --bad: #ff8c82; --bad-soft: #3e1d1c;
+  --serp-title: #9cc4ff; --serp-url: #bdc1c6; --serp-text: #c9ccd2;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-ui); font-size: 15px; line-height: 1.55; }
+a { color: var(--accent); }
+button, input, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.wrap { max-width: 1240px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.top { border-bottom: 1px solid var(--line); background: var(--surface); }
+.top .wrap { padding-block: 28px 22px; display: grid; gap: 10px; }
+.eyebrow { margin: 0; font-family: var(--font-mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+h1 { margin: 0; font-size: clamp(24px, 3.4vw, 34px); line-height: 1.2; letter-spacing: -.01em; text-wrap: balance; }
+.lede { margin: 0; max-width: 72ch; color: var(--muted); }
+.totals { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; font-variant-numeric: tabular-nums; }
+.totals .t { display: inline-flex; gap: 6px; align-items: baseline; font-size: 14px; }
+.totals .t b { font-family: var(--font-mono); font-size: 15px; }
+.bar { flex: 1 1 260px; display: flex; height: 8px; border-radius: 99px; overflow: hidden; background: var(--surface-2); min-width: 0; }
+.bar span { display: block; height: 100%; }
+.layout { display: grid; gap: 24px; padding-block: 24px 64px; }
+@media (min-width: 920px) { .layout { grid-template-columns: 240px minmax(0, 1fr); align-items: start; } .nav { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); } }
+.nav { display: flex; flex-wrap: wrap; gap: 6px; }
+@media (min-width: 920px) { .nav { flex-direction: column; flex-wrap: nowrap; } }
+.nav button { display: flex; justify-content: space-between; align-items: center; gap: 10px; width: 100%; text-align: left; padding: 10px 12px; border: 1px solid transparent; border-radius: 8px; background: transparent; cursor: pointer; }
+@media (max-width: 919px) { .nav button { width: auto; border-color: var(--line); background: var(--surface); } }
+.nav button:hover { background: var(--surface-2); }
+.nav button[aria-current="true"] { background: var(--accent-soft); border-color: var(--accent); }
+.nav .n { font-family: var(--font-mono); font-size: 12px; color: var(--muted); white-space: nowrap; }
+.nav .n em { font-style: normal; color: var(--warn); }
+main { min-width: 0; display: grid; gap: 16px; }
+.sec-head { display: grid; gap: 10px; }
+h2 { margin: 0; font-size: 22px; line-height: 1.25; text-wrap: balance; }
+.intro { margin: 0; max-width: 78ch; color: var(--muted); }
+.optdefs { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.optdef { border: 1px solid var(--line); border-radius: var(--r); padding: 12px 14px; background: var(--surface); }
+.optdef b { display: block; margin-bottom: 4px; }
+.optdef p { margin: 0; font-size: 14px; color: var(--muted); }
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.chip { border: 1px solid var(--line); background: var(--surface); border-radius: 99px; padding: 5px 12px; font-size: 13px; cursor: pointer; font-variant-numeric: tabular-nums; }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.search { flex: 1 1 200px; min-width: 0; border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 7px 10px; font-size: 14px; }
+.btn { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 7px 14px; font-size: 14px; font-weight: 500; cursor: pointer; }
+.btn:hover { background: var(--surface-2); }
+.btn:disabled { opacity: .5; cursor: default; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.primary:hover { filter: brightness(1.08); }
+.btn.e { font-family: var(--font-mono); font-weight: 600; min-width: 42px; }
+.btn.danger { color: var(--bad); }
+.confirm { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 10px 12px; border-radius: 8px; background: var(--warn-soft); color: var(--warn); font-size: 14px; }
+.list { display: grid; gap: 12px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 16px; display: grid; gap: 12px; min-width: 0; }
+.card[data-status="approved"] { border-color: color-mix(in srgb, var(--ok) 45%, var(--line)); }
+.card[data-status="edited"] { border-color: color-mix(in srgb, var(--warn) 45%, var(--line)); }
+.card[data-status="applied"] { border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
+.card[data-status="rejected"] { opacity: .78; }
+.meta-row { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; font-size: 13px; color: var(--muted); }
+.pill { display: inline-flex; align-items: center; gap: 6px; border-radius: 99px; padding: 2px 10px; font-size: 12px; font-weight: 600; letter-spacing: .02em; }
+.pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.pill.pending { background: var(--surface-2); color: var(--muted); }
+.pill.approved { background: var(--ok-soft); color: var(--ok); }
+.pill.edited { background: var(--warn-soft); color: var(--warn); }
+.pill.applied { background: var(--accent-soft); color: var(--accent); }
+.pill.rejected { background: var(--bad-soft); color: var(--bad); }
+.tag { font-family: var(--font-mono); font-size: 12px; border: 1px solid var(--line); border-radius: 4px; padding: 0 6px; }
+.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.card h3 { margin: 0; font-size: 16px; line-height: 1.35; text-wrap: balance; }
+.url { font-family: var(--font-mono); font-size: 12.5px; overflow-wrap: anywhere; }
+.opts { display: inline-flex; flex-wrap: wrap; gap: 0; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.opts button { border: 0; border-right: 1px solid var(--line); background: var(--surface); padding: 6px 12px; font-size: 13px; cursor: pointer; }
+.opts button:last-child { border-right: 0; }
+.opts button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+.opts button:disabled { cursor: default; }
+.field { display: grid; gap: 6px; min-width: 0; }
+.fname { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; font-weight: 600; }
+.count { font-family: var(--font-mono); font-weight: 400; color: var(--muted); font-variant-numeric: tabular-nums; }
+.count.over { color: var(--bad); font-weight: 600; }
+.cmp { display: grid; gap: 10px; }
+@media (min-width: 760px) { .cmp { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+.box { border-radius: 8px; padding: 10px 12px; min-width: 0; }
+.box .lbl { display: block; font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.box p { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.same { margin: 0; font-size: 13.5px; color: var(--muted); overflow-wrap: anywhere; }
+.same .lbl { font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; margin-right: 6px; }
+.was { background: var(--surface-2); color: var(--muted); }
+.now { border: 1px solid var(--line); }
+.serp { display: grid; gap: 2px; }
+.serp-site { display: flex; gap: 8px; align-items: center; }
+.fav { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: var(--surface-2); font-size: 11px; font-weight: 700; color: var(--accent); flex: none; }
+.serp-name { font-size: 13px; line-height: 1.2; }
+.serp-url { font-size: 12px; color: var(--serp-url); line-height: 1.2; overflow-wrap: anywhere; }
+.serp-title { color: var(--serp-title); font-size: 18px; line-height: 1.3; margin-top: 4px; overflow-wrap: anywhere; }
+.serp-desc { color: var(--serp-text); font-size: 14px; line-height: 1.5; overflow-wrap: anywhere; }
+.hint { font-size: 12.5px; color: var(--muted); }
+.shot { margin: 0; }
+.shot img { display: block; width: 100%; max-width: 760px; height: auto; border-radius: 12px; border: 1px solid var(--line); background: #fff; }
+.shot figcaption { margin-top: 6px; font-size: 13px; color: var(--muted); }
+.why { margin: 0; font-size: 13.5px; color: var(--muted); }
+.why b { color: var(--ink); font-weight: 600; }
+.vnote { margin: 0; font-size: 13.5px; padding: 8px 10px; border-radius: 8px; background: var(--accent-soft); }
+.pages { margin: 0; padding-left: 18px; font-size: 13.5px; display: grid; gap: 4px; }
+textarea { width: 100%; border: 1px solid var(--accent); border-radius: 8px; padding: 9px 11px; background: var(--surface); resize: vertical; line-height: 1.5; }
+textarea.note { border-color: var(--line); }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.actions .sp { flex: 1; }
+.empty { border: 1px dashed var(--line); border-radius: var(--r); padding: 28px 20px; text-align: center; color: var(--muted); }
+.foot { font-size: 13px; color: var(--muted); max-width: 78ch; }
+.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom, 0px) + 18px); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 8px; font-size: 14px; max-width: calc(100% - 32px); z-index: 10; }
+@media (prefers-reduced-motion: no-preference) { .card { transition: border-color .2s ease; } }
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <p class="eyebrow" id="eyebrow">example.vn · bản nháp</p>
+    <h1>Duyệt nội dung trước khi đăng</h1>
+    <p class="lede">Agent soạn, bạn duyệt. Bấm <b>Duyệt</b> nếu ổn. Bấm <b>E</b> để sửa chữ trực tiếp. Bấm <b>Bỏ</b> nếu không dùng. Mỗi lựa chọn được lưu ngay. Khi bạn báo "đã duyệt" trong chat, agent đọc lại kết quả và ghi vào WordPress, có backup trước.</p>
+    <div class="totals" id="totals"></div>
+  </div>
+</header>
+<div class="wrap layout">
+  <nav class="nav" id="nav" aria-label="Các phần cần duyệt"></nav>
+  <main id="main"><div class="empty">Đang tải các mục cần duyệt…</div></main>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function () {
+  // Sửa dòng SITE cho từng site. ORDER chỉ là thứ tự mặc định: danh sách phần thật lấy từ report/summary.sections, cộng ORDER, cộng mọi tài liệu report có items (hàm sections()).
+  var SITE = { name: 'Tên thương hiệu', host: 'example.vn', initial: 'E', draft: 'bản nháp DD/MM/YYYY' };
+  var ORDER = ['rev', 'applied', 'meta', 'year', 'links', 'tech'];
+  var eb = document.getElementById('eyebrow'); if (eb) eb.textContent = SITE.host + ' · ' + SITE.draft;
+  var STATUS = { pending: 'Chờ duyệt', approved: 'Đã duyệt', edited: 'Đã sửa', applied: 'Đã áp', rejected: 'Bỏ' };
+  var RV_LIMIT = 1000, RV_WARN = 800; // Mỗi truy vấn tối đa 1000 tài liệu; cảnh báo khi một nhóm đạt 80%.
+  var EN = { ok: 'Duyệt', no: 'Bỏ', bulk: 'Duyệt tất cả mục đang chờ', st: {}, was: 'Bản tiếng Việt đang chạy', now: 'Bản tiếng Anh đề xuất' };
+  var ACT = {
+    applied: { ok: 'Giữ', no: 'Hoàn tác', bulk: 'Giữ tất cả mục đang chờ', st: { approved: 'Giữ', rejected: 'Hoàn tác' } },
+    tech: { ok: 'Duyệt làm', no: 'Không làm', bulk: null, st: { approved: 'Duyệt làm', rejected: 'Không làm' } },
+    'en-service': EN, 'en-about': EN, 'en-hcm': EN,
+    _: { ok: 'Duyệt', no: 'Bỏ', bulk: 'Duyệt tất cả mục đang chờ', st: {} }
+  };
+  var st = {
+    report: {}, reviews: {}, rvParts: [], rvWarn: null, rvSub: false, loaded: { report: false, reviews: false }, db: null, ro: false, unavailable: false,
+    section: 'meta', filter: 'all', q: '', editing: {}, drafts: {}, notes: {}, noteOpen: {}, opt: {}, confirm: null, busy: {}, pendingRender: false
+  };
+  var hash = (location.hash || '').slice(1);
+  st.section = hash || pref('section') || 'meta';
+
+  function pref(k, v) {
+    try {
+      if (v === undefined) return localStorage.getItem('wcra-' + SITE.host + '-' + k);
+      localStorage.setItem('wcra-' + SITE.host + '-' + k, v);
+    } catch (e) { return null; }
+  }
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function len(s) { return Array.from(String(s == null ? '' : s).normalize('NFC')).length; }
+  function shown(f, s) { return f.kind === 'html' ? String(s == null ? '' : s).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim() : s; }
+  function fmt(n) { return Number(n || 0).toLocaleString('vi-VN'); }
+  function act(key) { return ACT[key] || ACT._; }
+  function sec(key) { return st.report[key] || null; }
+  function items(key) { var s = sec(key); return (s && s.items) || []; }
+  // Danh sách phần: summary.sections trước, rồi ORDER, rồi mọi tài liệu report có items. Thiếu một nguồn thì phần đó không biến mất.
+  function sections() {
+    var seen = {}, out = [];
+    function add(k) { if (k && k !== 'summary' && !seen[k]) { seen[k] = 1; out.push(k); } }
+    var sum = sec('summary');
+    ((sum && sum.sections) || []).forEach(function (x) { add(x.key); });
+    ORDER.forEach(add);
+    Object.keys(st.report).forEach(function (k) { if (st.report[k] && st.report[k].items) add(k); });
+    return out;
+  }
+  // Khoá lưu của một trường. Trường đầu giữ key gốc, trường trùng key trong cùng thẻ thành key#n.
+  function fid(it, f) {
+    var fs = it.fields || [], n = 0;
+    for (var i = 0; i < fs.length; i++) {
+      if (fs[i].key === f.key) { n++; if (fs[i] === f) return n === 1 ? f.key : f.key + '#' + n; }
+    }
+    return f.key;
+  }
+  function rv(id) { return st.reviews[id] || null; }
+  function status(id) { var r = rv(id); return (r && r.status) || 'pending'; }
+  function itemOpts(key, it) { var s = sec(key); return it.options || (s && s.options) || null; }
+  function option(key, it) {
+    var r = rv(it.id), o = itemOpts(key, it);
+    if (!o) return null;
+    return (r && r.option) || st.opt[it.id] || it.default_option || o[0].key;
+  }
+  function value(key, it, f) {
+    var r = rv(it.id);
+    var fk = fid(it, f);
+    if (st.editing[it.id] && st.drafts[it.id] && fk in st.drafts[it.id]) return st.drafts[it.id][fk];
+    if (r && r.values && fk in r.values) return r.values[fk];
+    if ('proposed' in f) return f.proposed;
+    var o = option(key, it);
+    return (o && f[o] != null) ? f[o] : (f.A || '');
+  }
+  function original(key, it, f) {
+    if ('proposed' in f) return f.proposed;
+    var o = option(key, it);
+    return (o && f[o] != null) ? f[o] : (f.A || '');
+  }
+  function statusLabel(key, s) { return act(key).st[s] || STATUS[s]; }
+
+  function toast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg; t.hidden = false;
+    clearTimeout(toast._t); toast._t = setTimeout(function () { t.hidden = true; }, 4200);
+  }
+  function errMsg(e) {
+    var c = e && e.code;
+    if (c === 'invalid_argument') return 'Không lưu được: tài khoản này chỉ có quyền xem trang.';
+    if (c === 'resource_exhausted') return 'Thao tác hơi nhanh. Đợi vài giây rồi bấm lại.';
+    if (c === 'quota_exceeded') return 'Kho dữ liệu của trang đã đầy. Báo agent dọn bớt.';
+    if (c === 'revoked') return 'Quyền truy cập trang vừa thay đổi. Tải lại trang.';
+    return 'Không lưu được. Kiểm tra kết nối rồi bấm lại.';
+  }
+
+  function counts(key) {
+    var c = { total: 0, pending: 0, approved: 0, edited: 0, applied: 0, rejected: 0 };
+    items(key).forEach(function (it) { var s = status(it.id); c.total++; c[s] = (c[s] || 0) + 1; });
+    return c;
+  }
+
+  function render() {
+    var a = document.activeElement;
+    if (a && a.matches && a.matches('.card textarea, .search')) { st.pendingRender = true; renderHeader(); return; }
+    st.pendingRender = false;
+    renderHeader(); renderNav(); renderMain();
+  }
+
+  function renderHeader() {
+    var c = { total: 0, pending: 0, approved: 0, edited: 0, applied: 0, rejected: 0 };
+    sections().forEach(function (k) { var x = counts(k); Object.keys(x).forEach(function (n) { c[n] = (c[n] || 0) + x[n]; }); });
+    var el = document.getElementById('totals');
+    if (!c.total) { el.innerHTML = ''; return; }
+    var pct = function (n) { return (n / c.total * 100).toFixed(2) + '%'; };
+    el.innerHTML =
+      '<span class="t">Tổng <b>' + fmt(c.total) + '</b> mục</span>' +
+      '<span class="t" style="color:var(--muted)">Chờ <b>' + fmt(c.pending) + '</b></span>' +
+      '<span class="t" style="color:var(--ok)">Duyệt <b>' + fmt(c.approved) + '</b></span>' +
+      '<span class="t" style="color:var(--warn)">Sửa <b>' + fmt(c.edited) + '</b></span>' +
+      '<span class="t" style="color:var(--accent)">Đã áp <b>' + fmt(c.applied) + '</b></span>' +
+      '<span class="t" style="color:var(--bad)">Bỏ <b>' + fmt(c.rejected) + '</b></span>' +
+      '<span class="bar" role="img" aria-label="Tiến độ duyệt"><span style="width:' + pct(c.approved) + ';background:var(--ok)"></span><span style="width:' + pct(c.edited) + ';background:var(--warn)"></span><span style="width:' + pct(c.applied) + ';background:var(--accent)"></span><span style="width:' + pct(c.rejected) + ';background:var(--bad)"></span></span>' +
+      (st.rvWarn ? '<span class="vnote" role="alert" style="flex-basis:100%">' + (st.rvWarn.n >= RV_LIMIT ? 'Kho kết quả duyệt đã đầy một nhóm (' + st.rvWarn.n + '/' + RV_LIMIT + '), một số kết quả có thể không hiện. Báo agent chia thêm nhóm.' : 'Một nhóm kết quả duyệt đã có ' + st.rvWarn.n + '/' + RV_LIMIT + ' bản ghi. Báo agent chia thêm nhóm trước khi đầy.') + '</span>' : '');
+  }
+
+  function renderNav() {
+    var sum = sec('summary');
+    var bykey = {};
+    ((sum && sum.sections) || []).forEach(function (x) { bykey[x.key] = x; });
+    var list = sections().map(function (k) { return bykey[k] || { key: k, title: k }; });
+    document.getElementById('nav').innerHTML = list.map(function (s) {
+      var c = counts(s.key);
+      var n = s.state === 'drafting' && !c.total ? 'đang soạn' : (c.pending ? '<em>' + c.pending + '</em> / ' + c.total : c.total ? '✓ ' + c.total : '0');
+      return '<button type="button" data-act="nav" data-v="' + esc(s.key) + '" aria-current="' + (st.section === s.key) + '"><span>' + esc(s.title) + '</span><span class="n">' + n + '</span></button>';
+    }).join('');
+  }
+
+  function visible(key) {
+    var q = st.q.trim().toLowerCase();
+    return items(key).filter(function (it) {
+      var s = status(it.id);
+      if (st.filter !== 'all' && s !== st.filter) return false;
+      if (q && (String(it.url) + ' ' + String(it.label || '')).toLowerCase().indexOf(q) < 0) return false;
+      return true;
+    });
+  }
+
+  function renderMain() {
+    var main = document.getElementById('main');
+    if (st.unavailable) {
+      main.innerHTML = '<div class="empty">Trang cần mở trong claude.ai khi đã đăng nhập để đọc và lưu kết quả duyệt.</div>';
+      return;
+    }
+    if (!st.loaded.report) { main.innerHTML = '<div class="empty">Đang tải các mục cần duyệt…</div>'; return; }
+    var key = st.section, s = sec(key), sum = sec('summary');
+    var meta = ((sum && sum.sections) || []).filter(function (x) { return x.key === key; })[0] || { title: key };
+    var c = counts(key), vis = visible(key), A = act(key), h = '';
+    h += '<section class="sec-head"><h2>' + esc(meta.title) + '</h2>';
+    if (s && s.intro) h += '<p class="intro">' + esc(s.intro) + '</p>';
+    if (s && s.options) {
+      h += '<div class="optdefs">' + s.options.map(function (o) { return '<div class="optdef"><b>' + esc(o.label) + '</b><p>' + esc(o.desc) + '</p></div>'; }).join('') + '</div>';
+    }
+    if (st.ro) h += '<p class="vnote">Tài khoản này chỉ có quyền xem. Các nút duyệt đã ẩn.</p>';
+    if (c.total) {
+      h += '<div class="toolbar">';
+      [['all', 'Tất cả', c.total], ['pending', 'Chờ duyệt', c.pending], ['approved', statusLabel(key, 'approved'), c.approved], ['edited', 'Đã sửa', c.edited], ['applied', 'Đã áp', c.applied], ['rejected', statusLabel(key, 'rejected'), c.rejected]].forEach(function (f) {
+        h += '<button type="button" class="chip" data-act="filter" data-v="' + f[0] + '" aria-pressed="' + (st.filter === f[0]) + '">' + esc(f[1]) + ' · ' + f[2] + '</button>';
+      });
+      h += '<input class="search" id="q" type="search" placeholder="Lọc theo URL hoặc tiêu đề" value="' + esc(st.q) + '" aria-label="Lọc theo URL hoặc tiêu đề">';
+      h += '</div>';
+      if (!st.ro && c.pending) {
+        h += '<div class="toolbar">';
+        if (s && s.options) {
+          h += '<span class="hint">Chọn hàng loạt cho mục đang chờ:</span>' + s.options.map(function (o) { return '<button type="button" class="btn" data-act="bulkopt" data-v="' + esc(o.key) + '">' + esc(o.label) + '</button>'; }).join('');
+        }
+        if (A.bulk) h += '<button type="button" class="btn primary" data-act="bulk">' + esc(A.bulk) + ' (' + c.pending + ')</button>';
+        h += '</div>';
+        if (st.confirm === key) {
+          h += '<div class="confirm" role="alert">' + esc(A.bulk) + ': ' + c.pending + ' mục, theo phương án đang hiện trên từng thẻ. <button type="button" class="btn primary" data-act="bulkyes">Xác nhận</button><button type="button" class="btn" data-act="bulkno">Huỷ</button></div>';
+        }
+      }
+    }
+    h += '</section>';
+    if (!c.total) {
+      h += '<div class="empty">' + (meta.state === 'drafting' ? 'Chưa có mục nào. Agent sẽ thêm vào đây khi soạn xong, trang tự cập nhật.' : 'Phần này chưa có mục nào.') + '</div>';
+    } else if (!vis.length) {
+      h += '<div class="empty">Không có mục nào khớp bộ lọc.</div>';
+    } else {
+      h += '<div class="list">' + vis.map(function (it) { return card(key, it); }).join('') + '</div>';
+    }
+    h += '<p class="foot">Kết quả duyệt lưu trong kho dữ liệu riêng của trang này. Agent chỉ ghi lên WordPress những mục ở trạng thái Đã duyệt hoặc Đã sửa, đúng chữ đang hiện trên thẻ. SEO title và meta phương án A ghi biến %currentyear% của Rank Math, nên năm tự đổi theo năm hiện tại. Trường ghi "Giữ nguyên" chỉ đổi khi bạn bấm E và sửa. Nếu bạn đổi URL, agent tạo redirect 301 từ URL cũ và sửa link nội bộ trỏ tới URL đó.</p>';
+    main.innerHTML = h;
+  }
+
+  function yr(s) { return String(s == null ? '' : s).replace(/%currentyear%/g, String(new Date().getFullYear())); }
+  function fieldVal(key, it, k) { var f = (it.fields || []).filter(function (x) { return x.key === k; })[0]; return f ? value(key, it, f) : null; }
+  function serp(key, it, desc) {
+    var slug = fieldVal(key, it, 'slug'), url = slug ? slug : String(it.url || '').replace(/^https?:\/\/[^/]+/, '');
+    var path = url.replace(/\/$/, '').split('/').filter(Boolean).join(' › ');
+    var title = yr(fieldVal(key, it, 'seo_title') || it.serp_title || it.label);
+    desc = yr(desc);
+    var d = len(desc) > 160 ? Array.from(desc).slice(0, 157).join('') + '…' : desc;
+    return '<div class="serp"><div class="serp-site"><span class="fav">' + esc(SITE.initial) + '</span><div><div class="serp-name">' + esc(SITE.name) + '</div><div class="serp-url">' + esc(SITE.host) + (path ? ' › ' + esc(path) : '') + '</div></div></div>' +
+      '<div class="serp-title">' + esc(title) + '</div><div class="serp-desc">' + esc(d) + '</div></div>';
+  }
+
+  function card(key, it) {
+    var s = status(it.id), r = rv(it.id), A = act(key), ed = !!st.editing[it.id], busy = !!st.busy[it.id];
+    var opts = itemOpts(key, it), cur = option(key, it), locked = s !== 'pending' || st.ro;
+    var h = '<article class="card" data-status="' + s + '" id="c-' + esc(it.id) + '">';
+    h += '<div class="meta-row"><span class="pill ' + s + '">' + esc(statusLabel(key, s)) + '</span>';
+    if (it.kind) h += '<span class="tag">' + esc(it.kind) + '</span>';
+    if (it.lang === 'en') h += '<span class="tag">EN</span>';
+    if (it.imp != null) h += '<span class="num">' + fmt(it.imp) + ' hiển thị · ' + fmt(it.clicks) + ' click / 90 ngày</span>';
+    h += '</div>';
+    h += '<div><h3>' + esc(it.label || it.url) + '</h3><a class="url" href="' + esc(it.url) + '" target="_blank" rel="noopener">' + esc(String(it.url).replace(/^https?:\/\//, '')) + '</a></div>';
+    if (opts) {
+      h += '<div class="opts" role="group" aria-label="Phương án">' + opts.map(function (o) {
+        return '<button type="button" data-act="opt" data-id="' + esc(it.id) + '" data-v="' + esc(o.key) + '" aria-pressed="' + (cur === o.key) + '"' + (locked || ed ? ' disabled' : '') + ' title="' + esc(o.desc) + '">' + esc(o.label) + '</button>';
+      }).join('') + '</div>';
+    }
+    // Thẻ ảnh: it.img là đường dẫn tương đối của file publish kèm trang (Artifact files) hoặc URL asset.
+    if (it.img && !/^\s*(javascript|data):/i.test(it.img)) h += '<figure class="shot"><a href="' + esc(it.img) + '" target="_blank" rel="noopener"><img src="' + esc(it.img) + '" alt="' + esc(it.img_alt || '') + '" loading="lazy"' + (it.img_w ? ' width="' + esc(it.img_w) + '" height="' + esc(it.img_h) + '"' : '') + '></a>' + (it.img_cap ? '<figcaption>' + esc(it.img_cap) + '</figcaption>' : '') + '</figure>';
+    if (it.pages && it.pages.length) {
+      h += '<ul class="pages">' + it.pages.map(function (p) { return '<li><a class="url" href="' + esc(p.url) + '" target="_blank" rel="noopener">' + esc(p.url.replace(/^https?:\/\/[^/]+/, '')) + '</a> · ' + esc(p.title) + (p.imp != null ? ' · <span class="num">' + fmt(p.imp) + '</span> hiển thị' : '') + '</li>'; }).join('') + '</ul>';
+    }
+    (it.fields || []).forEach(function (f) {
+      var v = value(key, it, f), n = len(yr(v)), over = f.max && n > f.max;
+      h += '<div class="field"><div class="fname"><span>' + esc(f.name) + '</span>' + (f.max ? '<span class="count' + (over ? ' over' : '') + '" data-count="' + esc(it.id + ':' + fid(it, f)) + '">' + n + '/' + f.max + '</span>' : '') + '</div>';
+      if (ed) {
+        var rows = Math.min(14, Math.max(2, Math.ceil(n / 70) + 1));
+        h += '<div class="cmp"><div class="box was"><span class="lbl">' + esc(A.was || 'Hiện tại') + '</span><p>' + esc(shown(f, f.before)) + '</p></div><div><textarea rows="' + rows + '" data-edit="' + esc(it.id) + '" data-field="' + esc(fid(it, f)) + '" data-max="' + (f.max || 0) + '" aria-label="' + esc(f.name) + '">' + esc(v) + '</textarea></div></div>';
+      } else if (String(v).trim() === String(f.before).trim()) {
+        h += '<p class="same"><span class="lbl">Giữ nguyên</span> ' + esc(f.before) + (f.before_hint ? ' <span class="hint">' + esc(f.before_hint) + '</span>' : '') + '</p>';
+      } else {
+        var isMeta = f.key === 'meta' && (key === 'meta' || key === 'year');
+        h += '<div class="cmp"><div class="box was"><span class="lbl">' + esc(A.was || 'Hiện tại') + '</span><p>' + esc(shown(f, f.before)) + '</p>' + (f.before_hint ? '<span class="hint">' + esc(f.before_hint) + '</span>' : '') + '</div>' +
+          '<div class="box now"><span class="lbl">' + (s === 'edited' ? 'Bản bạn sửa' : key === 'applied' ? 'Đang trên site' : (A.now || 'Đề xuất')) + (isMeta ? ' · xem như trên Google' : '') + '</span>' + (isMeta ? serp(key, it, v) : '<p>' + esc(shown(f, v)) + '</p>') + (!isMeta && /%currentyear%/.test(v) ? '<span class="hint">Trên Google hiện: ' + esc(yr(v)) + '</span>' : '') + '</div></div>';
+        if (s === 'edited' && v !== original(key, it, f)) h += '<span class="hint">Bản agent đề xuất: ' + esc(original(key, it, f)) + '</span>';
+      }
+      h += '</div>';
+    });
+    if (it.note) h += '<p class="why"><b>Lý do · luồng nội dung:</b> ' + esc(it.note) + '</p>';
+    if (r && r.note && !st.noteOpen[it.id] && !ed) h += '<p class="vnote"><b>Ghi chú của người duyệt:</b> ' + esc(r.note) + '</p>';
+    if ((ed || st.noteOpen[it.id]) && !st.ro) {
+      var nv = it.id in st.notes ? st.notes[it.id] : ((r && r.note) || '');
+      h += '<textarea class="note" rows="2" data-note="' + esc(it.id) + '" placeholder="Ghi chú cho agent (không bắt buộc)" aria-label="Ghi chú cho agent">' + esc(nv) + '</textarea>';
+    }
+    if (!st.ro) {
+      h += '<div class="actions">';
+      var d = busy ? ' disabled' : '';
+      if (ed) {
+        h += '<button type="button" class="btn primary" data-act="save" data-id="' + esc(it.id) + '"' + d + '>Lưu bản sửa</button><button type="button" class="btn" data-act="cancel" data-id="' + esc(it.id) + '"' + d + '>Huỷ</button>';
+      } else if (st.noteOpen[it.id]) {
+        h += '<button type="button" class="btn primary" data-act="savenote" data-id="' + esc(it.id) + '"' + d + '>Lưu ghi chú</button><button type="button" class="btn" data-act="note" data-id="' + esc(it.id) + '"' + d + '>Đóng</button>';
+      } else if (s === 'pending') {
+        h += '<button type="button" class="btn primary" data-act="approve" data-id="' + esc(it.id) + '"' + d + '>' + esc(A.ok) + '</button>';
+        if ((it.fields || []).some(function (f) { return f.max || f.editable; })) h += '<button type="button" class="btn e" data-act="edit" data-id="' + esc(it.id) + '"' + d + ' title="Sửa chữ">E</button>';
+        h += '<button type="button" class="btn danger" data-act="reject" data-id="' + esc(it.id) + '"' + d + '>' + esc(A.no) + '</button>';
+        h += '<span class="sp"></span><button type="button" class="btn" data-act="note" data-id="' + esc(it.id) + '"' + d + '>Ghi chú</button>';
+      } else if (s === 'applied') {
+        // Thẻ đã áp lên site là lịch sử: không sửa, không đặt lại. Cần đổi thì agent tạo thẻ mới.
+        h += '<button type="button" class="btn" data-act="note" data-id="' + esc(it.id) + '"' + d + '>Ghi chú</button>';
+      } else {
+        if ((it.fields || []).some(function (f) { return f.max || f.editable; })) h += '<button type="button" class="btn e" data-act="edit" data-id="' + esc(it.id) + '"' + d + ' title="Sửa chữ">E</button>';
+        h += '<button type="button" class="btn" data-act="note" data-id="' + esc(it.id) + '"' + d + '>Ghi chú</button><span class="sp"></span><button type="button" class="btn" data-act="reset" data-id="' + esc(it.id) + '"' + d + '>Đặt lại về chờ duyệt</button>';
+      }
+      h += '</div>';
+    }
+    return h + '</article>';
+  }
+
+  function find(id) {
+    var secs = sections();
+    for (var i = 0; i < secs.length; i++) {
+      var k = secs[i], arr = items(k);
+      for (var j = 0; j < arr.length; j++) if (arr[j].id === id) return { key: k, it: arr[j] };
+    }
+    return null;
+  }
+
+  function save(key, it, s, values, note) {
+    if (!st.db || st.ro) return Promise.resolve();
+    var r = rv(it.id), opts = itemOpts(key, it);
+    var vals = values || {};
+    if (!values) (it.fields || []).forEach(function (f) { vals[fid(it, f)] = value(key, it, f); });
+    var body = {
+      section: key, item_id: it.id, url: it.url || '', label: it.label || '', status: s,
+      option: opts ? option(key, it) : null, values: vals,
+      note: note != null ? note : (it.id in st.notes ? st.notes[it.id] : ((r && r.note) || '')),
+      updatedAt: new Date().toISOString()
+    };
+    st.busy[it.id] = true; render();
+    return st.db.doc('reviews/' + it.id).set(body).then(function () {
+      delete st.editing[it.id]; delete st.drafts[it.id]; delete st.notes[it.id]; delete st.noteOpen[it.id];
+    }).catch(function (e) {
+      toast(errMsg(e));
+      if (e && e.code === 'invalid_argument') st.ro = true;
+    }).then(function () { delete st.busy[it.id]; render(); });
+  }
+
+  function handle(a, id, v) {
+    if (a === 'nav') { st.section = v; st.filter = 'all'; st.q = ''; st.confirm = null; pref('section', v); render(); window.scrollTo(0, 0); return; }
+    if (a === 'filter') { st.filter = v; render(); return; }
+    if (a === 'bulkopt') { items(st.section).forEach(function (it) { if (status(it.id) === 'pending') st.opt[it.id] = v; }); render(); return; }
+    if (a === 'bulk') { st.confirm = st.section; render(); return; }
+    if (a === 'bulkno') { st.confirm = null; render(); return; }
+    if (a === 'bulkyes') {
+      var key = st.section; st.confirm = null;
+      var todo = items(key).filter(function (it) { return status(it.id) === 'pending'; });
+      todo.reduce(function (p, it) { return p.then(function () { return save(key, it, 'approved'); }); }, Promise.resolve())
+        .then(function () { toast('Đã lưu ' + todo.length + ' mục.'); });
+      return;
+    }
+    var f = find(id); if (!f) return;
+    var k = f.key, it = f.it;
+    if (a === 'opt') { st.opt[it.id] = v; render(); return; }
+    if (a === 'approve') { save(k, it, 'approved'); return; }
+    if (a === 'reject') { save(k, it, 'rejected'); return; }
+    if (a === 'edit') {
+      var d = {}; (it.fields || []).forEach(function (fl) { d[fid(it, fl)] = value(k, it, fl); });
+      st.drafts[it.id] = d; st.editing[it.id] = true; render();
+      var ta = document.querySelector('textarea[data-edit="' + CSS.escape(it.id) + '"]'); if (ta) ta.focus();
+      return;
+    }
+    if (a === 'cancel') { delete st.editing[it.id]; delete st.drafts[it.id]; delete st.notes[it.id]; render(); return; }
+    if (a === 'save') {
+      var vals = st.drafts[it.id] || {}, changed = (it.fields || []).some(function (fl) { var q = fid(it, fl); return q in vals && vals[q].trim() !== String(original(k, it, fl)).trim(); });
+      var clean = {}; Object.keys(vals).forEach(function (x) { clean[x] = vals[x].trim(); });
+      save(k, it, changed ? 'edited' : 'approved', clean); return;
+    }
+    if (a === 'note') { st.noteOpen[it.id] = !st.noteOpen[it.id]; render(); return; }
+    if (a === 'savenote') { save(k, it, status(it.id)); return; }
+    if (a === 'reset') {
+      st.busy[it.id] = true; render();
+      st.db.doc('reviews/' + it.id).delete().catch(function (e) { toast(errMsg(e)); }).then(function () { delete st.busy[it.id]; delete st.opt[it.id]; render(); });
+    }
+  }
+
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-act]');
+    if (b && !b.disabled) handle(b.dataset.act, b.dataset.id, b.dataset.v);
+  });
+  document.addEventListener('input', function (e) {
+    var t = e.target;
+    if (t.id === 'q') { st.q = t.value; return; }
+    if (t.dataset.note) { st.notes[t.dataset.note] = t.value; return; }
+    if (t.dataset.edit) {
+      var id = t.dataset.edit, fk = t.dataset.field, max = +t.dataset.max;
+      (st.drafts[id] = st.drafts[id] || {})[fk] = t.value;
+      var c = document.querySelector('[data-count="' + CSS.escape(id + ':' + fk) + '"]');
+      if (c && max) { var n = len(yr(t.value)); c.textContent = n + '/' + max; c.classList.toggle('over', n > max); }
+    }
+  });
+  document.addEventListener('keydown', function (e) { if (e.target.id === 'q' && e.key === 'Enter') { e.target.blur(); } });
+  document.addEventListener('focusout', function (e) {
+    if (e.target.id === 'q') { setTimeout(render, 0); return; }
+    var to = e.relatedTarget;
+    if (st.pendingRender && !(to && to.closest && to.closest('[data-act], textarea'))) setTimeout(render, 0);
+  });
+
+  // Một truy vấn không vượt 1000 tài liệu, nên chia reviews thành 3 khoảng item_id (cắt ở 1/3 và 2/3 danh sách mã thẻ của report), rồi gộp.
+  // Khoảng đầu và cuối để mở, nên thẻ có mã ngoài report vẫn được đọc. Gọi một lần sau lần đọc report đầu tiên.
+  function subscribeReviews(db) {
+    if (st.rvSub) return;
+    st.rvSub = true;
+    var seen = {}, ids = [];
+    Object.keys(st.report).forEach(function (k) { items(k).forEach(function (it) { if (!seen[it.id]) { seen[it.id] = 1; ids.push(it.id); } }); });
+    ids.sort();
+    var cuts = ids.length > 300 ? [ids[Math.floor(ids.length / 3)], ids[Math.floor(ids.length * 2 / 3)]] : [];
+    var bounds = [null].concat(cuts).concat([null]);
+    for (var i = 0; i < bounds.length - 1; i++) {
+      (function (i, lo, hi) {
+        var q = db.collection('reviews');
+        if (lo !== null) q = q.where('item_id', '>=', lo);
+        if (hi !== null) q = q.where('item_id', '<', hi);
+        st.rvParts[i] = { docs: {}, n: 0, loaded: false };
+        q.limit(RV_LIMIT).onSnapshot(function (s) {
+          var o = {}; s.docs.forEach(function (d) { o[d.id] = d.data(); });
+          st.rvParts[i] = { docs: o, n: s.docs.length, loaded: true };
+          mergeReviews();
+        }, function (e) { toast(errMsg(e)); });
+      })(i, bounds[i], bounds[i + 1]);
+    }
+  }
+  function mergeReviews() {
+    var o = {}, all = true, warn = null;
+    st.rvParts.forEach(function (p) {
+      if (!p.loaded) all = false;
+      Object.keys(p.docs).forEach(function (k) { o[k] = p.docs[k]; });
+      if (p.n >= RV_WARN && (!warn || p.n > warn.n)) warn = { n: p.n };
+    });
+    st.reviews = o; st.loaded.reviews = all; st.rvWarn = warn; render();
+  }
+
+  function init() {
+    render();
+    var c = window.claude;
+    if (!c || !c.use) { st.unavailable = true; render(); return; }
+    c.use('db').then(function (db) {
+      if (!db) { st.unavailable = true; render(); return; }
+      st.db = db;
+      c.use('user').then(function (u) { return u ? u.can('data.write') : null; }).then(function (w) { if (w === false) { st.ro = true; render(); } }).catch(function () {});
+      db.collection('report').onSnapshot(function (s) {
+        var o = {}; s.docs.forEach(function (d) { o[d.id] = d.data(); }); st.report = o; st.loaded.report = true;
+        var secs = sections();
+        if (secs.length && secs.indexOf(st.section) < 0) st.section = secs[0];
+        subscribeReviews(db); render();
+      }, function (e) { toast(errMsg(e)); });
+    }).catch(function () { st.unavailable = true; render(); });
+  }
+  init();
+})();
+</script>

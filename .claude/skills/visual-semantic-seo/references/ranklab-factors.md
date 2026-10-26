@@ -14,7 +14,9 @@
 - [Validation Checklist](#validation-checklist)
 - [Cross-References](#cross-references)
 
-**When to use:** Optimizing any content for the Goldmine final score (Google's ranking decision system from Content Warehouse API leak May 2024).
+> **Sửa 19/10/2026, đọc trước:** các factor goldmine trong leak 05/2024 thuộc module `QualityPreviewRanklabTitle`. Module này chấm title candidate để Google chọn title link. Module không chấm thân bài và không phải điểm xếp hạng cuối (xem SKILL.md mục Goldmine). Field `vboostFactor` không có trong leak. Các quota thân bài cũ trong file (Flesch cho thân bài, nhắc brand 5-7 lần, 90% in-vertical) đã bỏ. Phần còn lại là guidance viết dễ đọc, không phải tín hiệu Google đo.
+
+**When to use:** Title and heading hygiene for title link selection (Content Warehouse API leak, May 2024).
 
 **Core principle:** RankLab is Google's End-to-End Ranking Framework that evaluates 5 critical factors. Each factor has specific optimization tactics.
 
@@ -42,9 +44,9 @@ Each factor must be optimized individually. The Goldmine score is the combined e
 
 ## Factor 1: `readabilityScore`
 
-### What Google Measures
+### Proxy đọc dễ (Google không công bố đo Flesch)
 
-- Flesch Reading Ease score
+- Flesch Reading Ease score (chỉ tiếng Anh)
 - Average sentence length
 - Complex word ratio
 - Sentence structure variety (burstiness)
@@ -68,7 +70,7 @@ Each factor must be optimized individually. The Goldmine score is the combined e
 - Passive voice acceptable for technical/scientific content (research findings)
 - Direct address ("you", "your") for engagement
 
-**Flesch Reading Ease target:**
+**Flesch Reading Ease target (chỉ nội dung tiếng Anh; tiếng Việt dùng câu S-V-O, một ý một câu):**
 - Consumer content: ≥60 (8th grade reading level)
 - B2B/Technical: ≥50 (high school)
 - Academic/Research: ≥40 (college)
@@ -91,7 +93,7 @@ Sentence: 38 words. Passive. Abstract. Flesch ~25.
 - [ ] Sentence length variation (burstiness present)
 - [ ] Active voice ≥80%
 - [ ] No nuke words (use brand-specific blacklist)
-- [ ] Flesch Reading Ease meets target
+- [ ] (Chỉ tiếng Anh) Flesch Reading Ease đạt mục tiêu
 - [ ] Specific over abstract
 - [ ] No run-on sentences (>30 words)
 
@@ -168,25 +170,15 @@ H2s are real macro-contexts with semantic variations.
 
 ## Factor 3: `siteNameFactor`
 
-### What Google Measures
+### Cách hiểu đúng
 
-- Brand name mention frequency in content
-- Natural vs forced placement
-- Brand mentioned in early content (centerpiece zone)
-- Brand entity recognition signals (combined with knowledge graph)
+- Tên site/brand trong title candidate (dạng "Tiêu đề - Brand")
+- Một tên gọi thống nhất cho brand trên toàn site
+- Brand entity recognition đến từ entity home, schema và offsite, không đến từ số lần nhắc trong bài
 
 ### Optimization Tactics
 
-**Mention frequency:**
-- 5-7 brand mentions per article (1500-3000 word article)
-- Scale up for longer content (1 mention per 300-400 words)
-- Don't stuff (≥10 mentions per 1000 words feels spammy)
-
-**Placement strategy:**
-- 1 mention in introduction (Centerpiece L1)
-- 2-3 mentions in main content
-- 1 mention in conclusion or final CTA section
-- Optional: 1 mention in author byline
+**Brand trong thân bài:** nhắc brand khi câu cần chủ thể (phương pháp, dữ liệu, dịch vụ của brand). Không đặt quota số lần nhắc.
 
 **Natural integration:**
 - Use brand name in context: "GTV's methodology emphasizes..."
@@ -208,17 +200,13 @@ Brand entity weak. Just CTA placement.
 **After (strong siteNameFactor):**
 > "Semantic SEO works through three frameworks: Topical Authority, Contextual Layers, and EAV. **GTV's methodology** combines these with proprietary RPP scoring to rank Vietnamese enterprise content...
 > 
-> [later] **The GTV team** implements this for clients like Vinamilk and Bamboo Airways...
-> 
-> [later] **At GTV SEO**, we've measured 40-60% organic traffic lift within 6 months...
-> 
 > [later] **GTV's** approach differs from traditional SEO agencies because..."
 
-Brand entity reinforced 4-5 times naturally throughout content.
+Brand xuất hiện ở câu cần chủ thể, không theo quota.
 
 ### Audit Checklist
 
-- [ ] Brand mentioned 5-7 times per article
+- [ ] Brand gọi một tên thống nhất, nhắc khi câu cần chủ thể
 - [ ] First mention in centerpiece zone
 - [ ] Mentions distributed throughout content (not clustered)
 - [ ] Phrasing varied
@@ -469,11 +457,11 @@ For any article, score each factor:
 
 For RankLab optimization:
 
-- [ ] readabilityScore: Flesch ≥60, avg sentence ≤18 words, S-V-O dominant
+- [ ] readabilityScore: title candidate ngắn, S-V-O (Flesch chỉ áp tiếng Anh)
 - [ ] headingFactor: H1 exact query + ≤4 entities + no number stuffing
-- [ ] siteNameFactor: Brand mentioned 5-7 times naturally
+- [ ] siteNameFactor: tên brand thống nhất trong title candidate
 - [ ] salientTermFactor: 2-3 salient terms identified + strategic reinforcement
-- [ ] vboostFactor: 90%+ in-vertical content + live function present
+- [ ] Vertical consistency: nội dung không lạc chủ đề của site (field vboostFactor không có trong leak)
 - [ ] Combined audit average ≥7/10
 - [ ] No anti-patterns present
 

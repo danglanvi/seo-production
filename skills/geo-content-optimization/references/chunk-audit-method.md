@@ -45,7 +45,7 @@ Chấm mỗi chunk 5 tiêu chí — fail ≥2 tiêu chí → verdict REWRITE:
 
 Ngoài rubric: **mỗi câu trong chunk tự đứng S-V-O đủ E-A-V** (53% citation là câu giữa đoạn — Indig, B) — không chấm điểm riêng, nhưng là lý do rewrite ưu tiên câu quotable hơn nhồi thêm chữ.
 
-Verdict thứ 3 — **TÁCH PAGE**: khi nhiều chunk lệch hẳn Central Search Intent của page (page đa chủ đề). Tín hiệu định lượng nếu đo được embedding: snippet representativeness <0,80 = red flag (mean thực nghiệm 0,92; 88,7% >0,9; chỉ 2,2% cases dưới 0,80 — Dejan 2026). Đề xuất tách, KHÔNG đề xuất viết thêm cho "đủ coverage".
+Verdict thứ 3 — **TÁCH PAGE**: khi nhiều chunk lệch hẳn Central Search Intent của page (page đa chủ đề). Tín hiệu định lượng nếu đo được embedding: đoạn có cos với tâm trang thấp hẳn so với các đoạn khác của chính trang. Dejan 2026 đo representativeness bằng model tiếng Anh; mốc của nghiên cứu đó không dùng làm ngưỡng. Ngưỡng cho EmbeddingGemma đọc từ registry của skill `model-calibration`; chưa có thì ghi "chưa hiệu chuẩn, Claude đọc" và Claude đọc các đoạn đó. Đề xuất tách, KHÔNG đề xuất viết thêm cho "đủ coverage".
 
 ## 4. Subordinate Text Match — câu 1 sau heading
 
@@ -74,20 +74,20 @@ Nguồn: [[Subordinate Text Match]]. Nguyên tắc: câu đầu tiên dưới he
 
 ## 5. Manual cosine proxy (khi không có embedding tool)
 
-Các study dùng bge-base-en-v1.5 (AirOps, threshold match 0,80) / embeddinggemma-300m (Dejan) — đều tiếng Anh; threshold tiếng Việt chưa validated. Fallback thủ công ([[Audition Chunk]] In Practice — Manual audit):
+Các study dùng bge-base-en-v1.5 (AirOps) / embeddinggemma-300m (Dejan), đều trên tiếng Anh. Mốc cos của các study này không dùng làm ngưỡng. Có EmbeddingGemma 2 local: đo theo skill `geo-fanout-research` Bước 4a, đọc ngưỡng phủ (rubric `geo-fanout-coverage`) từ registry của skill `model-calibration`; chưa có thì ghi "chưa hiệu chuẩn, Claude đọc". Hiệu chuẩn 19/10/2026 chưa có ngưỡng phủ tuyệt đối; chỉ so tương đối trong cùng top 10 có tín hiệu. Fallback thủ công khi không có embedding ([[Audition Chunk]] In Practice — Manual audit):
 
 1. Liệt kê 10 key terms của Semantic Query (Entity + attributes + intent verbs; nhớ weight ChatGPT ước lượng 80% intent / 20% topic — estimate đơn nguồn).
 2. Đếm overlap trong đoạn đang chấm (heading + first 100-150 từ):
    - **≥5/10 = PASS** · 3-4/10 = borderline, cân nhắc · **<3/10 = REWRITE**.
-3. Với heading: so heading với sub-query gần nhất từ fan-out simulation; dùng dải thay cutoff: ≥0,90 excellent / 0,80-0,90 pass / <0,50 fail (proxy thủ công thì map: overlap ≥7 ≈ excellent, 5-6 ≈ pass, <3 ≈ fail — quy ước nội bộ, label "estimate").
+3. Với heading: so heading với sub-query gần nhất từ fan-out simulation. Proxy thủ công: overlap ≥7 ≈ khớp tốt, 5-6 ≈ khớp, <3 ≈ lệch (quy ước nội bộ, label "estimate"). Không quy đổi proxy sang dải cos.
 
 ## 6. Front-load check (AX2) — ví dụ ĐÚNG/SAI
 
-**Ngưỡng:** best content trong 30% đầu trang — 44,2% AI citations từ first-30% (Indig 02/2026; patent US9940367B1). First 100-150 từ = audition chunk target. Keyword chính trong 100 chữ đầu VÀ 100 chữ cuối (P16).
+**Ngưỡng:** best content trong 30% đầu trang — 44,2% AI citations từ first-30% (Indig 02/2026; patent US9940367B1). First 100-150 từ = audition chunk target. Central Entity + keyword chính trong 100 chữ đầu (P16).
 
 Ví dụ intro cho query "TTFB là gì" (minh hoạ theo dải cosine trong [[Audition Chunk]]):
 
-| Intro mở đầu bằng | Cosine ước lượng | Verdict |
+| Intro mở đầu bằng | Cosine ước lượng (minh hoạ thứ tự, không phải ngưỡng) | Verdict |
 |---|---|---|
 | "Chào mừng bạn đến với blog của chúng tôi! Hôm nay chủ đề rất thú vị..." | ~0,1 | ❌ junk — page rớt trước Deep Reading |
 | "Tốc độ website ảnh hưởng lớn đến trải nghiệm người dùng..." | ~0,25 | ❌ context-before-answer |
@@ -100,7 +100,7 @@ Weighted theo thứ tự sức mạnh predictor:
 | Trục | Trọng số | Cách chấm | Evidence thứ tự |
 |---|---|---|---|
 | **Rank status** | GATE (pass/fail, không cộng điểm) | Page-one của ≥1 sub-query = PASS | Predictor mạnh nhất: pos 0 = 58% citation vs pos 10 = 14%; median rank cited 2,5 vs never-cited 13 (Indig 04/2026). Page-one là đủ — snippet quality phẳng rank 1→10, drop ~2% (Dejan 2026) |
-| **Heading↔query alignment** | 30% | % heading đạt pass-band + title 0,656 benchmark + slug natural-language (89,78% vs 81,11%) | Content signal mạnh nhất: cosine ≥0,90 = 41% vs <0,50 = 30%; +19pp trong nhóm top-rank (Indig 04/2026; Ahrefs 04/2026) |
+| **Heading↔query alignment** | 30% | % heading Claude xác nhận khớp cluster (cos Gemma chỉ xếp thứ tự đọc, ngưỡng theo registry) + title 0,656 benchmark + slug natural-language (89,78% vs 81,11%) | Content signal mạnh nhất theo nghiên cứu tiếng Anh: heading khớp sub-query được cite 41% so với 30% khi lệch; +19pp trong nhóm top-rank (Indig 04/2026; Ahrefs 04/2026). Mốc cos bge của nghiên cứu không dùng cho Gemma |
 | **Chunk quality (AX1+AX2)** | 30% | % chunk PASS rubric mục 3 + front-load mục 6 | Audition Chunk gate; 44,2% citations first-30% |
 | **Freshness** | 20% | Ngày update cuối ≤30 ngày = full điểm | 76,4% top cited pages update trong 30 ngày (GEO.md — giữ đúng số); `URL_freshness_score` (Yeşilyurt). Nuance: trong 1 retrieval set trang established thắng trang mới, trừ news |
 | **Tactics KDD** | 20% | Có quote nguồn liên quan + statistics + cite nguồn sau claim trong các chunk chính; mỗi số truy được nguồn + ngày | KDD 2024 đọc primary: Quotation Addition top, "+41%/+28%" theo 2 metric proxy (GPT-3.5, 2023-24); đòn bẩy lớn nhất khi trang là nguồn yếu trong câu trả lời (Rank-5 +115,1% đi kèm Rank-1 −30,3%) — không viết "+40%"/"+115%" |

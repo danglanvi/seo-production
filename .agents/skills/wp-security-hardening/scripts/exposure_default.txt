@@ -1,0 +1,29 @@
+# mã-mong-đợi path ghi-chú. Thêm dòng riêng của site vào bản sao trong thư mục evidence, không sửa file này.
+403 /xmlrpc.php XML-RPC đã chặn
+403|404|410 /wp-config.php
+403|404|410 /wp-config.php.bak
+403|404|410 /wp-config.php.old
+403|404|410 /.env
+403|404|410 /.git/config
+403|404|410 /.user.ini lộ đường dẫn server
+403|404|410 /readme.html lộ version
+403|404|410 /license.txt
+403|404|410 /wp-content/debug.log
+403 /wp-content/uploads/test-wps-nonexistent.php PHP trong uploads: chỉ 403 là có rule; 404, 410 là theme trả lời
+403 /wp-content/uploads/test-wps-nonexistent.PHP PHP trong uploads: chỉ 403 là có rule; 404, 410 là theme trả lời
+403 /wp-content/uploads/test-wps-nonexistent.php/a PHP trong uploads: chỉ 403 là có rule; 404, 410 là theme trả lời
+403 /wp-content/languages/test-wps-nonexistent.php PHP trong languages: chỉ 403 là có rule; 404, 410 là theme trả lời
+403 /wp-content/languages/test-wps-nonexistent.PHP PHP trong languages: chỉ 403 là có rule; 404, 410 là theme trả lời
+403 /wp-content/languages/test-wps-nonexistent.php/a PHP trong languages: chỉ 403 là có rule; 404, 410 là theme trả lời
+403 /wp-content/upgrade/test-wps-nonexistent.php PHP trong upgrade: chỉ 403 là có rule; 404, 410 là theme trả lời
+403 /wp-content/upgrade/test-wps-nonexistent.PHP PHP trong upgrade: chỉ 403 là có rule; 404, 410 là theme trả lời
+403 /wp-content/upgrade/test-wps-nonexistent.php/a PHP trong upgrade: chỉ 403 là có rule; 404, 410 là theme trả lời
+403|404|410 /wp-content/backups-dup-pro/ thư mục backup Duplicator
+403|404|410 /wp-content/uploads/wc-logs/
+401|403|404|410 /wp-json/wp/v2/users liệt kê user
+404|410|200 /?author=1 không được 301 sang /author/<tên>/
+404|403|410 /wp-activate.php không được 302 sang slug đăng nhập ẩn
+404|403|410 /wp-signup.php
+404|403|410 /wp-login.php khi dùng slug đăng nhập ẩn
+404 /wps-{RAND}/ URL ngẫu nhiên không tồn tại phải trả đúng 404. 200, 301 về trang chủ hay 410 là soft-404 hoặc theme trả sai
+404 /wps-{RAND}.html URL ngẫu nhiên đuôi .html phải trả đúng 404

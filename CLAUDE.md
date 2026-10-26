@@ -16,6 +16,8 @@ Người dùng vừa clone repo, hỏi "cần cài gì để chạy được", h
 
 **Show plan súc tích, đủ ngữ cảnh (mục tiêu, công đoạn, file chạm, điểm cần duyệt) → chờ duyệt → thực hiện.** Ngoại lệ: task trivial read-only (đọc file, tra index, "đến lượt gì tiếp?") làm luôn theo `AGENT.md` §4.
 
+Trước khi trình plan, tự chấm bản nháp theo checklist "Bản tốt nhất phải có" của skill trạm. Mục chưa đạt thì sửa, hoặc ghi lý do bỏ. Nếu có output Codex hay agent khác cho cùng việc, so từng mục trước khi trình.
+
 ### 4 Meta-Principles — ALWAYS ON (inline, không phụ thuộc file ngoài)
 
 | # | Nguyên tắc | Nghĩa là |
@@ -125,7 +127,7 @@ Sau khi đọc, **báo cáo 3-5 câu** điều nắm được (status công đo�
 
 ## §4. Folder Map (tóm tắt — đầy đủ ở `_REFERENCE/folder-map.md`)
 
-`00-client-context/` (context + kpi-commitments) · `01-strategy-okrs/` · `02-raw/` (IMMUTABLE: contracts-proposals, seo-data (+ `keywords/` export research), logfiles, client-docs, knowledge = SOP/checklist/cheat-sheet read-only, screenshots) · `03-audits/` (+ `qc/` kho QC report · `technical/ content/ entity/ offsite/` audit lẻ · `ranking/` chẩn đoán bộ keyword cam kết · `full/` toàn diện) · `04-structure-ux-cro/` (cấu trúc lock #11) · `05-content-plan/` (plan + tracking, không chứa bài · `keyword-research/` · `content-tracking/` đấu nối fork) · `06-onpage-internal-link/` · `07-offpage/` · `08-geo-ai-visibility/` · `09-reporting/` · `10-client-management/` · `11-handover-maintenance/` · `12-feedback-lessons/` · `13-cro/` (#34–36) · `14-entity/` (#13, gate G-ENT) · `99-archive/` · `_TEMPLATES/` (37 template) · `_REFERENCE/` (tra cứu) · `skills/` (39 skill) · `tools/` (`content_sync.py`) · `index.md` (bảng A dự án + B 36 công đoạn + C nhịp quý + D deliverable) · `log.md`.
+`00-client-context/` (context + kpi-commitments) · `01-strategy-okrs/` · `02-raw/` (IMMUTABLE: contracts-proposals, seo-data (+ `keywords/` export research), logfiles, client-docs, knowledge = SOP/checklist/cheat-sheet read-only, screenshots) · `03-audits/` (+ `qc/` kho QC report · `technical/ content/ entity/ offsite/` audit lẻ · `ranking/` chẩn đoán bộ keyword cam kết · `full/` toàn diện) · `04-structure-ux-cro/` (cấu trúc lock #11) · `05-content-plan/` (plan + tracking, không chứa bài · `keyword-research/` · `content-tracking/` đấu nối fork) · `06-onpage-internal-link/` · `07-offpage/` · `08-geo-ai-visibility/` · `09-reporting/` · `10-client-management/` · `11-handover-maintenance/` · `12-feedback-lessons/` · `13-cro/` (#34–36) · `14-entity/` (#13, gate G-ENT) · `99-archive/` · `_TEMPLATES/` (38 template) · `_REFERENCE/` (tra cứu) · `skills/` (60 skill) · `tools/` (`content_sync.py`, `ai-assist/` Jev + GLM Flash + EmbeddingGemma, `gsc/gsc.sh`, `capabilities.py` + `capabilities.md` kiểm tool ở Bước 0) · `index.md` (bảng A dự án + B 36 công đoạn + C nhịp quý + D deliverable) · `log.md`.
 
 Luật cứng folder:
 
@@ -272,7 +274,7 @@ Repo này tự chứa. Hai điểm chạm duy nhất ra ngoài, đều là repo 
 | Điểm chạm | Vai trò | Cách nối |
 |---|---|---|
 | Repo content `Content Production - <client>/` (team content) | Viết bài công đoạn 13/15/16/19 · giữ **Kho tri thức khách** `00-context/kb/` (bản gốc fact của khách) | Bên này giao plan (`05-content-plan/`) → bên đó trả bài dạng Google Doc + verdict → bên này ghi tracking/QC. Không link file chéo, không copy bài. **Đồng bộ qua GitHub** (`_REFERENCE/project-sync.md`): `python3 tools/project_sync.py pull` kéo repo content → `content-status.md` + `delivered/` + KB snapshot chỉ đọc ở `00-client-context/kb-snapshot/<YYYY-MM-DD>/`; repo content kéo ngược hồ sơ khách, KPI, topical map, entity của repo này. Mỗi loại dữ liệu chỉ sửa ở repo chủ |
-| `wp-publish-workflow-kit` (repo GitHub public riêng) | Executor đăng/sửa bài WordPress cho WS06 (NEW draft + AUDIT update, approval hash, verify kép) | Clone riêng theo docs của kit; luật GTV chạy trên kit: `02-raw/knowledge/sop/11-publish-wp.md` — **không chạy bước strong-to-b**. KHÔNG vendor code kit vào repo |
+| `wp-publish-workflow-kit` (repo GitHub public riêng) | Executor đăng/sửa bài WordPress cho WS06 (NEW draft + AUDIT update, approval hash, verify kép) | Clone riêng theo docs của kit; luật GTV chạy trên kit: `02-raw/knowledge/sop/11-publish-wp.md` — **không chạy bước strong-to-b**. KHÔNG vendor code kit vào repo. Dự án có quyền SSH + WP-CLI vào server: dùng skill `wp-content-review-apply` (trang duyệt + ghi bằng WP-CLI) thay cho kit; hồ sơ server ở `00-client-context/wp-server.md` |
 
 Mọi tham chiếu khác tới tài liệu ngoài repo (wiki, kho gốc, folder khác) → **bỏ qua, không lỗi, không hỏi lại**; thiếu data thì hỏi thẳng người vận hành.
 

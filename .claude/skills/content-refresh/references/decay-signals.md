@@ -113,7 +113,7 @@ Chỉ áp cho candidate đã qua Gate 5 (decay thật), trừ 3 dòng cuối là
 | Backlinks cho ease | `site-explorer-backlinks-stats` | Thành phần Ease trong T11 |
 | AI visibility (lớp riêng) | `brand-radar-*`, `site-explorer-ai-responses-count` | Aggregate only; report tách riêng |
 
-🔴 Trước khi gọi: báo tổng số call dự kiến ở Bước 0 và chờ user xác nhận. Gọi `doc` cho tool lần đầu dùng.
+🔴 Trước khi gọi: báo tổng số call dự kiến ở Bước 0b và chờ user xác nhận. Gọi `doc` cho tool lần đầu dùng.
 
 ---
 

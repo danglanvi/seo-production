@@ -1,0 +1,15 @@
+{
+  "name": "nbsp-intent",
+  "version": "2026-10-19.1",
+  "questions": {
+    "intent": {
+      "type": "choice",
+      "instructions": "state.snippet is Vietnamese or English text from a blog post. The marker ⟦NBSP⟧ marks one non-breaking space character in the HTML. A non-breaking space stops the browser from breaking the line at that point. Decide whether the writer needed that effect at the marked position.",
+      "criteria": {
+        "keep_together": "The two sides must stay on one line: a number and its unit or currency (10 %, 500 000 đ, 3 GB), a date or time part, an initial and a name, a model or version number, or a symbol that must not start a new line.",
+        "plain_space": "The marked character separates two ordinary words or follows punctuation, so a normal space works the same. This is common when text was pasted from Google Docs or Word.",
+        "unknown": "The snippet does not show which case applies."
+      }
+    }
+  }
+}

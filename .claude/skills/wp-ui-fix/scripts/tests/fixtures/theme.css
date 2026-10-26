@@ -1,0 +1,4 @@
+.accordion-list .accordion-item .accordion-body .expanded-content-1 p { font-size: 12px; line-height: 1.4; }
+.pricing p.note { margin-top: 20px; font-size: 14px !important; color: #333; }
+.sec-title { font-size: 28px; }
+@media (max-width: 500px) { .sec-title { font-size: 22px; } }

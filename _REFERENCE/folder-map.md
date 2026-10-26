@@ -38,7 +38,7 @@ SEO Production/                      (instance: PROJECTS/<client-slug>/)
 │
 ├── 99-archive/               ← bản cũ khi thay đổi cấu trúc lớn
 ├── _TEMPLATES/               ← 32 template deliverable + account/ (mẫu báo cáo Account)
-├── tools/                    ← content_sync.py (đấu nối fork content) · sync-skills.sh
+├── tools/                    ← content_sync.py (đấu nối fork content) · sync-skills.sh · ai-assist/ (Jev + EmbeddingGemma) · gsc/gsc.sh (GSC API)
 └── skills/                   ← 37 skill SEO đóng gói theo dự án
 ```
 

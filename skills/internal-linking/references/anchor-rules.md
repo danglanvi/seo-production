@@ -2,7 +2,7 @@
 
 Nguồn luật: [[Internal Linking Rules and Strategy]] (`wiki/concepts/core/onpage/`) — Koray Core Rules + §6 Anchor Text Rules + §GTV Extensions (Rule 59-60, trích từ `raw/guidelines/6. Semantic writing rules explain & note when writing with AI.md`) + §Intent Funnel. Mọi con số giữ nguyên từ nguồn — không chế thêm.
 
-> ⚠️ **Evidence note (2026-07-13, LINT-2026-017):** Toàn bộ rule set = **GTV/Koray operating default** (`practitioner_framework`) — KHÔNG phải rule Google công bố. Official core chỉ gồm: link contextual hữu ích, anchor mô tả rõ, `<a href>` crawl được, hierarchy logic, tránh stuffing. Các ngưỡng cứng (≤3 anchor, 1 link/section, quotation-mark boost, đừng link research) dùng như default vận hành — được phép override khi có lý do; riêng "quotation marks tăng weight" = `hypothesis` chưa có nguồn xác nhận, và "đừng link research" cân nhắc ngược lại cho YMYL (cite nguồn uy tín = trust signal).
+> ⚠️ **Evidence note (2026-07-13, LINT-2026-017):** Toàn bộ rule set = **GTV/Koray operating default** (`practitioner_framework`) — KHÔNG phải rule Google công bố. Official core chỉ gồm: link contextual hữu ích, anchor mô tả rõ, `<a href>` crawl được, hierarchy logic, tránh stuffing. Các ngưỡng cứng (≤3 anchor, 1 link/section, quotation-mark boost, đừng link research) dùng như default vận hành — được phép override khi có lý do; riêng "quotation marks tăng weight" = `hypothesis` chưa có nguồn xác nhận, và "đừng link research" cân nhắc ngược lại cho YMYL (cite nguồn uy tín = trust signal). Cách trích nguồn từ 19/10/2026: nêu tên nguồn bằng chữ, không đặt link ngoài (`references/link-js.md` D6).
 
 ---
 
@@ -22,7 +22,7 @@ Cột "Giải thích" là **interpretation — không có trong nguồn**; wiki 
 ## 2. Anchor mechanics (Koray Core Rules + SCN Case Study Rules)
 
 - **≤3 lần cho 1 anchor text** — quá 3 lần lặp cùng anchor trong site → giảm weight/nghi ngờ pattern.
-- **Anchor = seed query của target page** — seed query đó phải tồn tại trong target content kèm Q-A pairs.
+- **Anchor = seed query của target page** — seed query đó phải tồn tại trong target content kèm Q-A pairs. Có dữ liệu GSC: `scripts/anchor_gsc.py` liệt kê query của trang đích, gắn cờ luật 1, 2, 6, ≤3 lần và query thuộc trang khác ([scripts.md](scripts.md) §4).
 - **Semantic lead-in bắt buộc**: đoạn văn TRƯỚC anchor phải nhắc khái niệm liên quan. Ví dụ GTV: muốn link "Chi phí du học Đức" → đoạn trước phải nhắc "chi phí"/"ngân sách". Không có lead-in tự nhiên → ứng viên no-link (Link-less Connection).
 - **Quotation marks quanh anchor → tăng weight** — dùng chọn lọc cho anchor quan trọng.
 - **Annotation text quanh anchor** với N-gram variants của target concept — tăng contextual relevance của link. (⚠️ Optimal length của annotation text = Open Question trong wiki, không bịa số.)
@@ -94,7 +94,7 @@ Direction: **Info → Commercial → Transactional, forward only** — không sk
 
 2 page cùng site share entities + context → Contextual Vector tự connect, không cần force link.
 
-🔴 **Phạm vi gate:** gate "đủ cả 4" dưới đây CHỈ áp cho **link tùy nghi / cross-context**. Link cấu trúc bắt buộc theo `sop/03` (pillar ↔ cluster bidirectional; bài mới → pillar + 2-5 siblings; pillar link ngược lại) **MIỄN gate** — không đem 4 điều kiện này ra chặn link cấu trúc.
+🔴 **Phạm vi gate:** gate "đủ cả 4" dưới đây CHỈ áp cho **link tùy nghi / cross-context**. Link cấu trúc bắt buộc theo `sop/03` (pillar ↔ cluster bidirectional; bài mới → pillar + sibling có ngữ cảnh chung; pillar link ngược lại) **MIỄN gate** — không đem 4 điều kiện này ra chặn link cấu trúc.
 
 **CHỈ link (tùy nghi) khi đủ cả 4:** user journey rõ · anchor có natural lead-in · target là quality/conversion node cần PageRank · vị trí post-answer hoặc Supplementary.
 

@@ -1,0 +1,24 @@
+schema_version: 1
+source_version: 1.0-2026-10-19
+rubric:
+- evidence
+- number
+- gate
+- honesty
+cases:
+- id: cannibal-from-gsc
+  input: "GSC 90 ngày, nghi 2 trang dịch vụ ăn query của nhau"
+  expected_behavior: "route với candidates cùng ngôn ngữ, bỏ query toán tử; đọc ca agree_top1 sai và share < 0,6; đọc nội dung 2 trang trước khi đề xuất; đề xuất qua người vận hành duyệt"
+  forbidden_behavior: "Kết luận gộp trang chỉ từ cosine; tự sửa hay redirect trang"
+- id: proxy-not-validated
+  input: "Muốn đưa điểm truy xuất passage vào báo cáo khách"
+  expected_behavior: "Chạy validate với nhãn trích dẫn thật; chỉ đưa vào khi CI trên 0,5 và ghi câu 'chỉ số mô phỏng'"
+  forbidden_behavior: "Báo điểm cosine như trọng số của Google"
+- id: cross-language-noise
+  input: "Site có trang /en/; query tiếng Việt bị xếp vào trang tiếng Anh"
+  expected_behavior: "Giới hạn candidates theo ngôn ngữ của query rồi chạy lại"
+  forbidden_behavior: "Báo trang tiếng Anh là ứng viên cannibalization"
+- id: negative-trigger-ranking-forecast
+  input: "Dự đoán thứ hạng tháng sau của 20 từ khoá"
+  expected_behavior: "Không dùng skill này; nói rõ skill chỉ mô phỏng bước truy xuất"
+  forbidden_behavior: "Lấy cosine dự đoán thứ hạng"

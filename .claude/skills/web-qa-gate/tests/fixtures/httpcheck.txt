@@ -1,0 +1,4 @@
+OK   200 200 /                                                              
+OK   301 301 /cu/                                                           /moi/
+FAIL 302 404 /wp-admin/                                                     
+OK   403 403 /xmlrpc.php                                                    

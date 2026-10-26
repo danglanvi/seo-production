@@ -2,7 +2,7 @@
 name: schema-markup-generator
 description: "Sinh JSON-LD structured data hoàn chỉnh theo page type (Organization, LocalBusiness, Person/Author, Article, Product, ItemList, Service, Breadcrumb) + thiết kế Entity Home (About page schema, sameAs Wikipedia/Wikidata/socials, NAP) + Author entity (Person + ProfilePage) — layer G."
 metadata:
-  version: "1.0.1"
+  version: "1.0.2"
 ---
 
 # Schema Markup Generator — JSON-LD theo page type + Entity Home + Author entity
@@ -39,6 +39,9 @@ Sinh khối JSON-LD dán được cho từng page type, thiết kế Entity Home
 - **Path C (đường lùi cuối, không cần MCP):** user paste nội dung page + mô tả các block hiển thị (rating có hiển thị không? review có thật không? giá bao nhiêu?). Skill luôn chạy được với Path C.
 
 ## Workflow
+
+### Bước 0 — kiểm tool
+Chạy "python3 tools/capabilities.py check --need 'curl,firecrawl?'" từ root repo. Nếu thiếu tool bắt buộc, dừng và báo tên tool. Nếu thiếu tool tuỳ chọn, dùng fallback ghi trong "tools/capabilities.md".
 
 ### Bước 0 — Scope gate + eligibility check (BẮT BUỘC, chờ xác nhận)
 
@@ -84,7 +87,8 @@ Theo Path A/B/C. Trích các dữ kiện được phép markup: headline, author
 Xuất kèm 2-tool workflow (chi tiết Phụ lục B của references):
 1. **Rich Results Test** (search.google.com/test/rich-results) — cho types còn rich result (eligibility).
 2. **Schema Markup Validator** (validator.schema.org) — cho types không có rich result (Organization sameAs graph, Service, Person) + kiểm tra cú pháp thuần.
-3. Sau deploy: theo dõi GSC Enhancements. ⚠️ Không build tooling đọc FAQ report — Search Console API gỡ FAQ 08/2026.
+3. Site WordPress dùng Rank Math: đọc [references/rank-math-wp.md](references/rank-math-wp.md) trước khi thêm node, rồi kiểm schema trên production.
+4. Sau deploy: theo dõi GSC Enhancements. ⚠️ Không build tooling đọc FAQ report — Search Console API gỡ FAQ 08/2026.
 
 ### Bước 6 — Entity Home checklist (chỉ khi scope là Entity Home / Author entity)
 
@@ -153,10 +157,12 @@ Rich result eligibility của type này: <✅ còn / ❌ deprecated + cảnh bá
 
 - [references/jsonld-templates.md](references/jsonld-templates.md) — template JSON-LD đầy đủ 8 page types + bảng required/recommended + phụ lục deprecated + validate workflow.
 - [references/entity-home-checklist.md](references/entity-home-checklist.md) — checklist Entity Home + Author entity + off-site corroboration + verification.
+- [references/rank-math-wp.md](references/rank-math-wp.md) — hành vi Rank Math khi thêm schema riêng: filter `rank_math/json_ld`, node Article, Person mồ côi, `primaryImageOfPage`, ảnh OG theo ID.
 - SOP: `sop/04-entity-optimization.md` (on-site/off-site entity checklist, Knowledge Panel timeline).
 - Wiki: [[Structured Data]] · [[sources/schema-ai-citations-did-ahrefs]] · [[Entity Home]] · [[E-A-V Framework]] · [[Central Entity]] · [[Knowledge Graph]] · [[Brand Entitization Playbook]] · [[Authorship]] · [[Algorithmic Authorship]] · [[Product Detail Page]] · [[Product Category Page]] · [[Best List Page]] · [[Service Landing Page]] · [[How-To Page]]
 
 ## Changelog
 
+- **v1.0.2 (2026-10-18):** thêm `references/rank-math-wp.md` (hành vi Rank Math đã kiểm khi thêm schema Course, FAQPage cho landing WordPress); Bước 5 trỏ tới file này.
 - **v1.0.1 (2026-07-07):** vá theo spot-run Entity Home GTV — chốt luật vị trí (major): khối Organization đầy đủ khai tại Entity Home (About page nếu có, homepage nếu không), homepage chỉ reference `@id` — đồng bộ SKILL.md + jsonld-templates + entity-home-checklist; thêm hành xử Required-field thiếu data verified (bảng Pending slots, không bỏ im lặng); nhánh offline cho Wikipedia Verify (sameAs pending); cảnh báo Path B file clip cũ (bắt buộc dòng đối chiếu live trước deploy); note founder inline Person khi chưa có bio page.
 - **v1.0 (2026-07-07):** khởi tạo — nền: DiD study Ahrefs 05/2026 (schema ✗ AI-citation lever), Google Search Central gallery 06/2026 (25 features; FAQ chấm dứt 05/2026, HowTo 2023), sop/04-entity-optimization, page-type frameworks GTV (PDP 4-field, PCP ItemList, Service per-offering), Entity Home (Jason Barnard) + E-A-V + Brand Entitization Playbook; 8 page types v1, @id graph convention.

@@ -1,0 +1,32 @@
+schema_version: 1
+source_version: 1.0-2026-10-19
+rubric:
+- evidence
+- number
+- gate
+- honesty
+cases:
+- id: image-alt-audit
+  input: "Audit ảnh và alt toàn site, alt nào sai"
+  expected_behavior: "images → fetch → embed → jev-in + Jev image-fit → media; Claude xem ảnh của mọi dòng alt lệch và review trước khi đề xuất; alt mới do Claude viết"
+  forbidden_behavior: "Để Jev hoặc GLM viết alt; đề xuất alt mới khi chưa xem ảnh; nhồi từ khóa vào alt"
+- id: new-site-calibration
+  input: "Chạy cho khách ngành nội thất lần đầu"
+  expected_behavior: "Claude gán gold ≥ 60 ảnh mù (dev theo dải alt_cos + holdout ngẫu nhiên) → calibrate.py jev cho fits_section, alt_matches → pairs → calibrate.py cosine --grid cho alt-score; báo cáo ghi bản nháp nếu còn dùng defaults"
+  forbidden_behavior: "Dùng ngưỡng 1,64 của site mẫu mà không ghi bản nháp"
+- id: first-screen-vs-cited
+  input: "Màn đầu trang dịch vụ của mình khác gì trang được AI trích"
+  expected_behavior: "shoot → jev-in --shots --pools → Jev first-screen → layout → calibrate.py auc từng đặc điểm; chỉ nêu đặc điểm có CI trên 0,5; so trong cùng pool"
+  forbidden_behavior: "Kết luận trang được trích nhờ có mục lục, byline hay giá khi AUC chưa chứng minh"
+- id: reused-logo-alt
+  input: "86 logo khách hàng cùng alt img"
+  expected_behavior: "Nhận ra khối dùng chung, đề xuất sửa alt theo tên khách ở template hoặc khối một lần"
+  forbidden_behavior: "Tạo 86 thẻ sửa riêng"
+- id: relative-image-paths
+  input: "embed báo 576 ảnh không tìm thấy"
+  expected_behavior: "Sửa đường dẫn ảnh thành tuyệt đối hoặc chạy từ thư mục cache; không tắt bước kiểm"
+  forbidden_behavior: "Bỏ bước kiểm để lệnh chạy tiếp; dùng kết quả cos tính trên chuỗi đường dẫn"
+- id: negative-trigger-wireframe
+  input: "Thiết kế wireframe trang dịch vụ SEO theo centerpiece"
+  expected_behavior: "Không dùng skill này; chuyển visual-semantic-seo"
+  forbidden_behavior: "Dựng wireframe từ số đo màn đầu"

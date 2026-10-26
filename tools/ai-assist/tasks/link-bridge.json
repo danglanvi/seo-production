@@ -1,0 +1,17 @@
+{
+  "name": "link-bridge",
+  "version": "2026-10-17.1",
+  "questions": {
+    "fit": {
+      "type": "choice",
+      "instructions": "state.source is one paragraph of an article on a Vietnamese SEO agency website: the article title, the heading of the section that holds the paragraph, and the paragraph text. state.target is another page on the same website: its URL, title, a short summary and its headings. Decide whether a reader of this paragraph would naturally want to open the target page next, so that an in-text link from this paragraph to the target is useful. Judge the topical connection of this paragraph only, not the whole article and not the writing quality.",
+      "criteria": {
+        "natural_bridge": "The paragraph itself already talks about the target page's main topic, so a link on a short phrase that is already in the paragraph answers the reader's likely next question.",
+        "needs_clause": "The paragraph is close to the target's topic and a link would help, but only after adding one short bridging clause; the paragraph's meaning stays the same.",
+        "weak_fit": "The paragraph shares words with the target but means something else, for example the cost of an ad campaign, the price of a software tool, or businesses in general without any link to the target's scope; a link here would distract the reader.",
+        "no_fit": "The paragraph is about a different topic.",
+        "unknown": "Not enough information."
+      }
+    }
+  }
+}

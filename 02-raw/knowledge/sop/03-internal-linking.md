@@ -23,7 +23,7 @@ related:
 
 ## Checklist khi publish bài mới
 1. Bài link TỚI pillar của cluster (≥1 link).
-2. Bài link TỚI 2-5 sibling pages trong cluster.
+2. Bài link TỚI sibling cùng cluster khi đoạn có ngữ cảnh chung (Rule 59). Số link theo entity và ngữ cảnh, không quota.
 3. Pillar page đã được update để link NGƯỢC lại bài mới.
 4. Nếu bài là bridge → link sang cluster đích với anchor contextual.
 5. Anchor text: descriptive, không keyword-stuff, khớp với intent destination page.

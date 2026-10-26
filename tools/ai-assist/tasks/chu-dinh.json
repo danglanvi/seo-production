@@ -1,0 +1,25 @@
+{
+  "name": "chu-dinh",
+  "version": "2026-10-19.1",
+  "questions": {
+    "lines_touch": {
+      "type": "noul",
+      "instructions": "state.image is the headline area of a designed banner, enlarged 2x. The text is Vietnamese, so capital letters may carry accent marks above them (for example Ể, Ở, Ấ, Ề) and below them (Ạ, Ộ). Do two text lines touch or almost touch each other (gap smaller than about 6 px at this size)? Count an accent mark that touches or nearly touches the line above, a yellow or colored highlight box of the line above or below, or the edge of its own highlight box. Do not count letters within one word touching each other."
+    },
+    "spacing": {
+      "type": "score",
+      "instructions": "How comfortable is the vertical spacing between the headline lines, the highlight box and the sub text?",
+      "criteria": [
+        "Bad: lines or accents collide, hard to read",
+        "Tight: some accents or lines almost touch",
+        "Acceptable: small but clear gaps",
+        "Good: clear even gaps",
+        "Very good: airy, balanced spacing"
+      ]
+    },
+    "touch_box": {
+      "type": "box",
+      "instructions": "in state.image, the place where two text lines, or an accent mark and a highlight box, are closest to touching"
+    }
+  }
+}

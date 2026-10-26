@@ -1,0 +1,39 @@
+{
+  "name": "company-fact-claim",
+  "version": "2026-10-17.1",
+  "questions": {
+    "subject": {
+      "type": "choice",
+      "instructions": "state.snippet is a passage from state.page on the website of state.site_profile. The marker ⟦...⟧ wraps one number together with its label. The character ¶ separates layout blocks, so a number and its label can sit in neighbouring blocks. The passage may be Vietnamese or English. Decide whom or what the marked number describes.",
+      "criteria": {
+        "company": "The number describes the website owner as a company: its years in operation, its total SEO projects, clients or businesses served, staff or experts, students trained, total organic traffic generated for clients, its own YouTube channel or community, its events, its overall KPI success rate, or its founding year.",
+        "founder": "The number describes the founder personally: his years of experience, his own channel or community, his talks.",
+        "client_result": "The number is a result or a fact of one specific client, case study, student or project, such as traffic, keywords, orders or growth.",
+        "service_terms": "The number is part of a service package, price, timeline, KPI target or guarantee offered to buyers.",
+        "general_fact": "The number is general industry data, a statistic, an example, a how-to step or anything else that is not about the company, its founder or one specific client.",
+        "other_company": "The number describes another company, such as a competitor, a tool vendor or a sister company named in the passage.",
+        "unknown": "The passage does not show whom the number describes."
+      }
+    },
+    "metric": {
+      "type": "choice",
+      "instructions": "Name the kind of quantity that the marked number measures, whatever entity it describes.",
+      "criteria": {
+        "years_experience": "Years of experience or years in operation.",
+        "founding_year": "A calendar year of founding or of starting the business.",
+        "seo_projects": "Number of SEO projects.",
+        "clients": "Number of clients, businesses, brands or partners served.",
+        "staff": "Number of employees, experts or team members.",
+        "students": "Number of students, learners or course participants.",
+        "traffic_total": "Total organic traffic or visits generated.",
+        "traffic_us": "Traffic from the US market.",
+        "kpi_rate": "Percentage of projects or KPIs achieved.",
+        "youtube": "YouTube subscribers.",
+        "community": "Members of a community or group.",
+        "events": "Number of events or of event attendees.",
+        "other": "Any other quantity.",
+        "unknown": "The passage does not show what the number measures."
+      }
+    }
+  }
+}

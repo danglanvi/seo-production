@@ -1,8 +1,8 @@
 ---
 name: semantic-content-audit
-description: "Audit and optimize existing content for semantic SEO compliance. Use when: (1) Reviewing content against the 60 Semantic Writing Rules, (2) Checking E-E-A-T compliance with emphasis on first-hand experience, (3) Auditing content structure and hierarchy."
+description: "Audit nội dung đã có theo chuẩn semantic SEO: 60 Semantic Writing Rules (code đếm luật đếm được, Jev xếp đoạn cần đọc), E-E-A-T trải nghiệm thật, Helpful Content, dấu hiệu AI, gate G-BÀI. Dùng khi review hoặc tối ưu bài trước refresh, onpage hay QC."
 metadata:
-  version: "2.2"
+  version: "2.3"
 ---
 
 # Semantic Content Audit
@@ -11,7 +11,20 @@ Audit existing content against semantic SEO standards, the 60 Semantic Writing R
 
 **Phân vai với `geo-content-optimization`:** skill này trả lời "bài có đạt chuẩn semantic/E-E-A-T/human không" + gate G-BÀI 4 item; `geo-content-optimization` chấm Bộ BÀI /12 (mode spot-check) và trả lời "vì sao bài không được AI cite, sửa chunk nào" (mode full). Gate FAIL, cần /12 hoặc rewrite → route sang đó.
 
+## Phân việc model
+
+| Model | Việc trong skill | Quyết định |
+|---|---|---|
+| Code | Luật đếm được trên đoạn và heading: 21, 24, 26, 32 (`references/writing-rules-routing.md` mục 2) | dùng |
+| Jev | Rubric `writing-rules` 2026-10-19.1 chấm từng đoạn: `answer_first` (luật 11, 17, 20), `fluff` (2), `vague_quantity` (3, 6, 8), `plural_no_example` (9, 25), `hedging` (1) | chỉ lọc cho Claude đọc. Hiệu chuẩn 19/10 trên 100 đoạn gold mù (dev 60, holdout 40): AUC 0,83–0,90, không câu hỏi nào đạt cổng tự chốt 0,95. Mốc đọc chọn trên dev bắt 80–100% vi phạm ở holdout khi Claude đọc 45–68% đoạn. `hedging` chưa hiệu chuẩn: 1 ca dương |
+| EmbeddingGemma 2 | Information gain (độ mới so với trang khác) | không dùng: pilot 10/2026 AUC 0,52–0,55 với trích dẫn AI. Dùng dấu hiệu effort của `content-quality-lab` |
+| GLM Flash | Trích câu | không dùng: Claude đọc đoạn trực tiếp |
+| Claude | Gán gold, đọc đoạn Jev xếp cao, chấm luật cần cả trang hoặc cả site, sửa đoạn | dùng |
+
 ## 6-Phase Audit Process
+
+### Bước 0 — kiểm tool
+Chạy "python3 tools/capabilities.py check --need 'python3,bs4?,jev?,numpy?'" từ root repo. Nếu thiếu tool bắt buộc, dừng và báo tên tool. Nếu thiếu tool tuỳ chọn, dùng fallback ghi trong "tools/capabilities.md".
 
 ### Phase 1: Structural Audit
 - Compare against content brief/outline
@@ -29,6 +42,13 @@ Audit existing content against semantic SEO standards, the 60 Semantic Writing R
 
 ### Phase 3: Writing Quality Audit
 - Apply the 60 Semantic Writing Rules: đọc `references/45-semantic-writing-rules.md` đã đóng gói trong skill này (tên lịch sử, đủ 60 rules). Bảng 16 điểm dưới là subset để tóm tắt, không thay bộ 60 khi chạy audit đầy đủ. Nếu user chỉ yêu cầu kiểm nhanh subset, ghi rõ phạm vi 16 điểm; không kết luận đã kiểm đủ 60.
+- Chấm luật theo đoạn bằng code và Jev (đọc `references/writing-rules-routing.md` trước):
+  - Tách đoạn: `python3 -B -E skills/semantic-content-audit/scripts/rules_jev.py paragraphs --html-dir <thư mục HTML> --urls urls.txt --out <W>/paras.jsonl`. Thư mục HTML là bản tải của `site-vector-index`; bài nháp chưa đăng thì dựng file `paras.jsonl` từ bản nháp và bỏ bước Jev.
+  - Chạy luật code: `skills/semantic-content-audit/scripts/rules_jev.py code --paras <W>/paras.jsonl --out <W>/code.jsonl`.
+  - Chạy Jev cho bài đã đăng: `skills/semantic-content-audit/scripts/rules_jev.py prepare --paras <W>/paras.jsonl --out <W>/jev_in.jsonl`, rồi `python3 -B -I tools/ai-assist/jev.py --task skills/semantic-content-audit/tasks/writing-rules.json --in <W>/jev_in.jsonl --out <W>/jev_out.jsonl --budget 0.05`. 100 đoạn tốn khoảng 0,004 USD.
+  - Ra bảng: `skills/semantic-content-audit/scripts/rules_jev.py report --paras <W>/paras.jsonl --jev-out <W>/jev_out.jsonl --code <W>/code.jsonl --registry 00-client-context/model-calibration.json --site <domain> --out-dir <W>`.
+  - Claude đọc mọi đoạn "Claude đọc" và kết luận vi phạm hay đạt. Đoạn "Jev xếp thấp" chưa phải "đạt": audit Premium thì Claude đọc cả nhóm này.
+  - Site mới hoặc rubric đổi version: gán gold mù ≥ 40 đoạn mỗi câu hỏi trước lượt Jev đầu, rồi hiệu chuẩn bằng skill `model-calibration`.
 - Check answer modality matching
 - Verify measurement precision
 - Audit citation positioning
@@ -40,6 +60,7 @@ Audit existing content against semantic SEO standards, the 60 Semantic Writing R
 - Authority citations
 - Trust factors
 - Google Helpful Content compliance
+- Original value added và first-hand: dùng dấu hiệu effort `original_data`, `first_hand` của skill `content-quality-lab`. Không đo information gain bằng độ khác embedding.
 
 ### Phase 5: AI-Pattern Detection — Humanness (chấm RIÊNG, không tính vào 66đ)
 - Chạy [references/ai-detection-checklist.md](references/ai-detection-checklist.md): quét 4 nhóm (Vocabulary/cliché · Grammar/structure · Statistical/rhythm · Content/experience) với ngưỡng đếm cụ thể.
@@ -59,6 +80,16 @@ Chạy mặc định khi full audit bài đã publish hoặc khi user hỏi "bà
 | GE-19 | Mỗi H2 cắt rời vẫn đủ Entity + context + claim; không "như đã nói ở trên" xuyên section; khối ý <~200 từ; heading tổ tiên có nghĩa |
 
 Output: **G-BÀI: PASS/FAIL (item rớt)**. Bộ BÀI /12 đầy đủ (GE-20…GE-27), scorecard, rewrite per chunk → `geo-content-optimization` (mode spot-check = tick /12; mode full = 6 bước).
+
+### Tự phản biện trước khi trình
+Chấm bản nháp theo checklist "Bản tốt nhất phải có". Mục chưa đạt thì sửa, hoặc ghi lý do bỏ. Nếu có output của Codex hay agent khác cho cùng việc, so từng mục và lấy phần tốt hơn trước khi trình Vincent.
+
+Bản tốt nhất phải có:
+- [ ] Mọi đoạn "Claude đọc" có kết luận của Claude; báo cáo không lấy nhãn Jev làm verdict. Nguồn lỗi: hiệu chuẩn 19/10, mốc "đạt" chọn trên dev chỉ đúng 88–93% ở holdout.
+- [ ] Báo cáo ghi rõ phạm vi luật đã chấm; không ghi "đủ 60 luật" khi chỉ chạy code và Jev. Nguồn lỗi: bản 2026-09-12 phải tách subset 16 điểm khỏi bộ 60 luật.
+- [ ] Information gain và first-hand lấy từ dấu hiệu effort của `content-quality-lab`, không lấy từ embedding. Nguồn lỗi: pilot 10/2026, độ mới passage so với pool có AUC 0,52–0,55.
+- [ ] Cột `hedging` không dùng khi chưa có entry hiệu chuẩn. Nguồn lỗi: 19/10, 60 đoạn gold chỉ có 1 ca dương.
+- [ ] Câu sửa đề xuất không thêm "hàng đầu", "#1", "tốt nhất" hay cam kết. Nguồn lỗi: các vòng sửa 15–19/10 của site mẫu phải gỡ hàng chục câu "hàng đầu", "tốt nhất".
 
 ## Scoring System (66 Points Total + Humanness verdict riêng + gate G-BÀI riêng)
 
@@ -178,12 +209,14 @@ For detailed audit criteria, see reference files:
 | Review Content Audit | [references/review-content-audit.md](references/review-content-audit.md) |
 | Helpful Content Issues & Fixes | [references/helpful-content-issues.md](references/helpful-content-issues.md) |
 | **AI-Pattern Detection (Phase 5 Humanness)** | [references/ai-detection-checklist.md](references/ai-detection-checklist.md) |
+| Phân luật viết cho code, Jev, Claude | [references/writing-rules-routing.md](references/writing-rules-routing.md) |
 | **Gate GEO G-BÀI (Phase 6)** | `sop/06-self-checklist/tier-1-content-writing.md` § G-BÀI (canonical) · Bộ BÀI /12 + rewrite → skill `geo-content-optimization` (spot-check / full) |
 
 **CRITICAL**: Always read `references/extended-eeat-audit.md` when auditing reviews, YMYL content, or any content requiring E-E-A-T compliance. Run Phase 5 whenever the user asks "bài này có AI không" / "check AI content" — or by default on any full audit of drafted content. Run Phase 6 by default on any full audit of **published** content or when the user asks about AI citation.
 
 ## Changelog
 
+- v2.3 (2026-10-19): thêm `scripts/rules_jev.py` và rubric Jev `tasks/writing-rules.json` 2026-10-19.1 chấm luật theo đoạn; `references/writing-rules-routing.md` chia 60 luật cho code, Jev, Claude. Hiệu chuẩn 100 đoạn gold mù: Jev chỉ lọc cho Claude đọc. Information gain trỏ sang effort của `content-quality-lab`. Thêm Bước 0, phân việc model, tự phản biện. Test `tests/test_rules_jev.py`.
 - 2026-09-12: đóng gói bộ 60 rules canonical cho audit đầy đủ; giữ phân biệt subset 16 điểm và gate nguồn.
 
 - **v2.2 (2026-08-29 — gộp v2.1 → v2.2 cùng ngày, Vincent duyệt):** (1) **Phase 6 = gate GEO G-BÀI 4 item** (GE-16…19; canonical `sop/06-self-checklist/tier-1-content-writing.md` § G-BÀI), chấm riêng không phá 66đ, chạy mặc định với bài đã publish; Bộ BÀI /12, scorecard, rewrite → `geo-content-optimization` 1.3 (mode spot-check / full) — phương án C: core skill giữ hook, lớp GEO ở skill geo-*. (2) Reconcile "L0 answer-first" = câu đầu sau heading (không ép đoạn thân) với `semantic-content-writing` 2.2. (3) GE-17 không chấm độ dài/số heading theo dải cố định (độ dài theo loại node + benchmark đối thủ). (4) Description +(12); phân vai 1 câu với GCO; header 6-Phase. Bản `-ca` 1.3.2-ca giữ module Retrievability 12 việc public. Port CP ×5.

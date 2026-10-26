@@ -1,0 +1,11 @@
+{
+  "name": "redirect-pick",
+  "version": "2026-10-17.1",
+  "questions": {
+    "target": {
+      "type": "choice",
+      "instructions": "state.old_url returns 404 on state.site. state.old_hint holds the words from the old URL and any known old title. state.policy lists site rules that take priority. Each option except home and none is a live page on the same site. Pick the page that best serves the same visitor intent as the old URL. Pick home only when the old URL is about the brand in general. Pick none when no page covers the same topic.",
+      "criteria": {}
+    }
+  }
+}

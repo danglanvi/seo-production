@@ -9,13 +9,13 @@
 # (Trong workspace Vincent, Lead vẫn dùng tools/sync-agent-skills.rb ở root như cũ —
 #  script đó đọc skills/manifest.yaml; script này là bản rút gọn cho standalone.)
 #
-# 2 skill CLAUDE-ONLY (không copy sang .agents/ cho Codex/Antigravity):
-#   gtv-client-report · gtv-weekly-report
+# 3 skill CLAUDE-ONLY (không copy sang .agents/ cho Codex/Antigravity):
+#   gtv-client-report · gtv-weekly-report · wp-content-review-apply
 
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-CLAUDE_ONLY=("gtv-client-report" "gtv-weekly-report")
+CLAUDE_ONLY=("gtv-client-report" "gtv-weekly-report" "wp-content-review-apply")
 
 if [ ! -d "skills" ]; then
   echo "LỖI: không thấy folder skills/ — chạy script từ trong folder SEO Production." >&2

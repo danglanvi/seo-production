@@ -1,0 +1,6 @@
+{
+  "name": "ai-answer-objection-extract",
+  "version": "2026-10-19.1",
+  "source": "answer",
+  "instructions": "You read an answer of an AI assistant. state.question is what the user asked. state.brand is one company and state.aliases are other names for it. Copy every sentence or table cell from state.answer that tells the reader to doubt, check or resolve something specific to state.brand before hiring it: a doubt about a claim or proof of state.brand, a weakness or limit of state.brand, or an open question about its scope, price or results. Do not copy general cautions that the answer gives for all companies in the same words. Do not copy praise or plain facts. For tag, use one of: proof_doubt, weakness, scope_question, price_question, result_question, other."
+}

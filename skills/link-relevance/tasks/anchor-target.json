@@ -1,0 +1,10 @@
+{
+ "name": "anchor-target",
+ "version": "2026-10-19.1",
+ "questions": {
+  "delivers": {
+   "type": "noul",
+   "instructions": "state.link_location.paragraph contains one link written as [anchor](url). state.target describes the linked page of the same website: URL, title, opening text and headings. Decide whether a reader who clicks this link finds, on the target page, the specific thing the anchor names. When the anchor is generic, such as 'xem chi tiết' or 'tìm hiểu thêm', use the paragraph to know what the link promises. The target delivers when that thing is the page's main topic or has its own section, list item or definition there. A category or listing page that only lists articles does not deliver a specific topic. A page about a narrower or different topic that shares words with the anchor does not deliver."
+  }
+ }
+}

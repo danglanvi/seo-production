@@ -51,6 +51,9 @@ metadata:
 
 ## Workflow
 
+### Bước 0 — kiểm tool
+Chạy "python3 tools/capabilities.py check --need 'python3,dataforseo,chrome?'" từ root repo. Nếu thiếu tool bắt buộc, dừng và báo tên tool. Nếu thiếu tool tuỳ chọn, dùng fallback ghi trong "tools/capabilities.md".
+
 ### Bước 0 — Đọc references + chốt phép đo (gate cứng, chờ xác nhận)
 
 1. Đọc [references/geo-grid-manual.md](references/geo-grid-manual.md).

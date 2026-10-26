@@ -3,7 +3,7 @@ name: visual-semantic-seo
 description: "Thiết kế, audit và so sánh Visual Semantic SEO: page layout, visual hierarchy, centerpiece, above-the-fold, component mapping, entity cards, image semantics, FAQ/tabs, trust/pricing blocks, PDP, service page, local page. Use when: 'visual semantic', 'page layout SEO', 'wireframe', 'centerpiece', 'audit layout [URL]'."
 ---
 
-# Visual Semantic SEO (v3.7)
+# Visual Semantic SEO (v3.7.1)
 
 Optimize content layout, visual hierarchy, website functions, image-level semantics, and patterned visual elements following Koray Tuğberk's framework, verified Google patents, and Content Warehouse API leak insights.
 
@@ -60,6 +60,11 @@ For **hybrid pages**, multiple centerpieces may stack with supporting blocks bet
 ## PROCESS — 8 bước triển khai (v3.7)
 
 > Bản đầy đủ có RACI + training: wiki nội bộ «07-visual-semantic» (ngoài repo, hỏi Lead/Vincent) (v2.0 — đã renumber 8 bước) + deep-dive trực quan: `sop/07-visual-semantic-deep-dive.html`. 2 chế độ: **Design-in** (trang mới, Bước 0-8) / **Audit-fix** (trang có sẵn — vào Bước 8, quay lại bước fail). Vị trí pipeline: giữa Layer 2 Outline AM và Layer 4 Onpage (Koray: topical map → document architecture → mockup → Figma). v3.6 thêm Bước 1 + nâng Bước 3; v3.7 nâng Bước 1 thành QDP Gate + output Query Augmentation Map.
+
+### Bước 0 — kiểm tool
+Chạy "python3 tools/capabilities.py check --need 'chrome?,playwright?,firecrawl?'" từ root repo. Nếu thiếu tool bắt buộc, dừng và báo tên tool. Nếu thiếu tool tuỳ chọn, dùng fallback ghi trong "tools/capabilities.md".
+
+### Các bước
 
 | Bước | Việc | Output |
 |---|---|---|
@@ -252,9 +257,9 @@ From Content Warehouse API leak (May 2024), module `QualityPreviewRanklabTitle` 
 
 | Factor (tên đúng trong leak) | How to Optimize |
 |---|---|
-| `goldmineReadabilityScore` | Short sentences, burstiness, S-V-O structure, no nuke words, Flesch reading ease ≥60 |
+| `goldmineReadabilityScore` | Title candidate dễ đọc: ngắn, S-V-O, không nuke word. Factor này chấm title candidate, không chấm thân bài. Flesch chỉ đo tiếng Anh |
 | `goldmineHeadingFactor` + `goldmineHeaderIsH1` | H1 contains exact target query, H2 carries semantic variations, H1 ≤4 entities, no number stuffing; heading phải render thật |
-| `goldmineSitenameFactor` | Brand name appears natural 5-7 times per article, never stuffed |
+| `goldmineSitenameFactor` | Tên site trong title candidate (dạng "Tiêu đề - Brand"), một tên gọi thống nhất. Factor chấm title candidate, không đếm số lần nhắc brand trong bài |
 | `goldmineSalientTermFactor` | Identify 2-3 salient terms per article, repeat strategically across heading + body |
 | `goldmineNavboostFactor` | Boost feature signal cho `goldmine_page_score` — hexdocs không có description riêng; "liên quan click signals" là suy luận từ tên Navboost (interpretation). ⚠️ v2.1 ghi sai thành "vboostFactor" — mis-crop từ slide; field đó không tồn tại |
 | `goldmineGeometryFactor` + `widthFraction` | Title/heading không tràn width gây truncate khi render |
@@ -370,9 +375,9 @@ Rules chung: đặt placeholder `{Brand}`, `{Doctor Name}`… cho mọi tên th�
 
 ### Goldmine Title/Heading Hygiene (renamed v3.0 — scope: title/snippet selection, không phải general ranking)
 - [ ] Salient terms (2-3) identified per article
-- [ ] Brand name natural mention 5-7 times
+- [ ] Tên brand thống nhất trong title candidate (không đếm số lần nhắc trong bài)
 - [ ] Heading factor: H1 exact query, H2 variations, heading render thật (headerIsH1)
-- [ ] Readability: Flesch ≥60, avg sentence ≤18 words
+- [ ] Title candidate ngắn, dễ đọc (Flesch chỉ áp trang tiếng Anh)
 - [ ] Title/heading không tràn width gây truncate (geometry/widthFraction)
 - [ ] Vertical consistency: no off-topic content (generic advice — grounding vboostFactor cũ đã bị gỡ)
 
@@ -468,6 +473,7 @@ Checklist ĐẠT/KHÔNG-ĐẠT khi build hoặc review PLP · PDP · Home · Sea
 
 ## Changelog
 
+- **v3.7.1 (2026-10-19):** goldmine factor chấm title candidate, không chấm thân bài: bỏ Flesch ≥60 cho trang tiếng Việt, bỏ quota nhắc brand 5-7 lần, ghi rõ field `vboostFactor` không có trong leak; funnel mapping bỏ số từ cố định theo funnel (TOFU 5000-10000); xoá ví dụ số liệu GTV không có nguồn trong `ranklab-factors.md`.
 - **v3.7 (24/07/2026):** Batch 37 (bài Koray SEL "How semantics and topical authority improve local SEO" 22/07 + 7 wireframe style-reference). (1) Bước 1 nâng thành **Query Augmentation & QDP Gate**: 4 tiêu chí ≥3/4 (demand/entities/similarity-WEIGHTED/pattern) → page, không đạt → QDH/QDS/component (table/form/calculator/filter); weighted-term rule (term nặng nhất = subject của triples — Bendersky/Najork); output đổi thành **Query Augmentation Map 4 cột** (queries→component→triples→entities). (2) **Wireframe Mode** 3 chế độ BUILD/ANALYZE/COMPARE + `references/wireframe-spec.md` (format PAGE LAYOUT SEMANTICS: rail macro/micro, callout đánh số, legend zone, diff matrix A≠B/A=B/A!/B!). (3) Archetype mới **Local Entity Pages** + `references/local-entity-page-patterns.md` (geo utility bar, NAP GBP field parity, landmark grounding, breadcrumb sibling switcher, 2 transaction modes, review acquisition loop, anti-doorway localization, store-entity skeleton). (4) Pattern 8 + forum subdomain route cho opinionated/experience queries + routing 4 query types. (5) Bước 2 thêm rule local: homepage target location-service pair #1 + contextual bridges → quality nodes. (6) `references/query-augmentation-map.md` (worked example rehab 12 dòng). Cross-skill: QDP gate canonical ở `keyword-topic-url-mapping/references/qdp-gate.md`. Evidence: wiki Batch 37 ([[sources/local-seo-topical-authority-sel-koray]] + [[Local SEO]] + [[cases/local-seo-sel-cases-2026]] + [[QDP-QDH-QDS]] →stable).
 - **v3.6 (16/07/2026):** Batch 32 (bài Koray SEL "Visual semantics" + 15 nguồn full-text, fact-check 3 vòng — 12 verdicts). (1) Core Principle + Formula v3 `((HD×TC)÷CoR) × Right Visual Annotations` + decision-tree gate (Nayak top ~20-30 đính chính). (2) PROCESS 7→8 bước: Bước 1 mới Query Augmentation Classification (map biến thể → page type/layout/function + prune/merge); Bước 3 nâng thành SERP & Attribute Benchmark (đọc ngược feature→attribute US10445328B2 + category thắng SERP US8498984B1); Bước 7 thêm HTML 2MB + image dimensions + JS bundle; Bước 8 thêm extraction test 400 ký tự. (3) Centerpiece Dial thêm hygiene flow liền mạch (Goodoc Flow/FlowThread + DOJ example; 400 chars label single-source) + case converter +30.5%. (4) Pattern 7 Subdomain Testing (3 lớp grounding) + Pattern 8 Content Type Distribution (2×2 + 4 kỹ thuật + 3 component). (5) Website Functions có consequence: misleading functionality spam policy + US12536233B1 "no product filter" trigger. (6) Bảng patents +4 granted (US9069855B2, US10445328B2, US9916366B1, US12536233B1), US8498984B1 nâng STRONG, bảng riêng patent APPLICATIONS (WO2020033805A1 CEASED, US20240289407A1 PENDING — design intent); fact-notes: LAMPRET không chứa "cards", WebRef ≠ WebFormer. (7) Quick Checklist +6 items; pointer deep-dive `sop/07-visual-semantic-deep-dive.html` (checklist 24 eval). Evidence: wiki Batch 32 (16 source pages + case page + verification page).
 - **v3.5 (12/07/2026):** Thêm module E-commerce Build Evals — 12 eval ĐẠT/KHÔNG-ĐẠT (E1-E12) đúc từ 3 vòng build + feedback IndochinaLight: PLP fold budget + không banner hero, sticky=mission tools, card 7 lớp + tag/metafield sync (pattern Rowabi verify 12/07), đơn vị dia. cho US, link placement (informational→blog), review ladder 0/1-14/≥15, sale display Save + counter app-bound, sticky mirror state (không inner-scroll), section heading=entity + sub-line, trust placement (press mid-page, payment logo chính chủ), cart honesty (progress freeship thật + bundle nudge), thank-you timeline made-to-order. Evidence: Build v3 6 trang (home/category/PDP/search/cart/thank-you) trong tài liệu nội bộ «.» (ngoài repo, hỏi Lead/Vincent)

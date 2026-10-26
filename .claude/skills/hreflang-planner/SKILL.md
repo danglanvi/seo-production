@@ -1,8 +1,8 @@
 ---
 name: hreflang-planner
-description: "Audit + generate hreflang cho site đa ngôn ngữ/đa thị trường (VN/EN, SEA) — 2 chế độ: AUDIT (self-referencing, return tags, x-default, mã ISO, conflict canonical, URL noindex/redirect) và GENERATE (sinh tag/sitemap). Use when: 'audit hreflang [site]', 'sinh hreflang cho [site]', 'site đa ngôn ngữ bị sai ngôn ngữ trên SERP'."
+description: "Audit và sinh hreflang cho site đa ngôn ngữ (VI/EN, SEA): mã ISO, self-reference, return tags, x-default, xung đột canonical, đích noindex hay redirect; EmbeddingGemma kiểm cặp trang 2 ngôn ngữ có tương đương không. Dùng khi audit, sinh hreflang hoặc SERP trả sai bản ngôn ngữ."
 metadata:
-  version: "1.0"
+  version: "1.2"
 ---
 
 # Hreflang Planner
@@ -41,9 +41,22 @@ Deep-dive **hreflang** cho site đa ngôn ngữ/đa thị trường: audit bộ 
 | **B — Fetch đại diện** | Chỉ có URL | curl/fetch 2-3 URL đại diện MỖI template (home, category, bài) × MỖI bản ngôn ngữ + fetch sitemap — kết luận theo template, ghi rõ "chưa quét toàn site" |
 | **C — User paste** | Không fetch được (staging chặn IP…) | User paste `<head>` + sitemap entry của bộ URL đại diện — coverage thấp nhất, ghi rõ giới hạn |
 
+## Phân việc model
+
+| Model | Việc trong skill | Quyết định |
+|---|---|---|
+| Code | Đọc thẻ hreflang, kiểm mã ISO, self-reference, return tags, đích HTTP, so cặp đã khai | dùng |
+| EmbeddingGemma 2 | Xếp ứng viên bản tương đương bằng cosine cấp trang (prompt SentenceSimilarity). Đẩy cặp có độ phủ section 2 chiều `sec_cov` thấp (prompt Document) xuống cuối danh sách đọc | dùng, chạy local. Hiệu chuẩn 19/10 trên 50 cặp VI–EN: ứng viên hạng 1 đúng 8/9 trang có bản tương đương. Ngưỡng `sec_cov` < 0,82 là nháp, chưa holdout, và đã loại nhầm 1 cặp thật (0,812), nên cặp dưới ngưỡng không bị loại, chỉ xếp cuối kèm ghi chú "nháp, chưa holdout". Không có ngưỡng nhận: cặp âm cao nhất 0,887, cặp dương thấp nhất 0,812 |
+| Jev | Chấm 2 trang có tương đương không | không dùng: chưa có rubric hiệu chuẩn; Gemma đã thu hẹp còn 21/50 cặp cho Claude đọc |
+| GLM Flash | Trích câu | không dùng: không có việc trích câu |
+| Claude | Gán gold, đọc mọi cặp ứng viên (cặp dưới ngưỡng nháp đọc cuối), gate chủ đích, viết finding và bộ tag | dùng |
+
 ## Workflow
 
-### Bước 0 — Đọc references + xác định data tier & scope
+### Bước 0 — kiểm tool
+Chạy "python3 tools/capabilities.py check --need 'python3,numpy?,gemma?,screaming-frog?,curl?'" từ root repo. Nếu thiếu tool bắt buộc, dừng và báo tên tool. Nếu thiếu tool tuỳ chọn, dùng fallback ghi trong "tools/capabilities.md".
+
+### Bước 0b — Đọc references + xác định data tier & scope
 
 1. Đọc `sop/06-self-checklist/tier-3-technical-advance.md` mục 10 (International — 9 item canonical) + [[syntheses/Multilingual SEO]] (4 nguyên tắc) + [[Hreflang PageRank Sharing]] (nuance gate) — khung chấm của skill này.
 2. Xác định `$MODE`, tier data, `$MARKETS` (thiếu → hỏi: những thị trường nào là mục tiêu THẬT có content riêng? — hreflang cho bản dịch máy rỗng là phản tác dụng).
@@ -53,6 +66,20 @@ Deep-dive **hreflang** cho site đa ngôn ngữ/đa thị trường: audit bộ 
 ### Bước 1 — Dựng inventory
 
 Từ data tier: bảng mỗi hàng = 1 URL, cột = ngôn ngữ khai báo, hreflang set (cặp lang→href), canonical, meta robots, HTTP status, nơi đặt (head/header/sitemap). Generate mode: bảng cặp URL tương đương giữa các bản (equivalence map) — user xác nhận map trước khi sinh tag.
+
+### Bước 1b — Kiểm cặp tương đương bằng EmbeddingGemma
+
+Chạy khi site có ≥ 2 bản ngôn ngữ và có store của skill `site-vector-index` (mức page và section). Thiếu Gemma hoặc store thì Claude đọc từng cặp, ghi giới hạn.
+
+1. Lấy cặp đã khai: `python3 -B skills/hreflang-planner/scripts/pair_check.py declared --html-dir <thư mục HTML đã tải> --out <W>/declared.jsonl`. Thư mục chứa cặp file `.html` + `.url` của `site-vector-index`.
+2. Dựng cặp ứng viên: `<venv>/bin/python -B -I skills/hreflang-planner/scripts/pair_check.py pairs --store <store> --page-store <store page SentenceSimilarity> --b-prefix /en/ --declared <W>/declared.jsonl --k 5 --out <W>/pairs.jsonl`. Không có store SentenceSimilarity thì bỏ `--page-store`.
+3. Ra kết luận: `<venv>/bin/python -B -I skills/hreflang-planner/scripts/pair_check.py report --pairs <W>/pairs.jsonl --registry 00-client-context/model-calibration.json --site <domain> --metric sec_cov --out-dir <W>`.
+4. Site mới: Claude gán gold mù ≥ 40 cặp trước khi xem điểm, rồi chạy `calibrate.py cosine --pairs` (skill `model-calibration`) với rubric `hreflang-pair`, version `sec_cov`. Chưa có ngưỡng thì Claude đọc mọi cặp.
+5. Claude đọc mọi cặp "Claude đọc", rồi đọc cặp "Claude đọc cuối" (dưới ngưỡng nháp, chưa holdout). Script không loại cặp nào. Kết luận đưa vào mục 3b của report:
+   - Cặp đã khai mà không tương đương → finding ❌, sửa nội dung hoặc gỡ hreflang.
+   - Trang chưa khai mà có bản tương đương → đề xuất cặp, qua gate chủ đích trước.
+   - Bản dịch lệch vì một bên đã viết lại → ghi "cần dịch lại", không ghi "không có bản tương đương".
+   - Trang khai `hreflang="en"` mà H1, H2 viết tiếng Việt → finding ❌ ngôn ngữ khai sai.
 
 ### Bước 2 — Audit 6 nhóm check (`$MODE = audit`)
 
@@ -90,10 +117,28 @@ Mỗi finding ❌/⚠️ ghi: evidence (URL + giá trị + nguồn tier) → fix
 
 Đổi cấu trúc trên site đang chạy = sự kiện migration → route, skill này chỉ khuyến nghị đích đến.
 
+**3d. Nút chuyển ngôn ngữ và tự chuyển hướng** (khi audit hoặc thiết kế bộ chọn ngôn ngữ):
+
+- Không tự chuyển giữa các bản ngôn ngữ theo IP hay `Accept-Language` khi trang gốc `/` không phải bản tiếng Anh. Googlebot thường crawl từ IP Mỹ với trình duyệt `en-US`, nên sẽ bị chuyển khỏi bản gốc. Khách Việt dùng trình duyệt tiếng Anh cũng bị đẩy sang bản EN.
+- Thay bằng gợi ý không chặn, đọc `navigator.languages` ở trình duyệt. Gợi ý hiện khi trình duyệt không ưu tiên ngôn ngữ của trang, có nút chuyển và nút đóng. Lựa chọn lưu bằng cookie 1 năm. Cookie này không được đưa vào vary của cache.
+- Dropdown trỏ đúng URL tương đương của từng trang theo cặp hreflang. Trang không có bản tương đương thì trỏ trang chủ của bản kia. Nhãn ghi tên ngôn ngữ, không dùng cờ quốc gia. Nút có `aria-expanded`, phím Esc đóng, vùng chạm từ 44 px.
+- Ngoại lệ: trang gốc `/` là tiếng Anh và mỗi bản có URL riêng cùng hreflang, như openai.com (chỉ chuyển `/` sang `/vi-VN/`). Khi đó tự chuyển riêng trang gốc ít rủi ro hơn. Report vẫn ghi rủi ro và để khách quyết.
+
 ### Bước 4 — Render report / bộ tag
 
 - Audit: `03-audits/<client>_Hreflang-Audit_<YYYY-MM-DD>.md` theo skeleton Output.
 - Generate: bộ tag/sitemap trong report (fenced code, sẵn dán) + hướng dẫn verify sau deploy (GSC URL Inspection bản từng thị trường; re-audit sau 2-4 tuần).
+
+### Tự phản biện trước khi trình
+Chấm bản nháp theo checklist "Bản tốt nhất phải có". Mục chưa đạt thì sửa, hoặc ghi lý do bỏ. Nếu có output của Codex hay agent khác cho cùng việc, so từng mục và lấy phần tốt hơn trước khi trình Vincent.
+
+Bản tốt nhất phải có:
+- [ ] Trang khai `hreflang="en"` có H1, H2 bằng tiếng Anh; trang lẫn tiếng Việt thành finding. Nguồn lỗi: 19/10 hai trang /en/ của site mẫu có H1 và H2 tiếng Việt.
+- [ ] Mọi trang chưa khai hreflang có kết luận về bản tương đương. Nguồn lỗi: 19/10 4/10 trang /en/ của site mẫu chưa khai cặp vi.
+- [ ] Cặp lệch do một bên viết lại được ghi "cần dịch lại". Nguồn lỗi: 19/10 trang dịch vụ TP.HCM bản EN dịch từ bản VI cũ, `sec_cov` 0,81 dưới ngưỡng nháp.
+- [ ] Không đề xuất trang tác giả, chuyên mục hay trang chủ làm cặp hreflang. Nguồn lỗi: 19/10 Gemma xếp trang tác giả hạng 1 cho trang đội ngũ /en/.
+- [ ] Ngưỡng loại lấy từ registry của site, chỉ dùng để xếp cuối, và report ghi rõ không có ngưỡng nhận. Nguồn lỗi: hiệu chuẩn 19/10, cặp âm cao nhất 0,887 cao hơn cặp dương thấp nhất 0,812.
+- [ ] Bộ chọn ngôn ngữ theo mục 3d: gợi ý theo `navigator.languages` và cookie, không tự chuyển theo IP khi trang gốc không phải tiếng Anh. Nguồn lỗi: 23/10 yêu cầu mặc định theo IP cho gtvseo.com; phép thử openai.com, notion.com, apple.com cho thấy chỉ site có gốc tiếng Anh mới tự chuyển an toàn.
 
 ## Output
 
@@ -110,6 +155,9 @@ Mỗi finding ❌/⚠️ ghi: evidence (URL + giá trị + nguồn tier) → fix
 
 ## 3. Return tags matrix (URL đại diện per template)
 | URL | vi-VN | en | x-default | Self | Canonical OK |
+
+## 3b. Cặp tương đương (EmbeddingGemma + Claude)
+| Trang B | Đã khai | Ứng viên đầu | sec_cov | Kết luận của Claude |
 
 ## 4. Bộ tag sửa / generate (sẵn dán)
 ```html hoặc ```xml — full set + self + x-default```
@@ -159,4 +207,7 @@ Mỗi finding ❌/⚠️ ghi: evidence (URL + giá trị + nguồn tier) → fix
 
 ## Changelog
 
+- **v1.2 (2026-10-24):** thêm mục 3d nút chuyển ngôn ngữ: không tự chuyển theo IP hay `Accept-Language` khi gốc không phải tiếng Anh, gợi ý theo `navigator.languages`, cookie 1 năm ngoài vary cache, dropdown trỏ URL tương đương. Thêm 1 mục tự phản biện. Nguồn: lane `ngon-ngu` gtvseo.com 23/10 (`Deliverables/GTV-Brand/GTV-Website/ui-20261020/doc-de-2310/ngon-ngu/bao-cao.md` mục 3) và phép thử openai.com, notion.com, apple.com, stripe.com cùng ngày.
+- **v1.1.1 (2026-10-19):** ngưỡng `sec_cov` < 0,82 về nháp (chưa holdout, loại nhầm 1 cặp thật 0,812): `pair_check.py report` không loại cặp dưới ngưỡng, chỉ xếp cuối với nhãn "Claude đọc cuối" và ghi chú "nháp, chưa holdout". Test cập nhật.
+- **v1.1 (2026-10-19):** thêm Bước 1b: EmbeddingGemma kiểm cặp trang 2 ngôn ngữ (`scripts/pair_check.py`: declared, pairs, report). Hiệu chuẩn 50 cặp VI–EN thật: ngưỡng loại `sec_cov` < 0,82, không có ngưỡng nhận. Thêm Bước 0, phân việc model, tự phản biện, mục 3b. Test `tests/test_pair_check.py`.
 - **v1.0 (2026-07-19):** tạo mới — 6 nhóm audit check (ISO validation với case `vn`→`vi`, self-ref, return tags, x-default, canonical conflict, đích sạch), generate 3 phương án đặt + bảng chọn theo quy mô, map cấu trúc ccTLD/subdomain/subfolder (default GTV: subfolder), gate chủ đích theo [[Hreflang PageRank Sharing]]; canonical checklist kế thừa tier-3 SOP mục 10.

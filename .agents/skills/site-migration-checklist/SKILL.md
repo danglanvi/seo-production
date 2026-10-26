@@ -2,7 +2,7 @@
 name: site-migration-checklist
 description: "Checklist + workflow audit site migration (đổi domain, đổi cấu trúc URL, redesign, gộp site, đổi CMS) qua 3 giai đoạn PRE/DURING/POST — bảo toàn signal, không reset Historical Data. Use when: 'chuẩn bị migration [site]', 'checklist đổi domain', 'site vừa redesign, kiểm tra gì', 'sau migration rớt traffic'."
 metadata:
-  version: "1.0"
+  version: "1.3"
 ---
 
 # Site Migration Checklist
@@ -40,6 +40,9 @@ Upstream: benchmark data từ Ahrefs/GSC (Path detection bên dưới). Downstre
 - **Path C (đường lùi cuối — luôn chạy được không cần MCP):** user paste danh sách top 50-100 URL kèm traffic/backlink ước lượng. ⚠️ Note trong output: benchmark độ tin thấp hơn, triage POST sẽ thiếu baseline chi tiết.
 
 ## Workflow
+
+### Bước 0 — kiểm tool
+Chạy "python3 tools/capabilities.py check --need 'python3,curl,screaming-frog?,gsc?,pagespeed-api?,ssh?,wp-cli?'" từ root repo. Nếu thiếu tool bắt buộc, dừng và báo tên tool. Nếu thiếu tool tuỳ chọn, dùng fallback ghi trong "tools/capabilities.md".
 
 ### Bước 0 — Scope, gate & rollback criteria
 
@@ -82,6 +85,7 @@ Checklist đầy đủ có [owner] + [blocker]: [references/migration-checklist-
 5. **Change of Address tool** trong GSC — chỉ khi domain move, submit cho mọi variant.
 6. Verify tracking fires (custom search "does not contain" tag trên crawl).
 7. Spot-check **top-100 URL cũ** bằng SF list mode → 301 đúng target, 1 hop.
+8. **Site WordPress tự quản** (đổi theme, đưa trang HTML tĩnh vào WordPress): thực thi theo [references/wp-tu-quan.md](references/wp-tu-quan.md): switch có rollback tự động, restart OpenLiteSpeed sau khi chuyển thư mục, kiểm trong giờ đầu.
 
 ### Bước 3 — POST (parity, coverage, triage)
 
@@ -166,6 +170,7 @@ chất lượng redirect map, và Historical Data hiện có">
 **References nội bộ skill:**
 - [references/migration-checklist-full.md](references/migration-checklist-full.md) — checklist 3 giai đoạn chi tiết (owner/blocker), triage matrix, rollback decision tree, bảng recovery timeline có label.
 - [references/redirect-mapping-method.md](references/redirect-mapping-method.md) — nguyên tắc map 1-1, priority tiers, method theo scale, QA, template sheet.
+- [references/wp-tu-quan.md](references/wp-tu-quan.md) — thực thi trên WordPress tự quản: đưa trang tĩnh vào WordPress giữ URL, switch có rollback, bẫy OpenLiteSpeed `.htaccess`, kiểm giờ đầu.
 
 **Wiki Semantic SEO (neo lý thuyết):**
 - [[Ranking Signal Consolidation]] — cơ chế 301/canonical transfer signal; 4 methods xử lý URL thừa.
@@ -178,4 +183,7 @@ chất lượng redirect map, và Historical Data hiện có">
 
 ## Changelog
 
+- **v1.3 (2026-10-18):** `references/wp-tu-quan.md`: mục 1 so plugin đang bật giữa staging và production; mục 4 kiểm plugin front-end bằng DOM (Fixed TOC chèn mục lục thô vào mọi bài sau cutover) và quét `<style>`, `<script>`, ảnh hotlink trong nội dung cũ.
+- **v1.2 (2026-10-18):** `references/wp-tu-quan.md` mục 4 thêm kiểm plugin front-end để lại chữ lẻ sau khi đổi theme; mục 5 mới: cách ly theme cũ và plugin chỉ theme cũ dùng sau khi ổn định, giữ bộ cũ trên staging.
+- **v1.1 (2026-10-18):** thêm `references/wp-tu-quan.md` từ một lần đổi theme và đưa 13 trang landing tĩnh vào WordPress (10/2026); Bước 2 thêm mục 8 trỏ tới file này.
 - **v1.0 (2026-07-07):** khởi tạo — nền: wiki Koray (Historical Data, Ranking Signal Consolidation, Status Codes, Robots.txt, Index Pollution) + Google site-move doc + Aleyda 3-phase + Screaming Frog migration/embeddings tutorials + SEJ migration-hangover + Gary Illyes signal-loss window.

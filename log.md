@@ -302,3 +302,163 @@ Luật ghi:
 - Kiểm: 54 test offline PASS; chạy lại export thật của hai dự án (nhiều domain và một domain) ra đúng số đã đối chiếu tay; `qp_render.py check` OK cả 11 JSON đợt 10/2026; audit 0 slide tràn.
 - Files touched: skills/query-processing-diagnosis/, 03-audits/ranking/README.md, 03-audits/README.md, 03-audits/CLAUDE.md, _TEMPLATES/qp-intake.md, _TEMPLATES/qp-chan-doan.md, _TEMPLATES/README.md, CLAUDE.md, README.md, COMMANDS.md, MIGRATION.md, _REFERENCE/runtime-workstream-matrix.md, _REFERENCE/folder-map.md, _REFERENCE/project-sync.md, 02-raw/knowledge/cheat-sheets/ws03-audit.md, log.md
 - Công đoạn: 22, 24, 29 · WS: 03
+
+## [2026-10-13] refactor | v2026.10.6 — Gate QA link trước khi đăng (SOP 10 v1.3) + textlink-analyzer v1.1.0 — Vincent duyệt — @claude
+
+- Vì sao: Vincent duyệt 13/10/2026 sau đợt ingest Clippings 10/2026 (wiki Semantic SEO, nguồn Dejan Petrovic 2026): link đặt sai chỗ người đọc cần dễ bị đoán là link mua và có thể bị Google bỏ qua không báo.
+- SOP 10 v1.3: §2 luật handoff 6, gate 6 bước cho link đặt trong thân bài. Bản canonical ở `Knowledge/Semantic SEO A - Z/sop/10-offpage-process.md`, chép nguyên sang master.
+- `skills/textlink-analyzer` v1.1.0: Bước 5b chấm gate, 2 cột mới trong bảng plan; mirror sinh lại bằng `tools/sync-agent-skills.rb` ở root workspace; lint drift runtime 0.
+- Files touched: 02-raw/knowledge/sop/10-offpage-process.md, skills/textlink-analyzer/SKILL.md, .claude/skills/textlink-analyzer/, .agents/skills/textlink-analyzer/, MIGRATION.md, log.md
+- Công đoạn: offpage · WS: 07
+
+## [2026-10-17] refactor | v2026.10.7 — Bộ skill WordPress có quyền server + nhánh GSC API — Vincent duyệt — @claude
+
+- Vì sao: Vincent duyệt 17/10/2026: đưa quy trình tốc độ, bảo mật, ghi nội dung qua trang duyệt đã chạy thật trên 2 site WordPress vào master, viết chung cho mọi dự án có quyền vào server; thông tin riêng của site nằm trong `00-client-context/wp-server.md` của instance.
+- Skill mới `wp-pagespeed`, `wp-security-hardening`, `wp-content-review-apply` (claude-only); sửa `technical-seo-audit` v1.7, `seo-onpage` v1.4.2, `internal-linking` v1.1.1. Bản gốc của 3 skill mới chuyển vào repo này; workspace Vincent đọc qua `source` trong manifest.
+- Tool mới `tools/ai-assist/`, `tools/gsc/gsc.sh`; template mới `_TEMPLATES/wp-server.md`.
+- Files touched: skills/wp-pagespeed/, skills/wp-security-hardening/, skills/wp-content-review-apply/, skills/technical-seo-audit/, skills/seo-onpage/SKILL.md, skills/internal-linking/SKILL.md, .claude/skills/, .agents/skills/, tools/ai-assist/, tools/gsc/, tools/sync-skills.sh, _TEMPLATES/wp-server.md, _TEMPLATES/README.md, CLAUDE.md, README.md, COMMANDS.md, SYNC.md, _REFERENCE/runtime-workstream-matrix.md, _REFERENCE/folder-map.md, 03-audits/technical/README.md, MIGRATION.md, log.md
+- Công đoạn: 5, 7, 18, 23, 24, 27 · WS: 03, 06
+
+## [2026-10-18] refactor | v2026.10.8 — Bài học nghiệm thu tốc độ và đổi theme site WordPress thứ hai — Vincent duyệt — @claude
+
+- Vì sao: Vincent duyệt 18/10/2026 ("tự quyết và tự nâng cấp"): đưa bài học từ đợt đổi theme, đưa trang tĩnh vào WordPress, đổi tên ảnh, nghiệm thu PSI vào master, viết client-neutral.
+- `wp-pagespeed` v1.2 (lớp 4 font, lớp 7 tracking, A/B trên PSI, 3 script mới đã chạy thử trên production site mẫu); `image-seo-optimize` v1.2 (Mode D, script cách ly đã chạy thử cách ly và trả lại trên server); `site-migration-checklist` v1.1; `schema-markup-generator` v1.0.2. Mirror sinh lại bằng `tools/sync-agent-skills.rb` ở root workspace.
+- Files touched: skills/wp-pagespeed/, skills/image-seo-optimize/, skills/site-migration-checklist/, skills/schema-markup-generator/, .claude/skills/, .agents/skills/, MIGRATION.md, log.md
+- Công đoạn: 5, 7, 18, 23, 24 · WS: 03, 06
+
+## [2026-10-18] refactor | v2026.10.9 — Vị trí internal link: đúng ngữ cảnh, ưu tiên supplementary content, bám topical map — Vincent yêu cầu — @claude
+
+- Vì sao: Vincent yêu cầu 18/10/2026: link chỉ đặt ở đúng ngữ cảnh, ưu tiên supplementary content, main content chỉ khi thật sự cần, bám topical map và topic cluster; bổ sung vào skill internal link và luật trạm, dò bằng Jev.
+- `internal-linking` v1.2 (`references/link-placement.md`, Bước 4b, 2 cột mới trong link plan); rubric Jev `link-placement` (hiệu chuẩn 115 link: `zone` từ 0,7 khớp 80/82); luật trạm 06. Mirror sinh lại bằng `tools/sync-agent-skills.rb` ở root workspace.
+- Files touched: skills/internal-linking/, .claude/skills/internal-linking/, .agents/skills/internal-linking/, tools/ai-assist/tasks/link-placement.json, tools/ai-assist/README.md, 06-onpage-internal-link/CLAUDE.md, MIGRATION.md, log.md
+- Công đoạn: 18 · WS: 06
+
+## [2026-10-18] refactor | v2026.10.10 — wp-pagespeed v1.3, wp-security-hardening v1.2 — Vincent duyệt "làm full", cho tự nâng cấp skill — @claude
+
+- Bài học đợt tốc độ thứ hai và siết server của một site WordPress sau khi đổi theme: font dự phòng trên máy đo PSI và Android, unicode-range, content-visibility, srcset ảnh màn hình đầu, forced reflow; chặn mu-plugins, HSTS, bind MariaDB, backup tự động xoay vòng không xoá file.
+- Files touched: skills/wp-pagespeed/, skills/wp-security-hardening/ (thêm templates/backup-tu-dong/), .claude/skills/, .agents/skills/, MIGRATION.md, log.md
+
+## [2026-10-18] refactor | v2026.10.11 — wp-pagespeed v1.4, wp-security-hardening v1.3, site-migration-checklist v1.2 — Vincent yêu cầu cập nhật skill từ phiên — @claude
+
+- Bài học lượt nghiệm thu đợt 2 của một site WordPress sau khi đổi theme: lượt PSI chậm dồn vào một URL phải đo lại, mốc so cùng buổi; tắt plugin chấm sao hết chức năng (backup `active_plugins`, grep dấu plugin, error log); cách ly theme cũ sau khi ổn định; công cụ chép file theme lẻ và lịch launchd kéo backup.
+- Files touched: skills/wp-pagespeed/ (thêm scripts/deploy_theme_files.sh), skills/wp-security-hardening/ (thêm templates/backup-tu-dong/cai-lich-pull-mac.command), skills/site-migration-checklist/, .claude/skills/, .agents/skills/, MIGRATION.md, log.md
+
+## [2026-10-18] refactor | v2026.10.12 — wp-pagespeed v1.5: hoãn GTM có hẹn giờ, hạng mục Agentic Browsing — Vincent yêu cầu tối đa TBT và Agentic — @claude
+
+- A/B 48 lượt PSI: hoãn GTM 2 s vẫn bị tính TBT, 4 s cho TBT = 0 ở 12/12 lượt; mốc chọn theo observedTraceEnd − observedLoad + biên. Hạng mục Agentic: aria-label nút icon, llms.txt tĩnh có charset, axe với content-visibility.
+- Files touched: skills/wp-pagespeed/ (thêm references/agentic-browsing.md, psi_run.py --categories), .claude/skills/, .agents/skills/, MIGRATION.md, log.md
+
+## [2026-10-18] refactor | v2026.10.13 — wp-pagespeed v1.6, wp-security-hardening v1.4, geo-content-optimization v1.3.1, technical-seo-audit v1.7.1, cro-measurement-plan v1.2 — Vincent: trang khoá học và blog chưa tối ưu xong, cho tự cập nhật skill — @claude
+
+- Bài học đợt đo đủ trang con của một site WordPress: CLS 0,92 do JS defer đổi bố cục sau lần vẽ đầu (sửa bằng trạng thái trong <head>, đo từng nhánh dữ liệu), stack font thiếu face dự phòng (Mac 0,03, PSI 0,28), bản 720w cho hero, logo dải chạy ngang, sizes ảnh thân bài, ảnh đại diện PNG sang WebP giữ OG, forced reflow bằng ResizeObserver, TBT trang chuyển đổi đến từ tracking. Ngoại lệ /llms.txt cho audit PSI. Kiểm GTM bị hoãn trong kế hoạch đo.
+- Files touched: skills/wp-pagespeed/ (thêm scripts/cls_trace.mjs, scripts/featured_webp.sh), skills/wp-security-hardening/, skills/geo-content-optimization/, skills/technical-seo-audit/, skills/cro-measurement-plan/, .claude/skills/, .agents/skills/, MIGRATION.md, log.md
+
+## [2026-10-18] refactor | v2026.10.14 — wp-pagespeed v1.7, site-migration-checklist v1.3 — kết quả A/B font trên PSI, plugin còn bật sau đổi theme — @claude
+- wp-pagespeed: psi_ab.py gộp spec; do-dac.md và checklist lớp 4 ghi kết quả A/B font.
+- site-migration-checklist: so plugin staging với production, kiểm plugin front-end bằng DOM, quét `<style>` và ảnh hotlink trong nội dung cũ.
+- Files touched: skills/wp-pagespeed/{SKILL.md,scripts/psi_ab.py,references/do-dac.md,references/checklist-theo-lop.md}, skills/site-migration-checklist/{SKILL.md,references/wp-tu-quan.md}, MIGRATION.md
+
+## [2026-10-19] refactor | v2026.10.15 — wp-pagespeed v1.8 — CLS do critical CSS thiếu font và mục lục chờ JS — @claude
+- wp-pagespeed: lớp 5 thêm bẫy LiteSpeed gom `<style>` có `@font-face` vào file async và luật dựng lại critical CSS sau khi đổi font; lớp 6 thêm mục lục Fixed TOC chờ JS và cách thử CSS bằng CDP `Fetch`.
+- Files touched: skills/wp-pagespeed/{SKILL.md,references/checklist-theo-lop.md}, MIGRATION.md
+
+## [2026-10-19] refactor | v2026.10.16 — lớp model cho SEO: 4 skill mới + glm.py — @claude
+- Skill mới: site-vector-index, model-calibration, geo-answer-lab, retrieval-lab (v1.0, mỗi skill có test offline).
+- Tool mới: tools/ai-assist/glm.py. calibration-defaults.json thêm cổng ai-answer-brand v3. .gitignore thêm 03-audits/_vector-index/.
+- Files touched: skills/{site-vector-index,model-calibration,geo-answer-lab,retrieval-lab}/, tools/ai-assist/{glm.py,calibration-defaults.json}, .gitignore, .claude/skills/, .agents/skills/, MIGRATION.md, CLAUDE.md, README.md, log.md
+
+## [2026-10-19] refactor | knowledge pack tier-1-geo GE-26 — AI nghi ngờ vì brand tự xếp hạng — @claude
+- Vincent chốt 19/10: không gỡ bài top list; viết khách quan + EEAT; giải nghi ngờ bằng offsite consensus GE-28…32. Vá theo kho gốc v2.0.4, chỉ dòng GE-26 và 1 dòng anti-pattern.
+- Files touched: 02-raw/knowledge/sop/06-self-checklist/tier-1-geo.md, 02-raw/knowledge/_MANIFEST.md, MIGRATION.md, log.md
+
+## [2026-10-19] refactor | v2026.10.17 — topical-focus, content-quality-lab, model-calibration v1.2 — @claude
+- Skill mới: topical-focus (map, selftest, plan), content-quality-lab (prepare, validate, report, template), mỗi skill có test offline.
+- model-calibration v1.2: proxy --control, chế độ auc, lưới cosine 0,01. calibration-defaults.json thêm cổng content-effort.
+- Files touched: skills/{topical-focus,content-quality-lab,model-calibration}/, tools/ai-assist/calibration-defaults.json, .claude/skills/, .agents/skills/, MIGRATION.md, CLAUDE.md, README.md, log.md
+
+## [2026-10-19] refactor | v2026.10.18 — link-relevance, model-calibration v1.3 — @claude
+- Skill mới: link-relevance (prepare, sample, validate, decide), rubric Jev anchor-target 2026-10-19.1, test offline.
+- model-calibration v1.3: cosine --grid cho điểm ngoài dải cosine. calibration-defaults.json thêm cổng anchor-score 0,52.
+- Files touched: skills/{link-relevance,model-calibration}/, tools/ai-assist/calibration-defaults.json, .claude/skills/, .agents/skills/, MIGRATION.md, CLAUDE.md, README.md, log.md
+
+## [2026-10-19] refactor | v2026.10.19 — visual-serp-lab — @claude
+- Skill mới: visual-serp-lab (images, fetch, embed, jev-in, pairs, media, shoot, layout), rubric Jev image-fit và first-screen 2026-10-19.1, test offline.
+- Lệnh embed dừng khi thiếu file ảnh: SentenceTransformer encode chuỗi đường dẫn như chữ khi file không tồn tại.
+- calibration-defaults.json thêm cổng first-screen (8 câu) và image-fit fits_section. Không thêm default alt-score.
+- Files touched: skills/visual-serp-lab/, tools/ai-assist/calibration-defaults.json, .claude/skills/, .agents/skills/, MIGRATION.md, CLAUDE.md, README.md, log.md
+
+## [2026-10-19] refactor | v2026.10.20 — Dạng mã của link: link thật hay link JS — Vincent chốt — @claude
+- `internal-linking` v1.3 (`references/link-js.md` mã D1–D6, Bước 4c, cột `Dạng mã`, 3 anti-pattern); luật trạm 06. Mirror sinh lại bằng `tools/sync-agent-skills.rb` ở root workspace.
+- Files touched: skills/internal-linking/, .claude/skills/internal-linking/, .agents/skills/internal-linking/, 06-onpage-internal-link/CLAUDE.md, MIGRATION.md, log.md
+- Công đoạn: 18 · WS: 06
+
+## [2026-10-19] refactor | v2026.10.21 — Bỏ chuẩn đếm số không theo Semantic SEO — Vincent yêu cầu — @claude
+- Checklist onpage P3, P6, P8, P14, P16–P20, T3-P1/P5/P6 bỏ quota keyword, link, bold, alt và ngưỡng %; internal link bỏ quota 2-5 sibling và 5-10 link mỗi bài; Tier 1 bỏ quota câu hỏi tu từ; nhãn "LSI" đổi thành "đồng nghĩa/biến thể".
+- Skill: seo-onpage 1.4.3, internal-linking 1.3.1, geo-content-optimization 1.3.3, visual-semantic-seo 3.7.1, image-seo-optimize 1.2.1, backlink-plan 1.2.1, textlink-analyzer 1.1.1. Mirror sinh lại bằng `tools/sync-agent-skills.rb`.
+- Files touched: 02-raw/knowledge/sop/03, 06-self-checklist/tier-1 + tier-2, 08, 11; 02-raw/knowledge/cheat-sheets/ws06, ws07; 06-onpage-internal-link/CLAUDE.md; _TEMPLATES/internal-link-plan.md, gate-offpage-decision.md; 7 skill trên + .claude/skills/, .agents/skills/; MIGRATION.md; log.md
+- Công đoạn: 18, 19, 25 · WS: 06, 07
+
+## [2026-10-19] refactor | v2026.10.22 — web-qa-gate, content-quality-lab v1.1, tools/capabilities — @claude
+- Skill mới: web-qa-gate (cổng kiểm 11 hạng mục sau mỗi lần ghi lên site WordPress; Jev ui-visual hiệu chuẩn lượt đầu 72 ảnh, chưa câu nào đạt ngưỡng).
+- content-quality-lab v1.1: lệnh claims (cam kết, tự xếp hạng, số không nguồn, số lệch bảng fact); hiệu chuẩn dev 167, holdout 60, h4 60 câu claim + 50 câu fact.
+- Tool mới: tools/capabilities.md, capabilities.py, tests/test_capabilities.py (Bước 0 kiểm tool). CLAUDE.md §0 thêm tự chấm plan.
+- Files touched: skills/{web-qa-gate,content-quality-lab}/, tools/{capabilities.md,capabilities.py,tests/test_capabilities.py}, tools/ai-assist/calibration-defaults.json, .claude/skills/, .agents/skills/, MIGRATION.md, CLAUDE.md, README.md, log.md
+
+## [2026-10-19] refactor | v2026.10.23 — ngram, SCN, kiểm kê bài, technical, GEO đo lại, topical gap, entity, viết lại an toàn — @claude
+- Skill mới: ngram-semantic-gap 1.0, semantic-content-network 1.0, content-inventory-audit 1.0 (54 skill).
+- Skill sửa: technical-seo-audit 1.8.1, geo-tracking-prompt-selection 1.5, topical-focus 1.1, geo-answer-lab 1.1, content-quality-lab 1.2.1, web-qa-gate (Bước 0).
+- Tool: jev.py chặn trường `must_be_empty`; gsc-cannibal-pair khai `shared_queries`; calibration-defaults +6 entry.
+- Đánh lại số entry 19/10 "web-qa-gate, content-quality-lab v1.1" từ v2026.10.20 thành v2026.10.22, vì phiên khác đã dùng v2026.10.20 và v2026.10.21.
+- Files touched: skills/{9 skill trên}/, tools/ai-assist/{jev.py,README.md,calibration-defaults.json,tasks/gsc-cannibal-pair.json}, MIGRATION.md, README.md, CLAUDE.md, log.md, .claude/skills/, .agents/skills/
+
+## [2026-10-19] refactor | v2026.10.24 — seo-onpage pixel, serp-clustering Gemma, định tuyến query → URL — @claude
+- seo-onpage 1.5.0 (serp_pixel.py, mốc 688 px), serp-clustering 1.1 (lọc trước cosine < 0,90), keyword-topic-url-mapping 1.3, query-processing-diagnosis 1.3 (gsc_route.py).
+- Tool: capabilities.md (pillow, gemma, numpy), calibration-defaults +1 entry serp-clustering-prefilter.
+- Files touched: skills/{seo-onpage,serp-clustering,keyword-topic-url-mapping,query-processing-diagnosis}/, tools/capabilities.md, tools/ai-assist/calibration-defaults.json, MIGRATION.md, log.md, .claude/skills/, .agents/skills/
+
+## [2026-10-19] refactor | v2026.10.25 — geo-fanout-research, geo-content-optimization, content-refresh — @claude
+- geo-fanout-research 1.1 (fanout_cover.py), geo-content-optimization 1.4.0 (bỏ ngưỡng 0,80/0,90), content-refresh 1.1 (intent_shift.py). Bản root geo-variant-simulation 1.1 dùng margin 0,015.
+- Tool: capabilities.md (gemma, numpy, ahrefs), calibration-defaults +2 entry.
+- Files touched: skills/{geo-fanout-research,geo-content-optimization,content-refresh}/, tools/capabilities.md, tools/ai-assist/calibration-defaults.json, MIGRATION.md, log.md, .claude/skills/, .agents/skills/
+
+## [2026-10-19] refactor | v2026.10.26 — semantic-content-audit, seo-drift-tracker, seo-logfile-analysis, hreflang-planner — @claude
+- semantic-content-audit 2.3 (Jev writing-rules chỉ lọc), seo-drift-tracker 1.1 (Jev diff-impact từ 0,65), seo-logfile-analysis 1.1 (log theo cụm, chưa có log thật), hreflang-planner 1.1 (sec_cov < 0,82). Bản root eeat-proof 1.2 (Jev ymyl).
+- Tool: capabilities.md (jev, numpy, gemma, bs4).
+- Files touched: skills/{semantic-content-audit,seo-drift-tracker,seo-logfile-analysis,hreflang-planner}/, tools/capabilities.md, MIGRATION.md, log.md, .claude/skills/, .agents/skills/
+
+## [2026-10-19] refactor | v2026.10.27 — sửa sau kiểm đợt 2, quyết định Vincent, parser log OLS — @claude
+- content-quality-lab 1.2.3 (--own-site), serp-clustering 1.1.1, keyword-topic-url-mapping 1.3.1, semantic-content-network 1.0.1, query-processing-diagnosis 1.3.1 (vai trò 4/10 và 6/10, Gemma trang tiền chỉ là danh sách đọc).
+- geo-answer-lab 1.1.1, topical-focus 1.1.1, technical-seo-audit 1.8.2, hreflang-planner 1.1.1, geo-fanout-research 1.1.1, geo-content-optimization 1.4.1, seo-drift-tracker 1.1.1, seo-logfile-analysis 1.1.1 (parser OpenLiteSpeed, 6 bot mới).
+- Files touched: skills/{content-quality-lab,serp-clustering,keyword-topic-url-mapping,semantic-content-network,query-processing-diagnosis,geo-answer-lab,topical-focus,technical-seo-audit,hreflang-planner,geo-fanout-research,geo-content-optimization,seo-drift-tracker,seo-logfile-analysis}/, MIGRATION.md, log.md, .claude/skills/, .agents/skills/
+
+## [2026-10-19] refactor | v2026.10.28 — 5 skill WordPress và media mới, 4 skill sửa — @claude
+- Mới: wp-staging-deploy 1.0, wp-theme-build 1.0, wp-paid-plugin-exit 1.0, semantic-media 1.0, blog-interactive-tools 1.0. Lượt thử chỉ đọc hoặc dry, bằng chứng ngoài repo.
+- Sửa: wp-security-hardening 1.5 (PHP trong languages, upgrade, path-info; probe chỉ 403), wp-content-review-apply 1.3 (sửa trực tiếp nút E), image-seo-optimize 1.2.2, wp-pagespeed 1.9.1.
+- Tool: capabilities.md thêm ffmpeg và tên skill. README, CLAUDE.md §4: 59 skill.
+- Files touched: skills/{wp-staging-deploy,wp-theme-build,wp-paid-plugin-exit,semantic-media,blog-interactive-tools,wp-security-hardening,wp-content-review-apply,image-seo-optimize,wp-pagespeed}/, tools/capabilities.md, README.md, CLAUDE.md, MIGRATION.md, log.md, .claude/skills/, .agents/skills/
+
+## [2026-10-19] refactor | v2026.10.29 — Bước 0 kiểm tool cho 21 skill, chuẩn câu Bước 0 cho 5 skill — @claude
+- Bước 0 theo câu mẫu của skill-creator; lệnh kiểm cấu trúc đạt 103/103 khối trong workspace.
+- media_match.py không sinh __pycache__ trong site-vector-index nữa.
+- Pilot chỉ đọc trên instance careerviet (route Gemma 76/88 top 1, title vượt 688 px 31/92). Không ghi vào instance; bằng chứng ngoài repo.
+- Files touched: 26 thư mục skills/ (liệt kê trong MIGRATION v2026.10.29), MIGRATION.md, log.md, .claude/skills/, .agents/skills/
+
+## [2026-10-19] refactor | v2026.10.30 — Nối dữ liệu Ahrefs cho bộ backlink và đo trích dẫn AI — @claude
+- link-relevance 1.1 (verdict M1–M3), backlink-research 2.2, backlink-plan 1.3.0, textlink-analyzer 1.2.0, geo-tracking-prompt-selection 1.6: thêm script đọc kết quả Ahrefs + test offline.
+- Lượt thử trên dữ liệu Ahrefs thật của site mẫu và 4 đối thủ; bằng chứng ngoài repo.
+- Files touched: skills/{link-relevance,backlink-research,backlink-plan,textlink-analyzer,geo-tracking-prompt-selection}/, tools/capabilities.md, MIGRATION.md, log.md, .claude/skills/, .agents/skills/
+
+## [2026-10-21] refactor | v2026.10.31 — Bài học đo tràn, biến thể cache và object cache — @claude
+- web-qa-gate 1.1 (đo tràn không bật cờ mobile, 6 bẫy), wp-pagespeed 1.10 (cache_variants.py, psi_run chặn utm_*, shot.mjs không bật cờ mobile, lớp 1 và lớp 4), wp-content-review-apply 1.4 (apply.php xoá object cache trước purge, CSS Elementor theo tài liệu).
+- Rút từ đợt site agency mẫu 20–21/10; test offline 13/13, fixture local, server giả, 2 URL production chỉ đọc. Bằng chứng ngoài repo.
+- Files touched: skills/{web-qa-gate,wp-pagespeed,wp-content-review-apply}/, MIGRATION.md, log.md, .claude/skills/, .agents/skills/
+
+## [2026-10-24] refactor | v2026.10.32 — Model mặc định là Opus mới nhất, bài học đợt nhiều lane 23–24/10 — @claude
+- `.claude/settings.json` thêm `"model": "opus"` (Vincent chốt 24/10). wp-pagespeed 1.11, wp-paid-plugin-exit 1.1, web-qa-gate 1.2, wp-security-hardening 1.6, wp-content-review-apply 1.5, seo-logfile-analysis 1.2, hreflang-planner 1.2.
+- Kiểm: test offline web-qa-gate 13/13, log_health.py 3/3. Bằng chứng ngoài repo.
+- Files touched: .claude/settings.json, skills/{wp-pagespeed,wp-paid-plugin-exit,web-qa-gate,wp-security-hardening,wp-content-review-apply,seo-logfile-analysis,hreflang-planner}/, MIGRATION.md, log.md, .claude/skills/, .agents/skills/
+
+## [2026-10-25] refactor | v2026.10.33 — Đợt dựng skill sau rà soát web 16–24/10 — @claude
+- Skill mới wp-ui-fix 1.0. Nâng cấp wp-pagespeed 1.12, wp-staging-deploy 1.1, wp-content-review-apply 1.6, web-qa-gate 1.3, wp-security-hardening 1.7, semantic-media 1.1, content-inventory-audit 1.2 (26/10: chỉ 301 về bài cùng chủ đề), internal-linking 1.4, seo-logfile-analysis 1.3, technical-seo-audit 1.9, wp-theme-build 1.1, model-calibration 1.4, wp-paid-plugin-exit 1.2. `tools/ai-assist` thêm cờ jev.py và 8 rubric.
+- Kiểm: test offline 14 skill đạt, kiểm cấu trúc và client-neutral đạt. Bằng chứng ngoài repo.
+- Files touched: skills/{wp-ui-fix,wp-pagespeed,wp-staging-deploy,wp-content-review-apply,web-qa-gate,wp-security-hardening,semantic-media,content-inventory-audit,internal-linking,seo-logfile-analysis,technical-seo-audit,wp-theme-build,model-calibration,wp-paid-plugin-exit}/, tools/ai-assist/, tools/capabilities.md, .gitignore, CLAUDE.md, README.md, MIGRATION.md, log.md, .claude/skills/, .agents/skills/

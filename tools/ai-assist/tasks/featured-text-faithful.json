@@ -1,0 +1,24 @@
+{
+  "name": "featured-text-faithful",
+  "version": "2026-10-19.1",
+  "questions": {
+    "support": {
+      "type": "choice",
+      "instructions": "state.article has the title, meta description and headings of a Vietnamese blog post. state.text is a short Vietnamese phrase printed on the post's cover image; state.role says where it sits (hl = big title, sub = subtitle, head = panel heading, items/steps/chips = list entries). Decide whether the phrase is faithful to the article. Shortened wording, reordering and plain topic labels that fit the article are faithful. Judge meaning, not exact words.",
+      "criteria": {
+        "supported": "The phrase restates, summarizes or labels something that the article title, description or headings say or directly imply.",
+        "unsupported": "The phrase adds a fact, number, year, claim, promise, tool, brand, step or topic that the article title, description and headings do not contain or imply, or it changes their meaning.",
+        "unknown": "Not enough information to decide."
+      }
+    },
+    "promise": {
+      "type": "choice",
+      "instructions": "Does state.text make a superlative or a promise of results, such as best, number one, top ranking guaranteed, sure results, money back?",
+      "criteria": {
+        "no": "The phrase is descriptive or instructional and makes no superlative or guarantee.",
+        "yes": "The phrase claims to be the best or first, or promises or guarantees a result.",
+        "unknown": "Not enough information to decide."
+      }
+    }
+  }
+}

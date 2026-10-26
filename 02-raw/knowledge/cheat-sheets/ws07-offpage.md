@@ -39,7 +39,7 @@ Verdict ghi vào index: `gate: <ĐẨY LINK | KHÔNG ĐẨY — lý do>` + link 
 4. **Target lăng kính:** trang tầng thấp, intent cụ thể, cạnh tranh thấp, internal link dày 2 chiều (lên cha + xuống con). Chưa có IL 2 chiều → fix internal trước khi bắn.
 5. Ưu tiên quick win: trang có keyword rank vị trí 4-20, volume ≥100. Site mới: homepage + pillow anchors (brand/naked/generic) trước, gate lại sau 5-10 bài content.
 6. **Anchor 4 lớp đúng thứ tự:** (1) giai đoạn trust → (2) SERP consensus "mimic the winners" → (3) GTV prior 8 loại → (4) Authority-Aggression theo sức nguồn.
-7. **3 giai đoạn trust** (AN TOÀN / TỪ KHÓA): GĐ1 ~70/30 · GĐ2 40-50/50-60 · GĐ3 35-45/55-65. **Exact ≤8-10% trần cứng MỌI giai đoạn** — tăng phần từ khóa bằng Partial/LSI/Brand+KW, không bằng Exact. Nghi ngờ → chọn giai đoạn thấp hơn.
+7. **3 giai đoạn trust** (AN TOÀN / TỪ KHÓA): GĐ1 ~70/30 · GĐ2 40-50/50-60 · GĐ3 35-45/55-65. **Exact ≤8-10% trần cứng MỌI giai đoạn** — tăng phần từ khóa bằng Partial/đồng nghĩa/Brand+KW, không bằng Exact. Nghi ngờ → chọn giai đoạn thấp hơn.
 8. **Footprint:** nguồn <DR40 chỉ nhận branded/generic/naked; exact CHỈ ở DR60-85+ editorial đúng theme · anchor map 20-30 variations/target · không lặp anchor non-brand trong tháng · anchor 3 phần + co-occurrence keyword quanh anchor (bắt buộc).
 9. **Velocity:** nhịp chuẩn = RD/tháng trung bình của đối thủ; site mới bắt đầu ½ nhịp; trong tháng: free/foundational trước → paid sau; kỳ vọng kết quả 1-6 tháng — ghi vào plan.
 10. **Method mix:** conservative mặc định (guest post đúng theme + textlink PR + linkable asset + reclaim); Entity campaign (social/profile/citation) TÁCH RIÊNG; plan phải có điều kiện dừng/đổi hướng.

@@ -44,6 +44,9 @@ Vận hành loại content **template/programmatic** — dòng 7 ma trận conte
 
 ## Workflow
 
+### Bước 0 — kiểm tool
+Chạy "python3 tools/capabilities.py check --need 'gsc?,dataforseo?,ahrefs?'" từ root repo. Nếu thiếu tool bắt buộc, dừng và báo tên tool. Nếu thiếu tool tuỳ chọn, dùng fallback ghi trong "tools/capabilities.md".
+
 ### Bước 0 — Đọc references + xác nhận scope
 
 1. Đọc `sop/09-project-timeline/10-thang-thuc-day.md` (dòng 7 ma trận content type) + topical map instance (cụm liên quan) + `sop/01-topical-map.md` (chuẩn Core/Outer).

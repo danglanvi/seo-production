@@ -1,0 +1,17 @@
+{
+  "name": "definition-consistency",
+  "version": "2026-10-17.1",
+  "questions": {
+    "relation": {
+      "type": "choice",
+      "instructions": "state.definition_a is the definition of state.concept in the main article about it on one SEO agency website. state.definition_b is a sentence about the same term on another page of the same website. Text may be Vietnamese or English. Compare what B says the term is with what A says. Judge meaning only, not wording, style or length.",
+      "criteria": {
+        "same": "B gives the same meaning as A, in other words.",
+        "compatible": "B describes the same concept with a narrower or broader focus, or adds detail, and nothing in B conflicts with A.",
+        "conflict": "B says something about the term that cannot be true if A is true: a different expansion of an acronym, a different category or purpose, a different number or threshold, or a statement that A rules out.",
+        "other_sense": "B uses the same word for a different thing, such as a different product, a person, an index in finance, or a general non-SEO meaning.",
+        "not_definition": "B does not define the term. It only mentions it, gives an example, or defines another term."
+      }
+    }
+  }
+}

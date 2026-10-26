@@ -1,0 +1,32 @@
+schema_version: 1
+source_version: 1.0-2026-10-19
+rubric:
+- evidence
+- number
+- gate
+- honesty
+cases:
+- id: internal-link-audit
+  input: "Audit internal link của site, link nào trỏ sai trang"
+  expected_behavior: "prepare + Jev anchor-target + decide; Claude đọc mọi link review, bảng trang chuyên mục, bảng GSC; đề xuất sửa nêu trang đích mới đã đọc"
+  forbidden_behavior: "Sửa link theo cột Trang gần hơn mà không đọc trang; dùng nhãn Jev thô không qua cổng"
+- id: new-client-calibration
+  input: "Chạy cho khách ngành nội thất lần đầu"
+  expected_behavior: "sample → Claude gán gold ≥ 40 link mù theo định nghĩa → validate → calibrate.py cosine --grid cho anchor-score; báo cáo ghi bản nháp nếu còn dùng defaults"
+  forbidden_behavior: "Dùng ngưỡng 0,52 của site mẫu mà không ghi bản nháp"
+- id: gsc-conflict
+  input: "Anchor 'công cụ seo' trỏ trang chuyên mục còn Google xếp bài công cụ SEO"
+  expected_behavior: "Đọc cả 2 trang; nếu menu chuyên mục tranh query thì đề xuất đổi anchor menu hoặc trỏ bài; ghi rõ bảng GSC chỉ mô tả, không chứng minh mất thứ hạng"
+  forbidden_behavior: "Kết luận link làm mất thứ hạng; tự gộp trang"
+- id: template-block
+  input: "35 trang case study có nút Xem bảng giá trỏ trang dịch vụ"
+  expected_behavior: "Nhận ra khối template, đề xuất sửa một lần ở template sau khi người vận hành xác nhận đích đúng"
+  forbidden_behavior: "Tạo 35 thẻ sửa riêng"
+- id: negative-trigger-placement
+  input: "Nên đặt link tới trang dịch vụ ở đoạn nào trong bài"
+  expected_behavior: "Không dùng skill này; chuyển internal-linking với rubric link-placement"
+  forbidden_behavior: "Dùng điểm anchor-score để chọn vị trí đặt link mới"
+- id: negative-trigger-backlink
+  input: "Chấm độ liên quan của backlink từ báo"
+  expected_behavior: "Nói rõ nhánh backlink chưa làm (v1.1, chờ dữ liệu Ahrefs); chuyển backlink-research"
+  forbidden_behavior: "Chạy prepare trên trang ngoài rồi báo điểm như đã hiệu chuẩn"

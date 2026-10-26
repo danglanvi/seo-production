@@ -1,8 +1,8 @@
 ---
 name: image-seo-optimize
-description: "Tối ưu SEO hình ảnh theo semantic (bulk) — đặt tên file, alt text, caption, metadata keywords cho ảnh ĐÃ CÓ + performance layer per-image (file-size tier theo vị trí, format ladder AVIF→WebP→JPEG, lazy-load/LCP, CLS, Discover ≥1200px). Use when: (1) 'tối ưu ảnh cho bài [X]'."
+description: "Tối ưu SEO hình ảnh theo semantic (bulk) — đặt tên file, alt text, caption, metadata keywords cho ảnh ĐÃ CÓ + performance layer per-image (file-size tier theo vị trí, format ladder AVIF→WebP→JPEG, lazy-load/LCP, CLS, Discover ≥1200px) + đổi tên ảnh ĐÃ ĐĂNG trên site kèm 301 và cách ly file cũ. Use when: (1) 'tối ưu ảnh cho bài [X]', (2) 'đổi tên ảnh trên site cho chuẩn'."
 metadata:
-  version: "1.1"
+  version: "1.2.2"
 ---
 
 # Image SEO Optimize — Semantic (bulk)
@@ -15,6 +15,8 @@ Tối ưu hàng loạt ảnh **đã có** cho 1 bài viết: filename + alt + ca
 |---|---|
 | Tối ưu ảnh đã có (tên, alt, caption, metadata, technical) | ✅ Skill này |
 | Work order cho designer khi chưa có ảnh | `media-brief` |
+| Chọn media cho từng mục (video sở hữu, ảnh thật, sơ đồ bằng code), media plan, YouTube facade | `semantic-media` |
+| Đo alt có tả đúng ảnh, ảnh có khớp mục chứa nó, so màn đầu với trang được AI trích | `visual-serp-lab` |
 | Generate ảnh brand | `brand-image-gen-gtv-tag` |
 | Audit layout/visual toàn trang | `visual-semantic-seo` + `sop/07` |
 | Chấm điểm onpage tổng (P19-P20 nằm trong đó) | `seo-onpage` |
@@ -26,9 +28,14 @@ Tối ưu hàng loạt ảnh **đã có** cho 1 bài viết: filename + alt + ca
 **Mode B — Folder + bài rời:** `$FOLDER` + `$ARTICLE_PATH` (draft trong pipeline hoặc file bất kỳ).
 **Mode C — Google Docs URL (ít dùng):** đọc text bài qua URL; ảnh trong Docs KHÔNG tải tự động được → yêu cầu user tải ảnh về 1 folder rồi chạy Mode A. Nếu chỉ cần GỢI Ý (không đụng file) → làm việc trên mô tả vị trí ảnh trong docs.
 
+**Mode D — Ảnh đã đăng trên site:** ảnh đã lên web với tên thiếu ngữ cảnh, cần đổi tên mà không vỡ link. Cần quyền server hoặc dev của site. Đọc `references/doi-ten-anh-da-dang.md` rồi chạy theo file đó. Bước 3 vẫn dùng để đặt tên mới.
+
 **Optional:** `$KEYWORD` (target keyword — thiếu thì suy từ tên folder/H1, flag inferred) · `$SECONDARY_KEYWORDS` · `$APPLY` (`plan-only` default | `apply` — thực thi rename + ghi metadata).
 
-## Workflow 6 bước
+## Quy trình 6 bước
+
+### Bước 0 — kiểm tool
+Chạy "python3 tools/capabilities.py check --need 'python3,cwebp,pillow?,ssh?,wp-cli?,jev?,gemma?'" từ root repo. Nếu thiếu tool bắt buộc, dừng và báo tên tool. Nếu thiếu tool tuỳ chọn, dùng fallback ghi trong "tools/capabilities.md".
 
 ### Bước 0 — Context
 1. Đọc bài viết (file trong folder / `$ARTICLE_PATH` / Docs URL): lấy **Central Entity, target keyword, heading tree, số liệu đắt**.
@@ -47,8 +54,8 @@ Per ảnh, sinh đủ 5 trường theo chuẩn:
 
 | Trường | Chuẩn | Nguồn |
 |---|---|---|
-| **Filename** | không dấu, chữ thường, gạch nối, **≤3-5 từ** mô tả entity; feature = keyword chính; ảnh sau = keyword phụ/semantic; nhất quán chain Title→URL→Image URL | P19 · SOP07 B4 |
-| **Alt text** | **8-15 từ**, công thức **Entity + Attribute + Action** ("Kỹ thuật viên lắp đèn led panel âm trần Rạng Đông 600x600"); feature alt = short-form H1; cụ thể — không generic, không nhồi keyword | P20 · L4 7.5 |
+| **Filename** | không dấu, chữ thường, gạch nối, **≤3-5 cụm** mô tả entity; tên riêng viết đủ, tính là một cụm (`logo-dai-hoc-lac-hong`, không `lac-hong`); ảnh feature tả chủ đề bài nên thường gần keyword chính; không đặt keyword mà ảnh không thể hiện; nhất quán chain Title→URL→Image URL | P19 · SOP07 B4 |
+| **Alt text** | **Tả đúng nội dung ảnh**, công thức **Entity + Attribute + Action** ("Kỹ thuật viên lắp đèn led panel âm trần Rạng Đông 600x600"); độ dài theo nội dung ảnh, không có ngưỡng số từ (logo, icon ngắn hơn ảnh minh hoạ); feature alt = short-form H1; cụ thể — không generic, không nhồi keyword | P20 · L4 7.5 |
 | **Caption** | **≠ Alt** — thông tin bổ sung/ngữ cảnh; số liệu xuất hiện trong ảnh phải lặp lại ở caption (OCR-legible principle) | P20 · SOP07 B4 |
 | **Metadata keywords** | 5-10 term: entity chính + attribute + 2-3 semantic terms + brand (IPTC Keywords; Title/Description metadata = alt rút gọn + caption) | P8/P19 |
 | **Placement** | heading đích + ghi chú (cạnh đoạn nào, trước/sau số liệu nào) | Bước 2 |
@@ -87,6 +94,7 @@ Format ladder: **AVIF → WebP → JPEG fallback** (nhúng bằng `<picture>` + 
 
 - **`plan-only` (default):** xuất bảng mapping đầy đủ (tên cũ → tên mới | alt | caption | keywords | placement | technical note) dạng markdown + CSV để dán vào sheet/CMS. KHÔNG đụng file.
 - **`apply` (cần Vincent confirm bảng trước):** rename file theo plan (`mv`), ghi metadata nếu có `exiftool` (máy hiện chưa cài — đề xuất `brew install exiftool`; không có thì chỉ rename + giao bảng metadata để CMS nhập). Ghi log old→new để revert được.
+- **Mode D:** bảng old→new là bảng 301 JSON. Áp theo `references/doi-ten-anh-da-dang.md`: staging trước, 301 bằng `templates/mu-plugin-301-anh.php`, cách ly file cũ bằng `scripts/anh_cach_ly.sh`, kiểm URL cũ 301 → 200.
 
 **Output report:**
 ```markdown
@@ -114,6 +122,8 @@ Format ladder: **AVIF → WebP → JPEG fallback** (nhúng bằng `<picture>` + 
 - Stock photo generic cho nội dung core (W8/T2-P5: original media = E-E-A-T signal).
 - Lazy-load ảnh hero/LCP, hoặc gắn `fetchpriority="high"` cho nhiều ảnh cùng trang (mất tác dụng ưu tiên, delay LCP).
 - Nén ảnh đạt size tier nhưng vỡ chữ/số liệu trong ảnh — performance không được phá machine-gaze (Bước 4b OCR risk).
+- Đổi tên ảnh đã đăng mà không 301 URL cũ, hoặc xoá file tên cũ thay vì cách ly.
+- Chỉ sửa tên ảnh trong DB khi trang dựng từ nguồn build: lần build sau đưa tên cũ trở lại.
 
 ## Reference
 
@@ -123,5 +133,8 @@ Format ladder: **AVIF → WebP → JPEG fallback** (nhúng bằng `<picture>` + 
 
 ## Changelog
 
+- **v1.2.2 (2026-10-19):** bảng phân vai trỏ sang `semantic-media` (chọn media theo mục) và `visual-serp-lab` (đo alt khớp ảnh, ảnh khớp mục).
+- **v1.2.1 (2026-10-19):** alt tả đúng nội dung ảnh, bỏ ngưỡng 8-15 từ; tên file ảnh feature tả chủ đề bài, không đặt keyword mà ảnh không thể hiện (khớp P19, P20 mới của `seo-onpage`).
+- **v1.2 (2026-10-18):** thêm Mode D đổi tên ảnh đã đăng trên site, từ đợt đổi tên 271 ảnh trên một site WordPress (284 URL cũ 301, không link vỡ). Reference `doi-ten-anh-da-dang.md`, mẫu `templates/mu-plugin-301-anh.php`, script `scripts/anh_cach_ly.sh` (đã chạy thử cách ly và trả lại trên server). Luật tên: tên riêng viết đủ, tính là một cụm.
 - **v1.1 (2026-07-19):** INTEGRATE từ gap-audit claude-seo (repo 11.7k★, đã phân loại INTEGRATE): thêm **PERFORMANCE layer per-image** (Bước 4c, không lấn semantic hiện có) — (1) file-size tiers theo vị trí: hero/above-fold ≤100KB · inline ≤150KB · thumbnail ≤30KB (label GTV baseline, điều chỉnh được) + format ladder AVIF→WebP→JPEG fallback qua `<picture>`; (2) lazy-load rules: below-fold lazy + `decoding=async`, hero KHÔNG lazy, `fetchpriority=high` duy nhất cho ảnh LCP; (3) CLS prevention: width/height bắt buộc + CSS `aspect-ratio`; (4) Discover/Image-SERP: feature image ≥1200px + variant 16:9/4:3/1:1 cho ImageObject. Output thêm cột performance cạnh cột semantic; Phân vai thêm ranh giới performance site-wide → `technical-seo-audit`; 2 anti-patterns mới (lazy hero/multi-fetchpriority, nén vỡ OCR).
 - **v1.0:** khởi tạo semantic layer (P19-P20, L4 7.5, SOP07 B4) + machine-gaze pass 4b (16/07/2026).

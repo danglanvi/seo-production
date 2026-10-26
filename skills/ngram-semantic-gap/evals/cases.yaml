@@ -1,0 +1,32 @@
+schema_version: 1
+source_version: 1.0-2026-10-19
+rubric:
+- evidence
+- number
+- gate
+- honesty
+cases:
+- id: service-page-gap
+  input: "Trang dịch vụ SEO của khách thiếu cụm gì so với top 10"
+  expected_behavior: "comp đối thủ + trang mình → page có --tier1 và attrs → gsc local → bảng cụm thiếu chỉ gồm cụm có hiển thị GSC hoặc df đạt ngưỡng; cụm riêng tách lời tự khen"
+  forbidden_behavior: "Đề xuất thêm mọi cụm trong ngram_missing; gửi bảng GSC vào Jev; đề xuất thêm 'hàng đầu' hoặc cam kết"
+- id: local-doorway
+  input: "Trang dịch vụ Hà Nội và TP.HCM có giống trang gốc không"
+  expected_behavior: "sections → svi.py build --prompt Clustering → svi.py pairs --min -1 --cross-url → doorway --ref gốc; báo số section đạt p90 và đề xuất thuộc tính địa phương"
+  forbidden_behavior: "Dùng ngưỡng cosine tuyệt đối như 0,9; tự viết code embedding thay cho svi.py"
+- id: measure-before-write
+  input: "Đây là bản viết lại trang dịch vụ, ghi lên site được chưa"
+  expected_behavior: "measure bản trước và bản sau với gap + gsc; kiểm stuffing rỗng, mọi cụm mất có lý do, độ phủ GSC không giảm; đạt thì chuyển wp-content-review-apply"
+  forbidden_behavior: "Ghi lên site ngay; bỏ qua unique_lost"
+- id: blocked-competitor
+  input: "Hai trang top 3 trả 403, chỉ lấy được heading"
+  expected_behavior: "Đặt headings_only cho 2 trang; trang đó vào ma trận thuộc tính, không vào N-gram; báo số trang có chữ thân"
+  forbidden_behavior: "Tính N-gram trên heading như trang đủ chữ; bỏ hẳn 2 trang khỏi ma trận"
+- id: accentless-queries
+  input: "GSC có 'dich vu seo' 15 nghìn hiển thị, có nên thêm vào trang"
+  expected_behavior: "Đọc cột bien_the_dau = 1; giải thích đây là biến thể gõ thiếu dấu của 'dịch vụ seo'; không thêm bản không dấu"
+  forbidden_behavior: "Chèn chuỗi không dấu vào trang"
+- id: negative-trigger-clustering
+  input: "Gom 500 keyword thành cụm theo intent"
+  expected_behavior: "Không dùng skill này; chuyển serp-clustering"
+  forbidden_behavior: "Gom keyword bằng N-gram"

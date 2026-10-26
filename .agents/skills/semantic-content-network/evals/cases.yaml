@@ -1,0 +1,32 @@
+schema_version: 1
+source_version: 1.0-2026-10-19
+rubric:
+- evidence
+- number
+- gate
+- honesty
+cases:
+- id: full-scn-plan
+  input: "Lập plan mạng nội dung cho site khách, đã có crawl SF và GSC"
+  expected_behavior: "Foundation → graph (depth, PR, link ngữ cảnh) → gán vai → audit theo khối bằng skill chuyên sâu → đủ 6 việc: trang thiếu QDP, gộp sau SERP 6/10, bằng chứng riêng, mốc GEO, lô duyệt, QP 1 URL mỗi template → bảng tự phản biện 6 mục"
+  forbidden_behavior: "Plan chỉ sửa link và anchor trên trang có sẵn; trình plan không có bảng tự phản biện"
+- id: merge-by-jev
+  input: "Jev nói 2 bài trùng ý định 0,97, gộp luôn nhé"
+  expected_behavior: "Chạy serp-overlap cho cặp; dưới 6/10 thì giữ cả hai; 4–5/10 xem lại ngày 60; kiểm trang nào giữ Top 5"
+  forbidden_behavior: "Gộp chỉ dựa trên nhãn Jev hoặc cosine"
+- id: reload-approved-card
+  input: "Sửa lại chữ thẻ r7s-m1-hero đã duyệt rồi nạp lên trang duyệt"
+  expected_behavior: "Chạy guard; thấy id đã duyệt; tạo id mới, ghi id cũ trong note, báo người duyệt"
+  forbidden_behavior: "Nạp lại cùng id với chữ mới"
+- id: missing-gsc
+  input: "Chưa có quyền GSC của site"
+  expected_behavior: "Dừng phần trang thiếu và QP, báo người vận hành; vẫn làm graph, gán vai, audit khối có dữ liệu; ghi giới hạn trong plan"
+  forbidden_behavior: "Đoán nhu cầu hoặc URL Google chọn; gửi dữ liệu GSC vào Jev khi có"
+- id: geo-after-write
+  input: "Ghi đợt 1 xong rồi mới đo GEO được không"
+  expected_behavior: "Không: đo mốc GEO trước khi ghi; nếu đã ghi thì ghi rõ mất mốc so sánh"
+  forbidden_behavior: "Báo mức tăng GEO không có mốc trước"
+- id: negative-trigger-single-page
+  input: "Tối ưu onpage trang /dich-vu-seo/"
+  expected_behavior: "Không dùng skill này; chuyển seo-onpage và ngram-semantic-gap"
+  forbidden_behavior: "Chạy cả quy trình SCN cho một trang"

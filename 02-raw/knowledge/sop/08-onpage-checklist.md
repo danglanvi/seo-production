@@ -27,7 +27,7 @@
 |---|---|
 | P1 | URL 3-5 từ, gạch ngang, keyword volume cao nhất, không dấu/ID, đúng folder topical map |
 | P2 | Title 50-60 ký tự, **Main Predicate** khớp query cluster, keyword chính 3 từ đầu, KHÁC H1+URL |
-| P3 | Meta 150-160 ký tự, 1-2 keyword tự nhiên, CTA rõ, ~70% bộ keyword |
+| P3 | Meta 150-160 ký tự, 1-2 keyword tự nhiên, CTA rõ; nêu câu trả lời/facet chính, không ép tỷ lệ keyword |
 | P4 | **CTR: Title hook (tính từ mạnh/số/năm) → Meta detail (CTA/value), không lặp ý; cross-check top 5-10** |
 | P5 | H1 Macro Context, **cùng predicate với Title**, Salient Entity, 60-70 ký tự, 1 H1 duy nhất |
 
@@ -35,36 +35,36 @@
 
 | ID | Check |
 |---|---|
-| P6 | H2 keyword chính / H3 semantic variations + entity chuyên sâu MỚI / H4 entity cụ thể; mỗi sub-heading ≥1 entity mới; variations dời xuống H3/H4, H1 giữ exact/sạch |
+| P6 | H2 attribute chính của Central Entity, không nhồi keyword chính vào mọi H2 / H3 semantic variations + entity chuyên sâu MỚI / H4 entity cụ thể; mỗi sub-heading ≥1 entity mới; variations dời xuống H3/H4, H1 giữ exact/sạch |
 | P7 | Entity đầu heading, K2Q khi query question, Subordinate Match câu đầu khớp format heading |
 
 ### C. Semantic Keywords & Content Body (P8-P16)
 
 | ID | Check |
 |---|---|
-| P8 | Topical Coverage: audit top 10 → cover ≥70% facts/entities/LSI (NeuronWriter/prompt). **Yếu tố onpage hiệu quả nhất** |
+| P8 | Topical Coverage: audit top 10 → cover đủ attribute/entity MANDATORY của consensus + ≥1 attribute information gain; chấm theo attribute, không theo % term của tool (bỏ khái niệm LSI). **Yếu tố onpage hiệu quả nhất** |
 | P9 | EAV Density: VERIFY + BỔ SUNG EAV trên CMS thực tế (khác P0); mỗi paragraph ≥1 E-A-V |
 | P10 | **Distribution Semantics: Macro Terms xuyên suốt / Micro Terms theo section; mỗi H2 bộ semantic riêng** |
 | P11 | **Word Relationships 5 loại: Synonyms (≥3-4) / Hypernym-Hyponym / Meronym-Holonym / Antonym / Co-hyponym** |
 | P12 | Co-occurrence (E+A cùng câu) + Proximity + **Anchor Segments** + Context Qualifiers |
 | P13 | **N-gram phrase-level: unique per section; macro n-gram ≠ micro n-gram** |
-| P14 | Bold câu trả lời + 2-3 keyword variations — bold = thẻ `<strong>`, KHÔNG dùng `<b>` (policy 2026-08-29); KHÔNG bold thuật ngữ, `<em>` từ ngoại, ~5-8 bold/1800 chữ; bold đúng chỗ, không bold nhiều |
+| P14 | Bold câu trả lời + 2-3 keyword variations — bold = thẻ `<strong>`, KHÔNG dùng `<b>` (policy 2026-08-29); KHÔNG bold thuật ngữ, `<em>` từ ngoại, không quota số bold; bold đúng chỗ, không bold nhiều |
 | P15 | Featured Snippet: density ≥ top-0, format khớp, ~40 từ/320 ký tự, bold answer L0 |
-| P16 | Keyword chính **100 chữ đầu VÀ 100 chữ cuối**; đoạn 2 synonyms; ≥1 H2 keyword |
+| P16 | Central Entity + keyword chính trong **100 chữ đầu** (câu trả lời chính); đoạn 2 synonyms; không bắt keyword ở 100 chữ cuối hay trong H2 |
 
 ### D. Link & Bridge (P17-P18)
 
 | ID | Check |
 |---|---|
-| P17 | Contextual Bridge (How/RQ) Main→Supplement; justify ≥1-3 lần trước link; anchor khớp Title đích; ít link Main; 5-10 internal link/bài |
-| P18 | **External Link: .edu/.gov/Wikipedia/peer-reviewed, 2-4/bài, new tab, nofollow affiliate, KHÔNG link đối thủ; Blockquote chuẩn** |
+| P17 | Contextual Bridge (How/RQ) Main→Supplement; justify ≥1-3 lần trước link; anchor = seed query hoặc biến thể của trang đích; vị trí theo link-placement (Main chỉ MC1–MC5); dạng mã theo link-js; không quota số link |
+| P18 | **Trích nguồn: nêu tên nguồn trong câu (link-js D6), không quota link ngoài; link ngoài chỉ khi người đọc phải mở trang đó (link JS D5); KHÔNG link đối thủ; Blockquote chuẩn** |
 
 ### E. Hình ảnh (P19-P20)
 
 | ID | Check |
 |---|---|
-| P19 | Feature ảnh keyword volume cao, ảnh sau keyword phụ, gạch ngang viết thường không dấu |
-| P20 | Alt 8-15 từ + keyword + context; Caption ≠ Alt; `.webp`, <150KB, max 1200px, `lazy`, W/H explicit |
+| P19 | Tên file tả nội dung ảnh, 3-5 cụm, tên riêng viết đủ (`image-seo-optimize`); gạch ngang, viết thường, không dấu |
+| P20 | Alt tả đúng ảnh (Entity + Attribute + Action + context, không nhồi keyword); Caption ≠ Alt; `.webp`, <150KB, ảnh inline max 1200px (ảnh đại diện theo `image-seo-optimize`), `lazy`, W/H explicit |
 
 ### F. Technical & Experience (P21-P23)
 
@@ -72,7 +72,7 @@
 |---|---|
 | P21 | Clean Code & Semantic HTML5 (`<main>` weight 100%, `<article>` AI-cite, heading hierarchy sạch) |
 | P22 | Function Web (CTA/form/filter hoạt động — function hỏng = tín hiệu âm) + Mobile UX + Creative Function |
-| P23 | **Chạy Prompt Tối Ưu Onpage 2 bước: Step 1 extract (macro/micro/entities/LSI/n-gram/facts) → Step 2 audit (coverage ≥70%? variations? n-gram unique?)** |
+| P23 | **Chạy Prompt Tối Ưu Onpage 2 bước: Step 1 extract (macro/micro/entities/attribute/n-gram/facts) → Step 2 audit (đủ attribute MANDATORY? variations? n-gram unique?)** |
 
 ---
 
@@ -93,12 +93,12 @@
 
 | ID | Check |
 |---|---|
-| T3-P1 | Information Gain & UX: ≥110% facts vs top 1, original data, calculator |
+| T3-P1 | Information Gain & UX: attribute/fact/dữ liệu gốc mà top 3 chưa có, original data, calculator |
 | T3-P2 | Schema: basic + advanced (sameAs/mainEntityOfPage). Guardrail: schema KHÔNG tăng AI citation — giá trị ở rendering/entity |
 | T3-P3 | Core Web Vitals: LCP <2.5s / INP <200ms / CLS <0.1 |
 | T3-P4 | People-first/Helpful Content assessment: 66 điểm Who-How-Why → skill `semantic-content-audit` |
-| T3-P5 | N-gram Advanced: unique per section, density ≥ top 1, front-load, AI Search |
-| T3-P6 | UX & UI: visual hierarchy, Flesch 6-8, heatmap |
+| T3-P5 | N-gram Advanced: unique per section, front-load, AI Search (không chấm density) |
+| T3-P6 | UX & UI: visual hierarchy, câu S-V-O một ý một câu, heatmap (Flesch chỉ đo tiếng Anh) |
 | T3-P7 | **Proper Word Sequence & Phrase Order**: Rule 11+23, NLP parse trái→phải, front-load — 5 tầng |
 | T3-P8 | *(label cắt trong xlsx — chờ Vincent xác nhận)* |
 

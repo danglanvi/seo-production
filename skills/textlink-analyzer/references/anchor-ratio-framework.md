@@ -19,7 +19,7 @@ Lớp 4 — Authority-Aggression      → anchor nào đặt ở nguồn nào
 
 Định nghĩa 2 nhóm:
 - **Nhóm AN TOÀN**: Brand thuần · Naked/URL · Generic · Image (alt) — không mang keyword chủ đích.
-- **Nhóm TỪ KHÓA (+biến thể)**: Exact · Partial · LSI/Đồng nghĩa · Brand+KW · Niche/lĩnh vực · Long-tail · Title anchor.
+- **Nhóm TỪ KHÓA (+biến thể)**: Exact · Partial · Đồng nghĩa/biến thể · Brand+KW · Niche/lĩnh vực · Long-tail · Title anchor.
 
 | Giai đoạn | Nhận diện site | Nhóm AN TOÀN | Nhóm TỪ KHÓA |
 |---|---|---|---|
@@ -27,7 +27,7 @@ Lớp 4 — Authority-Aggression      → anchor nào đặt ở nguồn nào
 | **2. Ổn định** | nền backlink + ranking đã ổn | 40-50% | **50-60%** |
 | **3. Có trust** | domain đã được tin cậy | 35-45% | **55-65%** (từ khóa + biến thể) |
 
-- **Trần Exact ≤8-10% giữ nguyên MỌI giai đoạn** — phần "từ khóa" tăng theo giai đoạn bằng Partial/LSI/Brand+KW/Long, KHÔNG bằng Exact.
+- **Trần Exact ≤8-10% giữ nguyên MỌI giai đoạn** — phần "từ khóa" tăng theo giai đoạn bằng Partial/đồng nghĩa/Brand+KW/Long, KHÔNG bằng Exact.
 - Bảng public gtvseo.com/anchor-text/ (Brand & Naked ~70%) ≈ guidance giai đoạn 1; mô hình 3 giai đoạn là bản tinh, dùng bản này.
 - Xác định giai đoạn từ data `backlink-research` §1 (RD, rank, spam, tuổi profile) — nghi ngờ giữa 2 giai đoạn → chọn giai đoạn thấp hơn (an toàn hơn).
 
@@ -42,7 +42,7 @@ Mọi nguồn active 2025-2026 (Floate, Diggity, FatJoe, Ahrefs) đồng thuận
 
 ## Nguyên tắc 2 — GTV prior theo page type (fallback đã kiểm chứng vận hành)
 
-> Bảng dưới là phân bổ chi tiết 8 loại — tổng nhóm của nó (AN TOÀN ~51% / TỪ KHÓA ~49%) tương ứng **giai đoạn 2**. Ở giai đoạn 1: co nhóm từ khóa về ~30% (ưu tiên giữ Partial + Brand+KW, Exact ≈ 0-3%); giai đoạn 3: nới nhóm từ khóa lên 55-65% bằng Partial/LSI/biến thể.
+> Bảng dưới là phân bổ chi tiết 8 loại — tổng nhóm của nó (AN TOÀN ~51% / TỪ KHÓA ~49%) tương ứng **giai đoạn 2**. Ở giai đoạn 1: co nhóm từ khóa về ~30% (ưu tiên giữ Partial + Brand+KW, Exact ≈ 0-3%); giai đoạn 3: nới nhóm từ khóa lên 55-65% bằng Partial/đồng nghĩa/biến thể.
 
 | Anchor Type | Homepage | Category/Money page | Ghi chú |
 |---|---|---|---|

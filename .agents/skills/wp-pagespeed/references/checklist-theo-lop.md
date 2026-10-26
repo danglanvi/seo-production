@@ -1,0 +1,258 @@
+# Checklist 7 lớp tối ưu
+
+Đọc file này ở Bước 3–4. Mỗi lớp gồm: dấu hiệu trong số đo, cách sửa (ưu tiên code tự viết), số đã đo trên 2 site thật 10/2026, bẫy, rollback. Thứ tự lớp là thứ tự nên làm khi chưa có lý do khác.
+
+Mẫu mã: `$WPS/templates/mu-plugin-lcp-priority.php` (ưu tiên ảnh LCP). Script nằm ở `$WPS/scripts/`. Các lớp khác viết thành một mu-plugin hiệu năng riêng của site, chia phần theo lớp: TTL ngắn, font, bỏ thư viện trùng, critical CSS theo template, `srcset` cho ảnh theme. Lưu bản đã chạy vào evidence của đợt.
+
+Mỗi mu-plugin chạy trên filter của LiteSpeed (`litespeed_buffer_before` hoặc `litespeed_buffer_after`). Tắt mu-plugin bằng cách chuyển file ra khỏi `mu-plugins/` rồi purge. Không xoá file.
+
+## Lớp 1 — cache và TTFB
+
+- Dấu hiệu: TTFB lab trên 0,8 s, CrUX TTFB p75 trên 0,8 s, header `x-litespeed-cache: miss` ở lượt thứ hai.
+- Kiểm: `curl -s -o /dev/null -w '%{http_code} %{time_starttransfer}\n' -H 'User-Agent: <UA>' <url>` 2 lần, xem header cache.
+- Sửa: TTL page cache dài (site mẫu: 1 → 7 ngày). Trang có giá, đếm ngược hoặc WooCommerce giữ TTL 1 ngày bằng mu-plugin. Cache 1 năm cho file có tên băm (`wp-content/litespeed/`, font).
+- Bẫy:
+  - LiteSpeed Guest Mode trễ mọi JS ở lượt xem đầu, kể cả GTM. UA Lighthouse nằm trong danh sách Guest Mode, nên lab đo đúng bản khách mới nhận.
+  - Guest Mode dùng danh sách loại trừ JS riêng: `optm-gm_js_exc` (filter `litespeed_optm_gm_js_exc`), không phải `optm-js_defer_exc`. Kiểm bằng `ls_exclusions_check.py` (`fcp-guest-mode.md`).
+  - FCP mobile dồn một mốc ở site bật Guest Mode mà trang chưa có critical CSS: đọc `fcp-guest-mode.md`.
+  - CrUX TTFB p75 trên 0,8 s hoặc lượt đầu của khách thường miss: nhánh chỉ đọc ở `ttfb-cache-trang.md`.
+  - Crawler LiteSpeed tốn CPU của host dùng chung. Không bật khi chưa đo tải.
+  - Đổi PHP version là thay đổi lớn. Thử trên staging trước.
+  - Cache trình duyệt 1 năm cho mọi file tĩnh (khối `expires` của vhost OpenLiteSpeed) chỉ an toàn khi CSS, JS có `?ver=` đổi theo nội dung (theme tự viết: `filemtime`). Ảnh, font không có version: đổi nội dung thì đổi tên file. Ghi luật này vào hồ sơ site.
+  - Option `purge-post_all=1` (quy tắc tự purge "All pages") làm mỗi lần lưu một bài xoá cache toàn site. Site agency mẫu 21/10: kho cache ghi mới 20.509 file trong 24 giờ, và 5 URL vừa làm nóng lúc 16:27 trở lại miss lúc 16:43. Đặt 0 khi chủ site duyệt, rồi kiểm các quy tắc `purge-post_*` còn lại vẫn purge trang chủ và chuyên mục.
+- Biến thể cache: LiteSpeed tách một URL thành tối đa 8 bản. Một lần purge theo URL xoá cả 8 bản.
+  - Khách mới hoặc khách quay lại (cookie `_lscache_vary` của Guest Mode).
+  - Desktop hoặc mobile (vary `ismobile`).
+  - Có hoặc không có WebP: khối rewrite WebP trong `.htaccess` đặt `vary=+webp` khi `Accept` có `image/webp`, hoặc khi UA là Safari, Firefox đời mới. Trình duyệt thật luôn vào bản webp. Googlebot và crawler gửi `Accept: */*`, nên vào bản plain.
+- Làm nóng cache sau mỗi đợt purge:
+  - Gửi header của Chrome thật: UA Chrome, `Accept` có `image/webp`, `Accept-Language`. curl mặc định gửi `Accept: */*`, nên chỉ làm nóng bản plain và khách thật vẫn miss.
+  - Làm nóng cả desktop lẫn mobile, cả khách mới lẫn khách quay lại (lấy cookie bằng POST `wp-content/plugins/litespeed-cache/guest.vary.php`). Thêm bản plain cho bot. Chạy 1 luồng, nghỉ 0,5 s giữa các lượt.
+  - Script: `bash "$WPS/scripts/lam_nong.sh" --host https://example.com <path vừa purge> ... -W both`. Không có path thì script làm nóng mọi URL trong sitemap. Chỉ làm nóng toàn site sau purge toàn site. Chạy `-n` trước để xem kế hoạch.
+  - Site agency mẫu 21/10: lane nội bộ chỉ làm nóng bằng UA desktop, nên lượt đầu của khách mobile hit 5%, desktop hit 95%. Sau khi làm nóng đủ biến thể: lượt đầu mobile vào cache ở 39/40 URL nhiều khách nhất.
+  - Kiểm sau khi làm nóng: `scripts/cache_variants.py` cho robots, canonical và nhãn cache ở 5 biến thể.
+- Đo bản miss bằng tham số nằm trong `cache-exc_qs` (không vào cache). Tham số lạ khác vẫn tạo một bản cache mới với TTL đầy đủ, làm phình kho cache. Không dùng `utm_*`, `fbclid`, `gclid` (`do-dac.md` mục 2).
+- Object cache (Redis, Memcached), khi `wp_using_ext_object_cache()` trả true:
+  - Ghi bằng WP API (`update_post_meta`, `update_option`, `wp_update_post`) thì cache tự cập nhật.
+  - Ghi SQL thô vào posts, postmeta, options, terms thì gọi thêm `clean_post_cache($id)` hoặc `wp_cache_delete($tên, 'options')`. Không có cách khác thì `wp cache flush`. LiteSpeed Cache 7.9.1 ghi key không hết hạn, nên dữ liệu cũ hiện tới khi flush.
+  - Xoá object cache trước, purge URL sau.
+  - Chỉ `FLUSHDB` đúng DB của site. Không `FLUSHALL` khi Redis dùng chung cho nhiều site.
+  - Chạy WP-CLI bằng đúng bản PHP của web (có `redis.so`). PHP CLI thiếu extension thì drop-in tự tắt, và lệnh ghi không xoá key trong Redis.
+  - Sau khi chép DB production sang staging, chạy `wp cache flush` trên staging nếu staging bật object cache.
+  - Rollback nhanh bằng cách đổi tên drop-in vẫn để option `object` bằng 1. Lần kế tiếp plugin lưu cài đặt, drop-in được tạo lại. Tắt hẳn bằng option, rồi mới gỡ gói PHP.
+- Server OpenLiteSpeed và RAM:
+  - `lswsctrl restart` (graceful) không thay tiến trình mẹ lsphp đang giữ socket. Đổi `LSAPI_CHILDREN` hay `LSAPI_MAX_IDLE` trong vhost chỉ có hiệu lực khi mẹ cũ thoát. Sau restart, chờ lúc vhost không có request PHP (3 mẫu liên tiếp), rồi `kill -TERM` mẹ cũ của đúng vhost đó. OpenLiteSpeed tự dựng mẹ mới ở request kế. Kiểm `.rtreport` (`CMAXCONN`) của mẹ mới.
+  - Nhận tiến trình mẹ bằng socket của vhost, không bằng `cwd`. Mẹ và con rảnh có `cwd` là thư mục lsphp. Chỉ con đang xử lý request mới có `cwd` là thư mục site.
+  - Kernel OOM có thể giết mysqld khi nhiều lsphp cùng chạy. Site agency mẫu 21/10 lúc 14:05: 83 tiến trình lsphp, mysqld bị giết. WP-CLI quét DB lớn chiếm 1,9–2,2 GB mỗi tiến trình; 19/10 kernel giết 8 tiến trình WP-CLI chạy song song.
+  - Chạy WP-CLI theo lô với `-d memory_limit=512M`, mỗi lúc một tiến trình nặng. Crawl nội bộ tối đa 2 luồng.
+  - Cách đã chạy khi chủ site duyệt: swap 2 GB, `OOMScoreAdjust` cho mysqld (`oom_score` 752 → 152), `LSAPI_CHILDREN` 20 → 10, gom vào một lần restart.
+- Rollback: đặt lại option TTL rồi purge.
+
+## Lớp 2 — ảnh LCP
+
+- Dấu hiệu: phần tử LCP là ảnh, pha "load delay" lớn, ảnh LCP có `loading="lazy"` hoặc ưu tiên thấp.
+- Sửa: bỏ lazy-load và gắn `fetchpriority="high"` cho đúng ảnh LCP của từng template. Dùng `templates/mu-plugin-lcp-priority.php`. Chỉ đánh dấu một ảnh mỗi trang.
+- Ảnh hero khác nhau giữa mobile và desktop: chọn theo thiết bị bằng cùng điều kiện với vary `ismobile` của cache.
+- Trang có bản sao hero cho desktop trong cùng HTML (thẻ `<img>` ẩn trên mobile, ví dụ class `show4desk`): đổi URL ảnh của thẻ mobile mà không đổi bản sao thì mobile tải 2 file. Thẻ ẩn bằng CSS vẫn tải nếu không lazy. Trên mobile, cho mọi thẻ cùng ảnh hero dùng chung một URL mới. Sau khi đổi, đo byte ảnh hero từng trang. Site agency mẫu 24/10: trang dịch vụ HCM và HN tăng từ 68 KB lên 110 KB ở bản v1; bản v2 dùng chung URL thì chỉ tải 1 file.
+- Ảnh nền CSS không nhận `fetchpriority`. Đổi sang thẻ `<img>` hoặc thêm `<link rel="preload" as="image">` cho đúng file.
+- Nén ảnh giữ URL: PNG bằng pngquant chất lượng 72–92, JPG chất lượng 82. Chỉ giữ bản mới khi cùng kích thước, nhỏ hơn ít nhất 15% và PSNR ≥34 dB. Site mẫu: 24 ảnh từ 13,9 MB xuống 4,4 MB.
+- Rollback: chuyển mu-plugin ra ngoài. Ảnh gốc giữ trong backup, ghi đè lại bằng `cat >` để giữ owner.
+
+## Lớp 3 — WebP và `srcset`
+
+- Dấu hiệu: PSI báo "Serve images in next-gen formats" hoặc "Properly size images". `shot.mjs` ghi số ảnh WebP thấp.
+- WebP:
+  1. Sinh `<ảnh>.<đuôi>.webp` bằng `scripts/webp_gen.py` trên bản sao của `uploads/`. Ảnh gốc không đổi.
+  2. Tải bản WebP lên server, giữ owner của web server.
+  3. Bật thay URL trong HTML của LiteSpeed (`img_optm-webp`) nếu có.
+  4. Thêm rewrite theo `Accept: image/webp` bằng `scripts/htaccess_webp.py add`. Rewrite phủ cả ảnh nền trong CSS.
+- Site mẫu: 60.213 file, 2,5 GB còn 0,89 GB. Dung lượng trang giảm 20–55%.
+- `srcset`: theme in thẳng URL ảnh gốc thì thêm `srcset` từ metadata của attachment (filter output buffer của plugin cache, đọc `wp_get_attachment_metadata`). Chỉ dùng cỡ cùng tỉ lệ.
+- Đo bề rộng hiển thị trước khi đổi `srcset` hoặc `sizes`:
+
+  ```bash
+  node "$WPS/scripts/img_display_width.mjs" --url <URL> --expect '<chuỗi trong title>' --out <ev>/img-w.json --apply
+  python3 -I "$WPS/scripts/img_width_report.py" <ev>/img-w.json
+  ```
+
+  Script đo ở 360, 412, 768, 1024, 1366, 1920 px, không bật cờ `mobile` của CDP. Báo cáo xếp ảnh thừa (file lớn hơn cần ở mọi viewport), thừa một phần và mờ. Chạy thêm `--dpr 2` cho màn hình nét.
+- Sinh bản ảnh nhẹ cho đúng ảnh trang dùng (logo dải chạy, cỡ 400/560/720w, avatar 96w):
+
+  ```bash
+  python3 "$WPS/scripts/img_variants.py" --html <trang.html> --map /wp-content/uploads/<thư mục>/=<thư mục local> [--apply --out-html <trang-moi.html>]
+  ```
+
+  Không có `--apply` thì script chỉ in kế hoạch. Script chỉ giữ bản mới khi nhỏ hơn bản gốc, không đổi `sizes`, không ghi đè ảnh có sẵn. Cần Pillow, nên chạy không có `-I`.
+- Bẫy:
+  - Với `srcset` dạng `w`, kích thước nội tại của ảnh bằng giá trị `sizes`. Ảnh không có `width`/`height` trong CSS sẽ hiện đúng bằng `sizes`: lần thử `sizes="100px"` trên site mẫu 1 làm logo nhỏ đi và header thấp hơn. Chỉ đổi `sizes` khi CSS đặt kích thước cho ảnh (`height` cố định, hoặc `max-width:100%` và `sizes` không nhỏ hơn bề rộng hiển thị), và đã đo bề rộng ở 360–1920 px. Không thoả thì bỏ cỡ lớn khỏi `srcset`.
+  - Không tự thêm `width`/`height` cho mọi ảnh. CSS của theme thiếu `height:auto` thì ảnh bị méo.
+  - Ảnh màn hình đầu hiển thị khoảng 350 px trên mobile: PSI giả lập DPR 1,75, chỉ cần ảnh rộng khoảng 610 px. Thêm bản 640w vào `srcset`, giữ ảnh gốc cho DPR cao. Đo bề rộng hiển thị ở 390, 600, 768, 1024, 1440 px trước khi viết `sizes`. Site mẫu 2: ảnh LCP hub 47 KB còn 23 KB trên mobile.
+  - Hero có `sizes` theo bề rộng màn hình (`92vw`, `calc(100vw - 40px)`): ở 412 px, DPR 1,75 trình duyệt cần 651–663 px, bản 600/640w không đủ nên tải bản gốc 900–1000 px. Thêm bản 720w vào `srcset`. Site mẫu 2: ảnh hero landing 70–95 KB còn 28–43 KB trên PSI mobile.
+  - Logo trong dải chạy ngang hoặc lưới logo: file 214–600 px cho chỗ cao 26–44 px, mỗi logo thừa 12–15 KB. Sinh bản WebP cao gấp 2 lần chiều cao CSS lớn nhất (site mẫu 2: 88 px), sửa `width`/`height` theo tỉ lệ. Logo header theme: `srcset` 2 bản (DPR 2 và 3) với `sizes` bằng bề rộng hiển thị.
+  - Ảnh trong thân bài: `sizes` mặc định của WordPress là `(max-width: 1200px) 100vw, 1200px`, nên desktop tải bản 1200 px cho cột chữ 720 px. Đo bề rộng cột ở 360–1920 px, rồi đặt `sizes` bằng filter `wp_calculate_image_sizes` cho `is_singular('post')`. Filter chỉ tác động ảnh chưa có `sizes` (ảnh của theme truyền `sizes` riêng thì giữ).
+  - Ảnh đại diện PNG/JPG nặng: tạo attachment WebP mới cùng kích thước, tên có ngữ cảnh (`cwebp -q 86 -m 6 -sharp_yuv`), đặt làm ảnh đại diện. WordPress tự sinh cỡ con bằng WebP. Ghim `rank_math_facebook_image(_id)` vào attachment cũ để thẻ chia sẻ không đổi. Script: `scripts/featured_webp.sh`. Kiểm bài còn trả 200 trước khi làm (site mẫu 2: 12/13 bài ảnh nặng đã 301 sang newsletter, chỉ 1 bài cần sửa: 944 KB PNG còn 48,6 KB).
+  - Lightbox đọc `img.currentSrc` sẽ mở bản nhỏ trong `srcset`. Sửa lightbox đọc `img.src` (ảnh gốc) trước khi thêm `srcset`.
+  - OpenLiteSpeed giữ kết quả rewrite khoảng 1 giây. Chỉ trình duyệt rất cũ bị ảnh hưởng.
+  - Nếu CDN (Cloudflare) cache ảnh, bật cache theo `Accept` ở CDN hoặc tắt rewrite cho host đó. OpenLiteSpeed bỏ qua lệnh `Header` trong `.htaccess`.
+  - Thêm block `.htaccess` trên OpenLiteSpeed cần restart. Gom vào một lần restart.
+- Rollback: `htaccess_webp.py remove` rồi restart. File WebP chuyển vào quarantine, không xoá.
+
+## Lớp 4 — font
+
+- Dấu hiệu:
+  - Font chiếm trên 200 KB mỗi trang, file TTF, nhiều weight không dùng, `fontmap.mjs` thấy font hệ thống ở chữ chính, CLS do đổi font.
+  - FCP observed của PSI dồn quanh một mốc ở mọi template (site mẫu 2: 2,3–2,5 s), trong khi main thread rảnh. Kiểm script nạp font trong `<head>` (bẫy đầu tiên dưới đây).
+- Sửa:
+  - Tự host WOFF2 subset latin + vietnamese. Chỉ giữ weight đang dùng. Font biến thiên gom nhiều weight vào một file.
+  - Font của Google Fonts: tải bằng `scripts/gfonts_selfhost.py`. Script giữ subset, `unicode-range` và thứ tự rule như CSS của Google. Khai `font-weight` đúng độ đậm trang từng xin Google. Trang xin 1 độ đậm thì khai 1 giá trị.
+  - So hiển thị trước và sau bằng `scripts/font_same.mjs`. Script so bề rộng chữ, khung phần tử và chiều cao trang. Chỉ giữ thay đổi khi kết quả là GIỐNG.
+  - `font-display: swap`. Mặc định không preload font. Site đang preload thì A/B bỏ preload trên PSI trước khi giữ.
+  - Một nguồn font cho cả site. Bỏ link Google Fonts thêm trong `header.php` hoặc plugin. Chưa tự host được thì nạp CSS Google Fonts bằng `media="print"` + `onload`, kèm `<noscript>`.
+  - Trang cần hoãn hẳn Google Fonts (thường đi cùng hoãn GTM): nạp CSS font sau FCP. Dùng `PerformanceObserver` loại `paint` (`buffered: true`) cộng hẹn giờ 3 s, nạp một lần ở mốc đến trước. Không chờ sự kiện `load`: site agency mẫu 22/10, bản chờ `load` có 3/9 lượt FCP trên 2,5 s. Đặt `<meta charset>` ở đầu `<head>`, trước mọi script.
+  - Font dự phòng có số đo: `python3 "$WPS/scripts/fallback_faces.py" --family "<Họ>" --web "<latin.woff2>,<vi.woff2>@400" --web "<latin-700.woff2>,<vi-700.woff2>@700" --sample <chữ trang thật.txt>`. Script in `@font-face` "<Họ> Fallback" có `size-adjust`, `ascent-override`, `descent-override`. Thêm `--out-dir <dir> --apply` để ghi CSS và `localtest.html` (trang kiểm `local()` nào khớp). Cần fontTools và brotli, nên chạy không có `-I`. Số này là điểm xuất phát. Hiệu chuẩn trên PSI theo `cls-chi-psi-thay.md`.
+  - Font Awesome: chỉ giữ icon site dùng. `fa_subset/collect_icons.py` quét HTML, theme, dữ liệu Elementor ra danh sách icon. `fa_subset/build_fa.py` cắt font, sinh CSS tách `unicode-range`: trang tải bản cắt, icon ngoài bản cắt tự tải bản đầy đủ. Không có `--apply` thì hai script chỉ in báo cáo. Đổi `--stamp` khi nội dung đổi, vì file font cache 1 năm. Đo lại kích thước trước khi giữ.
+- Đổi font hoặc cỡ chữ toàn site: thẩm mỹ quan trọng ngang số đo. Làm đủ 4 bước trước khi hỏi người duyệt chọn phương án:
+  1. Chạy `fallback_faces.py`, thêm face dự phòng trước lượt A/B đầu tiên.
+  2. Chụp so sánh 3 cột: hiện tại, đề xuất, site mẫu người duyệt chọn làm chuẩn. Chụp cả lúc đang tải (chỉ có face dự phòng) và lúc font đã về.
+  3. Đo CLS và PSI mobile, desktop.
+  4. Đưa câu hỏi A/B kèm ảnh và số đo vào trang chờ quyết.
+  - Lỗi đã gặp ở site agency mẫu: font mới làm CLS mobile tăng 0 → 0,27 ở trang dịch vụ (18/10), một vòng A/B mất khoảng 60 phút. Ngày 20/10, người duyệt chọn `font-display: optional` từ câu hỏi chưa kèm số CLS. Đo sau đó còn CLS 0,19, nên phải hỏi lại.
+- Số đã đo:
+  - Site mẫu 1: TTF 77–81 KB mỗi file thành WOFF2 20–24 KB. Font mỗi trang trước đó là 484–1.172 KB.
+  - Site mẫu 2: tự host font và in CSS theme vào `<head>` đưa FCP mô phỏng từ khoảng 1,3 s xuống khoảng 0,35 s.
+  - Site mẫu 2, sau khi đổi theme: script nạp font gọi `document.fonts.load()` trong `<head>`. Chuyển lệnh này ra sau frame đầu thì A/B trên PSI tăng 60 → 94 (landing) và 70 → 91 (trang chủ). Trung vị mobile 11 template tăng 66 → 83.
+  - Site mẫu 2: tự host Roboto thay Google Fonts ở 2 landing. A/B bằng bản HTML tĩnh tăng 68,5 → 85. Đo thật trên một landing tăng 62 → 92 mobile.
+- Bẫy:
+  - Không gọi `document.fonts.load()` trong `<head>` trước frame đầu. Chrome của PSI (HeadlessChrome 153) coi font nạp bằng API này là tài nguyên chặn hiển thị. Gọi sau `requestAnimationFrame` rồi `setTimeout(0)`. Chrome trên máy không tái hiện được độ trễ này, nên phải A/B trên PSI (`do-dac.md` mục 3).
+  - Preload font trong `<head>` làm Chrome chờ font trước lần vẽ đầu: A/B ở site mẫu 2 (18/10/2026) cho LCP mô phỏng chậm thêm 0,8 s ở trang có LCP là chữ. Không preload font. Site agency mẫu 24/10, preload Montserrat cho `/website/` kể cả `fetchpriority="low"`: CLS 0,0993 → 0, nhưng FCP lab chậm 0,4–0,7 s tuỳ nhóm máy PSI (trung vị 1,09 → 1,80 s, 11/12 lượt), nên đã trả lại.
+  - Font dự phòng khai `local('Arial')` kèm `size-adjust`. Máy đo PSI (HeadlessChrome trên Linux, đo 18/10/2026) khớp được `local('Arial')`, `local('Liberation Sans')`, `local('FreeSans')`, `local('NotoSans-Regular')`; không khớp `local('Roboto')`, `local('DejaVu Sans')`, `local('Arimo')`. Điện thoại Android thật không có Arial, chỉ có Roboto.
+    - Thêm `local('Liberation Sans'),local('LiberationSans')` cho Linux thật và một họ dự phòng thứ hai dùng `local('Roboto')` cho Android, số đo tính riêng, đặt ngay sau họ Arial trong `font-family`.
+    - Tính `size-adjust`, `ascent-override`, `descent-override` bằng fontTools (`fallback_faces.py`): bề rộng trung bình của chuỗi tiếng Việt thật (bỏ dấu) chia cho bề rộng của font dự phòng. Số lý thuyết lệch 1–3% so với số tối ưu trên PSI, và một số cho mọi bề rộng màn hình có thể không đủ (`cls-chi-psi-thay.md`).
+    - Kiểm `local()` nào khớp trên máy PSI: đưa lên một trang thử khai mỗi tên một `@font-face` có fallback monospace, đo bề rộng chữ, chạy PSI, xem ảnh `final-screenshot` trong JSON. Không kết luận từ `font-family` thường: Chrome trên Linux nhận cả font thay thế tương đương.
+    - CLS còn lại khi chữ trong đoạn đổi dòng lúc font thật thay font dự phòng: Chrome tính chữ đổi dòng là dịch chuyển, kể cả khi số dòng không đổi. Linux làm tròn bề rộng chữ theo pixel, nên Mac không tái hiện. Site mẫu 2: `p.lead` 0,086 trước và sau khi thêm Liberation, Roboto. Xem filmstrip `screenshot-thumbnails` để phân biệt với dịch chuyển bố cục.
+    - Kiểm CLS trên PSI, không chỉ trên Mac.
+    - Kết quả A/B trên PSI ở site mẫu 2 (18/10/2026), 5 trang × 3 lượt × 2 thiết bị:
+      - Máy PSI khớp cả tên bold: `local('Arial Bold')`, `Arial-BoldMT`, `Liberation Sans Bold`, `LiberationSans-Bold`, `FreeSans Bold`. Không khớp `Noto Sans Bold`, `DejaVu Sans Bold`, `Roboto Bold`, `Arimo Bold`.
+      - Chia face dự phòng theo từng độ đậm (6 dải, số đo tính lại bằng fontTools): CLS không đổi (0,086 → 0,086 và 0,08 → 0,081). Mac thì giảm (0,071 → 0,012). Không giữ.
+      - Preload font của H1 và đoạn dẫn: CLS 0,08 → 0, nhưng LCP mô phỏng 1,5 → 2,3 s, điểm 98 → 95 ở trang có LCP là đoạn chữ. Không giữ.
+      - `font-display: optional` triệt CLS ở landing nhưng không đổi trang dùng theme vẽ frame đầu bằng font dự phòng rồi gắn class đổi font (dịch chuyển do class, không do font về trễ). Lần xem đầu hiện font dự phòng, nên cần chủ site duyệt.
+      - CLS dưới 0,1 do chữ đổi dòng khi đổi font: ghi vào báo cáo là giới hạn đã đo, không thử tiếp các cách trên.
+  - `font-display: optional` cho font thân bài, chạy thật trên production site agency mẫu (21/10/2026), đã rollback:
+    - CLS desktop bài viết 0,0996 → 0,0006, điểm 83 → 97.
+    - Mobile tụt: 5/9 lượt PSI rơi vào chế độ FCP 2,1 s, vì Lantern coi font `optional` là chặn vẽ chữ. Điểm trung vị 3 lượt 99 → 94. LCP trung vị 3,2 s so với 1,46 s của bản cũ.
+    - Khách mở trang trong tab mới thấy font dự phòng, kể cả khi font đã nằm trong cache đĩa.
+    - `optional` không kín CLS khi CSS gộp nạp trễ khai thêm `@font-face` cùng họ: Chrome áp font đã tải. Mô phỏng PSI mobile 430 px: CLS 0,19.
+    - Kết luận: không dùng `optional` cho font thân bài khi chưa A/B trên PSI cả mobile lẫn desktop.
+  - LiteSpeed `optm-css_font_display=1` ép `font-display: swap` vào mọi `@font-face` trong HTML và CSS gộp. Sửa riêng file CSS font không đủ. Muốn giữ giá trị khác mà không đổi option: khối font inline có `data-no-optimize="1"`, không chép khối font vào critical CSS, và filter `litespeed_buffer_after` trả lại giá trị sau bước tối ưu.
+  - Grep mọi stack font trong CSS của trang, kể cả biến CSS và CSS lấy từ landing gốc: `grep -o '"<web font>",system-ui'`. Stack rơi thẳng từ web font xuống `system-ui` thì chữ chờ font hiện bằng font hệ thống. Mac dùng San Francisco gần bề rộng web font. Máy Linux của PSI dùng font rộng hơn nhiều. Site mẫu 2, trang thanh toán AAM: Mac đo 0,03, PSI đo 0,24–0,28. Chèn face dự phòng có `size-adjust` của theme vào sau web font (vá ở bước build nếu CSS lấy từ nguồn khác): PSI còn 0,012.
+  - `unicode-range` chồng nhau (ă, đ, ơ, ư nằm trong cả subset `vietnamese` lẫn `latin-ext`): trình duyệt chọn face khai báo sau. Khai `vietnamese` sau `latin-ext` thì trang tiếng Việt không tải file latin-ext. Site mẫu 2: bớt 1 file, 24 KB ở 3 trang, ảnh chụp lệch 0,0%.
+  - Google trả file tĩnh nhỏ hơn khi URL chỉ xin 1 độ đậm (Roboto 800 latin 16 KB, bản biến thiên 36 KB). Trang chỉ dùng 1 độ đậm thì tải riêng URL đó.
+  - Chữ "đ" nằm ở subset latin-ext của Google Fonts. Subset tự cắt phải gồm U+0110, U+0111.
+  - Customizer › Additional CSS hoặc critical CSS có thể chứa `font-family … !important`. Đổi font thì sửa cả các chỗ đó.
+  - Kiểm dấu tiếng Việt (ă, ơ, ư, ệ, ỗ, ữ, đ) ở mọi weight sau khi đổi.
+- Rollback: khôi phục meta hoặc file CSS font từ backup. File WOFF2 để lại không ảnh hưởng.
+
+## Lớp 5 — CSS chặn hiển thị
+
+- Dấu hiệu: FCP mobile trên 1,8 s, PSI báo "Eliminate render-blocking resources" hoặc "Reduce unused CSS", CSS inline lớn trong `<head>`.
+- Sửa theo thứ tự:
+  1. Plugin in CSS lớn vào `<head>` thì chuyển ra file (site mẫu: Max Mega Menu `css=fs`, HTML giảm khoảng 189 KB).
+  2. Gộp CSS ngoài và inline bằng LiteSpeed. Chụp lại để kiểm thứ tự cascade.
+  3. Critical CSS theo template bằng `scripts/ccss_gen.mjs`. Chèn `<style>` trước file CSS gộp. Nạp file gộp bằng `media="print"` + `onload`, kèm `<noscript>`.
+  4. Cắt CSS không dùng (UCSS) khi file gộp vẫn gây TBT lớn.
+- Critical CSS bắt buộc A/B từng template: đo `perf_probe.mjs` có và không có critical CSS, cùng PSI. Site mẫu: 5/11 template chậm hơn và đã tắt (trang chủ, tuyển dụng, dịch vụ, blog, giới thiệu desktop).
+- Bẫy:
+  - Lấy CSS đầu vào từ CSSOM của Chrome, không lấy text gốc. Text gốc có đoạn lỗi cú pháp, penthouse sửa và đưa quy tắc Chrome đã bỏ vào critical CSS.
+  - Không dùng `rel="preload" as="style"` cho file gộp. Chrome tải preload với ưu tiên cao nhất, Lighthouse vẫn tính file đó chặn FCP.
+  - Bỏ `@import` khỏi critical CSS inline.
+  - File gộp lớn vẫn phải parse sau FCP. Lighthouse tính phần đó vào TBT.
+  - Icon font có thể hiện ô vuông vài trăm ms khi chỉ có critical CSS. Không thêm `@font-face` icon vào critical CSS nếu file font nặng.
+  - LiteSpeed bật "CSS Combine External and Inline" (`optm-css_comb_ext_inl` = 1) gom cả `<style>` inline in ở `wp_head` vào file gộp tải async. Nếu `@font-face` của font chữ chính nằm trong `<style>` đó, lần vẽ đầu chỉ có critical CSS nên chữ hiện bằng font hệ thống, rồi đổi dòng khi file gộp tải xong. Site mẫu: H1 bài viết 2 dòng thành 3 dòng, CLS desktop 0,35. Sửa: nối `@font-face` và biến font vào đầu critical CSS qua filter của mu-plugin, dùng chung hàm sinh CSS với `wp_head`. Kiểm: chặn `*.css` trong Chrome rồi so khung phần tử với bản đủ CSS; chỉ còn khác chiều cao phần dưới màn hình đầu.
+  - Dựng lại critical CSS sau mỗi lần đổi font, header hoặc tắt plugin dựng trang. Site mẫu: critical CSS dựng trước đợt đổi font làm header co 19 px khi file gộp tải xong, CLS desktop 0,53.
+- Rollback: chuyển thư mục critical CSS ra ngoài. Mu-plugin thấy thiếu file thì giữ HTML cũ.
+- Trang dài, `mainthread-work-breakdown` của PSI báo `styleLayout` từ 500 ms: thêm `content-visibility:auto` cho section từ thứ 3 trở đi.
+  - `contain-intrinsic-size: auto <chiều cao>`: lấy chiều cao trung bình đo thật của section, tách mobile và desktop. Site mẫu 2: landing mobile ~2.600 px, desktop ~1.600 px. Ước tính 900 px làm chiều cao trang lệch 50%.
+  - Kiểm phần tử `position:fixed` (thanh giá, nút nổi) nằm ngoài section. Section có `content-visibility` trở thành khung chứa của phần tử fixed bên trong.
+  - Bẫy: nhảy tới `#mục` bị lệch vì section phía trên còn mang chiều cao ước tính. Khi người xem bấm link `#mục` hoặc mở URL có `#`, gắn một class trên `<html>` để tắt `content-visibility` trước khi trình duyệt cuộn (listener `click` ở capture phase).
+  - Chrome headless không chạy cuộn mượt ổn định, nên không dùng bài thử bấm link trong headless để kết luận lệch hay đúng. So vị trí mục sau khi tắt class với bản production.
+  - Bẫy: axe của PSI không vẽ được section chưa hiện. Kết quả là báo nhầm tương phản ở section nền tối và bỏ sót lỗi thật. Cách kiểm và sửa: `agentic-browsing.md` mục 3.
+
+## Lớp 5b — chi phí render của theme
+
+Rà lớp này trước khi nghiệm thu, kể cả khi điểm đã cao. Site mẫu 2 (18/10/2026): agent định nghiệm thu ở trung vị mobile 85. Người duyệt chỉ ra việc còn ở tầng theme. Sau đợt rà theme (bảng dưới) và hoãn GTM đã duyệt (lớp 7), điểm mobile đạt 97–100.
+
+Đo trước:
+
+```bash
+python3 -I "$WPS/scripts/psi_con_tru.py" <ev>/psi-<mốc> --mt
+grep -rnoE 'backdrop-filter|will-change|@import' <thư mục theme> --include='*.css' | cut -d: -f1 | sort | uniq -c
+```
+
+Trả lời từng câu. Câu nào "có" thì ghi việc sửa vào plan, hoặc ghi lý do giữ vào bảng "Phần còn trừ điểm".
+
+| Câu hỏi kiểm | Cách sửa | Số đã đo (site mẫu 2) |
+|---|---|---|
+| `styleLayout` mobile từ 500 ms ở trang dài? | `content-visibility` cho section từ thứ 3 (lớp 5) | 645 → 197 ms, trang chủ 360 → 138 ms |
+| Header hoặc thanh cố định dùng `backdrop-filter` trên nền gần như đặc? | Nền đặc, bỏ blur | 23 chỗ `backdrop-filter`. Header nền 96–97% trắng, blur gần như không thấy |
+| `will-change` khai cố định cho nhiều phần tử? | Chỉ giữ cho phần tử đang chuyển động | |
+| CSS có `@import`? | Nối vào file gốc hoặc dùng `<link>`. `@import` tạo chuỗi request nối tiếp | |
+| CSS của plugin form (Contact Form 7…) nạp ở mọi trang, hoặc nạp bằng file chặn hiển thị? | Chỉ nạp ở trang có form. File nhỏ thì in thẳng vào `<head>` | CSS CF7 3 KB in vào `<head>`: trang Liên hệ hết tài nguyên chặn hiển thị |
+| Chưa có speculation rules phù hợp? | `prefetch` mức `moderate` (WordPress mặc định `conservative`). Không prerender. Loại trang thanh toán, cảm ơn | |
+| Font, ảnh, CSS, JS có cache trình duyệt dưới 1 năm (`max-age`, `ExpiresByType`)? | Lớp 1, kèm luật đổi tên file | 7 ngày → 1 năm |
+| Script đọc layout ngay khi nạp trang (PSI báo `forced-reflow`)? | Lớp 6 | 73 ms ở thanh tiến độ cuộn |
+
+Rollback: mỗi việc ghi file đã sửa và bản backup. Speculation rules và CSS form trả lại bằng cách gỡ filter đã thêm.
+
+## Lớp 6 — JS
+
+- Dấu hiệu: TBT cao, long task trong `--detail`, thư viện nạp 2 lần, request 404/410 cho file JS hoặc CSS.
+- Sửa:
+  - Bỏ thư viện trùng trong HTML bằng mu-plugin. Giữ bản nạp sau cùng để cascade không đổi. Site mẫu: jQuery 3.6.0 trùng jQuery của WordPress, Slick 2 nguồn, Bootstrap 2 lần, Font Awesome 5 và 7.
+  - Bỏ thẻ trỏ tới file không tồn tại trong thư mục theme.
+  - Delay JS: phân loại script bằng Jev `asset-delay`, chỉ dùng nhãn từ 0,7. Loại `render_critical` và `early_interaction` khỏi danh sách delay.
+- Bẫy:
+  - Bỏ bản jQuery trùng có thể làm slider khởi tạo 2 lần. Site mẫu giữ nguyên JS ở 2 template dịch vụ vì lý do này. Luôn chạy `shot.mjs` với `--vis` cho slider và menu.
+  - Script tự tải thư viện từ CDN sau vài giây (ví dụ script khởi tạo slider của theme) tạo long task. Chỉ giữ ở trang có phần tử cần nó.
+  - PSI báo `forced-reflow`: tìm code đọc `scrollHeight`, `offsetTop`, `getBoundingClientRect` ngay khi nạp trang. Ví dụ thanh tiến độ cuộn gọi `draw()` lúc nạp (73 ms). Chỉ vẽ khi trang đã cuộn sẵn (`if (scrollY) requestAnimationFrame(draw)`). Nếu PSI vẫn báo (26–44 ms, sự kiện cuộn vẫn xảy ra trong lúc ghi trace): tính chiều cao trang trong `ResizeObserver` (chạy sau layout, không ép layout), `draw()` chỉ đọc `scrollY`. Giữ nhánh tính một lần cho trình duyệt không có `ResizeObserver`.
+  - Trang đổi bố cục theo dữ liệu bằng JS `defer` (trang thanh toán ẩn khối QR khi không có đơn, trang cảm ơn đổi trạng thái): JS chạy sau lần vẽ đầu nên cả khối co lại. PSI luôn mở trang không có dữ liệu. Site mẫu 2: CLS mobile 0,92 ở 3 trang thanh toán.
+    1. In một script đồng bộ nhỏ trong `<head>` (chỉ ở trang có phần tử của trạng thái đó), đọc dữ liệu theo đúng điều kiện của JS trang, gắn class lên `<html>`. CSS theo class ẩn hoặc hiện khối bằng `!important` (thắng `[hidden]{display:none !important}`).
+    2. Chữ đổi theo trạng thái (H1, lời chào): `MutationObserver` điền ngay khi phần tử đứng sau đã có trong DOM, tức phần tử cần điền đã parse xong.
+    3. Lấy tên khoá storage và regex mã từ chính file JS của trang (PHP đọc file, regex chặt). Không đọc được thì không in gì. Site mẫu 2: 2 trong 3 trang dùng khoá `tagOrder`, trang còn lại dùng `aamOrder`. Bản đầu viết cứng một khoá nên đã ẩn khối QR của khách có đơn thật trên staging.
+    4. Đo từng nhánh bằng `scripts/cls_trace.mjs`: không dữ liệu, có dữ liệu (`--session`), dữ liệu của trang khác, chế độ demo. Mọi nhánh phải hiện đúng khối và CLS dưới 0,05. Site mẫu 2: 0,92 → 0,03 (không đơn), 0,0015–0,03 (có đơn).
+    5. Chặn tracking khi đo, không chặn ảnh chức năng: chặn ảnh QR làm ảnh lỗi, JS ẩn ảnh và tạo shift giả 0,066.
+  - JS lấy từ nguồn dùng chung của entity khác: vá ở bước build của site mình, không sửa file nguồn.
+  - Plugin mục lục Fixed TOC (`ftwp`) in mục lục ở trạng thái `ftwp-hidden-state` (`position:fixed`, chiều cao 0 trong luồng trang). JS đưa mục lục vào luồng trang sau 0,6–1,3 s nên nội dung bên dưới nhảy. Desktop mục lục mở sẵn (300–800 px), mobile thu gọn (57 px). Site mẫu: CLS desktop 0,04–0,07 ở bài có mục lục trên màn hình đầu. Sửa bằng CSS giữ chỗ đúng trạng thái sau JS: `#ftwp-container-outer.ftwp-in-post #ftwp-container.ftwp-hidden-state{position:static;opacity:1;visibility:visible;z-index:auto}`, và ẩn `#ftwp-list` ở ≤768 px (đọc `mobileMaxWidth`, `contentsColexpInitMobile` trong `fixedtocOption` của trang). Plugin khác có trạng thái chờ JS tương tự: so khung phần tử khi tắt JS và khi bật JS.
+  - Thử CSS sửa CLS trước khi deploy: chèn `<style>` vào HTML qua CDP `Fetch.enable` (giai đoạn Response) rồi đo layout shift. `Page.addScriptToEvaluateOnNewDocument` chạy trước khi có `document.documentElement`, nên style chèn bằng cách này không áp ở lần vẽ đầu và cho kết quả sai.
+- Rollback: khôi phục bản mu-plugin trước đó từ backup.
+
+## Lớp 7 — bên thứ ba và tracking
+
+- Dấu hiệu: GTM, Pixel, Hotjar, chat widget, YouTube embed chiếm TBT hoặc byte lớn.
+- Không tự sửa. Đổi thời điểm nạp tracking là đổi dữ liệu đo lường. Người duyệt đồng ý từng mục.
+- Đề xuất được phép: tải chậm YouTube embed bằng ảnh thumbnail, gỡ site Hotjar không dùng, rà tag trùng trong GTM.
+- Ảnh thumbnail YouTube: dùng `https://i.ytimg.com/vi_webp/<id>/maxresdefault.webp` (khoảng 60 KB), không dùng `vi/<id>/maxresdefault.jpg` (khoảng 165 KB). Nếu video thiếu bản maxres, bản WebP trả 404 và bản JPEG trả ảnh xám 120px. Cho JS đổi về `hqdefault`, rồi về JPEG. Kiểm trong `onload` bằng `naturalWidth < 200`, không chỉ trong `onerror`. Ảnh xám 120px trả mã 404 kèm thân ảnh hợp lệ, nên trình duyệt chạy `onload` và `onerror` không chạy (gtvseo.com, 19/10/2026). Ví dụ: `theaigrowth/inc/blocks.php` và `assets/js/tag.js` của TAG, 18/10/2026.
+- Trước khi đề xuất trễ GTM: đối chiếu pageview GA4 với số phiên, vì khách không tương tác có thể không được ghi.
+- Kiểm kê container trước khi đề xuất: `python3 -I "$WPS/scripts/gtm_inventory.py" --url <trang>`. Script đọc `gtm.js` công khai và in số tag theo loại, sự kiện GA4, sự kiện Pixel, trình nghe click, cùng hệ quả nếu hoãn.
+- Khi người duyệt hỏi "hoãn GTM có mất gì", trả lời theo bảng sau:
+
+| Cách nạp | Dữ liệu mất | Điểm PSI |
+|---|---|---|
+| Giữ nguyên | Không | TBT giữ nguyên |
+| Hoãn đến khi người xem tương tác | Pageview và PageView Pixel của lượt thoát ngay. LPV của Meta. Cú click link đầu tiên, vì trình nghe `__lcl` chưa chạy (loader mẫu từ v1.12 tái phát `gtm.linkClick`, trừ link mở cùng tab). gclid, fbclid khi người xem chuyển trang trước khi GTM chạy | Tăng nhiều nhất. Site mẫu 2: bản bỏ GTM có TBT 0 |
+| Hoãn theo thời gian ngắn (2–3 s sau load) | Chỉ lượt xem rất ngắn | Không tăng. Site mẫu 2: hoãn 2 s, Lighthouse vẫn ghi đủ GTM, gtag, Pixel ở 12/12 lượt, TBT 200–500 ms |
+| Thao tác đầu tiên hoặc X s sau load, X lớn hơn lúc Lighthouse dừng ghi | Lượt xem không thao tác và thoát trước X s | Như hoãn đến khi tương tác. Site mẫu 2: X = 4 s cho TBT = 0 ở 12/12 lượt, điểm mobile 97–100. Chọn 5 s |
+
+- Lighthouse 13.5 dừng ghi trace sau khi đủ 4 điều kiện: FCP + 1 s, load + 1 s, mạng yên 1 s, rồi CPU yên khoảng 1,3 s. Trace không thể dừng trước load + 2,3 s. Site mẫu 2 đo được load + 2,3 đến 3,1 s. Script chạy trước lúc trace dừng thì bị tính đủ vào TBT (Lantern bỏ qua độ trễ của timer).
+- Chọn X = max(`observedTraceEnd` − `observedLoad`) của 3–5 lượt PSI khi đã hoãn GTM, cộng 1,5–2 s. Lấy 2 số này ở `audits.metrics.details.items[0]`. Không dùng `requestIdleCallback`: callback thường chạy ngay sau load, vẫn trong trace.
+- Lighthouse không gửi sự kiện chuột, chạm, phím hay cuộn trong lúc ghi trace. Loader nghe `pointerdown`, `touchstart`, `keydown`, `wheel`, `scroll`, `mousemove` (`passive`), nạp `gtm.js` một lần.
+- Khởi tạo `dataLayer` và đẩy `gtm.start` ngay trong `<head>`, để sự kiện đẩy vào trước khi GTM chạy vẫn được xử lý.
+- URL có `gclid`, `gbraid`, `wbraid`, `fbclid`, `ttclid`, `utm_*` thì nạp ngay: giữ nguồn quảng cáo và LPV của Meta. PSI không đo các URL này nên điểm không đổi.
+- LiteSpeed Cache "Delay JS" chỉ nạp script khi có tương tác, không có hẹn giờ. Muốn có hẹn giờ: loại loader khỏi Delay JS (`optm-js_defer_exc`) và dùng loader riêng. Site bật Guest Mode: loại thêm khỏi `optm-gm_js_exc`. Kiểm cả hai danh sách bằng `ls_exclusions_check.py --script gtm-delay-loader` (`fcp-guest-mode.md`).
+- Không kiểm loader bằng script tự cuộn trang trước `--eval` (ví dụ `cdp.mjs` của workstream cũ, không có trong skill): sự kiện `scroll` làm loader chạy sớm. Dùng bản không cuộn khi đo mốc giờ. Chặn domain GTM, Facebook bằng `--host-resolver-rules` để bài thử không gửi hit thật.
+- Mẫu cài được cho site khác: `templates/gtm-delay-loader.php` (mu-plugin, 3 hằng số, `data-no-optimize` cho LiteSpeed). Kiểm sau khi cài: `node scripts/gtm_delay_check.mjs --url <trang> [--now-url <trang cảm ơn>]`. Script chặn domain tracking, không cuộn, thử 4 trường hợp: không thao tác, phím Shift, URL có `utm_`, trang chuyển đổi. Bản gốc chạy trên production site mẫu 2: `inc/gtm.php` của theme (A/B ở `evidence-pagespeed-dot-a-2026-10-18/psi-ab-gtm/`).
+- Loader tái phát click link. Khách bấm link (Zalo, `tel:`, `mailto:`) ở thao tác đầu, trước khi `gtm.js` chạy xong. Bộ nghe Link Click của GTM chưa cài, nên click đó mất. Loại sự kiện này thường là chuyển đổi chính. Mẫu từ v1.12 ghi lại tối đa 5 link bị bấm trong lúc chờ, rồi đẩy `gtm.linkClick` vào `dataLayer` khi `gtm.js` nạp xong. Site agency mẫu 22/10: bản không tái phát mất click Zalo đầu tiên trên trang đào tạo.
+  - Giới hạn: link mở cùng tab làm trang rời đi trước khi `gtm.js` nạp, nên không tái phát được. Trigger "All Elements" dùng `gtm.click`, loader không tái phát sự kiện này. Ghi cả hai giới hạn vào bảng "hoãn GTM có mất gì" khi trình duyệt.
+  - Site đã cài mẫu v1.11 trở về trước: cài lại mẫu mới.
+- Kiểm event thật sau khi cài (staging hoặc bản thử): ghi lại request tới GA4, Ads, Pixel nhưng chặn gửi, che mã đo lường khi lưu evidence. Xác nhận đủ `page_view`, click chuyển đổi, conversion Ads, Pixel. Chờ ít nhất 8 s sau thao tác: event click của GA4 đến sau khoảng 5 s (site agency mẫu 22/10).
+- Mọi cách hoãn đều giữ GTM tải ngay ở trang thanh toán và trang cảm ơn. Đơn ghi phía server (form, cổng thanh toán) không bị ảnh hưởng.
+- Trang thanh toán, cảm ơn giữ GTM nạp ngay thì TBT còn lại đến từ tracking. Site mẫu 2: Meta Pixel (`fbevents.js` + `signals/config`) 330–510 ms, `gtag/js` của GA4 140–290 ms, `gtm.js` 60–170 ms, JS riêng của trang 5–19 ms. Điểm mobile 81–94 sau khi sửa CLS. Không còn việc gì ở phía trang. Ghi vào báo cáo 3 lựa chọn cho người duyệt: giữ nguyên (trang thường `noindex`, điểm chỉ là số lab), hoãn GTM cả ở trang này (sự kiện đẩy vào `dataLayer` trước vẫn được xử lý, chỉ mất khi khách rời trang trước khi GTM nạp), hoặc sửa container (Pixel bắn theo sự kiện thay vì mọi trang).
+- CrUX đã đạt thì đề xuất giữ nguyên, vì lợi ích chủ yếu là điểm lab. Site mẫu 2: GTM, gtag và Pixel nặng khoảng 570 KB, TBT mobile 221–588 ms. Người duyệt giữ nguyên lúc đầu, rồi duyệt hoãn 5 s khi muốn tối đa điểm PSI.

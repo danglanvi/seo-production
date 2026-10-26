@@ -79,7 +79,7 @@ AM phải note rõ yêu cầu E-E-A-T cho từng section: (1) Experience — ch�
 **Bật khi nào:** Khi PM yêu cầu content note IL  
 
 
-**Tóm tắt:** Outline ghi rõ internal link plan: anchor text khớp title trang đích, vị trí ưu tiên Supplement, Main Content tối đa 0-2 links. Tạo contextual bridge trước khi đặt link. Áp dụng khi PM yêu cầu content team chịu trách nhiệm internal link.
+**Tóm tắt:** Outline ghi rõ internal link plan: anchor = seed query hoặc biến thể của trang đích, vị trí ưu tiên Supplement, Main Content chỉ nhận link MC1–MC5. Tạo contextual bridge trước khi đặt link. Áp dụng khi PM yêu cầu content team chịu trách nhiệm internal link.
 
 **Mô tả đầy đủ:**
 
@@ -239,11 +239,11 @@ Brand integration cụ thể cho dự án: (1) Brand voice pattern — xưng hô
 **Bật khi nào:** Khi PM yêu cầu  
 
 
-**Tóm tắt:** Writer tự đặt internal link khi PM yêu cầu: anchor text khớp title trang đích, ưu tiên Supplement section, Main Content tối đa 0-2 links, tạo contextual bridge trước link. Không cluster links gần nhau.
+**Tóm tắt:** Writer tự đặt internal link khi PM yêu cầu: anchor = seed query hoặc biến thể của trang đích, ưu tiên Supplement section, Main Content chỉ nhận link MC1–MC5, tạo contextual bridge trước link. Không cluster links gần nhau.
 
 **Mô tả đầy đủ:**
 
-Khi PM yêu cầu content team tự đặt internal link (thay vì SEO team): Writer phải note rõ trong bài — (1) Anchor text cụ thể — khớp hoặc gần khớp title trang đích. (2) Vị trí link — ưu tiên Supplementary section, Main Content tối đa 0-2 links. (3) Justify — mention anchor terms 1-5 lần trước khi đặt link để tạo contextual bridge tự nhiên. (4) Distance giữa các link — không cluster lại gần nhau.
+Khi PM yêu cầu content team tự đặt internal link (thay vì SEO team): Writer phải note rõ trong bài — (1) Anchor text cụ thể — seed query của trang đích hoặc biến thể có trong trang đích, không lặp nguyên title. (2) Vị trí link — ưu tiên Supplementary section, Main Content chỉ nhận link MC1–MC5. (3) Justify — mention anchor terms 1-5 lần trước khi đặt link để tạo contextual bridge tự nhiên. (4) Distance giữa các link — không cluster lại gần nhau.
 
 ---
 

@@ -1,8 +1,8 @@
 ---
 name: query-processing-diagnosis
-description: "Chẩn đoán bộ keyword cam kết đã có hạng bằng Query Processing (gom template, URL Google chọn, SERP, trang thật, 8 trạm), ra topic ưu tiên, việc 2 tuần, deck HTML và file bàn giao cho team content. Dùng khi: 'phân tích QP [client]', 'vì sao keyword cam kết chưa lên', gate #22, refresh #24/#29."
+description: "Chẩn đoán bộ keyword cam kết đã có hạng bằng Query Processing (template, URL Google chọn, định tuyến URL, SERP, trang thật, 8 trạm), ra topic ưu tiên, việc 2 tuần, deck và file bàn giao content. Dùng khi phân tích QP [client], gate #22, refresh #24/#29."
 metadata:
-  version: "1.2"
+  version: "1.3.1"
 ---
 
 # Query Processing Diagnosis: chẩn đoán bộ keyword cam kết
@@ -25,7 +25,22 @@ Lead điền phiếu `_TEMPLATES/qp-intake.md` (hướng dẫn cho team: `03-aud
 
 Công cụ: Python 3 (thư viện chuẩn), curl. Audit deck cần Node ≥22 và Chrome; thiếu thì bỏ audit và ghi lý do.
 
+## Phân việc model
+
+| Model | Việc trong skill | Quyết định |
+|---|---|---|
+| Code (`qp_ranks.py`, `gsc_route.py`, `qp_build.py`) | Đếm hạng, gom template, gộp query GSC, verify số trên deck | dùng: mọi số phải tất định |
+| EmbeddingGemma 2 | Định tuyến query → URL khớp nội dung nhất (`retrieval-lab route`), so với URL Google chọn | dùng ở pha E2 khi có store `site-vector-index`. Trên trang tiền, kết quả chỉ là danh sách cần đọc, không phải kết luận: lượt thử 19/10 trên 781 query template tiền, top-1 trùng URL Google chỉ 29,3% (`references/dinh-tuyen.md`). Không đưa con số này vào deck khách |
+| Jev | Phân loại trạm hỏng | không dùng: trạm hỏng cần đọc hạng, SERP và trang cùng lúc; chưa có rubric hiệu chuẩn. Query GSC không gửi vào Jev |
+| GLM Flash | Trích câu | không dùng: skill không trích câu |
+| Claude | Viết template, đọc SERP và trang, chọn trạm hỏng, viết topic, kế hoạch, deck | dùng |
+
 ## Quy trình chuẩn
+
+### Bước 0 — kiểm tool
+Chạy "python3 tools/capabilities.py check --need 'python3,curl,node?,chrome?,gemma?,gsc?'" từ root repo. Nếu thiếu tool bắt buộc, dừng và báo tên tool. Nếu thiếu tool tuỳ chọn, dùng fallback ghi trong "tools/capabilities.md".
+
+- Thiếu `gemma` hoặc chưa có store của site: bỏ pha E2 và ghi lý do vào hồ sơ.
 
 `$S` = `skills/query-processing-diagnosis/scripts`. `$W` = `03-audits/ranking/_work/<CLIENT>_qp-chan-doan_v<N>`. Cách ra quyết định ở từng bước: `references/buoc-phan-tich.md`. Ngân sách là số tool call mục tiêu. Vượt gấp đôi ngân sách thì dừng lại xem đang làm thừa gì.
 
@@ -37,6 +52,7 @@ Công cụ: Python 3 (thư viện chuẩn), curl. Audit deck cần Node ≥22 v�
 | C. Template | `qp_ranks.py terms … --keywords …` → viết `$W/rules.json` → `table --rules` (lặp tới khi hết keyword chưa có template, "khác" dưới 10%, tối đa 16 template) | terms + ghi + 1–3 lần table | `qp-ly-thuyet.md` mục 2 | 3–5 |
 | D. SERP | 3 query đại diện của 3 intent, gọi song song trong một lượt | 1 lượt | `qp-ly-thuyet.md` mục 5 | 1–3 |
 | E. Trang thật | `python3 $S/site_check.py $W/pages home=… cate=… …` cho mọi URL hub (`hub_urls` trong `hang.json`) và trang chủ, một lệnh | 1 lệnh | `bay-da-gap.md` (Trang thật) | 1–2 |
+| E2. Định tuyến | Có GSC query × page 90 ngày và store của `site-vector-index`: `python3 $S/gsc_route.py prep --gsc <file GSC> --keywords $W/bo-cam-ket.txt --groups $W/hang.tsv --group-col template --chosen-col url --candidates <URL cùng ngôn ngữ> --out $W/route/queries.jsonl` → `~/.venvs/embeddinggemma/bin/python -I skills/retrieval-lab/scripts/retrieval.py route --store <store> --in $W/route/queries.jsonl --out $W/route/routing.jsonl --level page` → `python3 $S/gsc_route.py summary --routing $W/route/routing.jsonl --out $W/route/tom-tat`. Đọc `tom-tat.tsv` theo template | 3 lệnh | `dinh-tuyen.md` | 3 |
 | F. Viết | `qp_scaffold.py $W/hang.json --slug … --name … --domain … --lead … --period … -o <file>.json` (tự điền mọi số) → viết các ô TODO trong **một lần ghi file**; ghi `$W/topics.json` | scaffold + 2 lần ghi | `schema-qp-project.md`, `qp-ly-thuyet.md` mục 3–8 | 3–5 |
 | G. Dựng | `qp_build.py <file>.json --ranks $W/hang.json --topics $W/topics.json --web-out <file>_web.html --handoff 03-audits/ranking/<CLIENT>_qp-handoff-content_v<N>.md --numbers $W/con-so-nguon.md --shots $W/shots`. Sửa **mọi** lỗi in ra trong một lần sửa, rồi chạy lại. Đọc từng chỗ trúng của lệnh quét bản web | 1 lệnh, lặp 1–3 lần | — | 2–5 |
 | H. Đóng | Xem ảnh slide Template, Ưu tiên, Kế hoạch (lệnh G tự chụp). Viết hồ sơ theo `_TEMPLATES/qp-chan-doan.md` (mục 2 dán từ `con-so-nguon.md`), tự chấm `references/checklist-qc.md`. Thêm dòng bảng D trong `index.md` và entry `log.md` | xem ảnh + 3 lần ghi | `checklist-qc.md` | 4–6 |
@@ -50,7 +66,7 @@ Tổng mục tiêu: 25–35 tool call cho một dự án (đợt 10/2026 dùng h
 
 ## Luật chống làm thừa
 
-1. **Không viết script đếm riêng.** Số hạng, Top N, template, URL hub, keyword lệch URL target lấy từ `qp_ranks.py`. Số trên deck kiểm bằng `qp_build.py` (verify). Bảng "con số → nguồn" lấy từ `--numbers`. Chỉ viết script mới khi câu hỏi nằm ngoài các công cụ này; lưu vào `$W` và ghi vào hồ sơ.
+1. **Không viết script đếm riêng.** Số hạng, Top N, template, URL hub, keyword lệch URL target lấy từ `qp_ranks.py`. Định tuyến query → URL lấy từ `gsc_route.py` và `retrieval-lab route`. Số trên deck kiểm bằng `qp_build.py` (verify). Bảng "con số → nguồn" lấy từ `--numbers`. Chỉ viết script mới khi câu hỏi nằm ngoài các công cụ này; lưu vào `$W` và ghi vào hồ sơ.
 2. **Không đọc file thô.** Không mở CSV SpySERP, HTML trang tải về hay deck đã dựng. Đọc output tóm tắt của script. `hang.tsv` chỉ mở khi cần xem keyword của một template, và chỉ đọc phần đó.
 3. **Không gõ số hay keyword bằng tay.** Bộ cam kết trích bằng `qp_ranks.py bo`. Mọi số trong JSON đến từ scaffold. Volume lấy từ cột Volume của SpySERP trong `hang.json`. Sửa số thì chạy lại `qp_ranks.py` và scaffold sang version mới, không vá tay.
 4. **Gom lỗi rồi sửa một lần.** `qp_build.py` in hết lỗi của khâu đang chạy. Sửa tất cả trong một lần ghi rồi chạy lại. Không sửa từng lỗi rồi chạy lại từng lần.
@@ -79,6 +95,17 @@ File đã tồn tại thì tăng version. Chạy ở workspace GTV gộp nhiều
 - [ ] Giả thuyết và việc cần GSC hiện chữ đỏ, không viết như sự thật.
 - [ ] Không có giá, phí, giá trị hợp đồng, email cá nhân. Deck đưa ra ngoài nhóm dự án dùng bản `_web`, và mọi chỗ trúng của lệnh quét bản web đã đọc lại.
 - [ ] File bàn giao content đã sinh cùng version với deck.
+- [ ] Query GSC chỉ xử lý local bằng `gsc_route.py` và EmbeddingGemma. Không gửi vào Jev hay API ngoài.
+
+### Tự phản biện trước khi trình
+Chấm bản nháp theo checklist "Bản tốt nhất phải có". Mục chưa đạt thì sửa, hoặc ghi lý do bỏ. Nếu có output của Codex hay agent khác cho cùng việc, so từng mục và lấy phần tốt hơn trước khi trình Vincent.
+
+Bản tốt nhất phải có:
+- [ ] Volume trên deck lấy từ cột Volume của SpySERP trong `hang.json`. Dùng nguồn khác thì ghi tên nguồn. Nguồn lỗi: đợt chẩn đoán 10 dự án GTV 10/2026, một keyword có volume 2.400 / 60.500 / 39.000 giữa SpySERP, sheet và Ahrefs.
+- [ ] Không có nhãn "Đang lan" khi thiếu mốc so sánh. Nguồn lỗi: review 12/10/2026, `table` cũ ra "Đang lan" giả "0 → X".
+- [ ] URL đề xuất là URL Google đang trả. Đề xuất đổi URL chỉ khi có bằng chứng hai URL tranh nhau (`share` < 0,6 trong GSC). Gemma top-1 khác Google không đủ để đổi URL. Nguồn lỗi: lượt thử 19/10, template "dịch vụ seo" chỉ 2,5% hiển thị có Gemma top-1 trùng URL Google chọn.
+- [ ] Giả thuyết từ định tuyến (Gemma chọn URL khác) hiện chữ đỏ và có tên 2 trang đã đọc. Nguồn lỗi: pilot định tuyến 19/10, 74,8% query có `share` < 0,6 bị Gemma chọn khác Google.
+- [ ] Bảng GSC đã bỏ dòng jump link `#…` và gộp query bằng NFC + casefold. Nguồn lỗi: file GSC 18/10 có 6.702/25.000 dòng jump link; "dịch vụ seo" lệch 145 hiển thị giữa 2 cách gộp.
 
 ## Anti-patterns
 
@@ -91,9 +118,12 @@ File đã tồn tại thì tăng version. Chạy ở workspace GTV gộp nhiều
 
 ## Bảo trì
 
-Sửa script thì chạy `python3 evals/test_scripts.py` (offline, phải in "Tất cả ca PASS"). `examples/mau-du-an.json` là dữ liệu minh hoạ cho test, không nạp khi chạy production. Ca hành vi: `evals/cases.yaml`.
+Sửa script thì chạy `python3 evals/test_scripts.py` (offline, phải in "Tất cả ca PASS") và `python3 skills/query-processing-diagnosis/tests/test_gsc_route.py`. `examples/mau-du-an.json` là dữ liệu minh hoạ cho test, không nạp khi chạy production. Ca hành vi: `evals/cases.yaml`.
 
 ## Changelog
+
+- v1.3.1 (2026-10-19): định tuyến Gemma trên trang tiền chỉ là danh sách cần đọc (top-1 trùng URL Google 29,3%). Không đưa con số này vào deck khách.
+- v1.3 (2026-10-19): Bước 0 kiểm tool. Thêm pha E2 định tuyến query → URL bằng `retrieval-lab route` và `scripts/gsc_route.py` (gộp GSC local, URL Google chọn lấy từ SpySERP, verdict theo cổng `share` 0,6 của retrieval-lab), `references/dinh-tuyen.md`, test `tests/test_gsc_route.py`. Thêm phân việc model và tự phản biện.
 
 - v1.2 (2026-10-12): sửa theo review 12/10. `table` dừng mã 2 khi không có lần chạy quanh mốc so sánh (trước đây ra "Đang lan" giả "0 → X"), thêm `--no-compare`; dừng mã 3 khi project một domain có lần chạy mới bị nghi thiếu (`--keep-recent` / `--drop`). Đọc CSV dấu `;`, `,` hoặc tab; gộp nhiều file export; đọc cột Volume; `--targets` đếm keyword lệch URL kế hoạch; lệnh `bo` trích bộ cam kết; median_high. Scaffold không cắt template âm thầm, không gắn "Đang lan" khi thiếu mốc. Verify thêm: tổng n template, trạng thái, ghi chú Top 10, ngày đo, hạng ghi trong chữ, volume; hạng một lần chạy chỉ còn là cảnh báo. `qp_build.py` thêm quét chữ dễ lộ điều khoản trên bản web, `--handoff` (bàn giao content), `--numbers` (bảng con số → nguồn), tự chọn slide để chụp. Pha A đọc thêm `AGENT.md`, nội quy trạm, cheat-sheet và chạy `runs` trước điểm dừng.
 - v1.1 (2026-10-12): quy trình chuẩn 8 pha có ngân sách tool call; thêm `qp_ranks.py terms`, `qp_scaffold.py`, `qp_build.py` (verify), phiếu `_TEMPLATES/qp-intake.md`, README team ở `03-audits/ranking/`.
