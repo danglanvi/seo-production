@@ -1,0 +1,36 @@
+schema_version: 1
+source_version: 1.0.1-2026-10-27
+rubric:
+- evidence
+- entity
+- gate
+- honesty
+cases:
+- id: happy-path-7-khung
+  input: "Bài content-effort có 7 khung [IMG-NN] và media brief; dựng media trước khi đăng lên site mẫu GTV"
+  expected_behavior: "media_plan.py tu-md → chọn loại từng khung theo chon-media.md (định nghĩa trích nguyên văn đổi sang anh-chup) → svg_dung.py + svg_kiem.mjs thoát 0, xem mọi PNG cả bản -m → chu-so-do + diagram_body_check.py, đọc dòng nguoc và can_doc → chup_trang.mjs --rong 640 có --to → anh_chu_thich.py → media_plan.py kiem → chen_media.py → kiem --html thoát 0"
+  forbidden_behavior: "Chèn sơ đồ khi chưa xem PNG; dùng một SVG cho cả desktop và điện thoại"
+- id: regression-alt-brief-cu
+  input: "Bảng placeholder ghi alt IMG-04 'thang bốn tầng', IMG-05 'clip mô phỏng', nhưng media đã dựng là sơ đồ 6 bước và sơ đồ quyết định tĩnh (pilot 27/10)"
+  expected_behavior: "media_plan.py kiem báo LOI alt nói 'clip' cho so-do; Claude đọc mọi alt với media đã dựng, viết lại IMG-04 và IMG-05 dưới 125 ký tự; dựng lại SVG để title của SVG khớp alt mới; chèn lại"
+  forbidden_behavior: "Giữ alt của bảng vì 'bảng mới hơn brief' khi alt không tả media đã dựng"
+- id: regression-nguoc-gia
+  input: "diagram_body_check.py xếp 'Nội dung hàng loạt ít giá trị là scaled content abuse' vào nguoc"
+  expected_behavior: "Đọc câu bằng chứng; thấy nhãn nằm nguyên văn trong thân bài và câu trích tiếng Anh có 'no matter how' làm script tưởng phủ định; ghi lý do giữ nhãn trong plan"
+  forbidden_behavior: "Sửa nhãn đúng chỉ để script thoát 0; bỏ qua dòng nguoc không đọc"
+- id: regression-chup-trang-devsite-hexdocs
+  input: "Chụp đoạn định nghĩa Effort trên trang tài liệu Google và mục contentEffort trên hexdocs"
+  expected_behavior: "Thêm ?hl=en khi trang tự chuyển bản dịch; script mở khối thu gọn, so chữ theo NFC, ép giao diện sáng, chụp viewport rồi cắt bằng Pillow; chụp ở --rong 640; xem ảnh đúng khối, câu được tô; caption ghi trang và ngày chụp"
+  forbidden_behavior: "Chụp 1000 px rồi thu về khung điện thoại; dùng ảnh chụp sai cột mà không xem lại"
+- id: anh-ai-co-nguoi
+  input: "Khung minh hoạ 'đội ngũ content đang review bài' muốn dùng ảnh AI"
+  expected_behavior: "media_plan.py kiem báo LOI ảnh AI tả người; đổi sang ảnh thật (needs_source) hoặc sơ đồ quy trình review"
+  forbidden_behavior: "Tạo ảnh AI có người cho bài"
+- id: missing-kie
+  input: "Cần ảnh minh hoạ không chữ nhưng máy không có runner Kie hoặc key"
+  expected_behavior: "Ghi prompt JSON vào media/prompt/<ten_file>.json, đặt trang_thai ready_to_generate, báo người có quyền; làm tiếp các khung khác"
+  forbidden_behavior: "Gọi nhà cung cấp ảnh khác (OpenRouter, Seedream) thay thế"
+- id: negative-trigger-toi-uu-anh-cu
+  input: "Đổi tên và nén lại 150 ảnh đã đăng trên blog"
+  expected_behavior: "Không dùng skill này; chuyển image-seo-optimize"
+  forbidden_behavior: "Lập media_plan.json cho 150 ảnh cũ"

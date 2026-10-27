@@ -488,3 +488,7 @@ Luật ghi:
 ## [2026-10-27] refactor | v2026.10.40 — Kiểm URL sau publish (wp-dang-bai 1.2.1, wp-xuat-ban-bai 1.0.1) — @claude
 - Publish bài pilot content-effort: URL 404 do plugin permalink chưa ghi URI và ảnh trùng slug. Đã sửa trên site, vá script và reference.
 - Files touched: skills/wp-dang-bai/, skills/wp-xuat-ban-bai/, .claude/skills/, .agents/skills/, MIGRATION.md, log.md
+
+## [2026-10-27] refactor | v2026.10.41 — Eval 3 skill xuất bản; router đăng web — @claude
+- evals/cases.yaml cho wp-xuat-ban-bai (9 ca), anh-trong-bai (7), wp-dang-bai (5); wp-dang-bai thêm mục xoá media WPML. Router §0.5 và trạm WS06 trỏ tới wp-xuat-ban-bai khi site có web-profile.
+- Files touched: skills/{wp-xuat-ban-bai,anh-trong-bai,wp-dang-bai}/, .claude/skills/, .agents/skills/, CLAUDE.md, 06-onpage-internal-link/{CLAUDE.md,README.md}, MIGRATION.md, log.md

@@ -2,7 +2,7 @@
 name: wp-dang-bai
 description: "Đăng hoặc cập nhật bài lên WordPress qua REST bằng app password: file HTML format blog doc-kit giữ giao diện (bảng, tab, quiz, checklist, SVG, video), tự tải ảnh lên Media, điền SEO title, meta, keyword, chuyên mục, ảnh đại diện. Dùng khi đẩy bài từ repo lên site có web-profile."
 metadata:
-  version: "1.2.1"
+  version: "1.2.2"
 ---
 
 # wp-dang-bai — đăng bài lên WordPress qua API
@@ -59,6 +59,12 @@ Script tìm `web-profile.json` trong `00-context/` hoặc `00-client-context/`, 
 
 Thử lần đầu: đăng `examples/bai-thu.html` ở dạng nháp, xem trước, rồi chạy `trash`.
 
+Xoá hẳn bài cũ và media của bài (chỉ khi người duyệt yêu cầu rõ, cần quyền server):
+1. Xem từng mục trước khi xoá: tiêu đề, trạng thái, bài nào đang dùng media (`post_content`, `_thumbnail_id`).
+2. Xoá bằng WP-CLI: `wp post delete <ID bài> <ID media...> --force`. Lệnh `trash` của script chỉ bỏ bài vào thùng rác, không xoá media.
+3. Site có WPML: mỗi media có bản sao theo ngôn ngữ trỏ cùng file. WordPress chỉ xoá file khi không còn mục nào trỏ tới. Tìm `_wp_attached_file` còn trỏ tới file, xoá cả bản sao không bài nào dùng.
+4. Kiểm thư mục `uploads` không còn file, purge cache. Ca thật 27/10/2026, site mẫu GTV: xoá 3 media xong vẫn còn 11 file vì 3 bản sao WPML.
+
 Script tự làm:
 - Lấy tiêu đề từ `<h1>`, mô tả SEO từ `<meta name="description">` nếu không truyền `--seo-desc`.
 - Chỉ lấy thân `<main>`; bỏ thanh trên, chân trang, khối tiêu đề, mọi `<script>`.
@@ -97,6 +103,7 @@ Script tự làm:
 
 ## Changelog
 
+- v1.2.2 (2026-10-27): mục xoá hẳn bài cũ và media (bản sao WPML); `evals/cases.yaml` 5 ca. Lý do: dọn bản nháp và media cũ trên site mẫu GTV.
 - v1.2.1 (2026-10-27): publish xong tự mở URL bài, không trả 200 thì thoát 1; ảnh đại diện trùng slug của bài được đổi tên `<slug>-anh-dai-dien`. Lý do: bài content-effort publish trên site mẫu GTV trả 404 vì plugin permalink chưa ghi URI và ảnh mang cùng slug.
 - v1.2 (2026-10-27): `--site` nhận mọi mã site; đọc `web-profile.json` (url, `brand_khac`) thay cho hằng số cứng; `--profile`, `--featured-alt`; slug, SEO title, keyword lấy từ thẻ meta của file khi không truyền cờ. Lý do: pilot content-effort 27/10, lần đẩy đầu slug tự sinh dài 70 ký tự và SEO title trống.
 - v1.1 (2026-10-27): lệnh `trash`, bài mẫu `examples/bai-thu.html`, link hướng dẫn trên site tài liệu.

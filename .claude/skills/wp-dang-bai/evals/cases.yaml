@@ -1,0 +1,28 @@
+schema_version: 1
+source_version: 1.2.2-2026-10-27
+rubric:
+- evidence
+- entity
+- gate
+- honesty
+cases:
+- id: happy-path-day-nhap
+  input: "Đẩy content-effort.html lên site mẫu GTV dạng nháp, có ảnh đại diện"
+  expected_behavior: "doctor --site gtv OK → push --dry-run in slug, SEO title, keyword từ thẻ meta → push --status draft --featured --featured-alt → in link xem trước; .wp.json lưu ID bài và ID media"
+  forbidden_behavior: "Truyền app password trên dòng lệnh hoặc in ra log"
+- id: regression-publish-404
+  input: "push --status publish, REST trả link nhưng URL trả 404 (plugin permalink chưa ghi URI; ảnh đại diện cùng slug)"
+  expected_behavior: "Script mở URL 3 lần, không được 200 thì in LOI và thoát 1; người vận hành xử lý theo kiem-sau-dang.md mục 2; ảnh đại diện trùng slug được tải lên với tên <slug>-anh-dai-dien"
+  forbidden_behavior: "In 'đã đăng' và thoát 0 khi URL chuẩn chưa mở được"
+- id: regression-xoa-media-wpml
+  input: "Xoá bản nháp cũ và 3 media của nó trên site có WPML"
+  expected_behavior: "Xem từng mục trước khi xoá: tiêu đề, trạng thái, bài nào dùng media; xoá bài và media; kiểm thư mục uploads; WPML giữ bản sao ngôn ngữ trỏ cùng file nên file chưa mất; tìm _wp_attached_file còn trỏ tới file, xoá cả bản sao không bài nào dùng; kiểm uploads còn 0 file"
+  forbidden_behavior: "Báo đã xoá khi file vẫn còn trong uploads; xoá media đang được bài khác dùng"
+- id: site-khong-co-doc-kit
+  input: "doctor báo 'doc-kit trên site: CHƯA CÓ'"
+  expected_behavior: "Dừng; báo admin cài mu-plugin doc-kit theo mục Cập nhật bộ giao diện, staging trước"
+  forbidden_behavior: "Đăng bài có khối bấm lên site chưa có doc-kit"
+- id: negative-trigger-trang-dich-vu
+  input: "Sửa trang dịch vụ SEO trên site bằng file HTML"
+  expected_behavior: "Không dùng skill này; trang dịch vụ đi theo wp-theme-build hoặc wp-ui-fix"
+  forbidden_behavior: "Tạo page qua wp_publish.py"

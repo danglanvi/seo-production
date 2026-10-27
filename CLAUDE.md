@@ -43,6 +43,7 @@ Trước khi trình plan, tự chấm bản nháp theo checklist "Bản tốt nh
 |---|---|---|---|
 | "ingest <file>" · file mới trong `02-raw/` | Ingest | `02-raw/<sub>/` → `00-client-context/` | §2.1 routing; show diff context trước khi ghi |
 | "làm công đoạn N" · "làm <deliverable>" · "onpage <url…>" · "audit <site>" · "internal link" · "topical map" · "backlink plan" · "GEO baseline" | Work | tra ma trận M §5.2 → WS folder của công đoạn | Pre-work §3: `AGENT.md` → `<WS>/CLAUDE.md` → `index.md` dòng N → `lessons-ws<XX>.md` (nếu có) → cheat-sheet WS (nếu có) → checklist theo M → template `_TEMPLATES/` → `kpi-commitments.md` nếu chạm KPI |
+| "đăng bài <slug> lên web" · "xuất bản bài" · "dựng media cho bài" | Work (publish) | `06-onpage-internal-link/` | Pre-work §3 → `skills/wp-xuat-ban-bai/SKILL.md` → `00-client-context/web-profile.json` (thiếu → dựng từ mẫu của skill, hỏi trường luật). Không có profile và doc-kit → kit `wp-publish-workflow-kit` theo §11 |
 | "QC <path>" · "QC công đoạn N" · "QC random WS XX" | QC | `03-audits/qc/` + trạm gốc | §7 (checklist theo M, chấm từng item có evidence) |
 | "feedback: …" · item QC fail ≥2 lần · "retro pha N" | Feedback | `12-feedback-lessons/` | `_REFERENCE/self-improving.md` + template `lessons-workstream.md` |
 | "báo cáo tuần/tháng/quý/nghiệm thu" | Work | `09-reporting/` | M hàng Reporting + `report-config.yaml` + `_TEMPLATES/account/` |

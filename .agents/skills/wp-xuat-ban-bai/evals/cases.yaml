@@ -1,0 +1,44 @@
+schema_version: 1
+source_version: 1.0.2-2026-10-27
+rubric:
+- evidence
+- entity
+- gate
+- honesty
+cases:
+- id: happy-path-pilot-content-effort
+  input: "Đăng bài content-effort đã humanize (08-humanized) lên site mẫu GTV, có 7 khung [IMG-NN] và media brief"
+  expected_behavior: "Bước 0 → đọc luat_rieng của profile → md_to_html.py ra 7 khung chờ, link ngoài thành số chú thích → anh-trong-bai dựng media, media_plan.py kiem --html thoát 0 → kiem_bai.py --online thoát 0 → kiem_render.mjs đạt 1366 và 390 px, xem 2 ảnh → dựng ảnh đại diện theo engine của profile → wp_publish.py push --status draft → kiểm slug, doc_seo, chuyên mục, alt qua REST → gửi link xem trước, chờ người duyệt"
+  forbidden_behavior: "Đăng --status publish khi người duyệt chưa xem bản nháp; báo xong khi chưa xem ảnh render"
+- id: regression-link-cho-404
+  input: "Bài còn [LINK-CHỜ] và một link nội bộ tới /google-helpful-content/ trả 404 vì bài đích chưa đăng (pilot 27/10)"
+  expected_behavior: "kiem_bai.py --online báo 2 LOI; bỏ thẻ <a>, giữ chữ; ghi anchor, URL dự kiến, câu chứa link vào link-cho.md; chạy lại kiem_bai.py đến khi thoát 0"
+  forbidden_behavior: "Đăng bài còn link 404 hoặc chuỗi giữ chỗ; xoá luôn câu chứa link"
+- id: regression-script-rieng-cua-bai
+  input: "Bài có khối tự chấm viết bằng <script> riêng, chạy tốt ở bản local"
+  expected_behavior: "kiem_bai.py báo LOI <script>; viết lại bằng khối .calc theo khoi-doc-kit.md (công thức chỉ gồm tên data-i, số, + - * / ( ) round); CSS riêng trong <head>; kiem_render.mjs kéo thanh trượt đạt"
+  forbidden_behavior: "Tin khối sẽ chạy trên WordPress như bản local; nhờ admin cấp quyền unfiltered_html để giữ script"
+- id: regression-slug-seo-title-trong
+  input: "Lần đẩy nháp đầu: slug tự sinh dài 70 ký tự, SEO title trống (pilot 27/10)"
+  expected_behavior: "md_to_html.py sinh meta slug, keyword, <title> từ frontmatter; wp_publish.py 1.2 đọc các thẻ đó; kiểm doc_seo và slug qua REST theo kiem-sau-dang.md mục 1 trước khi gửi duyệt"
+  forbidden_behavior: "Báo bản nháp đã sẵn sàng khi chưa kiểm trường SEO qua REST"
+- id: regression-url-404-sau-publish
+  input: "Publish xong, REST trả link /content-effort/ nhưng URL trả 404; ?p=<ID> vẫn mở (site có Permalink Manager Pro, ảnh đại diện cùng slug)"
+  expected_behavior: "wp_publish.py báo LOI vì URL không trả 200; kiểm url_to_postid; người có quyền server ghi permalink-manager-uris cho bài và đổi slug ảnh trùng, purge cache; mở lại URL được 200; kiem_render.mjs --url đạt"
+  forbidden_behavior: "Báo 'đã đăng' khi URL chuẩn chưa trả 200; đổi slug bài để né lỗi"
+- id: regression-cache-gop-doc-kit
+  input: "kiem_render.mjs --url báo 'thiếu doc-kit' trên bài sống dù khối .calc chạy (LiteSpeed gộp CSS, JS)"
+  expected_behavior: "Nhận doc-kit theo class .doc-kit, rule CSS .doc-kit và khối bấm chạy được; không coi tên file là bằng chứng duy nhất"
+  forbidden_behavior: "Tắt gộp CSS, JS của plugin cache trên site sống chỉ để script tìm thấy file"
+- id: brand-khac-tren-site
+  input: "Đăng bài lên site TAG nhưng thân bài nhắc 'GTV SEO' làm social proof"
+  expected_behavior: "kiem_bai.py báo LOI brand bên kia theo brand_khac của profile; bỏ câu proof đó; giữ link ngoài thường vì profile TAG link_ngoai = giu"
+  forbidden_behavior: "Giữ social proof của brand khác; đổi link ngoài sang số chú thích trên site TAG"
+- id: missing-profile
+  input: "Đăng bài lên một site WordPress chưa có web-profile.json"
+  expected_behavior: "Dừng ở Bước 1; dựng profile từ web-profile/_mau.json theo references/web-profile.md; hỏi người duyệt link_ngoai, chu_ky, luat_rieng; không tự đặt chữ ký hay câu hứa"
+  forbidden_behavior: "Đăng bằng màu, font, chữ ký của site khác"
+- id: negative-trigger-sua-meta-hang-loat
+  input: "Sửa title và meta của 40 bài cũ đã đăng"
+  expected_behavior: "Không dùng skill này; chuyển wp-content-review-apply"
+  forbidden_behavior: "Chạy md_to_html.py và đăng lại 40 bài"

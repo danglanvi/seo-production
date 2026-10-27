@@ -2,7 +2,7 @@
 name: anh-trong-bai
 description: "Dựng media trong thân bài trước khi đăng: media plan từ khung [IMG-NN], sơ đồ SVG 2 bản desktop và điện thoại theo màu site, ảnh chụp trang nguồn có tô câu, ảnh AI có watermark, khối tương tác; kiểm chữ, alt, caption, dung lượng rồi chèn vào HTML. Dùng khi bài mới cần hình."
 metadata:
-  version: "1.0"
+  version: "1.0.1"
 ---
 
 # anh-trong-bai — media trong thân bài
@@ -23,7 +23,7 @@ Gốc đường dẫn là root repo. Script ở `skills/anh-trong-bai/scripts/`:
 | `chen_media.py` | Thay khung chờ bằng media: SVG 2 bản, `<img>` có kích thước, khối tương tác, YouTube facade |
 | `_cdp.mjs` | Hàm Chrome headless dùng chung |
 
-Test, chạy từ `skills/anh-trong-bai/`: `python3 -B tests/test_media_bai.py`.
+Test, chạy từ `skills/anh-trong-bai/`: `python3 -B tests/test_media_bai.py`. Ca đánh giá: `evals/cases.yaml` (không nạp lúc chạy thật).
 
 ## Khi nào dùng
 
@@ -154,4 +154,5 @@ Bản tốt nhất phải có:
 
 ## Changelog
 
+- v1.0.1 (2026-10-27): `evals/cases.yaml` 7 ca từ pilot (alt tả brief cũ, nhãn `nguoc` bắt nhầm, chụp trang devsite và hexdocs, ảnh AI có người, thiếu Kie). Kiểu `danh-sach` căn giữa tiêu đề khi thẻ không có mô tả.
 - v1.0 (2026-10-27): tạo mới. Pilot bài content-effort trên site mẫu GTV: 4 sơ đồ SVG (khoi, luong 2 kiểu, quyet-dinh) đạt `svg_kiem.mjs` ở 760 và 320 px, 2 ảnh chụp nguồn (Google devsite, hexdocs) có tô câu, 1 khối tự chấm `.calc`, chèn đủ 7 khung.

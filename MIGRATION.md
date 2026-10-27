@@ -1,5 +1,5 @@
 ---
-master_version: v2026.10.40
+master_version: v2026.10.41
 ---
 
 # MIGRATION — Cập nhật instance lên version master mới
@@ -15,6 +15,13 @@ master_version: v2026.10.40
 ---
 
 ## 1. Có gì mới
+
+### v2026.10.41 (2026-10-27) — Eval cho 3 skill xuất bản; router đăng web
+
+- **Vì sao:** đợt pilot bài content-effort cho 12 lỗi thật. Người duyệt yêu cầu giữ các ca đó làm eval và đưa đường đăng web vào luật router.
+- **Thêm:** `evals/cases.yaml` cho `wp-xuat-ban-bai` 1.0.2 (9 ca), `anh-trong-bai` 1.0.1 (7 ca), `wp-dang-bai` 1.2.2 (5 ca). `wp-dang-bai` thêm mục xoá hẳn bài cũ và media trên site có WPML.
+- **Luật:** `CLAUDE.md` §0.5 thêm hàng "đăng bài lên web / xuất bản bài / dựng media cho bài" → trạm `06-onpage-internal-link/`. `06-onpage-internal-link/CLAUDE.md` và `README.md`: site có `00-client-context/web-profile.json` dùng `wp-xuat-ban-bai`; cấm publish khi người duyệt chưa xem bản nháp hoặc URL chuẩn chưa trả 200.
+- **Port sang instance:** GHI ĐÈ `CLAUDE.md`, `06-onpage-internal-link/CLAUDE.md`, `06-onpage-internal-link/README.md`, 3 thư mục skill và mirror. Cập nhật `master_version` thành `v2026.10.41`.
 
 ### v2026.10.40 (2026-10-27) — wp-dang-bai 1.2.1, wp-xuat-ban-bai 1.0.1: kiểm URL sau publish
 

@@ -10,7 +10,7 @@ Claude ở trạm này là **Onpage Optimizer** — kỹ thuật viên tối ưu
 
 Ranh giới cứng: trạm này chạm **cách trình bày**, không chạm **ý nghĩa**. Đề xuất nào làm đổi nghĩa content (thêm/bớt claim, đổi angle, viết lại đoạn) → chuyển về `../05-content-plan/` + fork `Content Production - <client>/` xử lý, trạm này chỉ ghi nhận và bàn giao.
 
-Công đoạn phụ trách: **#7 (execute) · #18 · #23** + **khâu đăng/sửa bài WordPress** (phần publish của #15/16/19 — bài nhận từ fork content, hoặc flow SEO kiêm content) — status từng dòng tra bảng B `../index.md`, không chép khung 33 công đoạn vào đây. Luật đăng bài: `../02-raw/knowledge/sop/11-publish-wp.md`, executor = `wp-publish-workflow-kit` (root §11).
+Công đoạn phụ trách: **#7 (execute) · #18 · #23** + **khâu đăng/sửa bài WordPress** (phần publish của #15/16/19 — bài nhận từ fork content, hoặc flow SEO kiêm content) — status từng dòng tra bảng B `../index.md`, không chép khung 33 công đoạn vào đây. Luật đăng bài: `../02-raw/knowledge/sop/11-publish-wp.md`, executor = `wp-publish-workflow-kit` (root §11). Site có `../00-client-context/web-profile.json` và mu-plugin doc-kit: executor = skill `wp-xuat-ban-bai` (media trong bài qua `anh-trong-bai`, đẩy bài qua `wp-dang-bai`).
 
 ---
 
@@ -44,7 +44,7 @@ Công đoạn phụ trách: **#7 (execute) · #18 · #23** + **khâu đăng/sử
 | Audit trang cũ: dừng ở tier có ≥3 item FAIL, sửa nền trước | Tối ưu nâng cao đè lên nền đang hỏng |
 | Nhắc khi dây chuyền lệch nhịp (ghi report + Ghi chú index) | Im lặng gộp onpage + IL thành một đợt cuối kỳ |
 | Chấm MX1–MX6 riêng và đề xuất đổi khối nội dung sẵn có sang bảng, sơ đồ, video, khối tương tác (mục "Nâng cấp định dạng") | Cộng MX vào điểm P-series; tự thêm claim hoặc số liệu mới để dựng media; coi MX là điều kiện `done` |
-| Đăng/sửa bài WP qua kit theo sop/11: gate pre-publish → approval hash → verify kép | Đăng thẳng vào WP ngoài kit; tự bấm Publish draft (người duyệt bấm); chạy strong-to-b (policy `<strong>`); báo "đã đăng" khi chưa verify kép |
+| Đăng/sửa bài WP qua kit theo sop/11: gate pre-publish → approval hash → verify kép. Site có web-profile: theo `wp-xuat-ban-bai` (kiểm luật, render thử, đăng nháp, người duyệt xem, publish, URL trả 200) | Đăng thẳng vào WP ngoài kit và ngoài `wp-xuat-ban-bai`; publish khi người duyệt chưa xem bản nháp; chạy strong-to-b (policy `<strong>`); báo "đã đăng" khi chưa verify kép hoặc URL chuẩn chưa trả 200 |
 
 ---
 
@@ -97,6 +97,7 @@ Luật chấm:
 | `skills/schema-markup-generator/` (công cụ ở workspace Vincent — bản standalone bỏ qua) | Chỉ khi gắn schema cho URL theo spec của `../14-entity/` |
 | `skills/image-seo-optimize/` (công cụ ở workspace Vincent — bản standalone bỏ qua) | Chỉ khi batch có ảnh cần tối ưu bulk |
 | `../02-raw/knowledge/sop/11-publish-wp.md` + kit `wp-publish-workflow-kit` (root §11) | Chỉ khi đăng bài mới (NEW) hoặc sửa bài live (AUDIT) trên WordPress |
+| `skills/wp-xuat-ban-bai/` + `skills/anh-trong-bai/` | Chỉ khi đăng bài mới lên site có `../00-client-context/web-profile.json` |
 
 Không quét cả `../02-raw/knowledge/` — nạp đúng file theo Vòng tự kiểm; `references/` của skill nạp từng file theo pointer khi step cần (§10 root). AX1-AX7 trong sop/08 là việc của trạm 08 — không chấm ké ở đây.
 

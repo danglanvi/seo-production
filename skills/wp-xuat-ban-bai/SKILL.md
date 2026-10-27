@@ -2,7 +2,7 @@
 name: wp-xuat-ban-bai
 description: "Xuất bản bài blog đã humanize lên WordPress: Markdown thành HTML doc-kit, media trong bài, ảnh đại diện, khối bấm thử, kiểm luật site và link nội bộ, render thử trên theme thật, đăng nháp, kiểm sau đăng. Dùng khi đưa bài mới lên site có web-profile."
 metadata:
-  version: "1.0.1"
+  version: "1.0.2"
 ---
 
 # wp-xuat-ban-bai — xuất bản bài blog lên WordPress
@@ -18,7 +18,7 @@ Gốc đường dẫn là root repo. Script ở `skills/wp-xuat-ban-bai/scripts/
 | `kiem_render.mjs` | Ghép thân bài vào bài mẫu của theme thật, đo ở 1366 px và 390 px: tràn ngang, ảnh hỏng, lỗi JS của doc-kit, khối bấm chạy được, chữ sơ đồ trên điện thoại. `--url` kiểm bài đã đăng |
 | `_cdp.mjs` | Hàm Chrome headless dùng chung (mở tab, chặn analytics, chụp, gom lỗi JS) |
 
-Mẫu profile: `web-profile/_mau.json`. Test, chạy từ `skills/wp-xuat-ban-bai/`: `python3 -B tests/test_xuat_ban.py`.
+Mẫu profile: `web-profile/_mau.json`. Test, chạy từ `skills/wp-xuat-ban-bai/`: `python3 -B tests/test_xuat_ban.py`. Ca đánh giá: `evals/cases.yaml` (không nạp lúc chạy thật).
 
 ## Khi nào dùng
 
@@ -118,10 +118,11 @@ Bản tốt nhất phải có:
 - [ ] `kiem_bai.py --online` thoát 0. Nguồn lỗi: pilot 27/10, bài còn `[LINK-CHỜ]` và một link nội bộ trả 404 vì bài đích chưa đăng.
 - [ ] `kiem_render.mjs` đạt ở 1366 px và 390 px trên theme thật, và đã xem 2 ảnh chụp. Nguồn lỗi: pilot 27/10, plugin mục lục của theme ném lỗi JS sau khi ghép thân bài; script tách lỗi doc-kit khỏi lỗi plugin khác.
 - [ ] Mỗi H2 có hình, bảng hoặc khối bấm; bài có ít nhất một khối bấm chạy được khi không có `<script>`. Nguồn lỗi: 27/10, khối tự chấm của bài pilot viết bằng script riêng không lên được site.
-- [ ] Link ngoài theo `link_ngoai` của profile, mục Nguồn tham khảo đủ URL. Nguồn: luật site mẫu 20/10, không hyperlink ra ngoài.
+- [ ] Link ngoài theo `link_ngoai` của profile: `chu-thich` thì có số chú thích và mục nguồn đủ URL; `giu` thì link thường có `rel="noopener"`. Nguồn: luật site mẫu GTV 20/10 (chú thích) và site mẫu TAG 27/10 (giữ link).
 - [ ] Slug, SEO title, meta, keyword, chuyên mục, alt ảnh đại diện có trên bản nháp, kiểm qua REST. Nguồn lỗi: pilot 27/10, lần đẩy đầu slug tự sinh dài 70 ký tự và SEO title trống.
 - [ ] Không có câu cam kết hoàn tiền, không nhắc brand bên kia, chữ ký thương hiệu đúng 1 lần. Nguồn: luật workspace về cam kết và luật tách brand, `kiem_bai.py` chặn cả hai.
 - [ ] Bài chỉ lên `publish` sau khi người duyệt xem bản nháp. Nguồn: pilot 27/10, bản nháp đầu thiếu slug và SEO title, chỉ thấy khi kiểm qua REST.
+- [ ] Sau publish, URL chuẩn trả 200 và `kiem_render.mjs --url` đạt. Nguồn lỗi: pilot 27/10, URL trả 404 vì plugin permalink chưa ghi URI và ảnh đại diện cùng slug.
 
 ## Output
 
@@ -146,5 +147,6 @@ Bản tốt nhất phải có:
 
 ## Changelog
 
+- v1.0.2 (2026-10-27): `evals/cases.yaml` 9 ca từ pilot (link chờ, script riêng, slug và SEO title, URL 404 sau publish, cache gộp doc-kit, brand khác, thiếu profile). Mục tự phản biện thêm kiểm URL sau publish; luật link ngoài theo cả 2 chế độ của profile.
 - v1.0.1 (2026-10-27): `kiem_render.mjs --url` nhận doc-kit theo rule CSS và khối bấm chạy được (plugin cache gộp file). `kiem-sau-dang.md` thêm cách xử lý URL 404 sau publish do plugin permalink và ảnh trùng slug. Lý do: publish bài pilot trên site mẫu GTV.
 - v1.0 (2026-10-27): tạo mới. Pilot bài content-effort trên site mẫu GTV: `md_to_html.py` ra 7 khung media, `kiem_bai.py` bắt link chờ và link 404, `kiem_render.mjs` đạt ở 1366 px và 390 px, đăng nháp có slug, SEO title, chuyên mục, ảnh đại diện.
