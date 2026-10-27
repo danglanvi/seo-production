@@ -479,3 +479,8 @@ Luật ghi:
 ## [2026-10-27] refactor | v2026.10.38 — Skill wp-dang-bai đăng bài lên gtvseo.com, theaigrowth.io qua REST — @claude
 - Script wp_publish.py (doctor, push, media, trash), mu-plugin doc-kit, bài mẫu. Đã thử staging và production 2 site.
 - Files touched: skills/wp-dang-bai/, .claude/skills/wp-dang-bai/, .agents/skills/wp-dang-bai/, CLAUDE.md §11, MIGRATION.md
+
+## [2026-10-27] refactor | v2026.10.39 — Skill wp-xuat-ban-bai, anh-trong-bai; wp-dang-bai 1.2 đọc web-profile — @claude
+- wp-xuat-ban-bai 1.0: md_to_html.py, kiem_bai.py, kiem_render.mjs, 4 reference, mẫu web-profile, test offline. anh-trong-bai 1.0: media_plan.py, svg_dung.py (7 kiểu), svg_kiem.mjs, chup_trang.mjs, anh_chu_thich.py, chen_media.py, 4 reference, test offline. wp-dang-bai 1.2: profile, --featured-alt, slug và SEO title từ thẻ meta.
+- Pilot bài content-effort: đăng nháp trên site mẫu GTV, 7 khung media, render đạt 1366 px và 390 px.
+- Files touched: skills/{wp-xuat-ban-bai,anh-trong-bai,wp-dang-bai}/, .claude/skills/, .agents/skills/, CLAUDE.md §11, MIGRATION.md, log.md

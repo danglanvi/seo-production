@@ -1,0 +1,31 @@
+{
+ "site": "<mã ngắn, ví dụ abc>",
+ "url": "https://<domain>",
+ "brand": "<tên brand>",
+ "byline": "<tên tác giả hiển thị>",
+ "brand_khac": "<regex brand không được nhắc, bỏ trống nếu không có>",
+ "link_ngoai": "chu-thich",
+ "tieu_de_nguon": "Nguồn tham khảo",
+ "chu_ky": ["<dòng 1: tên brand - định vị>", "<dòng 2: tagline đã duyệt>"],
+ "nhan_dich_vu": "<nhãn bắt buộc khi link về trang dịch vụ>",
+ "chuyen_muc": {"ghi_chu": "Chọn đúng một chuyên mục chính theo cluster của bài. Chuyên mục chưa có thì hỏi SEO Leader, không tự tạo."},
+ "luat_rieng": ["<luật riêng của site, kèm ngày chốt>"],
+ "render": {
+  "bai_mau": "https://<domain>/<một bài đã đăng>/",
+  "khung_noi_dung": ".entry-content"
+ },
+ "media": {
+  "mau": {"chinh": "#2563EB", "phu": "#7C3AED", "grad1": "#2563EB", "grad2": "#7C3AED", "chu": "#0F172A", "chu_phu": "#475569", "vien": "#CBD5E1", "nen": "#FFFFFF", "nen_nhat": "#F1F5F9", "canh_bao": "#DC2626"},
+  "mau_ghi_chu": "",
+  "font": "Inter, Arial, sans-serif",
+  "logo": "<đường dẫn logo PNG nền trong, tính từ thư mục chứa file này>",
+  "rong_anh": 1200,
+  "kb_do_hoa": 80,
+  "kb_anh_chup": 140
+ },
+ "anh_dai_dien": {
+  "engine": "<skill dựng ảnh đại diện>",
+  "brand": "<tham số --brand của engine>",
+  "ghi_chu": ""
+ }
+}

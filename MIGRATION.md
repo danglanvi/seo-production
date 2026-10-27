@@ -1,5 +1,5 @@
 ---
-master_version: v2026.10.38
+master_version: v2026.10.39
 ---
 
 # MIGRATION — Cập nhật instance lên version master mới
@@ -15,6 +15,18 @@ master_version: v2026.10.38
 ---
 
 ## 1. Có gì mới
+
+### v2026.10.39 (2026-10-27) — Skill mới `wp-xuat-ban-bai` và `anh-trong-bai`; `wp-dang-bai` 1.2 đọc web-profile
+
+- **Vì sao:** đăng bài lên website cần nhiều hơn một lệnh đẩy: media trong bài, ảnh đại diện, khối bấm thử, link nội bộ sống, kiểm giao diện trên theme thật. Luật của từng site (link ngoài, chữ ký, màu, font) trước đây nằm rải trong chat và memory.
+- **Thêm:** `skills/wp-xuat-ban-bai/` (Markdown humanize → HTML doc-kit, `kiem_bai.py` kiểm luật trước khi đăng, `kiem_render.mjs` render trên theme thật ở 1366 px và 390 px, mẫu `web-profile/_mau.json`). `skills/anh-trong-bai/` (media plan từ khung `[IMG-NN]`, sơ đồ SVG 7 kiểu có bản điện thoại, chụp trang nguồn có tô câu, ảnh AI có watermark, chèn media).
+- **Sửa:** `wp-dang-bai` 1.2: `--site` nhận mọi mã site, đọc `web-profile.json` thay cho hằng số cứng, thêm `--profile`, `--featured-alt`; lấy slug, SEO title, keyword từ thẻ meta của file.
+- **Pilot:** bài content-effort đăng nháp trên site mẫu GTV ngày 27/10, đủ 7 khung media, render đạt 2 cỡ màn hình.
+- **Port sang instance:**
+  1. GHI ĐÈ `skills/wp-dang-bai/`. Thêm `skills/wp-xuat-ban-bai/` và `skills/anh-trong-bai/`.
+  2. Instance có đăng bài lên WordPress: chép `skills/wp-xuat-ban-bai/web-profile/_mau.json` thành `00-client-context/web-profile.json`, điền theo `skills/wp-xuat-ban-bai/references/web-profile.md`. Thêm skill ảnh đại diện mà profile khai ở `anh_dai_dien.engine`.
+  3. Instance không đăng bài: chỉ làm bước 1.
+  4. Cập nhật frontmatter `master_version` thành `v2026.10.39`.
 
 ### v2026.10.38 (2026-10-27) — Skill mới `wp-dang-bai`: đăng bài lên gtvseo.com, theaigrowth.io qua REST
 

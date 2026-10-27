@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
-"""Đăng bài HTML (format tài liệu pages.dev hoặc HTML thường) lên WordPress gtvseo.com / theaigrowth.io qua REST + app password.
+"""Đăng bài HTML (format bài blog doc-kit hoặc HTML thường) lên WordPress qua REST + app password.
 
 Lệnh:
-  python3 wp_publish.py doctor --site gtv|tag
-  python3 wp_publish.py push <bai.html> --site gtv|tag [--status draft|publish] [--slug s] [--category slug1,slug2]
+  python3 wp_publish.py doctor --site <mã site>
+  python3 wp_publish.py push <bai.html> --site <mã site> [--status draft|publish] [--slug s] [--category slug1,slug2]
                          [--tags t1,t2] [--title "…"] [--seo-title "…"] [--seo-desc "…"] [--keyword "…"]
-                         [--featured <ảnh>|first] [--id <post id>] [--allow-claims] [--dry-run]
-  python3 wp_publish.py media <file> --site gtv|tag [--alt "…"]
-  python3 wp_publish.py trash <bai.html> --site gtv|tag      (bỏ bài đã đăng từ file này vào thùng rác)
+                         [--featured <ảnh>|first] [--featured-alt "…"] [--id <post id>] [--allow-claims] [--dry-run]
+  python3 wp_publish.py media <file> --site <mã site> [--alt "…"]
+  python3 wp_publish.py trash <bai.html> --site <mã site>      (bỏ bài đã đăng từ file này vào thùng rác)
 
+Mã site là khoá "site" trong web-profile.json của repo (00-context/ hoặc 00-client-context/, hoặc --profile).
 Key (biến môi trường, hoặc file .env tìm từ thư mục hiện tại đi lên, ưu tiên .agent-secrets/.env):
-  WP_GTV_URL, WP_GTV_USER, WP_GTV_APP_PASSWORD · WP_TAG_URL, WP_TAG_USER, WP_TAG_APP_PASSWORD
+  WP_<MÃ>_URL (không có thì lấy "url" của profile), WP_<MÃ>_USER, WP_<MÃ>_APP_PASSWORD
 Đăng lại cùng file thì cập nhật đúng bài cũ (lưu ID trong <bai.html>.wp.json). Ảnh đã tải không tải lại.
 Chỉ dùng Python stdlib."""
 import argparse
@@ -29,10 +30,26 @@ import urllib.request
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from css_scope import scope  # noqa: E402
 
-UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) wp-dang-bai/1.0'
-DEFAULT_URL = {'gtv': 'https://gtvseo.com', 'tag': 'https://theaigrowth.io'}
+UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) wp-dang-bai/1.2'
 CLAIMS = re.compile(r'hoàn\s*(100\s*%|tiền|lại\s*tiền)|money[- ]back|cam\s*kết\s*hoàn', re.I)
-OTHER_BRAND = {'gtv': re.compile(r'The AI Growth|theaigrowth\.io', re.I), 'tag': re.compile(r'GTV SEO|gtvseo\.com', re.I)}
+
+
+def load_profile(site, path=None):
+    """web-profile.json của site: --profile, hoặc 00-context/ / 00-client-context/ tìm từ thư mục hiện tại đi lên."""
+    cands, d = ([path] if path else []), os.path.abspath(os.getcwd())
+    while True:
+        cands += [os.path.join(d, x, 'web-profile.json') for x in ('00-context', '00-client-context')]
+        p = os.path.dirname(d)
+        if p == d:
+            break
+        d = p
+    for f in cands:
+        if f and os.path.isfile(f):
+            j = json.load(open(f, encoding='utf-8'))
+            for pr in (j if isinstance(j, list) else [j]):
+                if pr.get('site') == site:
+                    return pr
+    return {}
 
 
 def load_env():
@@ -55,10 +72,12 @@ def load_env():
 
 
 class WP:
-    def __init__(self, site):
+    def __init__(self, site, profile=None):
         e = load_env()
         p = 'WP_' + site.upper() + '_'
-        self.base = (e.get(p + 'URL') or DEFAULT_URL[site]).rstrip('/')
+        self.base = (e.get(p + 'URL') or (profile or {}).get('url') or '').rstrip('/')
+        if not self.base:
+            sys.exit(f'Thiếu {p}URL trong .env và không thấy web-profile.json có site "{site}".')
         user, pw = e.get(p + 'USER'), (e.get(p + 'APP_PASSWORD') or '').replace(' ', '')
         if not user or not pw:
             sys.exit(f'Thiếu {p}USER hoặc {p}APP_PASSWORD trong .env. Xem hướng dẫn trong SKILL.md mục Cài đặt.')
@@ -91,7 +110,7 @@ def die(code, j, what):
 
 
 def doctor(a):
-    wp = WP(a.site)
+    wp = WP(a.site, load_profile(a.site, a.profile))
     c, me = wp.req('GET', '/wp/v2/users/me?context=edit')
     if c != 200:
         die(c, me, 'đăng nhập bằng app password')
@@ -103,7 +122,7 @@ def doctor(a):
 
 
 def extract(src):
-    """Trả (title, desc, body_html, doc_css) từ file HTML."""
+    """Trả (title, desc, body_html, doc_css, head_meta) từ file HTML. head_meta: <title>, meta slug, meta keyword."""
     title = desc = ''
     m = re.search(r'<header class="hd">([\s\S]*?)</header>', src)
     if m:
@@ -114,6 +133,14 @@ def extract(src):
         title = re.sub(r'<[^>]+>', '', t.group(1)).strip() if t else ''
     d = re.search(r'<meta name="description" content="([^"]*)"', src)
     desc = html.unescape(d.group(1)) if d else ''
+    hm = {}
+    for k in ('slug', 'keyword'):
+        v = re.search(r'<meta name="' + k + r'" content="([^"]*)"', src)
+        if v:
+            hm[k] = html.unescape(v.group(1)).strip()
+    t = re.search(r'<title>([\s\S]*?)</title>', src)
+    if t:
+        hm['seo_title'] = html.unescape(re.sub(r'<[^>]+>', '', t.group(1))).strip()
     css = []
     head = src.split('<body', 1)[0] if '<body' in src else ''
     for s in re.findall(r'<style[^>]*>([\s\S]*?)</style>', head):
@@ -131,7 +158,7 @@ def extract(src):
     body = re.sub(r'<script[\s\S]*?</script>', '', body)
     body = re.sub(r'<style[\s\S]*?</style>', '', body)
     body = re.sub(r'<nav class="nav">[\s\S]*?</nav>|<footer class="ft">[\s\S]*?</footer>', '', body)
-    return html.unescape(title), desc, body.strip(), '\n'.join(c for c in css if c.strip())
+    return html.unescape(title), desc, body.strip(), '\n'.join(c for c in css if c.strip()), hm
 
 
 def upload(wp, state, data, name, alt=''):
@@ -158,21 +185,28 @@ def slugify(s):
 def push(a):
     src_path = os.path.abspath(a.file)
     src = open(src_path, encoding='utf-8').read()
-    title, desc, body, css = extract(src)
+    title, desc, body, css, hm = extract(src)
     title = a.title or title
-    slug = a.slug or slugify(title)
+    slug = a.slug or hm.get('slug') or slugify(title)
+    seo_title = a.seo_title or (hm.get('seo_title') if hm.get('seo_title') != title else '')
+    keyword = a.keyword or hm.get('keyword', '')
     text = re.sub(r'<[^>]+>', ' ', body)
     if CLAIMS.search(text) and not a.allow_claims:
-        sys.exit('Dừng: bài có câu cam kết hoàn tiền ("' + CLAIMS.search(text).group(0) + '"). Luật GTV/TAG cấm tự thêm. Xoá câu đó, hoặc thêm --allow-claims nếu Vincent đã duyệt.')
-    if OTHER_BRAND[a.site].search(text):
-        print(f'Cảnh báo: bài đăng lên {a.site.upper()} có nhắc brand bên kia ("{OTHER_BRAND[a.site].search(text).group(0)}"). Kiểm luật GTV ≠ TAG.')
+        sys.exit('Dừng: bài có câu cam kết hoàn tiền ("' + CLAIMS.search(text).group(0) + '"). Luật workspace cấm tự thêm. Xoá câu đó, hoặc thêm --allow-claims nếu người duyệt đã đồng ý.')
+    prof = load_profile(a.site, a.profile)
+    other = re.search(prof['brand_khac'], text, re.I) if prof.get('brand_khac') else None
+    if other:
+        print(f'Cảnh báo: bài đăng lên {a.site.upper()} có nhắc brand bên kia ("{other.group(0)}"). Kiểm luật tách brand.')
+    if not prof:
+        print(f'Ghi chú: không thấy web-profile.json của site "{a.site}", bỏ kiểm brand. Chạy từ gốc repo hoặc thêm --profile.')
     if a.dry_run:
         print(f'[dry-run] tiêu đề: {title}\n[dry-run] slug: {slug} · thân bài {len(body):,} ký tự · CSS riêng {len(css):,} ký tự')
+        print(f'[dry-run] SEO title: {seo_title or "(theo tiêu đề)"} · keyword: {keyword or "(trống)"}')
         n_data = len(re.findall(r'(?:src|poster)="data:', body))
         n_file = len([u for u in re.findall(r'(?:src|poster)="([^"]+)"', body) if not u.startswith(('http', 'data:', '//', '#'))])
         print(f'[dry-run] ảnh data: {n_data} · file cục bộ: {n_file}')
         return
-    wp = WP(a.site)
+    wp = WP(a.site, prof)
     state_path = src_path + '.wp.json'
     allst = json.load(open(state_path)) if os.path.exists(state_path) else {}
     state = allst.setdefault(a.site, {'post_id': None, 'media': {}})
@@ -208,7 +242,7 @@ def push(a):
 
     post = {'title': title, 'content': body, 'slug': slug, 'status': a.status,
             'meta': {'_doc_kit': True, '_doc_kit_css': css},
-            'doc_seo': {'title': a.seo_title or '', 'description': a.seo_desc or desc, 'focus_keyword': a.keyword or ''}}
+            'doc_seo': {'title': seo_title, 'description': a.seo_desc or desc, 'focus_keyword': keyword}}
     if a.category:
         ids = []
         for s in a.category.split(','):
@@ -237,7 +271,7 @@ def push(a):
             if hit:
                 post['featured_media'] = hit[0]['id']
         else:
-            post['featured_media'] = upload(wp, state, open(a.featured, 'rb').read(), os.path.basename(a.featured), title)['id']
+            post['featured_media'] = upload(wp, state, open(a.featured, 'rb').read(), os.path.basename(a.featured), a.featured_alt or title)['id']
 
     pid = a.id or state.get('post_id')
     c, j = wp.req('POST', f'/wp/v2/posts/{pid}' if pid else '/wp/v2/posts', data=post)
@@ -261,7 +295,7 @@ def trash(a):
     pid = (allst.get(a.site) or {}).get('post_id')
     if not pid:
         sys.exit(f'Không thấy ID bài của file này trên {a.site} (thiếu {os.path.basename(state_path)}).')
-    wp = WP(a.site)
+    wp = WP(a.site, load_profile(a.site, a.profile))
     c, j = wp.req('DELETE', f'/wp/v2/posts/{pid}')
     if c != 200:
         die(c, j, 'bỏ bài vào thùng rác')
@@ -271,7 +305,7 @@ def trash(a):
 
 
 def media(a):
-    wp = WP(a.site)
+    wp = WP(a.site, load_profile(a.site, a.profile))
     st = {'media': {}}
     print(upload(wp, st, open(a.file, 'rb').read(), os.path.basename(a.file), a.alt or '')['url'])
 
@@ -280,24 +314,28 @@ def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sp = p.add_subparsers(dest='cmd', required=True)
     d = sp.add_parser('doctor')
-    d.add_argument('--site', choices=['gtv', 'tag'], required=True)
+    d.add_argument('--site', required=True)
     u = sp.add_parser('push')
     u.add_argument('file')
-    u.add_argument('--site', choices=['gtv', 'tag'], required=True)
+    u.add_argument('--site', required=True)
     u.add_argument('--status', choices=['draft', 'publish', 'pending', 'private'], default='draft')
-    for o in ('--slug', '--category', '--tags', '--title', '--seo-title', '--seo-desc', '--keyword', '--featured'):
+    for o in ('--slug', '--category', '--tags', '--title', '--seo-title', '--seo-desc', '--keyword', '--featured', '--featured-alt'):
         u.add_argument(o)
     u.add_argument('--id', type=int)
     u.add_argument('--allow-claims', action='store_true')
     u.add_argument('--dry-run', action='store_true')
     m = sp.add_parser('media')
     m.add_argument('file')
-    m.add_argument('--site', choices=['gtv', 'tag'], required=True)
+    m.add_argument('--site', required=True)
     m.add_argument('--alt')
     t = sp.add_parser('trash')
     t.add_argument('file')
-    t.add_argument('--site', choices=['gtv', 'tag'], required=True)
+    t.add_argument('--site', required=True)
+    for sub in (d, u, m, t):
+        sub.add_argument('--profile', help='web-profile.json (mặc định tìm 00-context/ hoặc 00-client-context/ từ thư mục hiện tại đi lên)')
     a = p.parse_args()
+    if not re.fullmatch(r'[a-z0-9]+', a.site):
+        sys.exit('--site là mã ngắn chữ thường, ví dụ gtv')
     {'doctor': doctor, 'push': push, 'media': media, 'trash': trash}[a.cmd](a)
 
 

@@ -1,0 +1,19 @@
+{
+ "site": "mau",
+ "url": "https://vuon-mau.example.com",
+ "brand": "Vườn Mẫu",
+ "brand_khac": "Vườn Khác|vuon-khac\\.example",
+ "link_ngoai": "chu-thich",
+ "tieu_de_nguon": "Nguồn tham khảo",
+ "chu_ky": ["Vườn Mẫu - Vườn nhỏ cho nhà phố", "Trồng ít, thu đều."],
+ "luat_rieng": ["Ví dụ luật riêng của site mẫu."],
+ "render": {"bai_mau": "https://vuon-mau.example.com/bai-mau/", "khung_noi_dung": ".entry-content"},
+ "media": {
+  "mau": {"chinh": "#2563EB", "phu": "#7C3AED", "grad1": "#2563EB", "grad2": "#7C3AED", "chu": "#0F172A", "chu_phu": "#475569", "vien": "#CBD5E1", "nen": "#FFFFFF", "nen_nhat": "#F1F5F9", "canh_bao": "#DC2626"},
+  "font": "Inter, Arial, sans-serif",
+  "rong_anh": 1200,
+  "kb_do_hoa": 80,
+  "kb_anh_chup": 140
+ },
+ "anh_dai_dien": {"engine": "featured-image-seo", "brand": "mau"}
+}
