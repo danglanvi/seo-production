@@ -2,7 +2,7 @@
 name: web-lane-orchestration
 description: "Dựng và chạy workflow nhiều lane sửa website đang chạy (WordPress, Shopify, Next.js): chia lane theo tài nguyên, khoá, cổng staging, kiểm độc lập, một vòng sửa, theo dõi và cứu lane treo. Dùng khi Lead yêu cầu rõ chạy workflow hoặc sub-agent cho nhiều việc trên site sống."
 metadata:
-  version: "1.2"
+  version: "1.2.1"
 ---
 
 # web-lane-orchestration — nhiều lane sửa site sống trong một workflow
@@ -37,8 +37,8 @@ Bảng vai → model ở `references/chon-model.md`, luật gốc ở `_REFERENC
 
 | Model | Việc trong skill | Quyết định |
 |---|---|---|
-| Claude Sonnet | Lane chỉ đọc, lane áp thẻ và sửa có checklist, agent kiểm lane thường | Dùng, effort high |
-| Claude Opus | Lane hạ tầng, theme, template, mu-plugin, config sống, viết chữ mới; agent kiểm lane `core` và kiểm cuối đợt; plan mẫu C | Dùng |
+| Claude Sonnet | Lane chỉ đọc, lane áp thẻ và sửa có checklist, agent kiểm lane thường | Dùng, effort xhigh |
+| Claude Opus | Lane hạ tầng, theme, template, mu-plugin, config sống, viết chữ mới; agent kiểm lane `core` và kiểm cuối đợt; plan mẫu C | Dùng, effort high |
 | Jev | QA ảnh và chữ trong lane (`ui-visual`, `chu-dinh`), phân loại user-agent lạ số lượng lớn, cổng tất định trước agent kiểm | Dùng trong task của lane, có ngân sách USD. Claude đọc lại mọi mục Jev gắn cờ |
 | EmbeddingGemma 2 | Chọn bài liên quan, đo độ giống của chữ mới trong lane | Dùng trong task của lane khi việc cần. Ghi ở dòng "Model phụ" của BRIEF |
 | GLM Flash | Trích câu nguyên văn | Không dùng: skill không có việc trích câu |
@@ -78,7 +78,7 @@ Bản tốt nhất phải có:
 - [ ] Bảng sở hữu tài nguyên nằm trong `COMMON`, mỗi tài nguyên một lane chủ. Lane ghi chữ đọc lại giá trị live ngay trước khi ghi và dừng ô khi chữ cũ đã đổi. Nguồn lỗi: 23/10 ba workflow cùng ghi site agency mẫu; thẻ cũ v2-qp-titles suýt ghi đè chữ thẻ m24 duyệt sau.
 - [ ] Đồ thị phụ thuộc: chuỗi độc lập chạy trong `pool`, mỗi workflow tối đa 6 agent và khoảng 90 phút, tổng agent cùng lúc không vượt cap của máy, lane cần chờ trả `held` thay vì ngủ chờ. Nguồn lỗi: 18/87 workflow bị kill, mất 2.528 phút và 26,8 triệu token; chuỗi UI 7 lane nối tiếp chờ 175 phút (16–24/10); đêm 26–27/10 hai workflow 8 và 7 agent vì hiểu "tối đa 8 agent" là trần mỗi workflow.
 - [ ] Mỗi lane có BRIEF tối đa 3 KB với NGUỒN PHÊ DUYỆT nguyên văn kèm giờ. Kết quả lane trước truyền bằng `ket-qua.json`. Nguồn lỗi: agent khởi đầu khoảng 67k token, 75 agent đọc HANDOFF; prompt kiểm 22,7 nghìn ký tự vì nhúng JSON; 19/10 10 agent trả `not_applied`, tốn 1,09 triệu token vì thiếu nguồn duyệt.
-- [ ] Model theo `references/chon-model.md`: lane chỉ đọc và cơ học chạy Sonnet high, agent kiểm chạy Sonnet high trừ lane `core`. Nguồn lỗi: đợt rà 16–24/10, 99,7% lượt chạy Opus; 96/96 agent của t-106e đặt xhigh.
+- [ ] Model theo `references/chon-model.md`: lane chỉ đọc và cơ học chạy Sonnet xhigh, agent kiểm chạy Sonnet xhigh trừ lane `core`, Opus chạy high (Lead chốt 27/10/2026). Nguồn lỗi: đợt rà 16–24/10, 99,7% lượt chạy Opus; 96/96 agent của t-106e đặt xhigh.
 - [ ] Kiểm: cổng tất định chạy trước, schema tách `loi_production` và `loi_bao_cao`, chỉ `loi_production` mở vòng sửa, lane chỉ đọc có `readOnly: true`. Nguồn lỗi: t-106e có 47 lượt kiểm dùng 1.180 phút; 5 lượt chỉ có lỗi báo cáo kéo theo khoảng 188 agent-phút sửa và kiểm lại; lane mốc B-0 ngày 24/10 tốn 4 agent.
 - [ ] `accept` ghi backup theo phiên bản và thử lệnh trả lại ở chế độ DRY; lệnh đo 5xx dùng `log_health.py`. Nguồn lỗi: lane ảnh LCP 24/10, lệnh trả lại cài lại bản v1; 4 lane đếm sai 5xx ngày 23–24/10 vì gán cứng `$9`/`$10`.
 - [ ] Không có lệnh chờ không trần: không Monitor, không vòng `until`/`while … sleep`, và watchdog chạy nền ngay sau launch. Nguồn lỗi: 20–21/10 agent chờ 2 lệnh Monitor có `$(wc -l …)` 155 và 321 phút; lane font 24/10 treo ở Monitor có `$(grep -c …)`, phát hiện sau 50 phút.
@@ -118,6 +118,7 @@ Bản tốt nhất phải có:
 
 ## Changelog
 
+- v1.2.1 (2026-10-27): effort theo model, Lead chốt 27/10: Opus high, Sonnet và Haiku xhigh, mỗi dòng dùng bản mới nhất. Sửa bảng phân việc model, `references/chon-model.md`, `references/mau-workflow.js`.
 - v1.2 (2026-10-27): rút từ chương trình đêm 26–27/10 site agency mẫu (24 workflow, 102 agent). Reference mới `chay-dem.md`: chạy từ phiên mới (Lead chốt 27/10), mẫu TIEN-DO, prompt lịch có khung yên lặng, hai trần agent, hết hạn mức giữa đêm, đóng buổi sáng. Bước 2 ghi rõ hai trần. `scripts/che_secret.py` che mật khẩu, key, IP trong output cấu hình và API (một lane in mật khẩu Redis 2 lần), test 9 ca; `luat-lane.md` §1 thêm luật dùng bộ lọc và `REDISCLI_AUTH`. `theo-doi-va-cuu.md` §0 thêm phối hợp phiên song song (khoá `cdn-no-restart`, `lsof` cho khoá flock, file trả lời giữa phiên); §1 watchdog chạy bằng `run_in_background`, không `&`. Eval thêm 3 ca.
 - v1.1.4 (2026-10-26): `references/luat-lane.md` §1 thêm 3 luật và một dòng từ đợt CDN site agency mẫu 26/10/2026 (`Deliverables/GTV-Brand/GTV-Website/perf-20261020/crawl-speed-2610/cdn-cf/`): lọc response API nhà cung cấp (một lane in DeploymentKey của Bunny lúc 20:41, đã đổi key); tài nguyên do phiên khác giữ thì không sửa, không restart; quota Globalping 250 probe/giờ/IP dùng chung (10 vòng mẫu DNS tốn 240 probe, lượt đo sau trả file rỗng); lane readOnly vẫn có rollback.md.
 - v1.1.3 (2026-10-26): `references/luat-lane.md` thêm 2 luật từ HANDOFF site agency mẫu mục "Bẫy đã gặp" (bản 26/10). §1: không chạy URL Inspection live test hay Rich Results Test hàng loạt, tối đa 1 đợt mỗi tuần; đợt 20/10 tạo 832 lượt Google (`Deliverables/GTV-Brand/GTV-Website/perf-20261020/crawl-speed-2610/plan.md` CS-01). §3.1: site có Basic Auth đọc mật khẩu từ `.agent-secrets/`, WP-Cron qua HTTP nhận 401 (bản tiếng Anh của site agency mẫu từ 24/10).

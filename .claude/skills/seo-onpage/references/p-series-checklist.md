@@ -23,7 +23,7 @@ Content phải **V-Pass 9 hạng mục chất lượng content** (self-checklist
 
 ### A. Chuẩn bị & Meta (P1-P5)
 
-- **P1 URL Structure** — 3-5 từ, gạch ngang, keyword volume cao nhất/đại diện cluster, không dấu tiếng Việt/không ID số, nằm đúng folder theo topical map.
+- **P1 URL Structure** — 3-5 từ, gạch ngang, keyword volume cao nhất/đại diện cluster, không dấu tiếng Việt/không ID số, nằm đúng folder theo topical map. **URL ngắn + ít tầng thư mục vật lý** (thử nghiệm Kyle Roof: càng nhiều `/` robot càng chậm index — dùng virtual silo thay folder vật lý sâu khi cấu trúc cho phép).
 - **P2 Title Tag** — 50-60 ký tự; chứa **Main Predicate** khớp query cluster; keyword chính trong 3 từ đầu; Title KHÁC H1 và KHÁC URL (không copy nhau); Title + H1 **cùng predicate**. *Lens GEO (→ AX7):* title chứa từ vựng của ≥1 cluster fan-out — AI engine lọc ứng viên theo **title + meta + URL** trước khi mở trang (≈ ước tính đơn nguồn, McSweeney 12/2025; benchmark cited title↔fan-out 0,656 Ahrefs 04/2026).
 - **P3 Meta Description** — 150-160 ký tự, 1-2 keyword tự nhiên, CTA rõ. Không ép tỷ lệ bộ keyword vào meta. *Lens GEO (→ AX7):* meta nêu **câu trả lời/facet chính bằng từ vựng cluster**, không chỉ CTA — cùng cổng lọc title+meta+URL.
 - **P4 CTR Optimization** — Title dùng hook (tính từ mạnh/số/năm/cảm xúc); Meta mang CTA + value prop; **Title hook → Meta detail, không lặp ý nhau**; cross-check với top 5-10 SERP hiện tại.

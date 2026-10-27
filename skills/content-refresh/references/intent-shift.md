@@ -12,7 +12,7 @@ Mục đích: cách chạy `scripts/intent_shift.py`, cách đọc `drift` và g
 
 ## 2. Kết quả hiệu chuẩn 19/10/2026
 
-Dữ liệu: 1 site dịch vụ SEO tiếng Việt, 25 truy vấn, SERP Firecrawl top 10 Việt Nam ngày 18/10/2026, vị trí GSC 90 ngày của URL có lượt hiển thị lớn nhất cho đúng truy vấn.
+Dữ liệu: site agency mẫu (dịch vụ SEO tiếng Việt), 25 truy vấn, SERP Firecrawl top 10 Việt Nam ngày 18/10/2026, vị trí GSC 90 ngày của URL có lượt hiển thị lớn nhất cho đúng truy vấn.
 
 | Phép đo | Spearman với vị trí GSC | Đọc |
 |---|---|---|

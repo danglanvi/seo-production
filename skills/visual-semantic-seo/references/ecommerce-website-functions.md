@@ -85,9 +85,9 @@ Các con số thời lượng dưới đây là quy ước thực hành.
 **Google Tracks:**
 | Interaction | Type | Weight |
 |-------------|------|--------|
-| Filter selection | Active | High (5x) |
+| Filter selection | Active | High |
 | Multiple filters | Active | Very High |
-| Sort change | Active | Medium (3x) |
+| Sort change | Active | Medium |
 | Filter → Product click | Conversion path | Highest |
 
 ### 2. Search Within Category
@@ -280,8 +280,8 @@ Các con số thời lượng dưới đây là quy ước thực hành.
 |-------------|------|--------|
 | Variant selection | Active | High |
 | Quantity change | Active | Medium |
-| Add to Cart click | **Conversion** | Highest (10x) |
-| Buy Now click | **Conversion** | Highest (10x) |
+| Add to Cart click | **Conversion** | Highest |
+| Buy Now click | **Conversion** | Highest |
 
 ### 2. Image Gallery
 

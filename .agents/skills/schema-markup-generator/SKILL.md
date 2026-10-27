@@ -2,7 +2,7 @@
 name: schema-markup-generator
 description: "Sinh JSON-LD structured data hoàn chỉnh theo page type (Organization, LocalBusiness, Person/Author, Article, Product, ItemList, Service, Breadcrumb) + thiết kế Entity Home (About page schema, sameAs Wikipedia/Wikidata/socials, NAP) + Author entity (Person + ProfilePage) — layer G."
 metadata:
-  version: "1.0.2"
+  version: "1.0.3"
 ---
 
 # Schema Markup Generator — JSON-LD theo page type + Entity Home + Author entity
@@ -96,7 +96,7 @@ Chạy [references/entity-home-checklist.md](references/entity-home-checklist.md
 
 ## Output
 
-File: tài liệu nội bộ «<project>_Schema-JSONLD_v1» (ngoài repo, hỏi Lead/Vincent) (tăng `_v2` nếu trùng). Task wiki nội bộ → trả trực tiếp trong chat.
+File: `<project>_Schema-JSONLD_v1.md` trong thư mục công đoạn theo ma trận M (`_REFERENCE/runtime-workstream-matrix.md` §5.2). Ngoài repo dự án: thư mục output của workstream. Tăng `_v2` nếu trùng. Task wiki nội bộ → trả trực tiếp trong chat.
 
 ```markdown
 # Schema Markup — <page/entity> (<PAGE_TYPE>)
@@ -163,6 +163,7 @@ Rich result eligibility của type này: <✅ còn / ❌ deprecated + cảnh bá
 
 ## Changelog
 
+- **v1.0.3 (2026-10-27):** dòng Output trỏ thư mục công đoạn thay cho tài liệu ngoài repo; gộp bản root vào bản này (27/10/2026).
 - **v1.0.2 (2026-10-18):** thêm `references/rank-math-wp.md` (hành vi Rank Math đã kiểm khi thêm schema Course, FAQPage cho landing WordPress); Bước 5 trỏ tới file này.
 - **v1.0.1 (2026-07-07):** vá theo spot-run Entity Home GTV — chốt luật vị trí (major): khối Organization đầy đủ khai tại Entity Home (About page nếu có, homepage nếu không), homepage chỉ reference `@id` — đồng bộ SKILL.md + jsonld-templates + entity-home-checklist; thêm hành xử Required-field thiếu data verified (bảng Pending slots, không bỏ im lặng); nhánh offline cho Wikipedia Verify (sameAs pending); cảnh báo Path B file clip cũ (bắt buộc dòng đối chiếu live trước deploy); note founder inline Person khi chưa có bio page.
 - **v1.0 (2026-07-07):** khởi tạo — nền: DiD study Ahrefs 05/2026 (schema ✗ AI-citation lever), Google Search Central gallery 06/2026 (25 features; FAQ chấm dứt 05/2026, HowTo 2023), sop/04-entity-optimization, page-type frameworks GTV (PDP 4-field, PCP ItemList, Service per-offering), Entity Home (Jason Barnard) + E-A-V + Brand Entitization Playbook; 8 page types v1, @id graph convention.

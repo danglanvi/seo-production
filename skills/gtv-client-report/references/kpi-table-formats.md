@@ -1,6 +1,6 @@
 # KPI Table Formats — Skeleton 3 chế độ báo cáo
 
-> Nguồn nền (tên file/folder giữ nguyên văn filesystem, kể cả space thừa): tài liệu nội bộ «3. MẪU BÁO CÁO CÔNG VIỆC HÀNG THÁNG» (ngoài repo, hỏi Lead/Vincent), tài liệu nội bộ «3.1 MẪU BÁO CÁO KPI DỰ ÁN - THÁNG CUỐI - NGHIỆM THU » (ngoài repo, hỏi Lead/Vincent), workbook tài liệu nội bộ «1. BÁO CÁO KẾT QUẢ» (ngoài repo, hỏi Lead/Vincent), tài liệu nội bộ «kpi-commitment-template» (ngoài repo, hỏi Lead/Vincent), tài liệu nội bộ «contract-playbook» (ngoài repo, hỏi Lead/Vincent). Template gốc read-only — file này chỉ trích cấu trúc + điều khoản công khai với khách.
+> Nguồn nền (tên file/folder giữ nguyên văn filesystem, kể cả space thừa): `<mẫu account, ngoài repo>/3. MẪU BÁO CÁO CÔNG VIỆC HÀNG THÁNG.docx`, `<mẫu account, ngoài repo>/3.1 MẪU BÁO CÁO KPI DỰ ÁN - THÁNG CUỐI - NGHIỆM THU .docx`, workbook `<mẫu account, ngoài repo>/(T11-2024) MẪU BÁO CÁO DỰ  ÁN/1. BÁO CÁO KẾT QUẢ.xlsx`, mẫu cam kết KPI (ngoài repo, hỏi Lead), playbook hợp đồng (ngoài repo, 🔒). Template gốc read-only — file này chỉ trích cấu trúc + điều khoản công khai với khách.
 
 ## TOC
 
@@ -91,10 +91,11 @@ Map từ `kpi-commitment-template.md` — chọn hàng đúng theo HĐ từng cl
 | TOP TỪ KHOÁ | Bộ duy trì — duy trì TOP03/05/10 | % và số key | SpySERP |
 | TOP TỪ KHOÁ | Bộ GEO — keywords hiển thị trong AIO | số key | SemRush/Ahrefs |
 | ORGANIC TRAFFIC | Duy trì / Thúc đẩy | Sessions (biến thể HĐ: Product Pageview) | GA4 |
-| TRAFFIC TỪ GEO | Tổng Traffic từ AI Search Engine | Sessions | GA4 (Referral + traffic chứng minh từ ChatGPT, Google AI Mode, Perplexity, Copilot) |
+| TRAFFIC TỪ GEO | Tổng Traffic từ AI Search Engine | Sessions | GA4 channel group "AI Assistant" (regex source chatgpt.com / gemini.google.com / perplexity.ai / copilot / claude.ai…) |
+| CONVERSION TỪ AI ASSISTANT *(mục chuẩn v1.3 — directional, KHÔNG phải KPI nghiệm thu)* | Key events + CVR kênh AI Assistant so với Organic Search | Key events · CVR · bội số AI/Organic | GA4 Traffic acquisition, cùng kỳ; <100 session → "chưa đủ mẫu" |
 | GEO | Website trong AI Overview | số keyword | SemRush filter SERP Feature > Google AI Overview + fact-check thủ công |
 | GEO | Brand mention trong AIO Commercial Investigation | Mentions | check ẩn danh |
-| GEO | Brand Mention trong LLM | ≥2/4 công cụ = tối ưu | bộ prompt Query Fan-out trên ChatGPT/Gemini/Perplexity/Google AI Mode |
+| GEO | Brand Mention trong LLM | **ChatGPT + Google AI (AI Mode/Gemini) cả hai = ĐẠT** (v1.3); Perplexity/Copilot/Claude bonus | bộ prompt Query Fan-out, ẩn danh, ≥3 lần chạy/prompt, ghi model version |
 | GEO | Information Accuracy About Brand | % | cùng 4 công cụ |
 | CÔNG VIỆC | Audit Content / Triển khai Content / Onpage URLs / Backlink… | số đầu việc | Google Sheets tiến độ |
 
@@ -136,7 +137,7 @@ Lưu ý:
 |---|---|---|---|---|
 | 1 | <tên công việc> | <dd/mm> | <Đã làm / Đang làm / Cần xử lý> | <kết quả + link> |
 
-## 3. Các dữ liệu báo cáo khác (CRO) — v2026.09.4: 3 khối từ WS 13 (skill `cro-audit` → `references/report-hook.md`)
+## 3. Các dữ liệu báo cáo khác (CRO) — v1.4: 3 khối từ WS 13 (skill `cro-audit` → `references/report-hook.md`)
 
 **3a. Chuyển đổi kỳ này** (đúng nhãn: "click" ≠ "lead"; "đơn tạo" ≠ "doanh thu" khi có COD; hàng AI Assistant directional, không nghiệm thu)
 
@@ -249,7 +250,7 @@ Ghi chú cho account (không đưa vào email): giai đoạn Bảo hành = duy t
 
 ## 6. Chế độ QUÝ — skeleton OKRs review (v1.1 — mẫu chính thức tự đề xuất)
 
-📌 **Trạng thái format:** v1.1 do Claude tự thiết kế 07/2026 theo ủy quyền Vincent (sheet OKRs workbook chỉ có header, chưa từng có mẫu email thật). Đây là format CHÍNH THỨC để render — cuối report luôn kèm 1 dòng: *"Format báo cáo quý v1.1 — anh/chị account góp ý sau lần dùng đầu để hiệu chỉnh."* 🔴 Chỉ REVIEW OKRs đã hoạch định (cập nhật Status + nhận xét) — lập OKRs quý mới là việc của `okrs-gtv-tag-framework`. Báo cáo quý mang tính tổng kết-định hướng, KHÔNG kèm điều khoản nghiệm thu 4/7 ngày (nghiệm thu chạy theo đợt/tháng).
+📌 **Trạng thái format:** v1.1 do Claude tự thiết kế 07/2026 theo ủy quyền Lead (sheet OKRs workbook chỉ có header, chưa từng có mẫu email thật). Đây là format CHÍNH THỨC để render — cuối report luôn kèm 1 dòng: *"Format báo cáo quý v1.1 — anh/chị account góp ý sau lần dùng đầu để hiệu chỉnh."* 🔴 Chỉ REVIEW OKRs đã hoạch định (cập nhật Status + nhận xét) — lập OKRs quý mới là việc của `okrs-gtv-tag-framework`. Báo cáo quý mang tính tổng kết-định hướng, KHÔNG kèm điều khoản nghiệm thu 4/7 ngày (nghiệm thu chạy theo đợt/tháng).
 
 ```markdown
 # [GTV SEO] – BÁO CÁO QUÝ <I/II/III/IV> DỰ ÁN (<Tên dự án>) – REVIEW OKRs & KPI
@@ -288,8 +289,9 @@ GTV SEO kính gửi anh/chị báo cáo tổng kết quý <n> của dự án SEO
 | Chỉ số | Đầu quý | Cuối quý | Δ | Nguồn + ngày đo |
 |---|---|---|---|---|
 | Keywords hiển thị trong AI Overview | … | … | … | SemRush/Ahrefs + fact-check, <dd/mm> |
-| Brand Mention LLMs (số công cụ /4) | <k>/4 | <k>/4 | … | Query Fan-out check ẩn danh, <dd/mm> |
-| Traffic từ GEO (Sessions) | … | … | … | GA4, <dd/mm–dd/mm> |
+| Brand Mention LLMs — ChatGPT · Google AI (bắt buộc) / Perplexity · Copilot (bonus) | ✅/❌ · ✅/❌ | ✅/❌ · ✅/❌ | … | Query Fan-out check ẩn danh, ≥3 lần chạy, <dd/mm> + model version |
+| Traffic từ GEO (Sessions, channel AI Assistant) | … | … | … | GA4, <dd/mm–dd/mm> |
+| Conversion từ AI Assistant (key events · CVR · bội số vs Organic) — directional | … | … | … | GA4 Traffic acquisition, <dd/mm–dd/mm> |
 
 (Đo aggregate theo quý — không kết luận từ 1 lần check đơn lẻ; AIO đổi bề mặt ~2 ngày/lần.)
 
@@ -320,7 +322,7 @@ Hàng KPI mẫu (từ docx 3., số giữ nguyên làm few-shot cách điền):
 
 ## 8. Render hàng GEO (v1.1 — quy ước chính thức tự đề xuất)
 
-📌 **Trạng thái format:** template gốc (T11-2024) tiền-GEO, không có hàng mẫu. Quy ước dưới đây là v1.1 do Claude tự thiết kế 07/2026 theo ủy quyền Vincent — dùng làm chuẩn render; đối chiếu với báo cáo thật đầu tiên có GEO KPI rồi hiệu chỉnh file này (ghi vào Changelog skill).
+📌 **Trạng thái format:** template gốc (T11-2024) tiền-GEO, không có hàng mẫu. Quy ước dưới đây là v1.1 do Claude tự thiết kế 07/2026 theo ủy quyền Lead — dùng làm chuẩn render; đối chiếu với báo cáo thật đầu tiên có GEO KPI rồi hiệu chỉnh file này (ghi vào Changelog skill).
 
 Đủ 5 hàng khớp menu KPI chuẩn (mục 3) — chỉ render hàng nào HĐ có cam kết, đủ 7 cột như bảng tháng:
 
@@ -328,8 +330,11 @@ Hàng KPI mẫu (từ docx 3., số giữ nguyên làm few-shot cách điền):
 |---|---|---|---|---|---|---|
 | GEO | Keywords hiển thị trong AI Overview (SemRush filter SERP Feature > Google AI Overview + fact-check thủ công, ngày <dd/mm>) | <số key> | <số key> | <n>% | ≤100% | export SemRush/Ahrefs + screenshot |
 | GEO | Brand mention trong AI Overview — nhóm keyword Commercial Investigation (check ẩn danh, ngày <dd/mm>) | <số mentions> | <số mentions> | <n>% | ≤100% | screenshot check ẩn danh |
-| GEO | Brand Mention trong LLM — bộ prompt Query Fan-out, 4 công cụ ChatGPT/Gemini/Perplexity/Google AI Mode (check ngày <dd/mm>) | ≥2/4 công cụ | <k>/4 công cụ | — | ĐẠT khi ≥2/4 | screenshot từng công cụ |
-| GEO | Information Accuracy About Brand (4 công cụ trên, ngày <dd/mm>) | <x>% | <y>% | <n>% | ≤100% | bảng chấm accuracy + screenshot |
-| TRAFFIC TỪ GEO | Tổng Sessions từ AI Search (GA4: Referral + traffic chứng minh từ ChatGPT/Google AI Mode/Perplexity/Copilot, từ <dd/mm> đến <dd/mm>) | <sessions> | <sessions> | <n>% | ≤100% | GA4 export |
+| GEO | Brand Mention trong LLM — bộ prompt Query Fan-out, ẩn danh, ≥3 lần chạy/prompt (check ngày <dd/mm>, model version <…>) | ChatGPT ✅ + Google AI ✅ | ChatGPT <✅/❌> · Google AI (AI Mode/Gemini) <✅/❌> · bonus: Perplexity <✅/❌> Copilot <✅/❌> | — | ĐẠT khi cả ChatGPT lẫn Google AI có mention | screenshot từng công cụ |
+| GEO | Information Accuracy About Brand (các công cụ trên, ngày <dd/mm>) | <x>% | <y>% | <n>% | ≤100% | bảng chấm accuracy + screenshot |
+| TRAFFIC TỪ GEO | Tổng Sessions kênh AI Assistant (GA4 channel group "AI Assistant" — chatgpt.com / gemini.google.com / perplexity.ai / copilot / claude.ai…, từ <dd/mm> đến <dd/mm>) | <sessions> | <sessions> | <n>% | ≤100% | GA4 export |
+| CONVERSION TỪ AI ASSISTANT *(directional — không nghiệm thu)* | Key events kênh AI Assistant · CVR · bội số so với Organic Search cùng kỳ (<dd/mm–dd/mm>) | — (không cam kết) | <key events> · <CVR>% · <n>× Organic | — | — | GA4 Traffic acquisition; <100 session → "chưa đủ mẫu" |
 
-Quy tắc: cột nghiệm thu cap 100%; hàng Brand Mention LLM là chỉ tiêu ngưỡng (ĐẠT/CHƯA ĐẠT theo ≥2/4) — không tính %, khi gộp vào trung bình KẾT QUẢ KPI thì ĐẠT = 100%, CHƯA ĐẠT = (k/2)×100% (quy ước v1.1, nêu rõ với account lần đầu dùng); mọi evidence GEO kèm ngày check + screenshot ẩn danh (không đăng nhập account cá nhân); bộ 4 công cụ cuối cùng theo HĐ từng client (xem ⚠️ mục 3).
+Quy tắc: cột nghiệm thu cap 100%; hàng Brand Mention LLM là chỉ tiêu ngưỡng **(v1.3: ĐẠT khi có mention trên CẢ ChatGPT lẫn Google AI; kênh bonus không tính vào ĐẠT/CHƯA ĐẠT)** — không tính %, khi gộp vào trung bình KẾT QUẢ KPI thì ĐẠT = 100%, CHƯA ĐẠT = 50% nếu đạt 1/2 kênh bắt buộc, 0% nếu không kênh nào (quy ước v1.3, nêu rõ với account lần đầu dùng; HĐ ký trước 29/08/2026 ghi "≥2/4" → giữ chữ HĐ tới khi gia hạn, report vẫn hiện tách 2 kênh bắt buộc); hàng Conversion từ AI Assistant luôn có mặt khi HĐ có GEO KPI nhưng **không cam kết, không vào trung bình**; mọi evidence GEO kèm ngày check + model version + screenshot ẩn danh (không đăng nhập account cá nhân).
+
+**Dùng số GEO cho case study công khai (luật ẩn danh — v1.3):** case public chỉ nói **ngành chung** ("dự án enterprise VN", "kênh bảo hiểm online"), không nêu brand; riêng client nhóm jobsite **không nói cả ngành**; dùng **tỷ lệ/bội số** (+111%, ≈10× organic) thay số tuyệt đối khi chưa có consent bằng văn bản; mọi số kèm **ngày + kênh đo + nhãn n=1/first-party**; screenshot phải crop bỏ tên brand/URL. Consent khách (email/HĐ) là điều kiện để nêu tên — lưu vào `00-client-context/`.

@@ -70,7 +70,7 @@ const LANES = [
     task: `<1. việc cụ thể, lệnh hoặc giá trị, file nguồn>
 <2. …>`,
     accept: `<tiêu chí đo được: cổng tất định đã chạy (verify.py, sweep, Jev), giá trị trên site, backup theo phiên bản, lệnh trả lại thử DRY đạt, 0 5xx mới, robots/canonical không đổi>` },
-  { key: '<lane-doc>', model: 'sonnet', effort: 'high', folder: `${B}/<đợt>/<lane-doc>`, readOnly: true, core: false, budget_min: 30,
+  { key: '<lane-doc>', model: 'sonnet', effort: 'xhigh', folder: `${B}/<đợt>/<lane-doc>`, readOnly: true, core: false, budget_min: 30,
     task: `<việc chỉ đọc hoặc chỉ đo>`,
     accept: `<số đo cần có, file kết quả>` },
 ]
@@ -98,7 +98,7 @@ async function pool(items, n, fn) {
   return out
 }
 
-const checkOpts = L => (L.core ? { model: 'opus', effort: 'high' } : { model: 'sonnet', effort: 'high' })
+const checkOpts = L => (L.core ? { model: 'opus', effort: 'high' } : { model: 'sonnet', effort: 'xhigh' })
 
 function workPrompt(L, extra) {
   return `${COMMON}\n\nLane: ${L.key}. Thư mục lane: ${L.folder}/ (tạo nếu chưa có). BRIEF: ${L.folder}/BRIEF.md.\n\nViệc:\n${L.task}\n${extra || ''}\n\nNgân sách: ${L.budget_min} phút. Hết ngân sách thì ghi CHECKPOINT.md, trả status partial. Cần chờ khoá hay điều kiện ngoài lane thì trả status held kèm held_until, không ngủ chờ.\nTiêu chí đạt (agent kiểm độc lập sẽ dùng): ${L.accept}\n\nGhi kết quả theo schema vào ${L.folder}/ket-qua.json, rồi trả đúng kết quả đó.`
@@ -164,17 +164,17 @@ return outA.filter(Boolean).flat().filter(Boolean).map(summary)
 // return out.map(summary)
 
 // ---------- Mẫu C: audit chỉ đọc → plan → phản biện → sửa plan (audit host, 23/10) ----------
-// Lane audit: model 'sonnet', effort 'high'. Plan và phản biện: Opus.
+// Lane audit: model 'sonnet', effort 'xhigh'. Plan và phản biện: Opus.
 // const FIND = { type: 'object', properties: { findings: { type: 'array', items: { type: 'string' } }, proposals: { type: 'array', items: { type: 'object', properties: {
 //   id: { type: 'string' }, action: { type: 'string' }, gain: { type: 'string' }, risk: { type: 'string' }, needs_approval: { type: 'boolean' }, rollback: { type: 'string' }, measure: { type: 'string' },
 // }, required: ['id', 'action', 'gain', 'risk', 'needs_approval'] } }, report_path: { type: 'string' } }, required: ['findings', 'proposals', 'report_path'] }
 // const PLAN = { type: 'object', properties: { plan_path: { type: 'string' }, summary: { type: 'array', items: { type: 'string' } }, approval_steps: { type: 'array', items: { type: 'string' } } }, required: ['plan_path', 'summary', 'approval_steps'] }
 // const CRIT = { type: 'object', properties: { ok: { type: 'boolean' }, problems: { type: 'array', items: { type: 'string' } }, missing: { type: 'array', items: { type: 'string' } } }, required: ['ok', 'problems', 'missing'] }
-// const audits = await pool(LANES, SLOTS, L => goi(`${COMMON}\nCHỈ ĐỌC. Mỗi đề xuất có việc cụ thể, lợi ích có số, rủi ro, cách đo trước/sau, cách trả lại, cần Lead duyệt hay không. Ghi báo cáo vào ${L.folder}/bao-cao.md.\n${L.task}`, { label: 'audit:' + L.key, phase: 'Làm', model: 'sonnet', effort: 'high', schema: FIND }))
+// const audits = await pool(LANES, SLOTS, L => goi(`${COMMON}\nCHỈ ĐỌC. Mỗi đề xuất có việc cụ thể, lợi ích có số, rủi ro, cách đo trước/sau, cách trả lại, cần Lead duyệt hay không. Ghi báo cáo vào ${L.folder}/bao-cao.md.\n${L.task}`, { label: 'audit:' + L.key, phase: 'Làm', model: 'sonnet', effort: 'xhigh', schema: FIND }))
 // const reports = audits.map((a, i) => a && `- ${LANES[i].key}: ${a.report_path} (${a.proposals.length} đề xuất)`).filter(Boolean).join('\n')
-// const plan = await goi(`${COMMON}\nĐọc các báo cáo audit dưới, gom thành MỘT plan, xếp theo lợi ích/rủi ro, có thứ tự chạy và mục "Cần Lead quyết" (câu hỏi ngắn, có đề xuất mặc định).\n${reports}`, { label: 'plan', phase: 'Kiểm', model: 'opus', effort: 'xhigh', schema: PLAN })
+// const plan = await goi(`${COMMON}\nĐọc các báo cáo audit dưới, gom thành MỘT plan, xếp theo lợi ích/rủi ro, có thứ tự chạy và mục "Cần Lead quyết" (câu hỏi ngắn, có đề xuất mặc định).\n${reports}`, { label: 'plan', phase: 'Kiểm', model: 'opus', effort: 'high', schema: PLAN })
 // const crit = plan ? await goi(`${COMMON}\nPhản biện plan ${plan.plan_path}: số lợi ích phóng đại, việc có thể làm hỏng site, thiếu cách trả lại, sai thứ tự với lane đang chạy, thiếu đòn bẩy lớn. Ghi phan-bien.md. ok=false nếu cần sửa plan.`, { label: 'phan-bien', phase: 'Kiểm', model: 'opus', effort: 'high', schema: CRIT }) : null
-// const fixed = crit && !crit.ok ? await goi(`${COMMON}\nSửa ${plan.plan_path} theo phan-bien.md cùng thư mục. Thêm mục "Đã sửa theo phản biện".`, { label: 'sua-plan', phase: 'Sửa', model: 'opus', effort: 'xhigh', schema: PLAN }) : null
+// const fixed = crit && !crit.ok ? await goi(`${COMMON}\nSửa ${plan.plan_path} theo phan-bien.md cùng thư mục. Thêm mục "Đã sửa theo phản biện".`, { label: 'sua-plan', phase: 'Sửa', model: 'opus', effort: 'high', schema: PLAN }) : null
 // return { audits: reports, plan: fixed || plan, critique: crit, stop: STOP || undefined }
 
 // ---------- Mẫu D: nhiều lô cùng tài nguyên, kiểm lô N song song với ghi lô N+1 (lô chữ Đợt 1, 20/10) ----------

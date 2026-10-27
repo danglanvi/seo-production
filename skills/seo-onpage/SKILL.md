@@ -2,7 +2,7 @@
 name: seo-onpage
 description: "Audit và tối ưu onpage một trang theo checklist P-series GTV (P0 gate, Tier 1–3, AX AI-Search), đo title và meta theo pixel, lấy cụm thiếu từ ngram-semantic-gap. Dùng khi audit onpage [URL], tối ưu onpage, kiểm title hoặc meta bị cắt, pre-publish CMS."
 metadata:
-  version: "1.5.0"
+  version: "1.8"
 ---
 
 # SEO Onpage — Audit & Optimization
@@ -97,6 +97,21 @@ Chạy 2 bước AI thay "cảm tính":
 
 Nguyên tắc: **sửa nền trước tối ưu sau** — còn ❌ Tier 1 thì chưa đụng T2/T3/AX.
 
+### Bước 5b — Region Completeness Summary (quy tắc "không bỏ sót yếu tố")
+
+Lead duyệt bước này ngày 30/08/2026. Nguồn: quy tắc "không bỏ sót yếu tố" của Kyle Roof ([references/kyle-roof-philosophy.md](references/kyle-roof-philosophy.md)).
+
+1. Sau khi chấm xong, đếm item ✅/⚠️/❌ theo từng nhóm vùng: A Meta, B Heading, C Semantic body, D Link, E Image, F Technical.
+2. Thêm 1 khối vào report theo mẫu dưới.
+3. Ưu tiên fix vùng có nhiều ❌/⚠️ nhất trước khi tối ưu sâu một vùng.
+
+```
+## Region completeness (quy tắc không bỏ sót — Kyle Roof)
+A Meta 4/5 ✅ · B Heading 2/2 ✅ · C Semantic 6/9 (⚠ thiếu: P10 n-gram, P12 co-occurrence)
+D Link 1/2 (❌ P18 trích nguồn) · E Image 2/2 ✅ · F Technical 3/3 ✅
+→ Vùng trống cần lấp trước: D (trích nguồn), C (n-gram)
+```
+
 ### Tự phản biện trước khi trình
 Chấm bản nháp theo checklist "Bản tốt nhất phải có". Mục chưa đạt thì sửa, hoặc ghi lý do bỏ. Nếu có output của Codex hay agent khác cho cùng việc, so từng mục và lấy phần tốt hơn trước khi trình Vincent.
 
@@ -129,11 +144,13 @@ Bản tốt nhất phải có:
 
 - **Bundled (đọc khi chạy):** [references/p-series-checklist.md](references/p-series-checklist.md) — full spec P0 → Tier 1/2/3 + AX, kèm data notes Suski 1M SERPs.
 - **Đo pixel (Bước 2, P2/P3):** [references/title-pixel.md](references/title-pixel.md) — lệnh, nguồn số đo, kiểm chứng ngưỡng title. Test offline: `python3 skills/seo-onpage/tests/test_serp_pixel.py`.
+- **Nền tư duy (nạp 1 lần đầu phiên):** [references/kyle-roof-philosophy.md](references/kyle-roof-philosophy.md) — Kyle Roof, patent US10540263B1, single-variable testing. File giải thích vì sao checklist có dạng này và là nguồn của Bước 5b.
 - **Nguồn gốc & sync (chỉ để đối chiếu, không bắt buộc khi chạy):** xlsx v5.3 của Vincent (thắng khi xung đột) · wiki `sop/08-onpage-checklist.md` + [[sources/onpage-checklist-final-gtv]] · cross-ref [[Layer 4 Onpage]], [[Distribution Semantics]], [[Featured Snippet]].
 - AX evidence: [[sources/research-2026-07-general-summary-summarization]] · [[sources/suski-onpage-llm-signals-cmseo2025]] (per-engine + Core Source) · [[AI Mode]] §Linkify/SRD Verification (AX6 — patent 2 pha, verified 21/08/2026).
 
 ## Changelog
 
+- **v1.8 (2026-10-27):** hợp nhất bản root 27/10/2026: thêm Bước 5b Region Completeness Summary, `references/kyle-roof-philosophy.md`, câu P1 về URL ngắn và virtual silo trong `references/p-series-checklist.md` (các mục này thuộc bản root v1.5, Lead duyệt 30/08/2026). Ví dụ vùng D của Bước 5b đổi "external link" thành "trích nguồn" cho khớp P18 của v1.4.3. Bản root ghi số v1.6 và v1.7 cho 2 mục v1.4.3 và v1.5.0 dưới đây. Bản này nhảy lên v1.8 để vượt cả 2 dãy số.
 - **v1.5.0 (2026-10-19):** Bước 0 kiểm tool. Thêm `scripts/serp_pixel.py` đo title và meta theo pixel (ngưỡng title 688 px Arial 20, holdout 138/140 trên SERP 18/10) và `references/title-pixel.md`. P10, P12, P13 và Prompt P23 trỏ sang `ngram-semantic-gap` (`page`, `gsc`, `measure`). Thêm phân việc model và tự phản biện.
 
 - **v1.4.3 (2026-10-19):** Vincent yêu cầu bỏ chuẩn đếm số không theo Semantic SEO. P18 bỏ quota 2–4 link .edu/.gov; bài nêu tên nguồn trong câu (`internal-linking` link-js D6). P17 bỏ quota 5-10 link mỗi bài và luật anchor khớp Title đích. P16 bỏ keyword ở 100 chữ cuối và trong H2. P3, P8 bỏ ngưỡng ~70%; P8 chấm theo attribute MANDATORY của consensus. P6 bỏ luật H2 chứa keyword chính. P14 bỏ quota bold. P19 đặt tên file theo nội dung ảnh. P20 bỏ ngưỡng 8-15 từ của alt. T3-P1 bỏ ngưỡng 110%, T3-P5 bỏ density, T3-P6 chỉ dùng Flesch cho tiếng Anh. Bỏ nhãn LSI.

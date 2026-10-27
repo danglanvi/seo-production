@@ -18,6 +18,8 @@ Search engine hỏi: *"Should we create an index for this query?"* → SEO hỏi
 
 **Verdict: ≥3/4 ✓ → QDP (page riêng).** Không đạt → xuống thang:
 
+> ✅ **Verdict (Lead/người duyệt chốt 01/08/2026): ≥3/4 là đủ. "Low similarity" là 1/4 phiếu, không phải veto.** Bài SEL gốc có chỗ mơ hồ ở ví dụ "1911" (L131 và L135). Đọc ví dụ đó là case minh hoạ tiêu chí #3, không phải luật chặn. Khi tách trang mà trượt #3, áp luật weighted-term chặt để chống cannibalization: term nặng nhất là subject của triples và là vocabulary chính của document.
+
 | Mức | Điều kiện | Hành động |
 |---|---|---|
 | **QDP — Page** | ≥3/4 | Node riêng trong topical map: URL + title + brief riêng. 1 topic = 1 URL chính (chống cannibalization) |

@@ -4,16 +4,18 @@ Mục đích: gán model và effort cho từng agent trong script. Đọc ở b�
 
 Nguồn lỗi: đợt rà 16–24/10, 99,7% lượt trả lời của agent chạy Opus, kể cả 113 agent cơ học. Ở t-106e, 96/96 agent đặt effort xhigh.
 
+Cập nhật 27/10/2026 (Lead): Opus chạy effort high; Sonnet và Haiku chạy xhigh. Mỗi dòng dùng bản mới nhất qua alias `opus`, `sonnet`, `haiku`.
+
 ## Vai → loại việc trong luật gốc
 
 | Vai trong workflow | Loại việc (luật gốc) | Đặt trong script |
 |---|---|---|
-| Lane chỉ đọc, chỉ đo (mốc, PSI, kiểm kê, audit mẫu C) | Đọc, kiểm kê, đo | `model: 'sonnet', effort: 'high'` |
-| Lane áp thẻ đã duyệt, sửa có checklist, chụp ảnh | Áp thẻ, sửa có checklist | `model: 'sonnet', effort: 'high'` |
-| Lane hạ tầng, theme, template, mu-plugin, config sống, quyết định theo ngưỡng, viết chữ mới | Quyết định khó, viết chữ mới | `model: 'opus', effort: 'xhigh'`, `core: true` |
-| Agent kiểm lane thường | Kiểm độc lập | `checkOpts`: Sonnet high |
+| Lane chỉ đọc, chỉ đo (mốc, PSI, kiểm kê, audit mẫu C) | Đọc, kiểm kê, đo | `model: 'sonnet', effort: 'xhigh'` |
+| Lane áp thẻ đã duyệt, sửa có checklist, chụp ảnh | Áp thẻ, sửa có checklist | `model: 'sonnet', effort: 'xhigh'` |
+| Lane hạ tầng, theme, template, mu-plugin, config sống, quyết định theo ngưỡng, viết chữ mới | Quyết định khó, viết chữ mới | `model: 'opus', effort: 'high'`, `core: true` |
+| Agent kiểm lane thường | Kiểm độc lập | `checkOpts`: Sonnet xhigh |
 | Agent kiểm lane `core: true` và bước kiểm cuối đợt | Kiểm độc lập. Luật gốc xếp việc này vào Sonnet; mục 11 Lead duyệt 24/10 giữ Opus cho lane lõi | `checkOpts`: Opus high |
-| Plan và phản biện plan (mẫu C) | Quyết định khó | Opus, xhigh cho plan, high cho phản biện |
+| Plan và phản biện plan (mẫu C) | Quyết định khó | Opus high cho plan và phản biện |
 | QA chữ, QA ảnh, phân loại hàng loạt trong lane | Jev | Lệnh Jev trong task, không mở agent Claude |
 
 Lint `tools/wf-status.py lint-script` báo ERROR khi một lời gọi `agent()` hoặc `goi()` thiếu `model` hay `effort`.

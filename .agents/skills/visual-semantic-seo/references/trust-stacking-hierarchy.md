@@ -323,19 +323,19 @@ Founder      Admin        Marketing    Operations   Customer
 | 4 | Tab: Course platform reviews + Google + LinkedIn endorsements | Mid section |
 | 5 | Written reviews per module (Module 1: 47 reviews, Module 2: 38 reviews, etc.) | After pricing |
 | 6 | Live stats: students graduated, avg rating, lifetime hours of content | Between centerpieces |
-| 7 | Vincent Do + co-instructor + mentors + alumni success team | Pre-footer |
+| 7 | Founder/giảng viên chính + co-instructor + mentors + alumni success team | Pre-footer |
 
 ### GTV Service Page Application
 
 | Layer | Implementation | Position |
 |---|---|---|
 | 1 | Clutch 5.0 OR Google Business 5.0 badge | Above-fold |
-| 2 | "Trusted by" — Vinamilk, Bamboo Airways, Kotex, CareerViet, Apolat | Below hero |
+| 2 | "Trusted by" — 5 logo khách đã đồng ý nêu tên (ví dụ site agency mẫu) | Below hero |
 | 3 | Video case studies from CMOs of GTV clients | Early supporting |
 | 4 | Tab: Clutch + Google + DesignRush + Vietnamese marketing platforms | Mid section |
 | 5 | Detailed client testimonials per service line | After pricing |
 | 6 | Live stats: clients served, organic traffic delivered, articles published | Between centerpieces |
-| 7 | Vincent Do + Account leads + SEO team + Content team | Pre-footer |
+| 7 | Founder + Account leads + SEO team + Content team | Pre-footer |
 
 ---
 

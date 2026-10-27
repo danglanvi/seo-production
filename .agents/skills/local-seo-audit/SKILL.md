@@ -2,7 +2,7 @@
 name: local-seo-audit
 description: "Audit local SEO tầng WEBSITE-SIGNALS + GBP-CONTENT cho khách local VN (nửa website của cặp skill local; nửa kia: map-pack-intelligence): business type, GBP checklist, NAP onsite, location pages đa chi nhánh, citations, review. Use when: 'audit local SEO [khách]', 'tối ưu GBP', 'location page cho chuỗi'."
 metadata:
-  version: "1.0"
+  version: "1.0.1"
 ---
 
 # Local SEO Audit — website signals + GBP content theo business type
@@ -115,7 +115,7 @@ Theo skeleton Output; mỗi finding ❌/⚠️ bắt buộc kèm **Falsifiabilit
 
 ## Output
 
-File: tài liệu nội bộ «<client>_Local-SEO-Audit_v1» (ngoài repo, hỏi Lead/Vincent) (tăng `_v2` nếu trùng).
+File: `<client>_Local-SEO-Audit_v1.md` trong thư mục công đoạn theo ma trận M (`_REFERENCE/runtime-workstream-matrix.md` §5.2). Ngoài repo dự án: thư mục output của workstream. Tăng `_v2` nếu trùng.
 
 ```markdown
 # Local SEO Audit — <business>
@@ -190,4 +190,5 @@ File: tài liệu nội bộ «<client>_Local-SEO-Audit_v1» (ngoài repo, hỏi
 
 ## Changelog
 
+- **v1.0.1 (2026-10-27):** dòng Output trỏ thư mục công đoạn thay cho tài liệu ngoài repo; gộp bản root vào bản này (27/10/2026).
 - **v1.0 (2026-07-19):** tạo mới — nửa WEBSITE-SIGNALS của cặp skill local; khung business type 4 loại, GBP checklist 8 mục, NAP từng-ký-tự, location pages chống thin duplicate, citations lớp VN, review operations; Falsifiability bắt buộc per finding; ranh giới với map-pack-intelligence / schema-markup-generator / sop-04.

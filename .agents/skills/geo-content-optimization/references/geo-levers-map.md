@@ -6,7 +6,7 @@ Reference cho Bước 0, 3, 4, 5 của `geo-content-optimization`. Nguồn khung
 
 | Lever (GEO.md) | AX (sop/08) | Hành động trong skill này | Ngoài scope → trỏ đi |
 |---|---|---|---|
-| **Structured Answers** | AX1 (chunk self-containment) + AX2 (front-load) + **AX6 (passage verifiability)** | Workflow Bước 1-2-5: tách chunk theo H2/H3, rubric 5 tiêu chí (chuẩn chunk GTV 4 tầng, không cap số từ section), front-load check, rewrite per chunk 100-170 từ, gộp claim quan trọng về 1 câu quotable trong passage rank được | HTML/DOM → `semantic-html-optimization` |
+| **Structured Answers** | AX1 (chunk self-containment) + AX2 (front-load) + **AX6 (passage verifiability)** | Workflow Bước 1-2-5: tách chunk theo H2/H3, rubric 5 tiêu chí (chuẩn chunk GTV 4 tầng, không cap số từ section), front-load check, rewrite đủ intent, L0 40-75 từ và khối ý <~200 từ; 100-170 chỉ là tham khảo, gộp claim quan trọng về 1 câu quotable trong passage rank được | HTML/DOM → `semantic-html-optimization` |
 | **Semantic Coverage** | **AX7** (heading/title/meta ↔ cluster) + AX3 (counter-positioning) | Workflow Bước 3-4: fan-out gom **cluster ≤4** (không đuổi từng query), heading↔cluster alignment + title/meta/slug chứa từ vựng cluster, consensus-gap vs AI answer hiện tại, KDD tactics (Quotation > Statistics > Cite Sources đứng riêng) | Consensus đa competitor → `competitor-consensus-content`; outline mới → `semantic-outline-methodology`; cluster map đầy đủ cho cả topic (công đoạn 28, Phase 1 research) → skill `geo-fanout-research` v1.0 |
 | **Topical Authority** | (nền — ngoài scope page-level) | Note 1 dòng trong report nếu page mồ côi topic; điều kiện nền indexed + rank ở Bước 0 | Topical map → `/seo-topical-map` |
 | **Entity Recognition** | (nền) | Note — không phải việc của skill này | Entity/schema/brand → pipeline semantic + `product-annotation` |
@@ -34,9 +34,12 @@ Ghi chú citation ↔ rank decoupling (lý do vẫn audit dù đã rank): AIO ci
 
 | Rank của $TARGET cho sub-query/cluster | Verdict Bước 0 | Việc nên làm |
 |---|---|---|
-| Page-one (1-10) | 🟢 PASS — "có vé dự thi" | Chạy đủ Bước 1-6 |
-| **11-50 — dải amber** | 🟡 vẫn nằm trong bể lọc của ChatGPT (pipeline lọc SERP theo **title + meta + URL** ~40-50 URL rồi mới fetch 10-20 — McSweeney/QueryBurst 12/2025, ≈ ước tính, corroborate Profound 10/2025) | Sửa **title/meta/slug khớp từ vựng cluster** trước (cổng lọc rẻ), + front-load (AX2); chưa rewrite sâu thân bài — ROI thấp cho tới khi lên page-one. Ngoại lệ Ahrefs: 28,3% cited pages có 0 organic keyword (01/2026, B) → mâu thuẫn mở với Surfer "80% từ top-3" — Open Question |
-| >50 / chưa index | 🔴 FAIL — quay về pipeline SEO thường | `/seo-onpage`, topical map; audit GEO chỉ khi user chấp nhận caveat |
+| Page-one (1-10) có evidence | Đạt phần ưu tiên rank của GE-01 [GTV]; chưa suy G-T1 PASS | Chạy Bước 1-6 theo scope; G-T1 cần thêm index/access/baseline |
+| Rank 11-50 hoặc >50 đã xác minh | Chưa đạt ưu tiên top 10 [GTV], không suy mọi engine không thể cite | Ưu tiên nền SEO và heading/intent theo finding. Vẫn audit chẩn đoán; không mặc định ROI rewrite thấp chỉ từ dải rank. |
+| Chưa index đã xác minh trên Google | Lỗi index trong scope Google; không suy mọi engine | Sửa nền index; vẫn kiểm nội dung và ghi giới hạn; rollout phụ thuộc chờ gate. |
+| Chưa đo rank/index hoặc chỉ có GSC average position | UNKNOWN ở phần chưa xác minh; average position không phải retrieval rank của AI | Xin evidence đúng URL/query/market; tiếp tục phần audit có dữ liệu, không xin chấp nhận caveat để được chẩn đoán. |
+
+Các ước tính reverse engineering về số URL được ChatGPT lọc không phải tiêu chí gate hay bằng chứng ROI. Áp trạng thái và scope theo `audit-contract.md`.
 
 ## 3. Per-engine emphasis khi counter-positioning (Bước 4)
 
@@ -74,7 +77,7 @@ Citation stats = moving target. Bảng nguồn chính để report cite đúng:
 
 | Cụm số | Nguồn | Ngày |
 |---|---|---|
-| 58%/14% retrieval rank; 41%/30% heading cosine; 26-50% coverage; 500-2.000 từ + 7-20 subheadings (quan sát trên tập mẫu — **không phải spec GTV**, độ dài theo node type + benchmark, Vincent 29/08) | Indig × AirOps (qua [[sources/shorter-focused-content-wins-chatgpt-indig]]) — **B** | 04/2026 |
+| 58%/14% retrieval rank; 41%/30% heading cosine; 26-50% coverage; 500-2.000 từ + 7-20 subheadings (quan sát trên tập mẫu — **không phải spec GTV**, độ dài theo node type + benchmark, Lead 29/08) | Indig × AirOps (qua [[sources/shorter-focused-content-wins-chatgpt-indig]]) — **B** | 04/2026 |
 | 0,656 title-fanout; 89,78%/81,11% slug; ~50% retrieved→cited; ref_type 5 kênh | Ahrefs (qua [[sources/why-chatgpt-cites-one-page-over-another-ahrefs]]) — **B** | 04/2026 |
 | 76,4% update 30 ngày; **~38% AIO cite top-10** (metric: tỷ lệ citation đến từ top-10 organic); llms.txt/schema verdicts | GEO.md / Ahrefs 01/2026 — **B** | cập nhật 07/2026 |
 | **38% AIO citations từ 100 từ đầu trang** (metric KHÁC dòng trên; 2025: 20%) — song song 44,2% first-30% (Indig 02/2026, ChatGPT) | Surfer (qua [[sources/ai-citations-first-100-words-surfer]]) — **C** COI | 06/2026 |

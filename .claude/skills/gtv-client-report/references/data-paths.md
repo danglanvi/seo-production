@@ -15,7 +15,7 @@
 | So sánh đối thủ (phụ lục nếu account cần) | `rank-tracker-competitors-overview` | optional |
 | Traffic/keyword trend (minh họa) | `gsc-performance-history`, `gsc-keywords`, `gsc-positions-history` | GSC data — vẫn không thay GA4 |
 | Organic keywords / metrics history (minh họa) | `site-explorer-organic-keywords`, `site-explorer-metrics-history` | |
-| GEO — số lượng AI responses trích dẫn site | `site-explorer-ai-responses-count`: KPI AIO theo từ khoá đọc `google_ai_overviews_keywords`; trích dẫn từ prompt cộng các nền tảng chatgpt, google_ai_overviews, google_ai_mode, gemini, perplexity, copilot. Không báo `all_platforms` (cộng cả hai loại, kiểm site mẫu 19/10/2026: 645 = 522 + 123) | ✅ nguồn đo AIO hợp lệ theo Điều 1; đối chiếu định nghĩa KPI trong HĐ trước khi chọn trường |
+| GEO — số lượng AI responses trích dẫn site | `site-explorer-ai-responses-count`: KPI AIO theo từ khoá đọc `google_ai_overviews_keywords`; trích dẫn từ prompt cộng các nền tảng chatgpt, google_ai_overviews, google_ai_mode, gemini, perplexity, copilot. Không báo `all_platforms` (cộng cả hai loại, kiểm site agency mẫu 19/10/2026: 645 = 522 + 123) | ✅ nguồn đo AIO hợp lệ theo Điều 1; đối chiếu định nghĩa KPI trong HĐ trước khi chọn trường |
 | GEO — brand mentions/citations trong AI | nhóm `brand-radar-*` (`brand-radar-mentions-overview`, `brand-radar-mentions-history`, `brand-radar-cited-pages`, `brand-radar-ai-responses`) | evidence cho hàng GEO; kèm ngày query |
 | Chart time series | `render-time-series-chart` | 🔴 tool trả về `render_with` metadata → BẮT BUỘC gọi render tool, không tự tóm tắt raw data |
 | Bảng data | `render-data-table` | như trên |
@@ -51,8 +51,10 @@ Quy trình đọc:
 ### 2c. GEO evidence (khi HĐ có GEO KPI)
 
 - Citation AIO: export SemRush (filter SERP Feature > Google AI Overview) hoặc Ahrefs `site-explorer-ai-responses-count` + fact-check thủ công.
-- Brand Mention LLM: chạy bộ prompt Query Fan-out trên 4 công cụ (ChatGPT / Gemini / Perplexity / Google AI Mode), chế độ ẩn danh, screenshot từng công cụ + ngày check. Ngưỡng tối ưu: xuất hiện **≥2/4**.
+- Brand Mention LLM: chạy bộ prompt Query Fan-out trên các công cụ, chế độ ẩn danh, screenshot từng công cụ + ngày check + model version. **Ngưỡng ĐẠT (v1.3, Lead chốt 29/08/2026): có mention trên CẢ ChatGPT lẫn Google AI (AI Mode hoặc Gemini)** — 2 kênh bắt buộc; Perplexity/Copilot/Claude là bonus, ghi thêm nếu có. HĐ ký trước 29/08/2026 còn ghi "≥2/4" → giữ đúng chữ HĐ cho tới khi gia hạn, nhưng report vẫn hiện tách 2 kênh bắt buộc.
+- **Conversion từ AI Assistant (v1.3):** GA4 → Reports → Acquisition → Traffic acquisition, dimension Session channel group, hàng **"AI Assistant"** (custom channel group regex `chatgpt\.com|gemini\.google\.com|perplexity\.ai|copilot\.microsoft\.com|claude\.ai…` — setup theo `geo-tracking-prompt-selection/references/kpis-metrics.md` § GA4) → lấy Sessions · Key events · Session key event rate; so với hàng Organic Search cùng kỳ → bội số `AI CVR / Organic CVR`. Kỳ ≥28 ngày; <100 session → ghi "chưa đủ mẫu".
 - Information Accuracy: bảng chấm % đúng/sai thông tin brand trên cùng 4 công cụ.
+- ⚠️ (v1.2) Brand Radar phân biệt **cited** (hiện link nguồn) vs **found** (được retrieve nhưng không hiện link) — export cả hai, report tách 2 metric, không gộp; mọi số citation/impression AI kèm nhãn "(directional)" + ghi ngày query. Chi tiết + kỳ vọng cam kết: SKILL.md mục "Luật GEO/AI metrics trong report".
 
 ## 3. Path C — Account điền tay (đường lùi cuối, không cần MCP/export)
 

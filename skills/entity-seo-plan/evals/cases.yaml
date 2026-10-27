@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "source_version": "1.2",
+  "execution_status": "Đặc tả eval; đã kiểm cấu trúc, chưa chạy activation/model A-B. Walkthrough vòng 1 không xác nhận ca mới hoặc ca đã sửa.",
+  "cases": [
+    {
+      "id": "happy-review-20260912",
+      "input": "Fixture: mỗi câu hỏi thương mại có đoạn text chính chủ đáp ứng; GE-11 PASS, EN-06 chưa đạt.",
+      "expected_behavior": "G-ENT [GEO] PASS; không ghi đè G-ENT [Entity/EN].",
+      "forbidden_behavior": "Dùng GEO PASS mở mọi gate Entity.",
+      "rubric": [
+        "G-ENT [GEO] PASS từ GE-11.",
+        "Giữ EN-06 chưa đạt; không mở gate [Entity/EN]."
+      ],
+      "source_version": "1.2",
+      "execution_status": "spec-not-executed-r2"
+    },
+    {
+      "id": "missing-review-20260912",
+      "input": "Chỉ có URL, chưa có brand facts được xác nhận và chưa kiểm được kênh.",
+      "expected_behavior": "GE-13 UNKNOWN; không tự suy năm thành lập/địa chỉ; chế độ GEO không đòi repo riêng.",
+      "forbidden_behavior": "Tạo brand facts để đủ bảng; bắt template EN cho audit GEO.",
+      "rubric": [
+        "GE-13 UNKNOWN; không suy brand facts khi chưa có nguồn xác nhận.",
+        "Không đòi EN template/repo riêng để audit GEO độc lập."
+      ],
+      "source_version": "1.2",
+      "execution_status": "spec-not-executed-r2"
+    },
+    {
+      "id": "wrong-trigger-review-20260912",
+      "input": "Chỉ kiểm robots và WAF.",
+      "expected_behavior": "Route geo-technical-audit.",
+      "forbidden_behavior": "Dựng toàn bộ Entity plan.",
+      "rubric": [
+        "Route geo-technical-audit cho robots/WAF.",
+        "Không dựng Entity plan ngoài intent."
+      ],
+      "source_version": "1.2",
+      "execution_status": "spec-not-executed-r2"
+    },
+    {
+      "id": "regression-review-20260912",
+      "input": "site: không trả URL nhưng URL chính chủ có text trả lời câu hỏi.",
+      "expected_behavior": "Kiểm URL trực tiếp, không kết luận thiếu answer chỉ từ site:; chấm theo evidence và giới hạn.",
+      "forbidden_behavior": "site: rỗng đồng nghĩa deindex hoặc thiếu trang.",
+      "rubric": [
+        "Kiểm nội dung URL trực tiếp trước verdict GE-11.",
+        "Không dùng site: rỗng để kết luận deindex hoặc không có answer.",
+        "Ghi giới hạn phép tìm site: và evidence trực tiếp."
+      ],
+      "source_version": "1.2",
+      "execution_status": "spec-not-executed-r2"
+    }
+  ],
+  "eval_revision": "2026-09-13-r2"
+}

@@ -1,6 +1,6 @@
 # Wireframe Spec — "PAGE LAYOUT SEMANTICS" format (v3.7)
 
-> Spec cho Wireframe Mode (BUILD / ANALYZE / COMPARE). Format chuẩn theo 7 wireframe mẫu tại wiki nội bộ «local-seo-sel-2026» (ngoài repo, hỏi Lead/Vincent) (page-layout-semantic*.png/webp) — Vincent duyệt làm target format 24/07/2026. Output = 1 file HTML tự chứa (inline CSS, không external font/img) hoặc render PNG.
+> Spec cho Wireframe Mode (BUILD / ANALYZE / COMPARE). Format chuẩn theo 7 wireframe mẫu tại wiki nội bộ «local-seo-sel-2026» (ngoài repo, hỏi Lead) (page-layout-semantic*.png/webp) — Lead duyệt làm target format 24/07/2026. Output = 1 file HTML tự chứa (inline CSS, không external font/img) hoặc render PNG.
 
 ## Anatomy — 3 cột + legend
 

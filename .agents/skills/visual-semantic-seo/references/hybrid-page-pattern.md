@@ -155,7 +155,7 @@ morethanpanel.com is a Koray-built template demonstrating all 6 advanced pattern
 
 ---
 
-## Application to Vincent's Projects
+## Application to sample projects (ví dụ)
 
 ### APOHAIR Homepage (B2B Hair Manufacturing)
 

@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "source_version": "1.4.1",
+  "execution_status": "Đặc tả eval; đã kiểm cấu trúc, chưa chạy activation/model A-B. Walkthrough vòng 1 không xác nhận ca mới hoặc ca đã sửa.",
+  "cases": [
+    {
+      "id": "happy-review-20260912",
+      "input": "Fixture: bài đầy đủ, có nguồn, L0 60 từ trả lời đúng, headings theo intent, không rewrite được giao.",
+      "expected_behavior": "Spot-check tick-only, giữ điều kiện cần để câu đúng; không fail vì L0 vượt 50 từ.",
+      "forbidden_behavior": "Ép 40–50 từ hoặc xóa modality cần thiết.",
+      "rubric": [
+        "Spot-check chỉ chấm và ghi finding; không rewrite khi chưa được giao.",
+        "L0 60 từ không fail vì vượt 50; có thể nhiều câu.",
+        "Giữ modality/điều kiện cần để nội dung đúng."
+      ],
+      "source_version": "1.4.1",
+      "execution_status": "spec-not-executed-r2"
+    },
+    {
+      "id": "missing-review-20260912",
+      "input": "Chỉ có headings và intro, chưa có toàn văn/ảnh/AI answer.",
+      "expected_behavior": "Chỉ chấm đủ evidence; GE-25/27 UNKNOWN nếu trong scope, không phát verdict cả Bộ BÀI PASS.",
+      "forbidden_behavior": "Thiếu dữ liệu biến thành N/A rồi 100%.",
+      "rubric": [
+        "Chỉ chấm phần có evidence; GE-25/27 UNKNOWN nếu áp dụng mà thiếu dữ liệu.",
+        "Không biến dữ liệu thiếu thành N/A; không chốt Bộ BÀI PASS.",
+        "Báo P/A, K/A và U thay điểm hoàn tất."
+      ],
+      "source_version": "1.4.1",
+      "execution_status": "spec-not-executed-r2"
+    },
+    {
+      "id": "wrong-trigger-review-20260912",
+      "input": "Viết bài mới từ đầu.",
+      "expected_behavior": "Route semantic-content-writing.",
+      "forbidden_behavior": "Chạy audit bài đã publish.",
+      "rubric": [
+        "Route semantic-content-writing cho bài mới.",
+        "Không giả định đã publish để mở audit GEO."
+      ],
+      "source_version": "1.4.1",
+      "execution_status": "spec-not-executed-r2"
+    },
+    {
+      "id": "regression-review-20260912",
+      "input": "Narrative niche và một chủ đề chỉ có intent giải thích.",
+      "expected_behavior": "Giữ ngoại lệ narrative có evidence intent; không bắt mọi trang đủ bốn cụm hiểu/chọn/làm/tin.",
+      "forbidden_behavior": "Thêm số/ngày bịa vào intro để đạt gate.",
+      "rubric": [
+        "Ngoại lệ narrative có bằng chứng intent được giữ.",
+        "Không ép bốn cụm hiểu/chọn/làm/tin khi chỉ một cụm phù hợp.",
+        "Không thêm số/ngày không có nguồn vào intro."
+      ],
+      "source_version": "1.4.1",
+      "execution_status": "spec-not-executed-r2"
+    },
+    {
+      "id": "length-heading-r2",
+      "input": "Section 420 từ, 3 khối ý 140 từ; L0 60 từ gồm 3 câu đúng intent; H2 “Tổng quan chi phí dịch vụ X”. Toàn bộ facts đã xác minh, yêu cầu full audit.",
+      "expected_behavior": "Không fail chỉ vì section >200 từ hay chứa chữ Tổng quan; không ép rewrite vào dải 100-170 từ.",
+      "forbidden_behavior": "Cắt section chỉ để đạt dải từ; bỏ heading có nghĩa vì blacklist từ.",
+      "rubric": [
+        "Phân biệt section 420 từ và khối ý 140 từ.",
+        "Giữ L0 nhiều câu; kiểm heading theo entity/facet.",
+        "Verdict dựa lỗi nghĩa/cấu trúc thực, không dựa dải 100-170."
+      ],
+      "source_version": "1.4.1",
+      "execution_status": "spec-not-executed-r2"
+    },
+    {
+      "id": "rank-diagnostic-r2",
+      "input": "URL index xác minh, rank 35 cho sub-query tại VN; baseline chưa có file; user yêu cầu chẩn đoán nội dung. Bài evergreen kiểm facts hôm nay vẫn đúng dù cập nhật 90 ngày trước.",
+      "expected_behavior": "Chẩn đoán vẫn chạy; ghi chưa đạt ưu tiên rank GTV và thiếu baseline. Freshness theo facts; không tổng điểm /10.",
+      "forbidden_behavior": "Dừng audit vì rank >10; xem rank Google là điều kiện mọi engine; fail freshness chỉ vì >30 ngày.",
+      "rubric": [
+        "Tiếp tục audit có evidence, gate nền không tự PASS.",
+        "Không coi rank 35 là chứng minh không được cite.",
+        "Không tạo tổng /10 hoặc fail tuổi bài đứng một mình."
+      ],
+      "source_version": "1.4.1",
+      "execution_status": "spec-not-executed-r2"
+    }
+  ],
+  "eval_revision": "2026-09-13-r2"
+}

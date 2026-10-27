@@ -1,0 +1,157 @@
+{
+  "schema_version": 1,
+  "source_version": "v1.4",
+  "execution_status": "18/10/2026: ca happy path và ca regression chạy thật trên 161 link mới hoặc đổi trong mạng nội dung site agency mẫu. Ca missing input và wrong trigger chưa chạy. 19/10/2026 (v1.3): thêm 2 ca dạng mã link (link-js.md). Ca happy chạy thật trên site agency mẫu. Ca regression chưa chạy. chiều 19/10/2026 (v1.3.2): thêm ca CTA theo ngữ cảnh, chạy trên 16 thẻ duyệt của site agency mẫu. v1.3.3: thêm ca filter trang danh mục ecommerce, chưa chạy. 25/10/2026 (v1.4, nd-10): thêm 4 ca script. Ca regression sửa link trong thẻ chạy bằng test offline (test_internal_linking.py, 36 test). Ca happy cầu nối chạy offline trên store site-vector-index của site agency mẫu tới bước build, chưa chạy Jev. Ca happy anchor GSC chạy offline trên file GSC 90 ngày đã lưu của site agency mẫu. Ca missing GSC chưa chạy.",
+  "cases": [
+    {
+      "id": "happy-20261018-placement-audit",
+      "input": "Rà lại các internal link và contextual bridge trong thẻ duyệt: chỉ link ở ngữ cảnh đúng, ưu tiên supplementary content, bám topical map. Dò bằng Jev.",
+      "expected_behavior": "Kiểm kê link, gắn quan hệ trên topical map, định vị đoạn theo outline H2. Chạy Jev link-placement, đọc dòng dưới ngưỡng theo references/link-placement.md §5. Link ở main content không có mã MC1–MC5 thì chuyển xuống supplementary content bằng Jev link-bridge hoặc bỏ. Câu mới qua humanizer. Báo cáo có bảng hiệu chuẩn và danh sách thẻ đổi.",
+      "forbidden_behavior": "Đổi đích link sai ở main content sang trang dịch vụ để giữ link. Tin nhãn zone dưới 0,7 không đọc lại. Sửa thẻ người dùng đã duyệt tại chỗ mà không báo.",
+      "rubric": [
+        "đúng vùng theo 5 mã MC",
+        "bám quan hệ topical map",
+        "đủ evidence Jev và nhãn tay",
+        "giữ gate duyệt"
+      ],
+      "source_version": "v1.2"
+    },
+    {
+      "id": "missing-20261018-no-map",
+      "input": "Kiểm vị trí link cho site mới của khách, chưa có topical map.",
+      "expected_behavior": "Hỏi topical map hoặc danh sách URL kèm cluster và pillar. Nếu người dùng chỉ đưa danh sách URL, gắn cờ cluster mapping do người dùng cung cấp. Hiệu chuẩn Jev trên 20–50 link của site đó trước khi dùng ngưỡng.",
+      "forbidden_behavior": "Tự gán cụm cho URL. Dùng thẳng ngưỡng hiệu chuẩn của site agency mẫu.",
+      "rubric": [
+        "hỏi đúng input thiếu",
+        "không dùng ngưỡng sai site"
+      ],
+      "source_version": "v1.2"
+    },
+    {
+      "id": "wrong-trigger-20261018-backlink",
+      "input": "Lên kế hoạch anchor text cho backlink báo chí trỏ về trang dịch vụ.",
+      "expected_behavior": "Không dùng skill này. Route sang backlink-plan hoặc textlink-analyzer theo bảng Phân vai.",
+      "forbidden_behavior": "Áp luật vùng main content và supplementary content cho link từ site ngoài.",
+      "rubric": [
+        "đúng skill",
+        "không thao tác thừa"
+      ],
+      "source_version": "v1.2"
+    },
+    {
+      "id": "regression-20261018-mc-commercial-link",
+      "input": "Bài thông tin 'chiến lược SEO' có câu 'Việc đầu tư SEO …' ở mục giữa bài, link sai về một bài cùng cụm. Đề xuất sửa link.",
+      "expected_behavior": "Xác định đoạn thuộc main content, quan hệ outer_ve_core hoặc cung_cum, không thuộc MC1–MC5. Bỏ link. Tìm đoạn supplementary content đạt link-bridge từ 0,85 nếu cần giữ liên kết, không có thì để liên kết bằng chữ.",
+      "forbidden_behavior": "Đổi đích link sang /dich-vu-seo/ hoặc trang báo giá và giữ ở giữa bài.",
+      "rubric": [
+        "luật 8 của references/link-placement.md",
+        "đúng vùng"
+      ],
+      "source_version": "v1.2"
+    },
+    {
+      "id": "regression-20261018-hub-intro",
+      "input": "Viết đoạn cầu nối dưới mô tả của 14 trang chuyên mục, mỗi đoạn link sang bài nền, bảng giá và dịch vụ.",
+      "expected_behavior": "Đoạn dưới mô tả chỉ link xuống seed của chuyên mục. Link khác cụm và link dịch vụ đặt ở khối cuối trang, sau danh sách bài. Thay đổi giao diện, template làm trên staging trước.",
+      "forbidden_behavior": "Gom link seed, link khác cụm và link dịch vụ vào cùng đoạn dưới mô tả.",
+      "rubric": [
+        "luật trang chuyên mục ở references/link-placement.md §3",
+        "giữ gate staging"
+      ],
+      "source_version": "v1.2"
+    },
+    {
+      "id": "happy-20261019-link-js",
+      "input": "Áp cách làm link onclick của Koray cho website: nút chuyển đổi trong thân trang, link phụ ở menu và footer, link báo chí. Chỉ dùng link JS ở đúng ngữ cảnh.",
+      "expected_behavior": "Kiểm kê phần tử bấm được theo vùng. Gắn mục đích bằng Jev link-purpose, gắn index, sitemap và loại trang đích bằng mã. Gán D1–D6 theo references/link-js.md §2. Gắn link ngoài bằng Jev link-external: trích nguồn đổi sang tên nguồn bằng chữ. Kiểm đường crawl còn lại cho mọi đích sẽ thành link JS. Đề xuất theo thứ tự template header, footer, khối CTA, rồi mới tới trang lẻ. Ghi rõ đây là khung thực hành, không phải luật Google. Đổi template qua staging.",
+      "forbidden_behavior": "Đổi link chủ đề trong thân bài hoặc menu dịch vụ sang onclick. Giấu đường crawl duy nhất tới trang index. Dùng <a href onclick> hoặc nofollow. Hứa tăng thứ hạng.",
+      "rubric": [
+        "đúng mã D1–D6 theo ngữ cảnh",
+        "kiểm luật 2 đường crawl",
+        "ưu tiên template",
+        "giữ gate staging và duyệt"
+      ],
+      "source_version": "v1.3"
+    },
+    {
+      "id": "regression-20261019-hide-topical",
+      "input": "Đổi hết link trong thân bài 'SEO là gì' sang nút onclick để dồn PageRank về trang dịch vụ.",
+      "expected_behavior": "Từ chối đổi link chủ đề (D1). Giải thích link chủ đề là tín hiệu do luật vị trí chọn. Chỉ đề xuất link JS cho link giữ lại để tăng chuyển đổi ở vị trí ngữ cảnh không cần link, nếu có.",
+      "forbidden_behavior": "Đổi link MC1–MC3, MC5 hoặc link SC chủ đề sang link JS.",
+      "rubric": [
+        "references/link-js.md §3 luật 1",
+        "không mở rộng scope"
+      ],
+      "source_version": "v1.3"
+    },
+    {
+      "id": "regression-20261019-cta-context",
+      "input": "Đổi mọi nút CTA trong bài sang onclick để link CTA không được tính.",
+      "expected_behavior": "Đọc ngữ cảnh từng CTA. CTA hợp ngữ cảnh (MC4, hoặc SC cuối bài nói về dịch vụ) giữ link thật. Chỉ đổi sang link JS CTA giữ lại để tăng chuyển đổi ở vị trí ngữ cảnh không cần link (thanh trên, nút nổi, khối lặp theo template) hoặc CTA trỏ trang noindex. CTA lạc ngữ cảnh trong main content bài thông tin thì đề xuất bỏ trước.",
+      "forbidden_behavior": "Đổi CTA sang onclick chỉ vì phần tử là CTA. Giữ CTA lạc ngữ cảnh dưới dạng link JS thay vì bỏ.",
+      "rubric": [
+        "references/link-js.md §2 bước 1–3",
+        "link-placement MC4"
+      ],
+      "source_version": "v1.3.2"
+    },
+    {
+      "id": "happy-20261019-ecommerce-filter",
+      "input": "Trang danh mục điện thoại có filter hãng, giá, màu, RAM, còn hàng và nút sắp xếp. Filter nào để link thật, filter nào để nút?",
+      "expected_behavior": "Kiểm search demand và SERP cho từng filter. Filter có demand (ví dụ hãng trong danh mục, khoảng giá có người tìm) làm trang đích riêng, link thật từ danh mục mẹ. Filter không có demand, còn hàng và sắp xếp dùng checkbox hoặc button, lưu trạng thái ở fragment hoặc chặn tham số bằng robots.txt. Giữ link thật cho link sản phẩm, phân trang, breadcrumb. Dẫn phân tích faceted navigation của Koray và case 3 triệu URL.",
+      "forbidden_behavior": "Đổi phân trang hoặc link sản phẩm sang nút. Viết filter dạng onclick chứa URL tham số. Chặn robots.txt và noindex cùng URL. Dùng canonical hoặc nofollow làm cách chính. Mở index mọi tổ hợp filter.",
+      "rubric": [
+        "references/link-js.md §7",
+        "kiểm demand và SERP trước khi mở trang filter",
+        "giữ link thật cho lưới sản phẩm và phân trang"
+      ],
+      "source_version": "v1.3.3"
+    },
+    {
+      "id": "regression-20261025-sua-link-the",
+      "input": "Trong thẻ M3, gỡ link thứ hai tới /dich-vu-seo/ và chuyển link bảng giá ở giữa bài xuống mục câu hỏi thường gặp. Anchor có 'SEO &amp; GEO', một link có <span> lồng trong <a>.",
+      "expected_behavior": "Dùng scripts/the_link.py unlink và to-sc, chạy không --write trước, đọc diff, rồi --write có bản .bak. Chạy check --base bản trước: không có vi phạm R1–R3 mới. Nếu script thoát 3 thì sửa thẻ, không ép ghi. Ghi lên site qua wp-content-review-apply.",
+      "forbidden_behavior": "Sửa thẻ bằng regex thô hoặc assert count == 1. Ghi với --allow-violations khi plan chưa ghi lý do. Sửa thẳng lên site.",
+      "rubric": [
+        "references/scripts.md §1",
+        "Bước 4d",
+        "không sinh vi phạm R1–R3 mới"
+      ],
+      "source_version": "v1.4"
+    },
+    {
+      "id": "happy-20261025-cau-noi",
+      "input": "Tìm 5–10 chỗ đặt contextual bridge trên toàn site cho trang dịch vụ mới /dich-vu-geo/.",
+      "expected_behavior": "Dùng store của site-vector-index. Chạy bridge_candidates.py queries, svi.py query --level passage --per-url một lần, bridge_candidates.py build, Jev link-bridge, rồi merge. Đọc summary.json để biết số đoạn bỏ theo lý do. Claude chọn trong các dòng natural_bridge từ 0,85, mỗi trang nguồn tối đa 1 đoạn, ưu tiên SC, câu mới theo anchor-rules.md và qua humanizer.",
+      "forbidden_behavior": "Chia lô và nạp lại Gemma cho từng lô. Gửi Jev đoạn mở bài, khối template hoặc đoạn trên trang đã link tới đích. Dùng --min-cos chưa hiệu chuẩn. Chọn đoạn chỉ theo cosine.",
+      "rubric": [
+        "references/scripts.md §3",
+        "link-placement.md §5 bước 4",
+        "Phân việc model: Gemma một tiến trình, Jev chấm, Claude chọn"
+      ],
+      "source_version": "v1.4"
+    },
+    {
+      "id": "happy-20261025-anchor-gsc",
+      "input": "Chọn anchor cho các link mới trỏ về /dich-vu-seo/ dựa trên query GSC 90 ngày của trang đó.",
+      "expected_behavior": "Chạy scripts/anchor_gsc.py trên file GSC page,query đã xuất, kèm --target-file, --source-file, --section và --site-anchors. Đọc dòng đầu: cờ đã kiểm, cờ chưa kiểm. Claude chọn anchor từ dòng dat theo anchor-rules.md §6 và luật 5. Query có cờ trang_khac không dùng làm anchor tới trang này. Dùng query có cờ mo_bai_dich thì ghi lý do.",
+      "forbidden_behavior": "Lấy query nhiều click nhất làm anchor mà không kiểm luật 6. Dùng query không dấu hoặc gõ sai làm anchor. Để script tự chọn anchor.",
+      "rubric": [
+        "references/scripts.md §4",
+        "anchor-rules.md §1 luật 1, 2, 6 và §2 ≤3 lần"
+      ],
+      "source_version": "v1.4"
+    },
+    {
+      "id": "missing-20261025-khong-co-gsc",
+      "input": "Chọn anchor từ GSC cho trang /bang-gia/ của site khách.",
+      "expected_behavior": "Kiểm có file GSC page,query hoặc quyền GSC (Bước 0, id gsc). Không có cả hai: xin file xuất từ giao diện GSC đã lọc theo trang. Chưa có file thì dùng seed query của trang đích theo anchor-rules.md, gắn cờ verify-anchor và ghi giới hạn trong plan.",
+      "forbidden_behavior": "Bịa số click hoặc query. Gọi API GSC của property chưa được cấp quyền.",
+      "rubric": [
+        "hỏi đúng input thiếu",
+        "không bịa dữ liệu"
+      ],
+      "source_version": "v1.4"
+    }
+  ]
+}

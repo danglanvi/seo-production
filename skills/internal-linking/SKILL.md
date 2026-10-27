@@ -2,7 +2,7 @@
 name: internal-linking
 description: "Executable hóa lý thuyết internal linking của wiki Semantic SEO thành link plan cụ thể — DECISION layer cho link NỘI BỘ trong site, nhận topical map làm input, executable hóa Bước 20 SOP 01 (signals flow to Core) + audit SOP 03. Use when: (1) 'lên internal link plan cho [site]'."
 metadata:
-  version: "1.4"
+  version: "1.4.1"
 ---
 
 # Internal Linking — Link Plan theo Semantic SEO
@@ -23,14 +23,14 @@ Biến lý thuyết internal linking trong wiki (Koray + GTV Extensions Rule 59-
 | Onpage audit tổng thể (OP1-OP55) | `/seo-onpage` — skill này chỉ audit lớp link |
 | Ghi link plan đã duyệt lên WordPress có quyền server | `wp-content-review-apply` (qua trang duyệt). Chọn đoạn đặt link hàng loạt: tuỳ chọn Jev `link-bridge` theo `tools/ai-assist/README.md`, Claude chọn chỗ đặt |
 | Kiểm vị trí link hàng loạt (MC hay SC, đúng ngữ cảnh) | ✅ Skill này, theo [references/link-placement.md](references/link-placement.md). Rubric Jev `link-placement`, `link-bridge` chạy qua `tools/ai-assist/` (`tools/ai-assist/README.md` §4) |
-| Chọn dạng mã của link: link thật `<a href>` hay link JS (onclick) cho nút chuyển đổi, menu, footer, link ngoài làm bằng chứng, filter trang danh mục ecommerce | ✅ Skill này, theo [references/link-js.md](references/link-js.md). Repo chưa có rubric Jev `link-purpose`: Claude gắn mục đích theo §2 của reference |
+| Chọn dạng mã của link: link thật `<a href>` hay link JS (onclick) cho nút chuyển đổi, menu, footer, link ngoài làm bằng chứng, filter trang danh mục ecommerce | ✅ Skill này, theo [references/link-js.md](references/link-js.md). Rubric Jev `link-purpose` gắn mục đích (`tools/ai-assist/tasks/link-purpose.json`) |
 | Sửa link trong thẻ duyệt hoặc bản nháp, kiểm kê dạng mã, tìm đoạn cầu nối, chọn anchor từ query GSC | ✅ Skill này, bằng 4 script trong `scripts/` theo [references/scripts.md](references/scripts.md). Embedding đoạn do `site-vector-index` làm |
 
 ## Phân việc model
 
 | Model | Việc trong skill | Quyết định |
 |---|---|---|
-| Jev | `link-placement` (vùng, độ hợp, nhu cầu), `link-bridge` (đoạn ứng viên cầu nối) qua `tools/ai-assist/` | Dùng. Ngưỡng ở `link-placement.md` §5. Repo chưa có rubric `link-purpose`, `link-external`: Claude gắn mục đích theo `link-js.md` §2 |
+| Jev | `link-placement` (vùng, độ hợp, nhu cầu), `link-bridge` (đoạn ứng viên cầu nối), `link-purpose` và `link-external` (mục đích phần tử bấm được) qua `tools/ai-assist/` | Dùng. Ngưỡng ở `link-placement.md` §5 và `link-js.md` §6 |
 | EmbeddingGemma 2 | Tìm đoạn gần trang đích nhất trên toàn site, qua `svi.py query --level passage --per-url` của `site-vector-index` | Dùng ở Bước 4b. Không dùng cho dạng mã (`link-js.md` §6 ghi lý do). Không dùng chọn anchor: luật 6 cần chữ có thật trong trang, script khớp chuỗi |
 | GLM Flash | Trích câu, diễn giải tự do | Không dùng. Skill không có việc mà Jev không làm được |
 | Script tất định | Đếm R1–R3, kiểm kê dạng mã, lọc đoạn ứng viên, khớp query GSC với chữ trang | Dùng 4 script trong `scripts/`. Script không gọi Jev hay Gemma |
@@ -226,6 +226,7 @@ Links đề xuất: N · Fix: N · No-link: N · Flags chờ quyết định: �
 
 ## Changelog
 
+- **v1.4.1 (2026-10-27):** hợp nhất bản root 27/10/2026: khôi phục rubric Jev `link-purpose`, `link-external` ở bảng Phân vai, bảng Phân việc model và `link-js.md` §6 (2 rubric đã có trong `tools/ai-assist/tasks/`); chép `evals/cases.yaml` 13 ca, tên site thật đổi thành "site agency mẫu".
 - **v1.4 (2026-10-25):** đề xuất nd-10. Thêm 4 script stdlib có test offline (`the_link.py`, `link_code_audit.py`, `bridge_candidates.py`, `anchor_gsc.py`), `references/scripts.md`, Bước 4d, bảng Phân việc model, mục Tự phản biện, 4 anti-pattern; trỏ script ở Bước 4, 4b, 4c và trong `link-js.md`, `link-placement.md`, `anchor-rules.md`.
 - **v1.3.3 (2026-10-19):** thêm `link-js.md` §7 cho trang danh mục ecommerce theo phân tích faceted navigation của Koray (case 3 triệu URL → 47 URL): filter có demand làm trang đích, link thật; filter không demand, sắp xếp dùng checkbox/button, không sinh URL Google thấy; link sản phẩm, phân trang giữ link thật; 7 luật (không `onclick` chứa URL, không robots.txt + noindex cùng URL, gộp 301/410 trước khi chặn).
 - **v1.3.2 (2026-10-19):** Vincent chốt chiều 19/10: ngữ cảnh quyết định dạng mã. CTA hợp ngữ cảnh giữ link thật (D1). Link JS chỉ cho link giữ lại để tăng chuyển đổi ở vị trí ngữ cảnh không cần link, link phụ lặp, link ngoài làm bằng chứng và đích noindex. `link-js.md` §2 thêm 3 bước chọn, sửa dòng D1, D3, luật 1, §4, §6; `link-placement.md` sửa dòng MC4.

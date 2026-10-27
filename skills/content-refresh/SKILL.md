@@ -2,7 +2,7 @@
 name: content-refresh
 description: "Phát hiện và xếp hạng content decay sau publish từ data hiệu suất theo cửa sổ. Use when: (1) 'kiểm tra content decay [site]', 'bài nào đang rớt traffic', 'rà bài cần refresh [site/cluster]'; (2) 'traffic bài [URL] giảm, có cần update không'; (3) audit quý content sau publish."
 metadata:
-  version: "1.1"
+  version: "1.3"
 ---
 
 # Content Refresh — Decay Detection & Update Brief
@@ -71,7 +71,7 @@ Chạy "python3 tools/capabilities.py check --need 'python3,gemma?,gsc?,ahrefs?,
 
 ### Bước 1 — Thu data theo path
 
-- Path A: kéo series clicks/impressions/CTR/position cho `$SCOPE` theo 2 cửa sổ (28d vs prev 28d; 90d vs YoY). Tool + params cụ thể cho từng tín hiệu: xem bảng T1-T14 trong [references/decay-signals.md](references/decay-signals.md).
+- Path A: kéo series clicks/impressions/CTR/position cho `$SCOPE` theo 2 cửa sổ (28d vs prev 28d; 90d vs YoY). Tool + params cụ thể cho từng tín hiệu: xem bảng T1-T15 trong [references/decay-signals.md](references/decay-signals.md).
 - Path B: đọc CSV user cung cấp; kiểm tra đủ 2 phép so sánh chưa, thiếu thì yêu cầu export bổ sung (nói rõ filter cần chọn trong GSC).
 - Path C: thu triệu chứng theo checklist câu hỏi trong references (cột "Path C" của bảng tín hiệu).
 
@@ -120,6 +120,7 @@ Dùng cho candidate nghi "SERP intent shift". Đọc `references/intent-shift.md
 - **T11 (convention GTV, không phải industry standard):** `Priority = Recovery potential (peak clicks − current clicks, hoặc traffic value) × Ease (KD thấp, structure sound, còn backlinks) × Business relevance`.
 - **T10 — Ease filter:** KD < 40 = "cứu được bằng content"; KD cao hơn → vấn đề authority, gắn flag AUTHORITY-GAP route sang `backlink-plan`, ❌ không hứa cứu bằng refresh.
 - **Route flag** (theo decision framework Ahrefs): `UPDATE` / `CONSOLIDATE` / `REDIRECT` / `PRUNE` / `RESTORE` / `REWRITE` / `AUTHORITY-GAP` — **chỉ UPDATE mới đổ vào 10-update-pipeline.**
+- **T15 — AI-cited + stale = ưu tiên cao nhất (chỉ khi có `$AI_DATA`):** page đang được AI cite (Brand Radar / GSC AI report) NHƯNG content stale theo T12 (pricing cũ, feature deprecated…) → boost lên đầu queue, vượt trên priority score thường. Lý do: page vừa đang có visibility, vừa đang phát tán thông tin sai về brand qua AI answers ("documentation tax"). Label `practitioner_framework` (Ahrefs dashboard concept "outdated pages cited by AI"), không phải chuẩn Google.
 - 🔴 **Protect Historical Data:** chỉ bài qua gate T3/T4/T5 mới vào queue. Bài đang perform không kéo vào — chỉ đưa vào annual review (review 1 lần/năm cho bài quan trọng bất kể metrics, theo Ahrefs).
 
 ### Bước 6 — Sinh UPDATE BRIEF + report tổng
@@ -129,7 +130,7 @@ Dùng cho candidate nghi "SERP intent shift". Đọc `references/intent-shift.md
 3. Skill **dừng tại đây** — không diff SERP chi tiết, không section plan (đó là bước 1-2 của 10-update-pipeline).
 
 ### Tự phản biện trước khi trình
-Chấm bản nháp theo checklist "Bản tốt nhất phải có". Mục chưa đạt thì sửa, hoặc ghi lý do bỏ. Nếu có output của Codex hay agent khác cho cùng việc, so từng mục và lấy phần tốt hơn trước khi trình Vincent.
+Chấm bản nháp theo checklist "Bản tốt nhất phải có". Mục chưa đạt thì sửa, hoặc ghi lý do bỏ. Nếu có output của Codex hay agent khác cho cùng việc, so từng mục và lấy phần tốt hơn trước khi trình người duyệt.
 
 Bản tốt nhất phải có:
 - [ ] Route REWRITE vì intent dịch chuyển có ghi chú Claude đã đọc top 3 SERP. Không route chỉ theo `drift`. Nguồn lỗi: hiệu chuẩn 19/10/2026, trang duy nhất được quyết viết lại vì SERP đổi nghĩa chỉ đứng hạng 8/25 theo `drift`.
@@ -164,6 +165,8 @@ Bản tốt nhất phải có:
 
 ## AI visibility (chỉ khi có $AI_DATA — lớp riêng, đo aggregate)
 - <AI Share of Voice / impressions AI report — KHÔNG đo prompt đơn lẻ>
+- Outdated-cited (T15): <pages đang được AI cite + stale facts → đầu queue> (practitioner_framework)
+- Chu kỳ freshness đề xuất: <per-vertical — commercial/pricing ~30 ngày, news ~7 ngày (interpretation n=8, xem T14b)>
 
 ## Re-measurement plan
 - 7-30 ngày: GSC impressions cho target queries (theo SOP GTV)
@@ -171,27 +174,27 @@ Bản tốt nhất phải có:
 - 6 tháng: full Historical Data effect (Koray 6-month lag)
 
 ## ⚠️ Disclaimer
-- Ngưỡng T1-T14 là đề xuất thực nghiệm có nguồn — hiệu chỉnh theo baseline dự án sau 2-3 chu kỳ audit.
+- Ngưỡng T1-T15 là đề xuất thực nghiệm có nguồn — hiệu chỉnh theo baseline dự án sau 2-3 chu kỳ audit.
 - Ranking hôm nay phản ánh HD từ ít nhất 6 tháng trước (≥6 tháng); không kết luận decay từ biến động <4-6 tuần.
 ```
 
 **UPDATE BRIEF** — mỗi URL flag UPDATE 1 file, skeleton đầy đủ ở [references/update-brief-template.md](references/update-brief-template.md).
 
 **Đặt tên file:**
-- Report: `<site>_Content-Refresh-Report_v1.md` → tài liệu nội bộ «<project>» (ngoài repo, hỏi Lead/Vincent) (tăng `_v2`, `_v3`… nếu trùng).
-- Brief: `<slug>__brief_v1.md` → folder `10-update-pipeline/<cluster>/` của brand tương ứng (`Content Production - GTV/` hoặc `Content Production - TAG/`), khớp convention output pipeline `<slug>__vN.md`.
+- Report: `<site>_Content-Refresh-Report_v1.md` → tài liệu nội bộ «<project>» (ngoài repo, hỏi Lead) (tăng `_v2`, `_v3`… nếu trùng).
+- Brief: `<slug>__brief_v1.md` → folder `10-update-pipeline/<cluster>/` của repo content `Content Production - <client>/` tương ứng, khớp convention output pipeline `<slug>__vN.md`.
 
 ## Behavior Gates
 
 - **#1 Think Before** — đây là task NGHĨ (phân tích) → Opus + Thinking. Thiếu input quyết định output (tuổi site, lần sửa gần nhất, entity brand, business priority) → hỏi qua `cơ chế hỏi người dùng có cấu trúc của runtime`, không lấp bằng assumption. Phép thử: "nếu assumption này sai, ranking priority có hỏng không?"
-- **#2 Evidence** — mọi con số trong report/brief truy được về nguồn + ngày lấy data (tool + date range, hoặc file CSV + ngày export). Mọi ngưỡng cite theo mã T1-T14 kèm nguồn gốc (Ahrefs / User Growth / GTV convention). Số không có citation → không đưa vào output.
+- **#2 Evidence** — mọi con số trong report/brief truy được về nguồn + ngày lấy data (tool + date range, hoặc file CSV + ngày export). Mọi ngưỡng cite theo mã T1-T15 kèm nguồn gốc (Ahrefs / User Growth / GTV convention). Số không có citation → không đưa vào output.
 - **#3 Surgical** — dừng ở UPDATE BRIEF. Không diff SERP chi tiết, không viết section plan, không sửa bài, không đề xuất đổi URL (anti-pattern của pipeline). Phát hiện việc ngoài scope (vd wiki cần update) → note 1 câu, làm xong task trước.
 - **#4 Goal-driven** — mục tiêu là recovery traffic có giá trị business, không phải "update cho có Update Score". Update phải substantive (Update Amount > 0); protect HD của bài đang khỏe; ưu tiên theo T11 chứ không theo "bài nào lâu chưa sửa".
 
 ## Anti-patterns
 
 - ❌ Kết luận decay từ biến động <4-6 tuần hoặc query <100 impressions/28 ngày (vi phạm T9 + 6-month lag).
-- ❌ **Date-spoofing**: đổi ngày publish/modified mà không đổi content — không qualify là substantive update và bị coi là manipulation (Google so old vs new content để detect substantive change — [[Update Score]] fake-freshness; [[GEO]] — Yeşilyurt: date-spoofing = manipulation, không dùng cho client).
+- ❌ **Date-spoofing**: đổi ngày publish/modified mà không đổi content — không qualify là substantive update và bị coi là manipulation (Google so old vs new content để detect substantive change — [[Update Score]] fake-freshness; [[GEO]] — Yeşilyurt: date-spoofing = manipulation, không dùng cho client; fake-refresh dates nằm trong footprint bị flag ở cohort scaled-AI-content + Google xử LLM manipulation như spam 04-05/2026 — refresh hợp lệ = content change thật, Update Amount > 0).
 - ❌ Kéo bài đang perform vào update queue "cho chắc" — phá Historical Data positive đang tích lũy.
 - ❌ Sinh 2 UPDATE BRIEF cho 2 URL đang cannibalize nhau — cặp đó là 1 đề xuất CONSOLIDATE/301.
 - ❌ Bỏ qua seasonal gate YoY khi site đủ 13 tháng data.
@@ -203,7 +206,7 @@ Bản tốt nhất phải có:
 
 ## References & wiki
 
-- [references/decay-signals.md](references/decay-signals.md) — bảng tín hiệu T1-T14 (ngưỡng + cách đo Path A/B/C + nguồn), decision tree gate chain, bảng nguyên nhân → tín hiệu → DEPTH.
+- [references/decay-signals.md](references/decay-signals.md) — bảng tín hiệu T1-T15 (ngưỡng + cách đo Path A/B/C + nguồn), decision tree gate chain, bảng nguyên nhân → tín hiệu → DEPTH.
 - [references/intent-shift.md](references/intent-shift.md) — đo intent dịch chuyển bằng Gemma (`drift`), số hiệu chuẩn 19/10/2026, giới hạn.
 - [references/update-brief-template.md](references/update-brief-template.md) — skeleton UPDATE BRIEF khớp input 10-update-pipeline (`_TEMPLATES/update.md`).
 - Wiki nền: [[Historical Data]] (6-month lag, engagement polarity, protect HD) · [[Update Score]] (Update Frequency × Update Amount, fake freshness) · [[Traffic Box]] (BCAU re-evaluation, static source) · [[Click Satisfaction]] (CTR/engagement là input decay hợp lệ) · [[GEO]] (URL freshness score, 76,4% top cited update trong 30 ngày, đo AI visibility aggregate).
@@ -212,5 +215,6 @@ Bản tốt nhất phải có:
 
 ## Changelog
 
+- **v1.3 (2026-10-27):** hợp nhất bản root 27/10/2026: T15 "AI-cited + stale" (Bước 5, Output, bảng tín hiệu), T14b freshness window per-vertical và số liệu T14 per-engine (`references/decay-signals.md`), guardrail date-spoofing mở rộng. Nội dung này là bản root v1.1 (22/08/2026); bản root đánh số 1.2 cho mục v1.1 (19/10) bên dưới. Giữ `scripts/intent_shift.py` + test của bản SP.
 - **v1.1 (2026-10-19):** Bước 0 kiểm tool (Scope gate cũ thành Bước 0b). Bước 4a đo intent dịch chuyển: `drift` giữa tâm top 3 SERP và trang mình (`scripts/intent_shift.py`, `references/intent-shift.md`). `drift` tương quan vị trí GSC (Spearman 0,545, 25 truy vấn); chưa có ngưỡng REWRITE vì 15–19/10 chỉ có 1 quyết định viết lại. Thêm phân việc model, tự phản biện, test offline `tests/test_intent_shift.py`.
 - **v1.0 (2026-07-07):** khởi tạo — tổng hợp từ wiki Koray/GTV (Historical Data, Update Score, Traffic Box, Click Satisfaction, GEO) + web research (Ahrefs content-decay, User Growth academy, Animalz ×2, SEO Sherpa cannibalization); ngưỡng T1-T14 đánh dấu đề xuất thực nghiệm; boundary khóa với 10-update-pipeline / semantic-content-audit / backlink-plan.

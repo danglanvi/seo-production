@@ -2,7 +2,7 @@
 name: keyword-topic-url-mapping
 description: "Gom bộ keyword CAM KẾT hợp đồng thành topic → xác định URL SEO tương ứng — công đoạn (4) T1 của quy trình 10 tháng GTV, MAPPING layer đứng trước topical map và traffic plan. Use when: (1) 'nhóm keyword cam kết thành topic cho [client]', 'mapping keyword → URL SEO'."
 metadata:
-  version: "1.3.1"
+  version: "1.3.2"
 ---
 
 # Keyword → Topic → URL SEO Mapping
@@ -193,6 +193,7 @@ Bản tốt nhất phải có:
 
 ## Changelog
 
+- **2026-10-27 v1.3.2** — hợp nhất bản root 27/10/2026: chép verdict QDP chốt 01/08/2026 vào `references/qdp-gate.md` (≥3/4 là đủ, low similarity không phải veto).
 - **2026-10-19 v1.3.1** — ghi rõ vai trò 2 ngưỡng SERP: 4/10 xếp keyword vào cùng cụm khi lập plan, 6/10 là điều kiện gộp 2 URL đang có. Định tuyến Gemma trên trang tiền chỉ là danh sách cần đọc (top-1 trùng URL Google 29,3%), không đưa con số này vào deck khách.
 - **2026-10-19 v1.3** — Bước 0 kiểm tool. Thêm Bước 2b định tuyến keyword → URL đang có bằng `retrieval-lab route` và `gsc_route.py` của `query-processing-diagnosis` (GSC chỉ xử lý local, dùng cổng `share` 0,6 có sẵn). Thêm phân việc model và tự phản biện.
 

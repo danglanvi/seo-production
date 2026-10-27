@@ -2,7 +2,7 @@
 name: map-pack-intelligence
 description: "Đo map pack theo tọa độ cho khách local VN (nửa platform-data của cặp skill local; nửa kia: local-seo-audit): geo-grid rank tracking 3x3/5x5, Share of Local Voice (SoLV), competitor radius, review velocity, NAP matrix. Use when: 'đo map pack [khách]', 'SoLV baseline', 'rank Google Maps theo khu vực'."
 metadata:
-  version: "1.0"
+  version: "1.0.1"
 ---
 
 # Map Pack Intelligence — geo-grid, SoLV, competitor radius
@@ -98,7 +98,7 @@ Chạy "python3 tools/capabilities.py check --need 'python3,dataforseo,chrome?'"
 
 ## Output
 
-File: tài liệu nội bộ «<client>_Map-Pack-SoLV_<YYYY-MM>_v1» (ngoài repo, hỏi Lead/Vincent).
+File: `<client>_Map-Pack-SoLV_<YYYY-MM>_v1.md` trong thư mục công đoạn theo ma trận M (`_REFERENCE/runtime-workstream-matrix.md` §5.2). Ngoài repo dự án: thư mục output của workstream.
 
 ```markdown
 # Map Pack Intelligence — <business> (chi nhánh <X>)
@@ -175,4 +175,5 @@ File: tài liệu nội bộ «<client>_Map-Pack-SoLV_<YYYY-MM>_v1» (ngoài rep
 
 ## Changelog
 
+- **v1.0.1 (2026-10-27):** dòng Output trỏ thư mục công đoạn thay cho tài liệu ngoài repo; gộp bản root vào bản này (27/10/2026).
 - **v1.0 (2026-07-19):** tạo mới — nửa PLATFORM-DATA của cặp skill local; geo-grid 3x3/5x5 + bảng bán kính theo loại hình, SoLV (% điểm lưới top 3), competitor radius mapping (proximity vs prominence), review velocity comparison, cross-platform NAP matrix; data ladder API → đo tay UULE/thực địa → screenshot; action đổ về local-seo-audit, số đổ về gtv-client-report.

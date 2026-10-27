@@ -1,15 +1,21 @@
 ---
 name: geo-tracking-prompt-selection
 description: "GEO (Generative Engine Optimization) prompt selection and tracking framework for optimizing brand visibility on AI search engines — ChatGPT + Google AI (AI Overviews / AI Mode / Gemini) bắt buộc, Perplexity / Copilot / Claude bổ sung."
+compatibility: "Gói skill kèm references. Router geo-audit cần bundle 5 skill mảng; chế độ audit nhận evidence dán/export hoặc công cụ đọc phù hợp."
 metadata:
-  version: "1.6"
+  version: "1.6.1"
 ---
 
 # GEO Tracking & Prompt Selection Skill
 
+> Bản SEO Production, sinh từ bản gốc của master bằng công cụ port. Không sửa tay: đề xuất sửa theo `_REFERENCE/self-improving.md`. Luật duyệt dùng chung: `_REFERENCE/luat-duyet-dieu-phoi.md`. Đường dẫn `Deliverables/…` trong phần nguồn lỗi là bằng chứng ở workspace của master, team không cần mở.
+
 Framework for selecting and organizing prompts to track brand visibility on AI search engines.
 
-## Ưu tiên kênh (Vincent chốt 29/08/2026)
+
+**Trước khi chấm GEO:** nếu chưa nạp hợp đồng v1.1 trong phiên, đọc `references/audit-contract.md` (bản đóng gói): UNKNOWN khác N/A, điểm nhị phân + độ phủ, gate theo URL/engine và bàn giao finding. Quy tắc v1.1 này áp cho các bảng audit GEO bên dưới; changelog chỉ là lịch sử.
+
+## Ưu tiên kênh (Lead chốt 29/08/2026)
 
 | Kênh | Vai trò trong prompt set + KPI | Lý do (nguồn + nhãn) |
 |---|---|---|
@@ -17,7 +23,7 @@ Framework for selecting and organizing prompts to track brand visibility on AI s
 | **Google AI** = AI Overviews + AI Mode + Gemini app | **Bắt buộc** (đo **tách 3 bề mặt**, vì AIO ≠ AI Mode chỉ 13,7% trùng citation) | AIO 2 tỷ user (Pichai, A) · AI Mode 100M sau 2 tháng · Gemini app **1 tỷ MAU 08/2026** (Google official, A) · VN: gemini.google.com #9 top website 07/2026 (Similarweb A) |
 | Perplexity · Copilot · Claude | **Bổ sung** — có thì đo, không có không sao | Copilot → Bing; Perplexity chia hạ tầng retrieval; tổng cộng phần nhỏ (kinh nghiệm vận hành GTV, nhãn F — chưa có nghiên cứu độc lập) |
 
-Hệ quả vận hành: (1) KPI Brand Mention đọc là **"có mặt trên CẢ ChatGPT lẫn Google AI"** — thay ngưỡng "≥2/4 tool bất kỳ" (GE-36 `tier-1-geo.md` v2.0.2, `gtv-client-report` v1.3); (2) prompt set chạy tối thiểu trên ChatGPT + AI Mode + Gemini, AIO check theo keyword; (3) DIY sheet cột engine xếp theo thứ tự ưu tiên này. Xem lại mỗi quý — thị phần là moving target.
+Hệ quả vận hành: (1) KPI Brand Mention đọc là **"có mặt trên CẢ ChatGPT lẫn Google AI"** — thay ngưỡng "≥2/4 tool bất kỳ" (GE-36 `tier-1-geo.md` từ v2.0.1, `gtv-client-report` từ v1.3); (2) prompt set chạy tối thiểu trên ChatGPT + AI Mode + Gemini, AIO check theo keyword; (3) DIY sheet cột engine xếp theo thứ tự ưu tiên này. Xem lại mỗi quý — thị phần là moving target.
 
 ## Quick Decision: Website Type
 
@@ -45,6 +51,10 @@ First, determine website type to choose the right approach:
 
 ### Bước 0 — kiểm tool
 Chạy "python3 tools/capabilities.py check --need 'python3,openrouter?,ahrefs?'" từ root repo. Nếu thiếu tool bắt buộc, dừng và báo tên tool. Nếu thiếu tool tuỳ chọn, dùng fallback ghi trong "tools/capabilities.md".
+
+### Bước 0b — Readiness, scope và baseline
+
+Khi router gọi hoặc mở baseline mới: đọc `references/readiness-baseline.md` trước các nhánh dưới; chấm GE-04 từ evidence dự án, chốt scope/prompt set, thu baseline GE-03 và kiểm GE-05. Chưa có dữ liệu thì trả UNKNOWN hoặc xác nhận chưa đo; vẫn thu evidence nền, không mắc vòng lặp “cần baseline để tạo baseline”. Đơn vị phân phối: skill này + references; nguồn wiki chỉ để bảo trì.
 
 ### For Service/Agency Websites
 1. Identify 1-3 core services
@@ -85,12 +95,12 @@ Ahrefs đếm citation theo kho prompt của Ahrefs, không theo bộ prompt c�
 3. Ghi kết quả vào `snapshots.json`, rồi chạy `geo_kpi.py ahrefs --snapshots snapshots.json --own <domain> --out ahrefs.md`.
 4. Báo trích dẫn từ prompt bằng cột "Từ prompt". KPI AIO theo từ khoá trong hợp đồng đọc cột "AIO theo từ khoá". Không báo `all_platforms`: số này cộng cả hai loại.
 
-Bẫy (đo site mẫu 19/10/2026):
+Bẫy (đo site agency mẫu 19/10/2026):
 
-- `all_platforms` của site mẫu là 645, nhưng 522 lượt là AIO theo từ khoá. Citation từ prompt chỉ có 123.
+- `all_platforms` của site agency mẫu là 645, nhưng 522 lượt là AIO theo từ khoá. Citation từ prompt chỉ có 123.
 - Hai chỉ số đi ngược chiều: từ 07/2026 đến 10/2026, citation từ prompt tăng 57 → 123, AIO theo từ khoá giảm 717 → 522. Báo `all_platforms` sẽ ra "giảm".
 - Gemini từ 0 lên 11 trong cùng kỳ. Có thể Ahrefs mới mở rộng kho prompt. Chỉ kết luận khi đối thủ được đo cùng 2 mốc.
-- Mention (tên brand trong câu trả lời) cần addon Brand Radar. Nếu tài khoản chưa có addon này, `brand-radar-*` trả lỗi "Missing addon". Mention lấy từ lệnh `kpi`.
+- Mention (tên brand trong câu trả lời) cần addon Brand Radar. Nếu tài khoản Ahrefs chưa có addon này, `brand-radar-*` trả lỗi "Missing addon". Tài khoản GTV chưa có addon này (19/10/2026). Mention lấy từ lệnh `kpi`.
 
 ## Funnel Allocation (Service/Agency)
 
@@ -171,6 +181,7 @@ ChatGPT `genui_run` widget verticals — stocks, sports schedules, map pins — 
 - **Checklist**: See [checklist.md](references/checklist.md) for BD consultation checklist
 - **Đo mốc và đo lại**: [do-va-do-lai.md](references/do-va-do-lai.md): lệnh chạy, bẫy từng engine, lịch ngày 14, 30, 60, cách đọc `compare.md`
 - **Script**: `scripts/geo_kpi.py` (`kpi`, `compare`, `ahrefs`). Test: `python3 -B -m unittest discover -s skills/geo-tracking-prompt-selection/tests`
+- **Skill mảng khác của lớp GEO** (12/09/2026): `geo-technical-audit` (gate G-T1, G1) · `entity-seo-plan` mục Lăng kính GEO (G2) · `geo-content-optimization` (G3) · `geo-offsite-audit` (G4) · `geo-audit` (router gộp scorecard 4 bộ; skill này cấp verdict GE-04 + baseline + Bộ ĐO)
 
 ## Red Flags to Avoid
 
@@ -191,25 +202,23 @@ ChatGPT `genui_run` widget verticals — stocks, sports schedules, map pins — 
 ✅ Date-stamp every measurement; label citation numbers as directional (see Measurement Reliability Rules)
 
 ### Tự phản biện trước khi trình
-Chấm bản nháp theo checklist "Bản tốt nhất phải có". Mục chưa đạt thì sửa, hoặc ghi lý do bỏ. Nếu có output của Codex hay agent khác cho cùng việc, so từng mục và lấy phần tốt hơn trước khi trình Vincent.
+Chấm bản nháp theo checklist "Bản tốt nhất phải có". Mục chưa đạt thì sửa, hoặc ghi lý do bỏ. Nếu có output của Codex hay agent khác cho cùng việc, so từng mục và lấy phần tốt hơn trước khi trình Lead.
 
 Bản tốt nhất phải có:
 - [ ] Bộ prompt có ID, funnel, cờ branded và URL đích, chốt chữ trước khi đo. Nguồn lỗi: lần đo lại chỉ so được prompt giữ nguyên chữ và ID.
-- [ ] Mỗi prompt × engine có ≥ 3 lượt, mỗi dòng ghi ngày và `model_served`. Nguồn lỗi: thử A/A site mẫu 18/10, 2 lượt cùng ngày lệch tới 11 điểm % ở Gemini.
-- [ ] Tỷ lệ nhắc brand chỉ tính trên prompt không mang tên brand. SoV ghi rõ tập brand cố định. Nguồn lỗi: 3 prompt mang tên brand của site mẫu kéo tỷ lệ lên nếu tính chung.
+- [ ] Mỗi prompt × engine có ≥ 3 lượt, mỗi dòng ghi ngày và `model_served`. Nguồn lỗi: thử A/A site agency mẫu 18/10, 2 lượt cùng ngày lệch tới 11 điểm % ở Gemini.
+- [ ] Tỷ lệ nhắc brand chỉ tính trên prompt không mang tên brand. SoV ghi rõ tập brand cố định. Nguồn lỗi: 3 prompt mang tên brand của site agency mẫu kéo tỷ lệ lên nếu tính chung.
 - [ ] Domain Gemini lấy từ `title` của link vertexaisearch. Báo cáo không liệt kê URL Gemini trích. Nguồn lỗi: pilot 18/10, 245 link của Gemini đều là link chuyển hướng.
-- [ ] Lần đo lại so bằng `compare` (bootstrap ghép cặp), không so số thô. Nguồn lỗi: thử A/A 18/10, dùng chênh giữa các lượt làm nhiễu báo sai "tăng/giảm" ở 6/9 ô.
-- [ ] Lịch đo lại tính từ ngày ghi đợt sửa: ngày 14, 30, 60. Không mở đợt sửa mới trên cùng nhóm trang trước ngày 60.
+- [ ] Lần đo lại so bằng `compare` (bootstrap ghép cặp), không so số thô. Lịch đo lại tính từ ngày ghi đợt sửa: ngày 14, 30, 60. Không mở đợt sửa mới trên cùng nhóm trang trước ngày 60. Nguồn lỗi: thử A/A 18/10, dùng chênh giữa các lượt làm nhiễu báo sai "tăng/giảm" ở 6/9 ô.
 - [ ] AI Overview và AI Mode ghi UNKNOWN hoặc có ảnh chụp tay cùng ngày. Không suy từ số API.
 - [ ] Kế hoạch đo ghi chi phí và `--budget` đủ. Nguồn lỗi: mặc định 5 USD của `collect.py` thấp hơn 6,6 USD của bộ 30 prompt × 3 engine × 3 lượt.
-- [ ] KPI citation từ Ahrefs dùng cột "Từ prompt", không dùng `all_platforms`. Nguồn lỗi: site mẫu 19/10, `all_platforms` giảm 774 → 645 trong khi citation từ prompt tăng 57 → 123.
+- [ ] KPI citation từ Ahrefs dùng cột "Từ prompt", không dùng `all_platforms`. Nguồn lỗi: site agency mẫu 19/10, `all_platforms` giảm 774 → 645 trong khi citation từ prompt tăng 57 → 123.
 
 ## Changelog
 
-- **v1.6 (2026-10-19):** thêm mục "Số trích dẫn AI từ Ahrefs" và lệnh `geo_kpi.py ahrefs` (tách citation từ prompt khỏi AIO theo từ khoá, xếp với đối thủ, diễn biến theo ngày). Sửa dòng KPI AI Citations: bỏ Brand Radar vì tài khoản chưa có addon. Bước 0 thêm `ahrefs?`. Thêm 1 mục Tự phản biện. Số liệu: site mẫu và 4 đối thủ ngày 19/10/2026.
-- **v1.5 (2026-10-19):** thêm Bước 0 kiểm tool, bảng Phân việc model, bước "Đo mốc và đo lại (ngày 14, 30, 60)" với `scripts/geo_kpi.py` (`kpi`, `compare` bằng bootstrap theo prompt ghép cặp) và `references/do-va-do-lai.md` (lệnh chạy qua `geo-answer-lab`, bẫy Sonar và Gemini, lịch đo, thử A/A), mục Tự phản biện. Sửa dòng "Monthly iteration - Replace underperformers" cho khớp luật cohort. Bỏ qua số 1.4 vì bản root đã dùng 1.4 cho nội dung khác. Số liệu lấy từ pilot site mẫu 18/10/2026: 270 câu trả lời.
-- **v1.3 (2026-08-29, Vincent duyệt 29/08):** (1) Mục **Ưu tiên kênh**: ChatGPT + Google AI (AIO/AI Mode/Gemini 1B MAU 08/2026) bắt buộc, Perplexity/Copilot/Claude bổ sung — KPI Brand Mention đổi từ "≥2/4 tool" sang "cả ChatGPT lẫn Google AI" (đồng bộ GE-36 v2.0.1 + `gtv-client-report` v1.3). (2) KPI mới **AI CVR vs Organic CVR** + `references/kpis-metrics.md` mục **GA4 "AI Assistant" channel setup** (regex source, cách đọc, benchmark directional 10×/23×/15,9% vs 1,76%). (3) Bảng tool bổ sung Ahrefs AI responses / Brand Radar (found vs cited), GSC → Generative AI features (Beta), GA4 channel; DIY sheet cột engine theo ưu tiên. Mirror `geo-tracking-optimize-ca` 1.2-ca (T4 + T5 luật 7).
-- **v1.2 (2026-08-23):** đồng bộ bộ GEO 3 lớp. (1) Skill này chạy ở **G0 (baseline T1)** và **G5 (đo T6/T10/quý)** của quy trình 6 điểm chạm — `sop/09-timeline/lop-geo-v2.md`. (2) Trước khi chốt prompt set phải chạy **GEO Readiness scorecard** → verdict *Tối thiểu* / *Chuẩn hoá* (AIO trigger share theo vertical + rank hiện trạng + competitor citation set); verdict ghi vào proposal/SOW. Vertical AIO thấp (Shopping 3,2%) → *Tối thiểu* là đúng, không phải thiếu sót. (3) **Gate G-T1**: chưa index / chưa page-one ≥1 sub-query / bot bị chặn / không baseline → **dừng lớp GEO**, không chạy prompt set lấy lệ. (4) **Information Accuracy** + **branded-prompt defense** là phần bắt buộc của baseline, không phải tuỳ chọn — đây là KPI dễ thắng nhất và hay bị bỏ quên. (5) Mọi lần đo **date-stamp engine + model version**; báo cáo **theo topic**, tách per-engine; metric dán nhãn **directional**, đối chiếu GA4/server log trước khi tuyên bố thắng. (6) Bàn giao (G5) gồm đủ 4 thứ: prompt set nguyên văn · baseline + số T6/T10 · register số liệu có hạn dùng · lịch đo quý. (7) Checklist canonical: `sop/06-self-checklist/tier-1-geo.md` v2.0.2 — **Bộ ĐO /5 (GE-33…GE-37)**.
+- v1.6.1 (2026-10-27): bản root thành bản gốc, bản SEO Production sinh bằng `tools/port-dieu-phoi.py`. Lấy từ bản SEO Production: GE-36 ghi "từ v2.0.1" (bản đóng gói ở repo là v2.0.2), câu addon Brand Radar dạng điều kiện. Gộp mục lịch đo lại vào mục `compare` để checklist Tự phản biện còn 8 mục (lệnh kiểm cấu trúc cần 5–8).
+- v1.6 (2026-10-19): port cùng nội dung với bản SEO Production 1.6: mục "Số trích dẫn AI từ Ahrefs", lệnh `geo_kpi.py ahrefs`, dòng KPI AI Citations bỏ Brand Radar (tài khoản chưa có addon), Bước 0 thêm `ahrefs?`, 1 mục Tự phản biện. Số liệu: site agency mẫu và 4 đối thủ ngày 19/10/2026.
+- v1.5 (2026-10-19): port cùng nội dung với bản SEO Production 1.5: Bước 0 kiểm tool (readiness đổi thành Bước 0b), bảng Phân việc model, bước "Đo mốc và đo lại (ngày 14, 30, 60)" với `scripts/geo_kpi.py` (`kpi`, `compare` bằng bootstrap theo prompt ghép cặp) và `references/do-va-do-lai.md` (bẫy Sonar và Gemini, lịch đo, thử A/A trên mốc site agency mẫu 18/10), mục Tự phản biện. Bản root gọi `collect.py`, `prepare.py` ở `skills/geo-answer-lab/scripts/`. Giữ khác biệt sẵn có của bản root: `audit-contract.md`, `readiness-baseline.md`, evals, `CHANGELOG.md`.
+- v1.4 (2026-09-12): đưa readiness/baseline thành workflow executable, schema evidence và cohort so sánh rõ.
 
-- **v1.1 (2026-08-22):** thêm Measurement Reliability Rules — date-stamp rule (ChatGPT format break 08/2026, `search_queries` field gone), citation caveats (bot noise + lag n=1, convergence problem, 4 fake proofs), widget queries loại khỏi citation opportunity, tools mới (Clarity AI Citations, GSC→LLM classify workflow); update references/kpis-metrics.md tương ứng. (Vincent duyệt 22/08, nền Batch 39.)
-- **v1.0:** bản gốc — funnel/matrix framework, prompt templates, KPIs, BD checklist.
+Lịch sử đầy đủ: `CHANGELOG.md` (chỉ đọc khi bảo trì).

@@ -62,7 +62,7 @@ Visual Semantic (Layout) + Website Function (Interactive)
 **Google Tracks:**
 | Interaction | Type | Weight |
 |-------------|------|--------|
-| Click letter | Active | High (5x) |
+| Click letter | Active | High |
 | Navigate A→B→C | Sequential | Excellent engagement |
 | Return to letter | Active | Topic interest confirmed |
 

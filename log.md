@@ -471,3 +471,7 @@ Luật ghi:
 - Nâng wp-ucss 1.1.0, wp-pagespeed 1.14, seo-logfile-analysis 1.4, cdn-speed-setup 1.2, wp-security-hardening 1.8, web-qa-gate 1.3.1, technical-seo-audit 1.10. Thêm 4 skill điều phối bản sinh từ master (web-lane-orchestration 1.2, decision-page 1.0.1, workstream-master-plan 1.0.1, runtime-handoff 1.3.1), không sửa tay.
 - Thêm `tools/wf-status.py`, `tools/shell-traps-macos.md`, `tools/ai-assist/jev_ledger.py`, `_REFERENCE/luat-duyet-dieu-phoi.md`. `jev.py` ghi sổ lượt gọi và có cờ `--label`. `ORCHESTRATOR.md` thêm mục 4.1 trỏ tới 4 skill điều phối. `master_version` đổi thành v2026.10.36.
 - Files touched: skills/{wp-ucss,wp-pagespeed,seo-logfile-analysis,cdn-speed-setup,wp-security-hardening,web-qa-gate,technical-seo-audit,web-lane-orchestration,decision-page,workstream-master-plan,runtime-handoff}/, tools/wf-status.py, tools/tests/test_wf_status.py, tools/shell-traps-macos.md, tools/ai-assist/jev.py, tools/ai-assist/jev_ledger.py, _REFERENCE/luat-duyet-dieu-phoi.md, ORCHESTRATOR.md, MIGRATION.md, log.md, .claude/skills/, .agents/skills/
+
+## [2026-10-27] refactor | v2026.10.37 — Gộp skill hai bản: repo này là bản gốc của 29 skill, 4 skill sinh từ master — @claude
+- 19 skill gộp giữ nguyên, 10 skill hợp nhất nội dung của master, 4 skill GEO và báo cáo sinh bằng công cụ port của master. Chi tiết: MIGRATION.md v2026.10.37.
+- Files touched: skills/<29 skill>/, skills/<4 skill sinh>/, .claude/skills/, .agents/skills/, MIGRATION.md

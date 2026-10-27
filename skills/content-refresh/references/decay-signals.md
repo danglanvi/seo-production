@@ -4,7 +4,7 @@ Reference cho skill `content-refresh`. Mọi ngưỡng là **đề xuất thực
 
 ## TOC
 
-1. [Bảng tín hiệu T1-T14](#1-bảng-tín-hiệu-t1-t14)
+1. [Bảng tín hiệu T1-T15](#1-bảng-tín-hiệu-t1-t15)
 2. [Decision tree — gate chain](#2-decision-tree--gate-chain)
 3. [Bảng nguyên nhân → tín hiệu → DEPTH](#3-bảng-nguyên-nhân--tín-hiệu--depth)
 4. [Ghi chú Path A — Ahrefs MCP tool map](#4-ghi-chú-path-a--ahrefs-mcp-tool-map)
@@ -12,7 +12,7 @@ Reference cho skill `content-refresh`. Mọi ngưỡng là **đề xuất thực
 
 ---
 
-## 1. Bảng tín hiệu T1-T14
+## 1. Bảng tín hiệu T1-T15
 
 | # | Signal | Ngưỡng đề xuất | Path A — Ahrefs MCP | Path B — GSC CSV | Path C — câu hỏi triệu chứng | Nguồn ngưỡng |
 |---|--------|----------------|----------------------|-------------------|------------------------------|--------------|
@@ -29,12 +29,15 @@ Reference cho skill `content-refresh`. Mọi ngưỡng là **đề xuất thực
 | T11 | Priority score | `Priority = Recovery potential (peak clicks − current clicks, hoặc traffic value) × Ease (KD thấp, structure sound, còn backlinks) × Business relevance` | Peak từ history series; backlinks từ `site-explorer-backlinks-stats` | Peak từ export dài nhất có được | KHÔNG chấm bằng số ở Path C — chỉ xếp hạng định tính | Tổng hợp ahrefs.com (3 trục: business relevance, historical traffic peak, KD) — **công thức là convention đề xuất của skill, không phải industry standard** |
 | T12 | Stale-fact trigger | Data/facts trong bài >12 tháng | Đọc content bài (ngày số liệu, năm trong text) | Như Path A | "Bài cập nhật số liệu lần cuối khi nào?" | Content Production/10-update-pipeline/CLAUDE.md (trigger table sẵn có) |
 | T13 | Re-measure sau update | Sớm nhất 7-30 ngày (GSC impressions); validate 90 ngày; full HD effect 6 tháng | `gsc-page-history` sau ngày re-publish | Export sau mốc 30/90 ngày | Hẹn lịch check thủ công | sop/05-audit-checklist.md + usergrowth.io + Historical Data.md |
-| T14 | AI freshness benchmark | Top cited pages: 76,4% update trong 30 ngày; AI-cited fresher hơn organic SERP 25,7%; median cited age 500 ngày | `brand-radar-*` / `site-explorer-ai-responses-count` (nếu có); GSC AI report chỉ có impressions | GSC Search Generative AI report export | "Bài có xuất hiện trong ChatGPT/AIO khi hỏi topic này không?" (aggregate, không prompt đơn lẻ) | 76,4% + median 500 ngày: GEO.md; 25,7%: ahrefs.com/blog/do-ai-assistants-prefer-to-cite-fresh-content/ (study 17M citations, riêng — không phải bài content-decay) |
+| T14 | AI freshness benchmark | Top cited pages: 76,4% update trong 30 ngày; AI-cited fresher hơn organic 25,7% (avg **1.064 vs 1.432 ngày** — study 17M citations); median cited age 500 ngày. Per-engine: **ChatGPT recency bias mạnh nhất**; ChatGPT + Perplexity sắp in-text citations **mới→cũ**; AIO lean già hơn | `brand-radar-*` / `site-explorer-ai-responses-count` (nếu có); GSC AI report chỉ có impressions | GSC Search Generative AI report export | "Bài có xuất hiện trong ChatGPT/AIO khi hỏi topic này không?" (aggregate, không prompt đơn lẻ) | 76,4% + median 500 ngày: GEO.md; 25,7% + 1.064/1.432 + per-engine: ahrefs.com/blog/do-ai-assistants-prefer-to-cite-fresh-content/ (study 17M citations, riêng — không phải bài content-decay); wiki [[sources/how-ai-engines-choose-sources-surfer]]. Refresh theo lint quý |
+| T15 | AI-cited + stale (v1.1) | Page được AI cite (Brand Radar / GSC AI report) + trigger stale-fact T12 (pricing cũ, feature deprecated) → **ưu tiên refresh cao nhất**, vượt priority score thường — đang có visibility + đang phát tán thông tin sai về brand | Giao T12 với `brand-radar-cited-pages` / `site-explorer-ai-responses-count` | Giao T12 với GSC AI report export | "Trang nào AI hay trích mà số liệu trong bài đã cũ?" | **`practitioner_framework`** — Ahrefs dashboard concept "outdated pages cited by AI", không phải chuẩn Google |
 
 **Cách đọc impressions + CTR cùng nhau (Ahrefs methodology):**
 - Cả impressions + CTR cùng giảm → decay cổ điển.
 - Impressions giảm + CTR tăng → mất position nhưng user còn engage → **recoverable, ưu tiên cao**.
 - Impressions flat + CTR giảm → SERP feature problem (T6), **KHÔNG phải decay**.
+
+**T14b — Freshness window per-vertical (v1.1, ⚠ label `interpretation`):** wire capture ChatGPT search 08/2026 (Suganthan, **n=8 câu hỏi, 1 account, 1 location** — [[sources/chatgpt-new-search-language-suganthan]]): mỗi fan-out line mang field freshness window theo tốc độ stale của query — stock ~2 ngày · **news ~7 ngày** · **commercial/pricing research ~30 ngày** · earnings ~90 ngày. Hệ quả nếu đúng: pricing/comparison page không update trong 30 ngày = rơi ra ngoài default retrieval window của ChatGPT ở query so sánh → các page này cần **chu kỳ refresh THẬT theo tháng** (content change thật, không phải date-spoofing). Format ChatGPT đổi 3 lần từ 06/2026 — số cực dễ stale, refresh theo lint quý.
 
 ---
 
@@ -122,6 +125,6 @@ Chỉ áp cho candidate đã qua Gate 5 (decay thật), trừ 3 dòng cuối là
 - **Baseline VN:** toàn bộ ngưỡng đến từ site tiếng Anh — thu thập số hiệu chỉnh sau 2-3 quý chạy trên project GTV thật.
 - **GSC 16-month retention:** cần verify chính thức tại Google Search Console docs trước khi dựa cứng vào YoY ở Path B.
 - **Ngưỡng swap cannibalization bằng số** (≥3 lần/8 tuần): GTV convention — SEO Sherpa chỉ mô tả pattern định tính.
-- **Traffic value trong T11:** clicks thô hay clicks × CPC-equivalent (Ahrefs traffic value)? — chờ Vincent chốt convention.
+- **Traffic value trong T11:** clicks thô hay clicks × CPC-equivalent (Ahrefs traffic value)? — chờ Lead chốt convention.
 - **Update Score decay curve** (update cũ có mất effect theo thời gian?): Open Question sẵn trong [[Update Score]] — ảnh hưởng tần suất refresh tối ưu.
-- **Ngưỡng engagement polarity** (CTR<1% position 1-10, bounce>80%): proposed của Vincent trong [[Historical Data]], chưa validate.
+- **Ngưỡng engagement polarity** (CTR<1% position 1-10, bounce>80%): đề xuất nội bộ trong [[Historical Data]], chưa validate.

@@ -11,15 +11,15 @@
 ## 2. Chạy một lần đo
 
 ```bash
-python3 -I skills/geo-answer-lab/scripts/collect.py --prompts <W>/prompts.tsv --out <W>/raw.jsonl --runs 3 --budget 8
-python3 -I skills/geo-answer-lab/scripts/prepare.py --raw <W>/raw.jsonl --prompts <W>/prompts.tsv \
+python3 -I "skills/geo-answer-lab/scripts/collect.py" --prompts <W>/prompts.tsv --out <W>/raw.jsonl --runs 3 --budget 8
+python3 -I "skills/geo-answer-lab/scripts/prepare.py" --raw <W>/raw.jsonl --prompts <W>/prompts.tsv \
   --brands <W>/brands.json --out-dir <W>
 python3 -I skills/geo-tracking-prompt-selection/scripts/geo_kpi.py kpi --raw <W>/raw.jsonl --det <W>/det.jsonl \
   --citations <W>/citations.jsonl --prompts <W>/prompts.tsv --brands <W>/brands.json --out-dir <W>/kpi
 ```
 
 - Nếu `collect.py` báo lượt lỗi (`http_429`, timeout), chạy lại cùng lệnh. Script bỏ qua lượt đã có `ok=true`.
-- Đặt `--budget` theo số lượt. `collect.py` mặc định dừng ở 5 USD. Bộ 30 prompt × 3 engine × 3 lượt của site mẫu 18/10 tốn 6,6 USD: ChatGPT 4,1 USD, Gemini 2,0 USD, Perplexity 0,5 USD.
+- Đặt `--budget` theo số lượt. `collect.py` mặc định dừng ở 5 USD. Bộ 30 prompt × 3 engine × 3 lượt của site agency mẫu 18/10 tốn 6,6 USD (`Deliverables/GTV-Brand/GTV-Website/semantic-network-2026-10/v2/evidence/geo/`): ChatGPT 4,1 USD, Gemini 2,0 USD, Perplexity 0,5 USD.
 - `geo_kpi.py kpi` ghi `kpi/kpi.json` và `kpi/by_prompt.tsv`. Mỗi engine có các số sau:
   - Tỷ lệ nhắc brand, tỷ lệ nhắc ở BOFU, tỷ lệ trích domain, SoV. Mẫu số là câu trả lời hợp lệ của prompt không mang tên brand.
   - Số câu trả lời lỗi và model thật đã trả lời (`models_served`).
@@ -72,7 +72,7 @@ python3 -I skills/geo-tracking-prompt-selection/scripts/geo_kpi.py compare --bas
   - Prompt đổi chữ: script bỏ prompt đó khỏi phép so.
 - Prompt đổi từ 2/3 lượt trở lên: đọc câu trả lời gốc của các prompt này trước khi viết nhận định.
 
-Thử A/A trên site mẫu 18/10, cùng ngày, không có thay đổi thật:
+Thử A/A trên mốc site agency mẫu 18/10, cùng ngày, không có thay đổi thật:
 
 - Nếu dùng chênh giữa các lượt làm nhiễu, script báo sai "tăng" hoặc "giảm" ở 6/9 ô.
 - Bootstrap ghi "trong nhiễu" ở 35/36 ô. Ô còn lại sát biên (cận trên −0,4 điểm).

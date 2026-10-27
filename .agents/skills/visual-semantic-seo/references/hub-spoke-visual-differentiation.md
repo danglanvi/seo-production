@@ -295,7 +295,7 @@ Note: morethanpanel actually beefs up FAQ on spoke (6 tabs) because conversion-f
 
 ### TAG Course Platform
 
-**Hub (`theaigrowth.io/`):**
+**Hub (trang chủ, ví dụ site khoá học mẫu):**
 - Hero with intro video, 4 course cards
 - Trust badges + press
 - 3 centerpieces (Brand intro + Course catalog + Mentorship offering)

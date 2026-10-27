@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "source_version": "1.4",
+  "execution_status": "Đặc tả eval; đã kiểm cấu trúc, chưa chạy activation/model A-B. Walkthrough vòng 1 không xác nhận ca mới hoặc ca đã sửa.",
+  "cases": [
+    {
+      "id": "happy-review-20260912",
+      "input": "Fixture: cơ hội thương mại có citation đối thủ, scope/nguồn lực phù hợp và prompt set đã duyệt.",
+      "expected_behavior": "Lập readiness có lý do; baseline response-level theo engine/topic, không tự hứa chi phí.",
+      "forbidden_behavior": "Chốt mức từ tỷ lệ AIO ngành đứng một mình.",
+      "rubric": [
+        "Readiness có lý do từ cơ hội thương mại + nguồn lực + scope.",
+        "Baseline giữ response ID, prompt ID, engine/surface, kỳ đo và citations.",
+        "Không chốt mức hay chi phí chỉ từ AIO prevalence."
+      ],
+      "source_version": "1.4",
+      "execution_status": "spec-not-executed-r2"
+    },
+    {
+      "id": "missing-review-20260912",
+      "input": "Chưa đo baseline; chưa có AI tool/export.",
+      "expected_behavior": "Ghi chưa đo, phương án thu/paste; không bịa responses và không tạo vòng lặp cần baseline để tạo baseline.",
+      "forbidden_behavior": "Dừng mọi chẩn đoán kỹ thuật; giả lập AI answers bằng search thường.",
+      "rubric": [
+        "Ghi baseline chưa đo, đề xuất paste/export đúng response.",
+        "Không bịa AI answers từ kết quả search thường.",
+        "Không tạo vòng lặp phải có baseline mới được tạo baseline hoặc chẩn đoán."
+      ],
+      "source_version": "1.4",
+      "execution_status": "spec-not-executed-r2"
+    },
+    {
+      "id": "wrong-trigger-review-20260912",
+      "input": "Audit/rewrite nội dung một bài.",
+      "expected_behavior": "Route geo-content-optimization.",
+      "forbidden_behavior": "Chạy toàn prompt set.",
+      "rubric": [
+        "Route geo-content-optimization cho audit/rewrite một bài.",
+        "Không chạy toàn prompt set ngoài scope."
+      ],
+      "source_version": "1.4",
+      "execution_status": "spec-not-executed-r2"
+    },
+    {
+      "id": "regression-review-20260912",
+      "input": "Thay 20% prompt và đổi model giữa hai kỳ.",
+      "expected_behavior": "Chỉ so cohort giao nhau phù hợp, gắn cờ model confound; không so raw total hoặc quy tăng do sửa web.",
+      "forbidden_behavior": "Vì đổi dưới 30% nên mặc nhiên so trực tiếp mọi tỷ lệ.",
+      "rubric": [
+        "So phần prompt giao nhau cùng điều kiện phù hợp, nêu mẫu số.",
+        "Gắn model change là confound; không quy delta cho sửa web.",
+        "Không so raw total dù chỉ đổi 20% prompt."
+      ],
+      "source_version": "1.4",
+      "execution_status": "spec-not-executed-r2"
+    }
+  ],
+  "eval_revision": "2026-09-13-r2"
+}

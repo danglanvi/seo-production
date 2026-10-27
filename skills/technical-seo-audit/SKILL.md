@@ -2,7 +2,7 @@
 name: technical-seo-audit
 description: "Audit technical SEO tầng SITE theo bộ audit nội bộ GTV/TAG (crawl, PageSpeed, DataForSEO): index, crawl, redirect, CWV, crawl budget. Use when: 'audit technical [domain]', 'kiểm tra technical SEO [site]', 'site không được index / crawl chậm', 'check Core Web Vitals'."
 metadata:
-  version: "1.10"
+  version: "1.10.1"
 ---
 
 # Technical SEO Audit
@@ -356,6 +356,7 @@ Bản tốt nhất phải có:
 
 ## Changelog
 
+- **v1.10.1 (2026-10-27):** hợp nhất bản root 27/10/2026: không có mục mới cần lấy về. Bản này giữ 3 hàng định tuyến `wp-pagespeed`, `wp-security-hardening`, `wp-content-review-apply`. Hàng định tuyến sang skill GEO kỹ thuật của bản root không vào bản này, vì repo không có skill đó.
 - **v1.10 (2026-10-27):** mục mới "Chọn skill theo triệu chứng": 11 triệu chứng → cách đo → skill bắt đầu (đề xuất T2 của đợt rà phiên tốc độ và crawl 26–27/10, người duyệt chốt 27/10). `evals/cases.yaml` 4 ca định tuyến.
 - **v1.9.1 (2026-10-26):** bảng Phân vai thêm `cdn-speed-setup`; khu vực 1 ghi giới hạn RTT của origin ở VN hoặc châu Á với Googlebot ở Mỹ (đợt CDN site VN 26/10/2026).
 - **v1.9 (2026-10-25, tech-1):** reference `index-chuyen-muc-rank-math.md` (option Rank Math, hàm theme tự noindex, bảng quyết định chuyên mục và phân trang, thử staging, schema tắt) và `gsc-ghi.md` (nộp sitemap bằng service account); script `index_probe.py`, `pagerank.py`, mu-plugin tạm `robots-public-test.php`, 11 test mới; luật URL sạch khi kiểm robots; bẫy SF headless trong `data-paths.md`; checklist 3.6 thêm ngoại lệ phân trang giả; chọn đích 301/410 trỏ sang `content-inventory-audit`.

@@ -71,7 +71,7 @@ Không sửa link lẻ trong một bài chỉ để đổi dạng mã. Tác đ�
 
 ## 6. Kiểm hàng loạt
 
-Phân việc model: Jev gắn mục đích của phần tử bấm được (rubric `link-purpose` cho link nội bộ, `link-external` cho link ngoài). Mã tất định gắn vùng, trạng thái index và loại trang đích. Claude áp bảng mục 2 và đọc lại dòng cần đọc. Không dùng EmbeddingGemma ở bước này, vì quyết định dựa trên vùng, mục đích và loại trang đích, không dựa trên độ giống nghĩa. Repo này chưa có rubric `link-purpose` và `link-external` trong `tools/ai-assist/tasks/`. Nếu thiếu rubric, Claude gắn mục đích từng phần tử theo mục 2 và ghi giới hạn trong output.
+Phân việc model: Jev gắn mục đích của phần tử bấm được (rubric `link-purpose` cho link nội bộ, `link-external` cho link ngoài). Mã tất định gắn vùng, trạng thái index và loại trang đích. Claude áp bảng mục 2 và đọc lại dòng cần đọc. Không dùng EmbeddingGemma ở bước này, vì quyết định dựa trên vùng, mục đích và loại trang đích, không dựa trên độ giống nghĩa. Hai rubric nằm ở `tools/ai-assist/tasks/link-purpose.json` và `tools/ai-assist/tasks/link-external.json`. Nếu thiếu key Jev, Claude gắn mục đích từng phần tử theo mục 2 và ghi giới hạn trong output.
 
 1. Kiểm kê mọi phần tử bấm được: vùng (header, mega menu, MC, SC, footer, popup), dạng mã hiện tại, đích, anchor. Gộp template lặp thành 1 dòng. Chạy `link_code_audit.py scan` trên HTML đã lưu, không kiểm kê tay ([scripts.md](scripts.md) §2).
 2. Gắn đặc điểm đích bằng mã: index hay noindex, trang tiền hay không (theo topical map), số link thật còn lại tới đích, có trong XML sitemap không. Script gắn index (`--noindex` hoặc meta robots), sitemap (`--sitemap`) và số link thật. Claude gắn trang tiền theo topical map.

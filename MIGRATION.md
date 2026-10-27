@@ -1,5 +1,5 @@
 ---
-master_version: v2026.10.36
+master_version: v2026.10.37
 ---
 
 # MIGRATION — Cập nhật instance lên version master mới
@@ -15,6 +15,24 @@ master_version: v2026.10.36
 ---
 
 ## 1. Có gì mới
+
+### v2026.10.37 (2026-10-27) — Repo này là bản gốc duy nhất của 29 skill; 4 skill GEO và báo cáo sinh từ master
+
+- **Vì sao:** 37 skill có 2 bản gốc (master và repo này) và lệch nhau, nên mỗi lần nâng cấp chỉ vào một bản. Người duyệt chốt 27/10: gộp 29 skill về repo này, 4 skill sinh từ master bằng công cụ, master thêm lint chặn skill hai bản.
+- **Gộp, giữ nguyên chức năng (19 skill):** backlink-plan, cro-audit, cro-measurement-plan, expert-case-study, okrs-gtv-tag-framework, semantic-html-optimization, site-migration-checklist, textlink-analyzer, traffic-plan, hreflang-planner, competitor-seo-gap-analysis, backlink-research, serp-clustering, image-seo-optimize, semantic-content-audit, seo-logfile-analysis. Riêng `local-seo-audit` 1.0.1, `map-pack-intelligence` 1.0.1, `schema-markup-generator` 1.0.3: dòng Output trỏ thư mục công đoạn theo ma trận M.
+- **Hợp nhất nội dung của master (10 skill):**
+  - `technical-seo-audit` 1.10.1: giữ 3 hàng định tuyến của repo này.
+  - `seo-onpage` 1.8: Bước 5b Region Completeness, `references/kyle-roof-philosophy.md`, câu URL ngắn ở P1.
+  - `internal-linking` 1.4.1: rubric Jev `link-purpose`, `link-external`, `evals/cases.yaml`.
+  - `keyword-topic-url-mapping` 1.3.2: verdict QDP 01/08/2026 trong `qdp-gate.md`.
+  - `visual-semantic-seo` 3.8.0: Phân việc model, Tự phản biện 7 mục; bỏ hệ số 3x/5x/10x và dẫn US7716225B1 cho chức năng trang (fact-fix); bảng patent chuyển sang `references/related-patents.md`.
+  - `content-refresh` 1.3: tín hiệu T15 (AI-cited + stale), T14b.
+  - `seo-drift-tracker` 1.3.0: `scripts/drift_tracker.py`, test, `references/cli.md`.
+  - `programmatic-seo-builder` 1.2: Bước 3b guardrail AI-era, G2 non-commodity test, Phân việc model, Tự phản biện.
+  - `topical-map-creation` 2.3: Phân việc model, Bước 0, Tự phản biện; mục GEO chuyển sang `references/geo-ai-search.md`.
+  - `geo-fanout-research` 1.2: khối chấm nhanh QDP.
+- **Sinh từ master bằng công cụ (4 skill, không sửa tay ở repo này):** `entity-seo-plan` 1.2.1, `geo-content-optimization` 1.5.1, `geo-tracking-prompt-selection` 1.6.1, `gtv-client-report` 1.4.2. Muốn sửa thì đề xuất sửa bản master theo `_REFERENCE/self-improving.md`.
+- **Port sang instance:** GHI ĐÈ các thư mục skill trên trong `skills/`. Không có bước nào chạm site hay dữ liệu dự án. Cập nhật frontmatter `master_version` thành `v2026.10.37`.
 
 ### v2026.10.36 (2026-10-27) — Nâng 7 skill tốc độ, crawl và bảo mật; thêm 4 skill điều phối, công cụ theo dõi workflow, sổ lượt gọi Jev
 

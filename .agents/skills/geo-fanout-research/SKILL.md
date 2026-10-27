@@ -2,7 +2,7 @@
 name: geo-fanout-research
 description: "Tách prompt AI search thành subquery theo 8 lens, gom ≤4 cluster, đo mức phủ từng subquery theo section bằng EmbeddingGemma và map cluster về page/heading. Dùng khi research fan-out GEO trước outline hoặc tìm gap cluster của một topic."
 metadata:
-  version: "1.1.1"
+  version: "1.2"
 ---
 
 # GEO Fan-out Research — sinh sub-query, gom cluster, map về page
@@ -20,7 +20,7 @@ Trả lời câu hỏi: **"Khi user hỏi AI câu Q, máy tách Q thành những
 | Outline/AM mới theo cluster (mỗi cluster ≥1 heading) | → `semantic-outline-methodology` v2.1 |
 | Gom keyword thành topic/URL theo SERP overlap (Google ranking) | → `serp-clustering` / `keyword-topic-url-mapping` — khác bản chất: skill này gom **câu hỏi con của AI**, không gom keyword theo SERP |
 | Chọn prompt set tracking, đo citation share | → `geo-tracking-prompt-selection` |
-| Quyết định page/heading/sentence cho gap | → rubric QDP `keyword-topic-url-mapping/references/qdp-gate.md` (skill này chỉ đề xuất mức, không quyết) |
+| Quyết định page/heading/sentence cho gap | → rubric QDP đầy đủ ở `keyword-topic-url-mapping/references/qdp-gate.md` (skill này chỉ đề xuất mức bằng bản chấm nhanh ở Bước 4, không quyết) |
 
 ## Phân việc model
 
@@ -80,7 +80,9 @@ Với mỗi query sinh sub-query theo 8 lens ([references/fanout-lenses.md](refe
 | … | URL hoặc "chưa có" | H2/H3 + mức khớp (khớp/gần/lệch) | ✅/❌ (câu đầu = answer, không hồi chỉ) | từ Bước 4a, hoặc "chưa đo" | COVERED / GAP-HEADING / GAP-PAGE |
 
 - GAP-HEADING: page đúng nhưng thiếu heading → đề xuất heading (K2Q) + Subordinate Text.
-- GAP-PAGE: không page nào → đề xuất mức theo QDP (page / heading / sentence — rubric `qdp-gate.md`; skill chỉ đề xuất).
+- GAP-PAGE: không page nào → đề xuất mức theo QDP (page / heading / sentence); skill chỉ đề xuất, không quyết.
+  - Chấm nhanh 4 tiêu chí: có demand thật (volume/impression, hoặc allintitle khi tool = 0) · entity khác biệt so với cluster đang có · similarity thấp theo trọng số term (proxy: SERP overlap dưới ngưỡng gộp) · thuộc query template lặp. ≥3/4 → page riêng; contextual domain thật nhưng thiếu demand riêng → heading trong page cha; attribute phụ → một câu; query dạng dữ liệu lặp → một component (bảng/list/calculator) trả lời cả family.
+  - Rubric đầy đủ: `skills/keyword-topic-url-mapping/references/qdp-gate.md`. Bản chấm nhanh ở trên đủ để chạy skill này.
 - Title/meta/slug của page phụ trách có chứa từ vựng cluster không (AX7 — cổng lọc title+meta+URL)?
 
 ### Bước 4a — Đo mức phủ từng subquery theo section (Gemma)
@@ -91,14 +93,14 @@ Với mỗi query sinh sub-query theo 8 lens ([references/fanout-lenses.md](refe
 3. Chạy `~/.venvs/embeddinggemma/bin/python -B -I $S cover --store <store> --subq <W>/subq.jsonl --pools <W>/pools.jsonl --out <W>/cover.jsonl --detail <W>/detail.jsonl`.
 4. So `mean_best` của trang mình với trang khác trong cùng pool. Nếu trang mình đứng dưới trang được AI trích, xếp prompt đó lên đầu danh sách gap.
 5. Chạy `python3 -B -I $S gaps --detail <W>/detail.jsonl --query-id <prompt> --url <URL trang mình> --out <W>/gaps_<prompt>.md`.
-6. Đọc ngưỡng phủ (rubric `geo-fanout-coverage`) theo thứ tự: registry của site (`00-client-context/model-calibration.json`) → `tools/ai-assist/calibration-defaults.json`. Nếu chưa có ngưỡng, không truyền `--cover-at`.
+6. Đọc ngưỡng phủ (rubric `geo-fanout-coverage`) theo thứ tự: registry của site (`00-client-context/model-calibration.json` của instance) → `tools/ai-assist/calibration-defaults.json`. Nếu chưa có ngưỡng, không truyền `--cover-at`.
 7. Đọc section thắng của subquery cos thấp nhất trước. Claude ra verdict COVERED hoặc GAP cho từng subquery, rồi gộp lên cluster ở bảng Bước 4.
 
 ### Bước 5 — AIO counter-positioning seed (khi có `$AI_ANSWERS`)
 Facts AI đang nêu + nguồn được cite → facts **bỏ sót** mà nguồn đáng tin có → danh sách "fact cần cover + nguồn + năm" (GE-27) + format AI ưa (định nghĩa đầu, list có cấu trúc, bảng) → chuyển cho outline/AM hoặc `geo-content-optimization` Bước 4.
 
 ### Bước 6 — Output + bàn giao
-File: `<project>_Fanout-Cluster-Map_<topic>_v1.md` → tài liệu nội bộ «<project>» (ngoài repo, hỏi Lead/Vincent) (hoặc `05-content-plan/` trong SEO Production; `03-research/` trong Content Production).
+File: `<project>_Fanout-Cluster-Map_<topic>_v1.md` → `05-content-plan/` của instance. Repo Content Production lưu ở `03-research/`.
 
 ```markdown
 # Fan-out Cluster Map — <topic>
@@ -117,7 +119,7 @@ File: `<project>_Fanout-Cluster-Map_<topic>_v1.md` → tài liệu nội bộ «
 Template đầy đủ + cách chấm ổn định: [references/cluster-map-template.md](references/cluster-map-template.md).
 
 ### Tự phản biện trước khi trình
-Chấm bản nháp theo checklist "Bản tốt nhất phải có". Mục chưa đạt thì sửa, hoặc ghi lý do bỏ. Nếu có output của Codex hay agent khác cho cùng việc, so từng mục và lấy phần tốt hơn trước khi trình Vincent.
+Chấm bản nháp theo checklist "Bản tốt nhất phải có". Mục chưa đạt thì sửa, hoặc ghi lý do bỏ. Nếu có output của Codex hay agent khác cho cùng việc, so từng mục và lấy phần tốt hơn trước khi trình Lead.
 
 Bản tốt nhất phải có:
 - [ ] Verdict COVERED hoặc GAP của từng subquery do Claude đọc section, không do một ngưỡng cos. Nguồn lỗi: hiệu chuẩn 19/10/2026, cặp subquery × trang không có ngưỡng nhận nào đạt precision 0,95 so với trích dẫn AI thật.
@@ -152,6 +154,7 @@ Bản tốt nhất phải có:
 
 ## Changelog
 
+- **v1.2 (2026-10-27):** hợp nhất bản root 27/10/2026: lấy về khối chấm nhanh QDP 4 tiêu chí ở Bước 4 (GAP-PAGE) và dòng Phân vai trỏ tới bản chấm nhanh. Giữ `scripts/fanout_cover.py`, `tests/` và đường dẫn của SP. Bỏ dòng "Bằng chứng" trỏ ra ngoài repo ở `references/muc-phu-gemma.md`.
 - **v1.1.1 (2026-10-19):** đổi tên mục "## Workflow" thành "## Quy trình" để lệnh kiểm cấu trúc thấy Bước 0 đúng chỗ.
 - **v1.1 (2026-10-19):** Bước 0 kiểm tool. Bước 4a đo mức phủ từng subquery theo section bằng EmbeddingGemma (`scripts/fanout_cover.py`, `references/muc-phu-gemma.md`): `mean_best` có tín hiệu trong top 10 (AUC 0,674 dev, 0,683 holdout), không có ngưỡng phủ tuyệt đối nên Claude ra verdict. Thêm phân việc model, tự phản biện, test offline `tests/test_fanout_cover.py`.
-- **v1.0 (2026-08-29):** khởi tạo (Vincent chốt Q5 29/08 — skill riêng, `seo-research` gọi). 6 bước: gate → seed 8 lens → evidence PAA/related/AI answer (≥3 lần chạy, stable/volatile) → gom cluster ≤4 → map page/heading/passage (COVERED / GAP-HEADING / GAP-PAGE + AX7) → AIO counter-positioning seed → bàn giao. Nguồn: Batch 40 wiki (cluster ≤4 / 27% ổn định), Indig 815k pairs, Nectiv 28k fan-out, McSweeney pipeline (≈), FINDINGS 22/08/2026 §2.2.
+- **v1.0 (2026-08-29):** khởi tạo (Lead chốt Q5 29/08 — skill riêng, `seo-research` gọi). 6 bước: gate → seed 8 lens → evidence PAA/related/AI answer (≥3 lần chạy, stable/volatile) → gom cluster ≤4 → map page/heading/passage (COVERED / GAP-HEADING / GAP-PAGE + AX7) → AIO counter-positioning seed → bàn giao. Nguồn: Batch 40 wiki (cluster ≤4 / 27% ổn định), Indig 815k pairs, Nectiv 28k fan-out, McSweeney pipeline (≈), FINDINGS 22/08/2026 §2.2.

@@ -2,7 +2,7 @@
 name: seo-drift-tracker
 description: "Chụp và so 9 thành phần SEO của từng URL sau deploy (title, meta, canonical, robots, H1, hreflang, schema, status, link nội bộ); Jev phân loại diff chữ đáng kể hay vô hại. Dùng khi chụp baseline SEO, so sánh sau deploy, hỏi element đổi từ bao giờ."
 metadata:
-  version: "1.1.1"
+  version: "1.3.0"
 ---
 
 # SEO Drift Tracker
@@ -52,7 +52,7 @@ metadata:
 
 | Tier | Điều kiện | Store |
 |---|---|---|
-| **A — SQLite** | Chạy được Python | `scripts/drift_tracker.py` (viết 1 lần vào skill folder, tái dùng) → `05-tracking/drift/<client>.sqlite`: bảng `snapshots(id, ts, label)` + `elements(snapshot_id, url, element, value)` — history đầy đủ, diff bằng SQL |
+| **A — SQLite** | Chạy được Python | `scripts/drift_tracker.py` (đã đóng gói, stdlib) → `05-tracking/drift/<client>.sqlite`: bảng `snapshots` + `pages` chứa 9 element, phương pháp fetch và trạng thái lỗi — lịch sử bất biến qua CLI. Lệnh: `references/cli.md` |
 | **B — CSV** | Không SQLite nhưng có shell | Mỗi snapshot 1 file `05-tracking/drift/<client>/<ts>_<label>.csv` (url, element, value) — diff bằng script so 2 file; history = so nhiều file |
 | **C — Markdown** | Không chạy được script | Bảng markdown baseline trong repo client (`05-tracking/drift/<client>-baseline.md`), URL × 9 elements; compare = fetch tay từng URL + so mắt với bảng — chỉ khả thi ≤ ~20 URL, ghi rõ giới hạn |
 
@@ -76,15 +76,17 @@ Chạy "python3 tools/capabilities.py check --need 'python3,curl?,jev?'" từ ro
 ### Bước 0b — Đọc references + xác định tier & scope
 
 1. Xác định `$CLIENT` → store path trong SEO Production instance (`05-tracking/drift/`; instance không có folder → tạo). Kiểm tra store đã tồn tại chưa: `compare`/`history` mà CHƯA có baseline → dừng, báo user chạy `baseline` trước — không có gì để so, không bịa baseline.
-2. Xác định storage tier (A/B/C) theo môi trường. Đọc bảng severity dưới trước khi diff.
+2. Xác định storage tier (A/B/C) theo môi trường. Nếu dùng tier A, đọc `references/cli.md` rồi chạy script đóng gói. Không viết lại script mỗi phiên. Đọc bảng severity dưới trước khi diff.
 3. `baseline`: xác nhận `$URL_LIST` = bộ URL cam kết + đại diện template. >200 URL → báo thời gian fetch ước tính + đề xuất rate limit (1-2 req/s — bài học shared hosting VN chặn crawler nhanh, technical-seo-audit v1.2) → **chờ user xác nhận** rồi mới fetch.
 4. Snapshot nào cũng gắn `$LABEL` + timestamp — snapshot không nhãn sau 3 tháng không ai hiểu chụp lúc nào, vì sao.
 
 ### Bước 1 — Fetch & snapshot
 
 1. Fetch từng URL trong `$URL_LIST` (rate limit lịch sự), extract 9 elements theo bảng Input.
-2. Fetch lỗi (timeout, 5xx thoáng qua) → retry 1 lần; vẫn lỗi → ghi element = `FETCH_ERROR`, KHÔNG ghi giá trị rỗng (rỗng sẽ diff giả thành "element bị xóa" ở lần compare).
-3. Ghi vào store theo tier + in tóm tắt: n URL chụp OK / n lỗi / label / snapshot id.
+2. Fetch lỗi (timeout, lỗi mạng, 5xx thoáng qua) → retry 1 lần; vẫn lỗi → ghi element = `FETCH_ERROR`, KHÔNG ghi giá trị rỗng (rỗng sẽ diff giả thành "element bị xóa" ở lần compare).
+3. HTTP 4xx/5xx còn response: giữ HTTP status để so. Đánh dấu phần HTML của trang đó là không so được.
+4. JSON-LD hỏng: đánh dấu schema là không so được. Cách này tránh diff giả "schema bị xóa".
+5. Ghi vào store theo tier + in tóm tắt: n URL chụp OK / n lỗi / label / snapshot id.
 
 ### Bước 2 — Compare (chỉ `$MODE = compare`)
 
@@ -105,7 +107,7 @@ Chạy "python3 tools/capabilities.py check --need 'python3,curl?,jev?'" từ ro
    - Chạy `prepare --diffs <W>/diffs.jsonl --out-dir <W>`. Code chốt ca rõ; phần còn lại vào `<W>/jev_in.jsonl`.
    - Chạy `python3 -B -I tools/ai-assist/jev.py --task skills/seo-drift-tracker/tasks/diff-impact.json --in <W>/jev_in.jsonl --out <W>/jev_out.jsonl --budget 0.05`. 67 diff tốn 0,0016 USD.
    - Chạy `report --diffs <W>/diffs.jsonl --jev-out <W>/jev_out.jsonl --registry 00-client-context/model-calibration.json --site <domain> --out-dir <W>`.
-   - Site mới hoặc rubric đổi version: gán gold mù ≥ 40 diff trước lượt Jev đầu, rồi hiệu chuẩn bằng skill `model-calibration`: `calibrate.py jev --question significant --positive yes`. Chưa có ngưỡng thì Claude đọc mọi ca Jev.
+   - Site mới hoặc rubric đổi version: gán gold mù ≥ 40 diff trước lượt Jev đầu, rồi hiệu chuẩn bằng skill `model-calibration` (`skills/model-calibration/scripts/calibrate.py`): `calibrate.py jev --question significant --positive yes`. Chưa có ngưỡng thì Claude đọc mọi ca Jev.
    - Ghi nhãn vào cột "Mức đổi nghĩa" của bảng diff. Nhãn không đổi severity và không thay cột Chủ đích?.
 
 ### Bước 3 — History (chỉ `$MODE = history`)
@@ -119,7 +121,7 @@ Liệt kê chuỗi giá trị của 1 URL (hoặc 1 element across URLs) qua cá
 - Có ≥1 CRITICAL → mở đầu report bằng khối cảnh báo + khuyến nghị báo dev trong ngày (cửa sổ sửa trước khi Googlebot re-crawl + ghi đè signal là hữu hạn).
 
 ### Tự phản biện trước khi trình
-Chấm bản nháp theo checklist "Bản tốt nhất phải có". Mục chưa đạt thì sửa, hoặc ghi lý do bỏ. Nếu có output của Codex hay agent khác cho cùng việc, so từng mục và lấy phần tốt hơn trước khi trình Vincent.
+Chấm bản nháp theo checklist "Bản tốt nhất phải có". Mục chưa đạt thì sửa, hoặc ghi lý do bỏ. Nếu có output của Codex hay agent khác cho cùng việc, so từng mục và lấy phần tốt hơn trước khi trình người duyệt.
 
 Bản tốt nhất phải có:
 - [ ] Hai snapshot dùng cùng cách trích: H1 cùng dạng (chuỗi hoặc danh sách), cùng phương pháp fetch. Nguồn lỗi: 19/10 so snapshot 17/10 (H1 dạng danh sách) với store 19/10 (H1 dạng chuỗi) ra 327 diff H1 giả.
@@ -188,6 +190,7 @@ Bản tốt nhất phải có:
 
 ## Changelog
 
+- **v1.3.0 (2026-10-27):** hợp nhất bản root 27/10/2026: `scripts/drift_tracker.py` (CLI SQLite stdlib, snapshot bất biến, retry một lần, tách fetch error khỏi element rỗng), `tests/test_drift_tracker.py`, `references/cli.md`; tier A trỏ script đóng gói; Bước 1 tách luật 4xx/5xx và JSON-LD hỏng. Bản root đánh số 1.2/1.2.1 cho 2 mục 1.1/1.1.1 bên dưới.
 - **v1.1.1 (2026-10-19):** Bước 0 đổi `python3?` thành `python3`, vì script bắt buộc python3.
 - **v1.1 (2026-10-19):** thêm `scripts/diff_classify.py` và rubric Jev `tasks/diff-impact.json` 2026-10-19.1 phân loại diff chữ đáng kể hay vô hại; hiệu chuẩn 67 diff thật 15–19/10 (ngưỡng p ≥ 0,65, đúng 46/47). Thêm Bước 0, phân việc model, tự phản biện, cột Mức đổi nghĩa. Test `tests/test_diff_classify.py`.
 - **v1.0 (2026-07-19):** tạo mới — 9 elements cố định per URL, 3 mode baseline/compare/history, severity CRITICAL (canonical/robots/status) → HIGH (title/H1/hreflang/schema mất) → MEDIUM (meta desc); storage ladder SQLite → CSV → markdown; nhịp T2/T4/T7 + hằng tháng duy trì.

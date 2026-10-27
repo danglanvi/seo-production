@@ -47,7 +47,7 @@ Ranking evidence: sutliffstout.com homepage top 5-8 cụm "houston car accident 
 
 ## Marketplace PDP Patterns (NEW v3.3 — benchmark Amazon B0CZ3S7S3P, 07/2026)
 
-9 pattern verified từ 1 listing chuẩn UGC do Vincent chỉ định (Dgroositon rattan plug-in pendant — 4.5★/165, Amazon's Choice, "50+ bought in past month") qua Playwright capture desktop 1440px (15 slice) + mobile 390px (17 slice) + DOM facts extract, 10/07/2026. Evidence + 10 ảnh chú giải: tài liệu nội bộ «indochinalight_PDP-Review_v2» (ngoài repo, hỏi Lead/Vincent) mục 8. Phạm vi: pattern **thương mại/UGC cho PDP** — bổ sung cho khung PDP zone-weight của skill này và VN pattern #3.
+9 pattern verified từ 1 listing chuẩn UGC do Lead chỉ định (Dgroositon rattan plug-in pendant — 4.5★/165, Amazon's Choice, "50+ bought in past month") qua Playwright capture desktop 1440px (15 slice) + mobile 390px (17 slice) + DOM facts extract, 10/07/2026. Evidence + 10 ảnh chú giải: tài liệu nội bộ «indochinalight_PDP-Review_v2» (ngoài repo, hỏi Lead) mục 8. Phạm vi: pattern **thương mại/UGC cho PDP** — bổ sung cho khung PDP zone-weight của skill này và VN pattern #3.
 
 | # | Pattern | Rule |
 |---|---|---|
@@ -67,7 +67,7 @@ Ranking evidence: sutliffstout.com homepage top 5-8 cụm "houston car accident 
 
 ## Service Page Application Playbook (NEW v3.4 — dịch benchmark thương mại sang trang dịch vụ, 07/2026)
 
-Đúc từ 3 bộ benchmark đã verify của skill này sang **service page**: (a) case GTV **Minh Tuấn Mobile** — trang dịch vụ Thu Cũ + đối chiếu CPS/TGDĐ + báo cáo Koray Benchmark #5 (evidence: tài liệu nội bộ «MTM-iPhone-PLP-Review» (ngoài repo, hỏi Lead/Vincent) — file `MTM_Home_DienThoai_ThuCu_Feedback_v1.html`, `MTM_Koray_Benchmark_v1.html`); (b) **Koray live-sites** (module v3.2 — sutliffstout chính là service page YMYL rank top 5 cụm CPC ~$60); (c) **Amazon PDP** (module v3.3). Nguyên tắc dịch: **dịch vụ = sản phẩm vô hình** — mọi pattern thương mại đều có bản service nếu thay product attribute bằng service attribute (deliverable · SLA · timeline · người thực hiện · phạm vi · kết quả đo được). Đi cùng wiki [[Service Landing Page]] (1-2 RQ + 20-30 PQ, 3 layers Problem Awareness → Service Details → Decision) và references: `service-page-visual-template.md` · `trust-stacking-hierarchy.md` · `multi-tier-pricing-pattern.md` · `real-time-function-validators.md`.
+Đúc từ 3 bộ benchmark đã verify của skill này sang **service page**: (a) case GTV **Minh Tuấn Mobile** — trang dịch vụ Thu Cũ + đối chiếu CPS/TGDĐ + báo cáo Koray Benchmark #5 (evidence: tài liệu nội bộ «MTM-iPhone-PLP-Review» (ngoài repo, hỏi Lead) — file `MTM_Home_DienThoai_ThuCu_Feedback_v1.html`, `MTM_Koray_Benchmark_v1.html`); (b) **Koray live-sites** (module v3.2 — sutliffstout chính là service page YMYL rank top 5 cụm CPC ~$60); (c) **Amazon PDP** (module v3.3). Nguyên tắc dịch: **dịch vụ = sản phẩm vô hình** — mọi pattern thương mại đều có bản service nếu thay product attribute bằng service attribute (deliverable · SLA · timeline · người thực hiện · phạm vi · kết quả đo được). Đi cùng wiki [[Service Landing Page]] (1-2 RQ + 20-30 PQ, 3 layers Problem Awareness → Service Details → Decision) và references: `service-page-visual-template.md` · `trust-stacking-hierarchy.md` · `multi-tier-pricing-pattern.md` · `real-time-function-validators.md`.
 
 ### Bảng dịch pattern → service page
 
