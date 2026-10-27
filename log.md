@@ -496,3 +496,7 @@ Luật ghi:
 ## [2026-10-27] refactor | v2026.10.42 — Luật port giữ link fork của instance; trả chốt chặn GSC cho instance — @claude
 - MIGRATION 2.A thêm ngoại lệ dòng "Link fork:" của 05-content-plan/README.md. Instance gtvseo, theaigrowth nhận lại gsc-cannibal-pair.json bản master (có must_be_empty).
 - Files touched: MIGRATION.md, log.md
+
+## [2026-10-27] refactor | v2026.10.43 — Skill mới wp-host-optimize; nâng 5 skill web — @claude
+- Rà phiên sửa website 16–27/10. Thêm wp-host-optimize 1.0; nâng wp-security-hardening 1.9, wp-content-review-apply 1.7, wp-dang-bai 1.2.3, wp-xuat-ban-bai 1.0.3, semantic-html-optimization 1.2. _TEMPLATES/wp-server.md thêm mục 2b.
+- Files touched: skills/{wp-host-optimize,wp-security-hardening,wp-content-review-apply,wp-dang-bai,wp-xuat-ban-bai,semantic-html-optimization}/, _TEMPLATES/wp-server.md, .claude/skills/, .agents/skills/, MIGRATION.md, log.md

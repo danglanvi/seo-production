@@ -29,6 +29,8 @@ Script dùng file này: `md_to_html.py`, `kiem_bai.py`, `kiem_render.mjs`, `wp_p
 | `media.kb_do_hoa`, `media.kb_anh_chup` | không | Trần dung lượng (KB) cho đồ hoạ và ảnh chụp. Mặc định 80 và 140 | `media_plan.py`, `anh_chu_thich.py` |
 | `anh_dai_dien.engine` | có | Skill dựng ảnh đại diện của site | `anh-trong-bai/references/anh-dai-dien.md` |
 | `anh_dai_dien.brand` | không | Tham số `--brand` của engine | engine |
+| `cache.cdn_html` | không | `khong`: CDN không giữ HTML. `tu-purge`: site tự purge CDN khi bài đổi. `lead-purge`: CDN giữ HTML và chưa tự purge, nên sửa bài cũ xong phải nhờ SEO Leader purge URL. Mặc định `khong` | `wp_publish.py` (in dòng nhắc) |
+| `cache.ghi_chu` | không | TTL HTML ở edge, vùng khách đi qua CDN, ngày chốt | người đăng |
 
 ## Cách dựng profile cho site mới
 

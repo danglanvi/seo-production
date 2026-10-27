@@ -8,6 +8,11 @@
 2. Chạy thử `apply.php` với `DRY=1`. Lưu log JSON vào thư mục backup (`before_values.json`). Log này đủ để rollback từng trường.
 3. Đọc mọi dòng `skip`. Mỗi dòng phải có lý do đã hiểu trước khi ghi thật.
 4. Chạy `DRY=0`. Script sinh lại CSS Elementor của từng tài liệu vừa ghi, xoá cache sitemap Rank Math, xoá object cache, rồi mới purge cache trang (LiteSpeed, WP Rocket, W3 Total Cache hoặc WP Super Cache, theo plugin đang có). Với `PURGE=0`, người chạy purge theo URL sau khi script xong.
+4b. Đi hết tầng cache ngoài server theo mục "Tầng cache sau khi ghi" của `00-client-context/wp-server.md`:
+   - CDN giữ HTML mà site chưa tự purge: ghi path đã đổi vào `paths.txt`, chạy lệnh purge theo URL ghi trong hồ sơ. Với Bunny, lệnh là `python3 -I skills/wp-ucss/scripts/bunny_purge.py paths.txt --site <site.json> --apply --warm`. Không tự viết lệnh purge mới: purge Bunny có `exactPath` chỉ xoá bản desktop.
+   - Kiểm header giờ lưu của CDN (Bunny: `cdn-cachedat`, giờ UTC) mới hơn giờ purge ở cả bản desktop và mobile. Script trả mã khác 0 thì đọc log trước khi chạy lô sau. Lệch giờ lưu mà HTML ở edge đã có chữ mới thì ghi cảnh báo, không chặn lô (đợt semantic HTML site mẫu GTV 27/10: 2/10 URL lệch giờ lưu, HTML vẫn đúng).
+   - Site có CSS gọn theo path (`wp-ucss`): thay đổi thêm thẻ, class hoặc đổi cấp heading có thể làm CSS gọn thiếu rule. Ghi danh sách path vào mục regen của hồ sơ và chạy lệnh regen cho đúng các path đó. Lane khác đang giữ khoá CSS gọn thì ghi path vào file phối hợp, không tự regen.
+   - Truyền đường dẫn tuyệt đối cho file danh sách path. Chuỗi lệnh chạy nền đổi thư mục làm việc nên đường dẫn tương đối hỏng (đợt semantic HTML 27/10: chuỗi dừng ở bước CDN).
 5. Làm nóng các URL vừa purge theo `wp-pagespeed` (`references/checklist-theo-lop.md` lớp 1): header Chrome thật có `image/webp`, cả desktop lẫn mobile, thêm bản plain cho bot.
 6. Chạy `verify.py`. Sửa hoặc ghi lý do cho từng dòng lệch.
 7. Chạy `python3 -I skills/wp-pagespeed/scripts/cache_variants.py <url sạch> ...` cho URL đã ghi. Robots và canonical phải giống nhau ở 5 biến thể cache.

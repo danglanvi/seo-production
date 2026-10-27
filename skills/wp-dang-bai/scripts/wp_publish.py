@@ -309,6 +309,9 @@ def push(a):
         print(f'LOI: {j["link"]} trả HTTP {code}. Bài đã publish nhưng URL chưa mở được. Xem wp-xuat-ban-bai/references/kiem-sau-dang.md mục 2.')
         sys.exit(1)
     print(f'URL trả 200: {j["link"]}')
+    # CDN giữ HTML ở edge mà site chưa tự purge khi bài đổi: khách ngoài vùng origin nhận bản cũ tới hết TTL (site agency mẫu 27/10/2026: 1 ngày).
+    if pid and (prof.get('cache') or {}).get('cdn_html') == 'lead-purge':
+        print(f'Nhắc: CDN của site giữ HTML và chưa tự xoá khi bài đổi. Gửi SEO Leader URL {j["link"]} để purge CDN.')
 
 
 def trash(a):

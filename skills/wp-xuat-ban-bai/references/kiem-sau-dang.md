@@ -38,6 +38,7 @@ node skills/wp-xuat-ban-bai/scripts/kiem_render.mjs --url <URL bài> --profile <
   Không có quyền server: mở bài trong wp-admin và bấm Cập nhật một lần. Ca thật 27/10/2026, site mẫu GTV.
 - Kiểm `url_to_postid("<URL bài>")` trả đúng ID bài. Ảnh tải lên trùng slug với bài làm URL trỏ sang trang của ảnh. Từ bản 1.2.1, `wp_publish.py` đổi tên ảnh đại diện trùng slug thành `<slug>-anh-dai-dien`.
 - Script báo LOI khi thiếu doc-kit (class `.doc-kit`, rule CSS `.doc-kit`, khối bấm chạy được), tràn ngang, ảnh hỏng, khối bấm không chạy. Plugin cache gộp CSS, JS thành file mới, nên script không tìm theo tên file.
+- Sửa bài đã publish trên site có `cache.cdn_html` bằng `lead-purge`: máy ở cùng vùng origin thấy bản mới, còn khách đi qua CDN (ví dụ Googlebot ở Mỹ) vẫn nhận bản cũ tới hết TTL. Gửi URL cho SEO Leader purge. Người có quyền server purge theo `wp-content-review-apply` Bước 6 mục "Tầng cache", rồi kiểm header giờ lưu của CDN mới hơn giờ purge.
 - Mở `desktop.png` và `mobile.png`.
 - Xem nguồn trang: một thẻ `<title>`, một `meta description`, `canonical` trỏ về chính URL, schema Article của plugin SEO.
 

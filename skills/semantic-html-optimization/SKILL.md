@@ -1,8 +1,8 @@
 ---
 name: semantic-html-optimization
-description: "Semantic HTML optimization for SEO and AI/LLM discoverability. Use when (1) Creating HTML templates for service pages or landing pages, (2) Auditing HTML structure of websites, (3) Making HTML machine-readable so AI engines parse chunk boundaries correctly — retrieval hygiene."
+description: "Semantic HTML cho SEO và AI: dựng template trang dịch vụ, landing; audit cấu trúc HTML theo mẫu template; sửa trên site WordPress đang chạy (main, article, aside, time, heading giả, b/i). Dùng khi tạo template, audit HTML hoặc sửa semantic HTML hàng loạt."
 metadata:
-  version: "1.1"
+  version: "1.2"
 ---
 
 # Semantic HTML Optimization
@@ -37,6 +37,7 @@ Skill này cung cấp kiến thức về tối ưu Semantic HTML cho SEO và AI 
 3. Tối ưu HTML cho AI/LLM citations
 4. Hướng dẫn heading hierarchy chuẩn
 5. Xác định khi nào dùng `<article>` vs `<section>`
+6. Sửa semantic HTML trên site WordPress đang chạy: theme và heading giả trong bài (`references/ap-site-wordpress.md`)
 
 ## Core Principles
 
@@ -192,6 +193,7 @@ For detailed implementation guides, see:
 - `references/semantic-elements-guide.md` - Chi tiết từng element
 - `references/heading-hierarchy.md` - Hướng dẫn heading structure
 - `references/ai-optimization.md` - Tối ưu cho LLM citations
+- `references/ap-site-wordpress.md` - Audit theo mẫu template, sửa theme, heading giả trong bài, cache sau khi ghi, phối hợp lane
 
 ## Quy trình
 
@@ -199,6 +201,36 @@ For detailed implementation guides, see:
 Chạy "python3 tools/capabilities.py check --need 'curl,firecrawl?'" từ root repo. Nếu thiếu tool bắt buộc, dừng và báo tên tool. Nếu thiếu tool tuỳ chọn, dùng fallback ghi trong "tools/capabilities.md".
 
 Sau đó rà theo mục Checklist bên dưới.
+
+### Nhánh site WordPress đang chạy
+
+Dùng khi sửa trên site có quyền server. Đọc `references/ap-site-wordpress.md` trước lệnh đầu tiên.
+
+1. Audit chỉ đọc: `python3 -I skills/semantic-html-optimization/scripts/semantic_audit.py --base https://<domain> chon.tsv <thư mục html> audit_truoc.csv`.
+2. Tìm gốc lỗi trong template, đưa câu cần quyết lên trang duyệt.
+3. Sửa theme qua staging (`wp-staging-deploy`), đo trước và sau ở 1366 px và 390 px.
+4. Heading giả: quét sau `wpautop` bằng `scripts/scan_heading_gia.php`, Jev `semantic-role`, ghi bằng `wp-content-review-apply`.
+5. Sau khi ghi: tầng cache, regen CSS gọn cho path đổi DOM, đo lại bằng `semantic_audit.py`.
+
+### Phân việc model
+
+| Model | Việc | Quyết định |
+|---|---|---|
+| Code | `semantic_audit.py`, `scan_heading_gia.php`, đếm nhảy cấp, so trước và sau | Dùng. Mọi số đếm lấy từ script |
+| Jev | Task `semantic-role`: đoạn chữ đậm đứng riêng là heading, bước, câu dẫn hay nhãn bảng. Task `ui-visual` so ảnh trước và sau | Dùng. Gán nhãn tay 20 mẫu trước khi xem điểm. Ngưỡng 0,7 và 0,3 ở `references/ap-site-wordpress.md` mục 3 |
+| EmbeddingGemma 2 | Gom chữ đậm lặp giữa các bài | Không dùng. Đếm chữ trùng nguyên văn đủ để tách phần layout |
+| Claude | Đọc đoạn Jev cho 0,3–0,69, chọn cấp heading, quyết luật giữ, đọc ảnh Jev gắn cờ | Dùng |
+
+### Tự phản biện trước khi trình
+
+Chấm plan sửa và lô ops theo checklist dưới. Mục chưa đạt thì sửa, hoặc ghi lý do bỏ.
+
+Bản tốt nhất phải có:
+- [ ] Gốc lỗi nằm ở template thì sửa template, không sửa từng trang. Nguồn lỗi: audit đầu 27/10/2026 đề xuất sửa theo trang, agent kiểm lại thấy 20 file theme phủ cả site.
+- [ ] Heading giả quét sau `wpautop`, không quét chuỗi thô. Nguồn lỗi: lần quét đầu sót 142 đoạn ở 48 bài.
+- [ ] Rubric Jev có 20 mẫu gán tay trước khi xem điểm, và đoạn 0,3–0,69 có Claude đọc. Nguồn lỗi: người duyệt nhắc dùng Jev cho audit, 27/10/2026 17:13.
+- [ ] Shim CSS đo trên staging trước khi phát hành, 0 phần tử lệch quá 1 px. Nguồn lỗi: shim bản đề xuất đổi chữ đậm 800 thành 700 và lệch chiều cao 15–35 px.
+- [ ] Danh sách path đổi DOM đã gửi cho bước regen CSS gọn và purge CDN. Nguồn lỗi: đợt 27/10/2026 phải phối hợp tay với lane tốc độ, chuỗi ghi dừng ở bước CDN.
 
 ## Checklist
 
@@ -268,7 +300,7 @@ Patent US12393768B2 (LAMPRET, granted 08/2025) cho các rule cấu trúc một c
 
 ## Tabs vs Accordion vs Nội dung ẩn (Mobile-first) — 09/07/2026 (rev 2)
 
-Fact-check myth "Google đọc accordion nhưng không đọc tab" / "`display:none` bị bỏ qua" (phát sinh khi review CareerViet + audit Rowabi/Indochinalight PDP). **Tách 2 TRỤC độc lập — gộp chúng là gốc rễ mọi hiểu nhầm:**
+Fact-check myth "Google đọc accordion nhưng không đọc tab" / "`display:none` bị bỏ qua" (phát sinh khi review site khách mẫu và audit 2 trang sản phẩm thương mại điện tử, 07/2026). **Tách 2 TRỤC độc lập — gộp chúng là gốc rễ mọi hiểu nhầm:**
 
 **TRỤC 1 — Có được INDEX không?** → quyết định bởi *nội dung có nằm trong DOM đã render không*, KHÔNG bởi tab-hay-accordion.
 - Nằm sẵn trong HTML/DOM (kể cả `display:none`) → **index đủ, full weight**. Nguồn: Illyes 2016 *"content hidden for UX should have full weight"*; Google MFI Best Practices *khuyến nghị* "moving content into accordions or tabs to save space"; Google nhiều lần: `display:none` trong tab/accordion **không bị phạt** ở mobile-first; Mueller đính chính "myth of hidden tab content" (SEJ).
@@ -329,5 +361,6 @@ Verified qua crawl HTML thô 9 URL (mobile UA) + đối chiếu ranking Ahrefs:
 
 ## Changelog
 
+- **v1.2 (2026-10-27):** nhánh site WordPress đang chạy. `references/ap-site-wordpress.md`; `scripts/semantic_audit.py` (audit theo mẫu template, test 3 ca), `scripts/scan_heading_gia.php` (quét heading giả sau `wpautop`); Phân việc model với Jev `semantic-role`; Tự phản biện 5 mục. Description viết lại tiếng Việt. Nguồn: đợt semantic HTML site agency mẫu 27/10/2026 (95 URL audit, 17 file theme, 436 op trên 109 bài, verify lệch 0). Phần đề xuất `section`/`article` cho trang core và đổi `b`/`i` ở template chưa xong lúc ghi bản này.
 - **v1.1 (2026-08-29):** gỡ claim không nguồn "90% ChatGPT citations từ well-structured pages" (5 chỗ: SKILL.md ×3, `references/heading-hierarchy.md`, `references/ai-optimization.md`); tách Schema.org/FAQ schema ra khỏi danh sách "LLM ưu tiên cite" thành block **"Rich results / entity — KHÔNG phải citation lever"** trỏ `schema-markup-generator` (causal DiD Ahrefs 1.885 trang 05/2026 ≈ 0; FAQ rich result chấm dứt 07/05/2026); Core Insight viết lại: semantic HTML = retrieval hygiene, citation = kiến trúc passage (AX1-AX6 / GE-16…GE-27); thêm rule heading tổ tiên có nghĩa (`includeAncestorHeadings`). Nguồn: FINDINGS 22/08/2026 §6b + `tier-1-geo.md` v2.0 guardrail 2. Vincent duyệt 29/08.
 - **v1.0 (07/2026):** bản gốc + các bổ sung 09-16/07/2026 (centerpiece hygiene, HTML budget, LAMPRET, tabs/accordion, heading patterns e-commerce VN, Koray live-site).

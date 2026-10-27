@@ -32,6 +32,21 @@
 | Plugin bảo mật | {{Wordfence, plugin ẩn trang đăng nhập}} |
 | Site khác cùng server | {{số site, có thuộc dự án không}} |
 
+## 2b. Tầng cache sau khi ghi
+
+Skill ghi nội dung (`wp-content-review-apply`, `wp-dang-bai`, `semantic-html-optimization`) đọc mục này sau mỗi lượt ghi.
+
+| Tầng | Giá trị |
+|---|---|
+| Page cache trên server | {{LiteSpeed Cache; option purge-post_all = 0/1}} |
+| Object cache | {{Redis DB số mấy / không}} |
+| CDN giữ HTML | {{không / có: nhà cung cấp, vùng khách đi qua CDN, TTL HTML ở edge}} |
+| CDN tự purge khi bài đổi | {{có: mu-plugin nào / không}} |
+| Lệnh purge CDN theo URL | {{ví dụ: python3 -I skills/wp-ucss/scripts/bunny_purge.py <paths.txt> --site <site.json> --apply --warm}} |
+| Header giờ lưu ở edge | {{ví dụ: cdn-cachedat, giờ UTC}} |
+| CSS gọn theo path | {{không / có: file map, lệnh regen cho danh sách path, file phối hợp khi lane khác giữ khoá}} |
+| Biến thể cần làm nóng | {{desktop, mobile, bản WebP, bản bot}} |
+
 ## 3. Staging
 
 | Mục | Giá trị |

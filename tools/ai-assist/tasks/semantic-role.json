@@ -1,0 +1,19 @@
+{
+  "name": "semantic-role",
+  "version": "2026-10-27.1",
+  "questions": {
+    "role": {
+      "type": "choice",
+      "instructions": "state.snippet is text taken in reading order from a page (state.page) of the website of state.site_profile. The character ¶ separates layout blocks. The marker ⟦...⟧ wraps one short paragraph that is fully bold (state.html_tag is <p><strong> or <p><b>). state.so_lan_lap is how many sampled pages contain the same bold text; a high number means it is part of the shared header, footer or sidebar. Decide what role the marked bold paragraph plays in the document structure, judged by the text before and after it.",
+      "criteria": {
+        "section_heading": "The bold text is a title that introduces the block of content right after it, such as a sub-topic, a named method, a table name or a reference list title. It should be a real heading tag (h2 to h4). Example: 'Cách 1: Truy cập trên Desktop' followed by the steps for desktop.",
+        "step_title": "The bold text is the title of one item in a numbered or ordered sequence of steps, ways or phases, and the next blocks explain that item. Example: 'Bước 2: Đề Xuất Chiến Lược (Tuần 2-3)' followed by what happens in that step.",
+        "list_lead_in": "The bold text is a short lead-in that introduces a list or a set of conditions right after it, usually ending with a colon. Example: 'Tự làm SEO phù hợp khi:' followed by bullet conditions.",
+        "table_or_grid_label": "The bold text is a column, row or cell label inside a comparison table or a card grid, followed by a short value rather than a block of content. Example: 'Tiêu chí' then 'Đối tượng tối ưu' then 'Kết quả trả về'.",
+        "ui_label": "The bold text belongs to the interface or the shared layout rather than the article: share buttons, footer or sidebar titles, button text, form labels, author box labels.",
+        "emphasis": "The bold text is an emphasised sentence or phrase that is part of the running text, such as a key statement, a note, a quote or a name, and it does not introduce a following block.",
+        "unknown": "The snippet does not show enough to decide."
+      }
+    }
+  }
+}

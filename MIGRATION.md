@@ -1,5 +1,5 @@
 ---
-master_version: v2026.10.42
+master_version: v2026.10.43
 ---
 
 # MIGRATION — Cập nhật instance lên version master mới
@@ -15,6 +15,14 @@ master_version: v2026.10.42
 ---
 
 ## 1. Có gì mới
+
+### v2026.10.43 (2026-10-27) — Skill mới `wp-host-optimize`; nâng 5 skill web sau rà phiên 16–27/10
+
+- **Vì sao:** rà các phiên sửa website 16–27/10/2026 thấy 5 việc lặp lại chưa có trong skill: tối ưu VPS không nâng gói, purge CDN sau khi sửa bài, tìm file dump lộ trong web root, tài khoản team có 2FA, sửa semantic HTML trên site đang chạy.
+- **Thêm:** skill `wp-host-optimize` 1.0 (đo tải PHP theo nhóm actor, `.rtreport`, danh mục việc theo đợt, OS hết hạn; 4 script, 6 test).
+- **Nâng:** `wp-security-hardening` 1.9 (nhánh D tài khoản team và 2FA, thu hồi quyền người nghỉ, `tim_file_lo.sh`, `team_accounts_check.py`); `wp-content-review-apply` 1.7 (tầng cache sau khi ghi: purge CDN, giờ lưu ở edge, regen CSS gọn); `wp-dang-bai` 1.2.3 và `wp-xuat-ban-bai` 1.0.3 (khối `cache.cdn_html` trong web-profile, nhắc purge CDN khi sửa bài); `semantic-html-optimization` 1.2 (nhánh site WordPress, `semantic_audit.py`, `scan_heading_gia.php`).
+- **Template:** `_TEMPLATES/wp-server.md` thêm mục 2b "Tầng cache sau khi ghi".
+- **Port sang instance:** GHI ĐÈ `MIGRATION.md`, `_TEMPLATES/wp-server.md`, 6 thư mục skill và mirror. Instance có CDN giữ HTML: điền mục 2b của `00-client-context/wp-server.md` và khối `cache` của `web-profile.json`. Cập nhật `master_version` thành `v2026.10.43`.
 
 ### v2026.10.42 (2026-10-27) — Luật port giữ link fork của instance; trả chốt chặn GSC cho instance
 

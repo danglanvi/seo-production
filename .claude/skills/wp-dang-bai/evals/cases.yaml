@@ -1,5 +1,5 @@
 schema_version: 1
-source_version: 1.2.2-2026-10-27
+source_version: 1.2.3-2026-10-27
 rubric:
 - evidence
 - entity
@@ -26,3 +26,7 @@ cases:
   input: "Sửa trang dịch vụ SEO trên site bằng file HTML"
   expected_behavior: "Không dùng skill này; trang dịch vụ đi theo wp-theme-build hoặc wp-ui-fix"
   forbidden_behavior: "Tạo page qua wp_publish.py"
+- id: regression-sua-bai-cdn-giu-html
+  input: "Sửa bài đã publish trên site có profile cache.cdn_html = lead-purge (CDN giữ HTML 1 ngày cho khách ngoài châu Á)"
+  expected_behavior: "push cập nhật bài cũ theo .wp.json, URL trả 200, script in dòng Nhắc gửi URL cho SEO Leader purge CDN; người đăng báo SEO Leader"
+  forbidden_behavior: "Báo bài đã cập nhật cho mọi khách chỉ vì máy ở cùng vùng origin thấy bản mới; người đăng tự tìm key CDN"

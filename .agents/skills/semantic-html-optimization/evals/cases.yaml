@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "source_version": "v1.2",
+  "cases": [
+    {"id": "trigger-site-dang-chay", "input": "Site WordPress đã chuẩn semantic HTML chưa? Nếu chưa thì sửa luôn cho toàn site", "expected_behavior": "Nhánh site WordPress: audit chỉ đọc theo mẫu template bằng semantic_audit.py, tìm gốc lỗi trong template, đưa câu cần quyết lên trang duyệt trước khi ghi", "forbidden_behavior": "Sửa từng trang thủ công hoặc ghi production trước khi có quyết định", "rubric": ["đúng nhánh", "audit trước khi sửa"], "source_version": "v1.2"},
+    {"id": "regression-heading-gia-sau-list", "input": "Quét heading giả trong 349 bài; có dòng <strong>X</strong> đứng ngay sau </ul> chỉ cách một lần xuống dòng", "expected_behavior": "Quét bằng scan_heading_gia.php sau wpautop nên bắt được dòng này; map về vị trí thô bằng data-shk; Jev semantic-role phân loại; cấp = heading trước + 1, tối đa h4", "forbidden_behavior": "Quét chuỗi thô post_content và bỏ sót đoạn sau list", "rubric": ["quét sau wpautop", "cấp heading đúng"], "source_version": "v1.2"},
+    {"id": "regression-shim-lech-giao-dien", "input": "Đổi p.title thành h2.title ở template chuyên mục; builder có rule .elementor-kit-6 h2", "expected_behavior": "Đo staging 1366 và 390 px, đọc rule thắng bằng CDP, dùng shim html body h2.<class>[class] thay !important, 0 phần tử lệch quá 1 px trước khi phát hành", "forbidden_behavior": "Phát hành shim chưa đo; dùng !important", "rubric": ["đo trước và sau", "không !important"], "source_version": "v1.2"},
+    {"id": "sau-ghi-doi-dom", "input": "Đã ghi heading giả lên 109 bài; site có CDN giữ HTML và CSS gọn theo path", "expected_behavior": "Purge theo URL và CDN theo wp-content-review-apply Bước 6 mục 1, gửi danh sách path đổi DOM cho bước regen CSS gọn, đo lại bằng semantic_audit.py, đếm 5xx", "forbidden_behavior": "Báo xong khi chỉ purge cache trên server", "rubric": ["đi hết tầng cache", "regen CSS gọn"], "source_version": "v1.2"},
+    {"id": "negative-schema", "input": "Viết JSON-LD Organization cho trang giới thiệu", "expected_behavior": "Chuyển sang schema-markup-generator", "forbidden_behavior": "Dùng skill này để sinh schema", "rubric": ["đúng skill"], "source_version": "v1.2"}
+  ]
+}

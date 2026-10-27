@@ -1,8 +1,8 @@
 ---
 name: wp-security-hardening
-description: "Ứng cứu sự cố và hardening site WordPress khi có quyền vào server (SSH + WP-CLI): backup, tìm IOC, cách ly, đổi credentials, siết server và site, kiểm, báo cáo việc chờ duyệt. Dùng khi site bị xâm nhập, có mã độc, cần rà bảo mật định kỳ hoặc vá OS, PHP."
+description: "Ứng cứu sự cố và hardening site WordPress có quyền server (SSH + WP-CLI): backup, tìm IOC, file lộ, cách ly, đổi credentials, siết server, tài khoản team và 2FA, thu hồi quyền người nghỉ. Dùng khi site bị xâm nhập, rà bảo mật định kỳ, vá OS, PHP hoặc dựng tài khoản."
 metadata:
-  version: "1.8"
+  version: "1.9"
 ---
 
 # wp-security-hardening — ứng cứu và siết bảo mật WordPress
@@ -16,6 +16,7 @@ Gốc đường dẫn là root repo. Script nằm ở `skills/wp-security-harden
 - Site có dấu hiệu bị xâm nhập: link lạ, script lạ, admin lạ, GSC báo Security issues, host báo mã độc.
 - Rà bảo mật định kỳ, hoặc trước khi đổi theme, đổi server.
 - Vá OS hoặc PHP sau advisory, áp khối `.htaccess` hoặc vhost, xoá site phụ, DB, user trên server.
+- Dựng tài khoản team có role và 2FA bắt buộc, cấp app password cho API, thu hồi quyền khi nhân sự nghỉ.
 - Không dùng khi: chỉ tối ưu tốc độ (`wp-pagespeed`), chỉ sửa nội dung (`wp-content-review-apply`), không có quyền vào server (chỉ chạy được `exposure_check.sh` từ ngoài, ghi giới hạn).
 
 ## Luật cho mọi đợt
@@ -37,6 +38,8 @@ Gốc đường dẫn là root repo. Script nằm ở `skills/wp-security-harden
 - `references/va-os-php.md`: vá OS, vá PHP theo advisory. Đọc khi vá.
 - `references/xoa-an-toan.md`: checklist trước mọi thao tác xoá trên server.
 - `references/ra-tai-khoan-cdn.md`: rà tài khoản Cloudflare, CDN; quy trình khi secret bị lộ. Đọc ở nhánh C.
+- `references/tai-khoan-team-2fa.md`: role team, 2FA bắt buộc, bộ kiểm, sổ truy cập. Đọc ở nhánh D.
+- `references/offboard-nhan-su.md`: thu hồi quyền khi nhân sự nghỉ trên mọi hệ thống. Đọc ở nhánh D.
 - `tools/ai-assist/README.md` trước khi gọi Jev hoặc EmbeddingGemma.
 
 ## Input
@@ -52,7 +55,7 @@ Gốc đường dẫn là root repo. Script nằm ở `skills/wp-security-harden
 
 | Phần | Việc | Quyết định |
 |---|---|---|
-| Code | `exposure_check.sh`, `persistence.sh`, `scan_files.py`, `apply_server_block.sh`, `preflight_remote.sh`, `verify_backup.sh`, `sitecheck.sh` | Dùng. Mọi phép kiểm có mã thoát chạy bằng script |
+| Code | `exposure_check.sh`, `tim_file_lo.sh`, `persistence.sh`, `scan_files.py`, `apply_server_block.sh`, `preflight_remote.sh`, `verify_backup.sh`, `sitecheck.sh`, `team_accounts_check.py` | Dùng. Mọi phép kiểm có mã thoát chạy bằng script |
 | Jev | Task `malware-triage` xếp file nghi độc sau lớp checksum và scanner | Dùng. Ngưỡng và cách gọi theo `references/ung-cuu-su-co.md` mục 2. Nhãn `benign` không thay việc Claude đọc file có dấu hiệu |
 | EmbeddingGemma 2 | So excerpt file với bộ mẫu webshell đã cách ly, cosine từ 0,90 thì chuyển Claude đọc | Dùng khi có bộ mẫu dương. Thiếu bộ mẫu thì bỏ |
 | GLM Flash | Trích câu | Không dùng. Skill không có việc trích câu tự do |
@@ -77,11 +80,13 @@ Kiểm thêm dependency riêng và backup. Lệnh dưới chạy từ root repo,
 
 - **Nhánh A, ứng cứu sự cố:** có IOC hoặc nghi xâm nhập. Làm Bước 2 → 6.
 - **Nhánh B, rà soát định kỳ:** chưa thấy IOC. Bỏ Bước 3. Làm Bước 2, 4, 5, 6.
+- **Nhánh D, tài khoản team và 2FA, nhân sự nghỉ:** dựng role SEO Leader và Người đăng bài, bắt buộc 2FA, cấp app password; hoặc thu hồi quyền của người nghỉ. Làm Bước 0 (backup bảng user), rồi theo `references/tai-khoan-team-2fa.md` hoặc `references/offboard-nhan-su.md`, rồi Bước 6.
 - **Nhánh C, tài khoản Cloudflare hoặc CDN, secret bị lộ:** trang lạ chỉ hiện qua edge (CAPTCHA giả, redirect lạ), rà tài khoản CDN định kỳ, hoặc secret lọt vào transcript, chat, file. Làm theo `references/ra-tai-khoan-cdn.md`, rồi Bước 6. Agent chỉ đọc và lập danh sách. Người dùng tự bấm xoá và đổi bảo mật.
 
 ## Bước 2 — thu thập, chỉ đọc
 
 1. Kiểm từ ngoài: `scripts/exposure_check.sh https://<domain>`. Script không in Location, nên không lộ slug đăng nhập. Staging có Basic Auth: đặt `EXPOSURE_CURL_CONFIG=<file cấu hình curl>`. Hai dòng `{RAND}` gọi URL ngẫu nhiên và chỉ nhận 404. FAIL ở hai dòng này nghĩa là site trả soft-404 hoặc theme đổi mã (200, 301 về trang chủ, 410). Ghi vào bảng phát hiện và chuyển cho `technical-seo-audit`.
+1b. Tìm file lộ trong web root: `bash scripts/tim_file_lo.sh --ssh '<lệnh ssh>' --root <web root> --base https://<domain> --out <ev>/file-lo.tsv`. Script tìm dump, backup, log, file môi trường theo đuôi, rồi thử tải từng file từ ngoài. File trả 200 hoặc 206 là phát hiện mức Cao. Đọc access log xem file đã bị tải chưa. Dump chứa dữ liệu khách mà log không đủ xa để loại trừ thì báo người duyệt: việc báo khách và nghĩa vụ bảo vệ dữ liệu cá nhân do chủ site quyết. Ca thật 27/10/2026: 5 dump SQL 57 MB trên site WooCommerce, `exposure_check.sh` không thấy.
 2. Kiểm dấu bám trụ server: `ssh <alias> "bash -s" < scripts/persistence.sh > <ev>/persistence.txt`. Script chạy bằng root, cần Ubuntu hoặc Debian.
 3. Sàng file theo `references/ung-cuu-su-co.md` mục 2: checksum → `scan_files.py` → EmbeddingGemma → Jev `malware-triage` → Claude đọc.
 4. Quét DB theo mục 3 của cùng file: script tiêm trong bài, option lạ, admin lạ, app password, cron.
@@ -117,6 +122,7 @@ Kiểm thêm dependency riêng và backup. Lệnh dưới chạy từ root repo,
 - Chạy lại `exposure_check.sh` và `persistence.sh`, so với Bước 2.
 - Kiểm cloaking: cùng URL với UA Chrome, Googlebot, mobile kèm referer Google phải trả cùng mã, cùng title, cùng tập host.
 - Kiểm PHP trong `uploads`, `languages`, `upgrade`: gọi `.php`, `.PHP` và biến thể path-info `.php/a`, mong 403. Mã 404 hoặc 410 nghĩa là rule chưa có. Nếu tạo file thử, chuyển file vào quarantine sau khi kiểm.
+- Chạy lại `tim_file_lo.sh`: không còn file tải được.
 - Kiểm cổng từ ngoài bằng `nc -z`. Kiểm các site khác trên cùng server vẫn trả 200.
 - Site có CDN: request qua CDN phải ghi IP khách thật vào `REMOTE_ADDR` và log. Header `X-Forwarded-For` giả gửi thẳng tới origin phải bị bỏ qua.
 - Chụp template chính trước và sau bằng `skills/wp-pagespeed/scripts/shot.mjs` và `shot_cmp.py`.
@@ -133,13 +139,13 @@ Kiểm thêm dependency riêng và backup. Lệnh dưới chạy từ root repo,
 Chấm plan, danh sách chờ duyệt và báo cáo theo checklist dưới. Lập bảng 4 cột: mục, đạt chưa (Đạt, Một phần, Chưa, Bỏ), bằng chứng, việc sửa. Sửa mọi mục Chưa và Một phần trước khi trình. Mục bỏ ghi lý do. Nếu có output của agent khác cho cùng đợt, so từng mục và lấy phần tốt hơn.
 
 Bản tốt nhất phải có:
-- [ ] Mọi số liệu (số gói, số file, số bảng) lấy từ lệnh vừa chạy, có lệnh đi kèm. Nguồn lỗi: một lượt vá OS 10/2026 đếm bằng danh sách apt cũ ra 75 gói, thực tế 281.
-- [ ] Tài khoản, DB hoặc user chỉ gọi là "thừa" hay "lạ" sau khi map với `wp-config.php` mọi vhost và đối chiếu nhật ký phiên agent. Nguồn lỗi: 10/2026 một kết luận "DB thừa" sai suýt làm xoá DB đang dùng; 22/10/2026 lượt SSH của agent qua VPN trông như IP lạ.
+- [ ] Mọi số liệu lấy từ lệnh vừa chạy, có lệnh đi kèm. Tài khoản, DB hoặc user chỉ gọi là "thừa" hay "lạ" sau khi map với `wp-config.php` mọi vhost và nhật ký phiên agent. Nguồn lỗi: lượt vá OS 10/2026 đếm 75 gói, thực tế 281; kết luận "DB thừa" sai suýt xoá DB đang dùng; 22/10/2026 lượt SSH của agent qua VPN trông như IP lạ.
 - [ ] Mỗi việc ghi cấp site hay cấp server; việc cấp server có backup, diễn tập, probe và rollback thay cho "staging trước". Nguồn lỗi: đợt rà skill 24/10/2026 (đề xuất sec-1), plan hứa "staging trước" cho việc cấp server.
 - [ ] Config sống chỉ đổi trong danh sách đã duyệt; việc phát sinh vào danh sách chờ duyệt kèm lệnh và rollback. Nguồn lỗi: 22/10/2026 agent tự đổi handler PHP mặc định và tắt php-fpm ngoài 4 đề xuất đã duyệt.
 - [ ] Mọi backup qua `verify_backup.sh` đạt trước thay đổi đầu tiên. Nguồn lỗi: 16/10/2026 dump ra file 0 byte vì server không có `zstd`; 18/10/2026 `backup_pull.sh` báo xong dù server không có `rsync`.
-- [ ] Mỗi khối `.htaccess`, vhost có probe hồi quy và `rollback.sh` trước khi báo xong. Nguồn lỗi: 17/10/2026 một khối áp tay làm 13 trang trả 404 khoảng 3,5 phút.
-- [ ] Probe chặn chỉ nhận mã chặn (403); URL ngẫu nhiên chỉ nhận 404. Nguồn lỗi: 19/10/2026 theme trả 410 cho path lạ nên probe cũ báo đạt dù chưa có rule.
+- [ ] Mỗi khối `.htaccess`, vhost có probe hồi quy và `rollback.sh` trước khi báo xong. Probe chặn chỉ nhận 403, URL ngẫu nhiên chỉ nhận 404. Nguồn lỗi: 17/10/2026 một khối áp tay làm 13 trang trả 404 khoảng 3,5 phút; 19/10/2026 theme trả 410 cho path lạ nên probe cũ báo đạt dù chưa có rule.
+- [ ] Rà soát có chạy `tim_file_lo.sh` trên web root, không chỉ `exposure_check.sh`. Nguồn lỗi: 27/10/2026 site WooCommerce có 5 dump SQL công khai, path cố định không bắt được.
+- [ ] URL đăng nhập trong sổ truy cập lấy từ cấu hình đang chạy và đã thử 200 trước khi giao. Nguồn lỗi: 27/10/2026 sổ chép URL từ file ngày 16/10, slug đã đổi 2 lần, người dùng không đăng nhập được.
 - [ ] Bản vá không có mã CVE trong changelog ghi "chưa xác minh trực tiếp", kèm phép thử và phương án chuyển. Nguồn lỗi: vá PHP 22/10/2026, 2 site còn chạy bản dựng lại chưa xác minh nên thêm 1 vòng chờ quyết.
 
 ## Gate
@@ -148,7 +154,8 @@ Bản tốt nhất phải có:
 - [ ] Không xoá file nào. File độc nằm trong quarantine có hash.
 - [ ] Không có mật khẩu, key, slug đăng nhập trong chat, báo cáo hay log ngoài `.agent-secrets/`.
 - [ ] Mỗi mốc thay đổi có `sitecheck` đạt và lệnh rollback. Khối `.htaccess`, vhost có `rollback.sh` do `apply_server_block.sh` sinh.
-- [ ] `exposure_check.sh` và `persistence.sh` chạy cả trước và sau.
+- [ ] `exposure_check.sh`, `tim_file_lo.sh` và `persistence.sh` chạy cả trước và sau.
+- [ ] Nhánh D: `team_accounts_check.py` đạt mọi dòng ở staging rồi production. App password còn giữ gọi thử trả 200.
 - [ ] Việc ngoài phạm vi nằm trong danh sách chờ duyệt, không tự làm.
 - [ ] Quét lộ secret trong thư mục evidence và báo cáo trả mã 0.
 - [ ] Đã chấm theo "Bản tốt nhất phải có"; mục bỏ có lý do.
@@ -166,6 +173,7 @@ Bản tốt nhất phải có:
 
 ## Changelog
 
+- v1.9 (2026-10-27): nhánh D. `references/tai-khoan-team-2fa.md`, mẫu `templates/tai-khoan-team/` (mu-plugin role và 2FA, `t.php`), `scripts/team_accounts_check.py` (bản dùng chung của bộ kiểm 30/30 trên 2 site mẫu ngày 27/10). `references/offboard-nhan-su.md` từ lượt rà Cloudflare 26/10. `scripts/tim_file_lo.sh` tìm file lộ trong web root, test 4 ca, từ ca 5 dump SQL công khai trên site WooCommerce 27/10. Tự phản biện và Gate thêm mục. Nguồn: đợt rà tổng thể phiên web 16–27/10 (`Deliverables/AI-Internal/Web-Skill-Review-2026-10/`).
 - v1.8 (2026-10-27): nhánh C và `references/ra-tai-khoan-cdn.md`: rà Worker, route, token, thành viên, 2FA, audit log, SSL theo host; kiểm từ ngoài bằng UA trình duyệt và UA Googlebot; ranh giới agent đọc, người dùng bấm; 8 bước khi secret bị lộ. Nguồn: sự cố Worker độc trên tài khoản Cloudflare của site agency mẫu (phát hiện 26/10/2026, người dùng xoá 14:1x, agent kiểm lại sạch) và 4 lần lộ secret tháng 10/2026. Eval thêm 2 ca. Chưa có script đọc tài khoản: token hiện có trả 403 ở Workers Routes.
 - v1.7.2 (2026-10-26): Bước 4 mục 7 và Bước 5 thêm phần site có CDN: khai IP trạm CDN tin cậy (đúng từng IP, OLS dạng `IPT`), Wordfence đọc `REMOTE_ADDR`, chặn đăng nhập ở edge, kiểm XFF giả. Nguồn: đợt CDN site VN 26/10/2026 (`cdn-speed-setup` v1.0).
 - v1.7.1 (2026-10-26): `backup_pull.sh` kéo bằng `rsync -rlt` thay `-a` rồi `chmod -R u+rwX,go-rwx` thư mục đích. Lần kéo đầu từ site khoá học mẫu lỗi `fstatat: Permission denied` vì thư mục trên server mang mode 600 và `-a` chép mode đó về máy. openrsync của macOS không có `--chmod`.

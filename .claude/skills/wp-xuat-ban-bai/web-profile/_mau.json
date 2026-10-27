@@ -27,5 +27,9 @@
   "engine": "<skill dựng ảnh đại diện>",
   "brand": "<tham số --brand của engine>",
   "ghi_chu": ""
+ },
+ "cache": {
+  "cdn_html": "khong",
+  "ghi_chu": "<TTL HTML ở edge, vùng khách đi qua CDN, ngày chốt>"
  }
 }

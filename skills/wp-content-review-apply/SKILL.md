@@ -2,7 +2,7 @@
 name: wp-content-review-apply
 description: "Đưa thay đổi SEO title, meta, H1, slug, link, đoạn văn, trường ACF/Elementor của site WordPress qua trang duyệt có nút Duyệt/E, rồi ghi an toàn bằng WP-CLI: dựng dữ liệu, QA, plan, chạy thử, ghi, kiểm. Dùng trước mọi lần sửa nội dung trên site có quyền server."
 metadata:
-  version: "1.6"
+  version: "1.7"
 ---
 
 # wp-content-review-apply — duyệt trước, ghi sau
@@ -152,15 +152,16 @@ Chữ người duyệt tự sửa:
 
 ## Bước 6 — kiểm và đóng đợt
 
-1. Kiểm bằng HTTP: `python3 -I skills/wp-content-review-apply/scripts/verify.py --plan plan.json --out verify.json`. Script kiểm mã 200, title, meta, H1, link, 301 khi đổi slug.
-2. Kiểm robots và canonical ở 5 biến thể cache: `python3 -I skills/wp-pagespeed/scripts/cache_variants.py <url sạch> ...`. `verify.py` chỉ đọc một bản cache, còn bot và điện thoại có thể nhận bản khác.
-3. Chạy lại `doi_chieu.py` trên bản sao db mới. Thẻ vừa ghi phải có nhãn `da-len`.
-4. Cập nhật trang duyệt: gắn `applied` cho mục đã ghi. Chỉ gắn khi live có đúng chữ duyệt ở bản bỏ cache và bản có cache. Mục đã bị thẻ duyệt sau thay thế: không ghi chữ cũ, không gắn `applied`, ghi "thay bằng <id thẻ mới>" rồi đóng.
+1. Tầng cache: đọc mục "Tầng cache sau khi ghi" của `wp-server.md`. CDN giữ HTML mà site chưa tự purge thì purge theo URL và kiểm giờ lưu của CDN. Site có CSS gọn theo path thì regen path có thay đổi thẻ hoặc class. Lệnh và bẫy: `references/ghi-an-toan.md` mục 1 bước 4b. Hồ sơ chưa có mục này thì hỏi người vận hành site có CDN giữ HTML không, rồi điền hồ sơ.
+2. Kiểm bằng HTTP: `python3 -I skills/wp-content-review-apply/scripts/verify.py --plan plan.json --out verify.json`. Script kiểm mã 200, title, meta, H1, link, 301 khi đổi slug. Máy kiểm ở cùng vùng origin chỉ thấy bản origin. Site có CDN chia vùng thì kiểm thêm bản edge theo bước 1.
+3. Kiểm robots và canonical ở 5 biến thể cache: `python3 -I skills/wp-pagespeed/scripts/cache_variants.py <url sạch> ...`. `verify.py` chỉ đọc một bản cache, còn bot và điện thoại có thể nhận bản khác.
+4. Chạy lại `doi_chieu.py` trên bản sao db mới. Thẻ vừa ghi phải có nhãn `da-len`.
+5. Cập nhật trang duyệt: gắn `applied` cho mục đã ghi. Chỉ gắn khi live có đúng chữ duyệt ở bản bỏ cache và bản có cache. Mục đã bị thẻ duyệt sau thay thế: không ghi chữ cũ, không gắn `applied`, ghi "thay bằng <id thẻ mới>" rồi đóng.
    - Ghi `mark_applied.json` (`[{"id", "status": "applied", "note": "[Claude hh:mm] <chỗ ghi, cách verify, rollback>"}]`) và `kiem-doc-lap.md` có mục "Kết luận" ghi đạt vào thư mục đợt. Thiếu kết luận đạt thì script bỏ cả đợt.
    - Query `reviews` một lần (`status in [approved, edited]`, `limit 1000`), lưu ra `versions.json`.
    - Chạy `python3 -I skills/wp-content-review-apply/scripts/mark_batch.py --lane <thư mục đợt> --versions versions.json --out <thư mục lô ngắn>` để xem kế hoạch và số lô. Đúng thì chạy lại với `--ghi`.
    - Gửi từng `_writes_NN.json` bằng ArtifactData `batch`, lúc người vận hành đang trực tuyến. Script giữ `note` cũ của người duyệt và nối id vào sổ `applied-ids.txt`. Lô bị từ chối thì xoá id của lô đó khỏi sổ trước khi chạy lại.
-5. Lưu đợt ở `06-onpage-internal-link/apply-<YYYY-MM-DD>/`: plan, sổ duyệt, log chạy thử, log ghi, verify, kết quả đối chiếu. Thêm dòng bảng D `index.md`, append `log.md`, cập nhật `HANDOFF.md` nếu đợt kéo dài.
+6. Lưu đợt ở `06-onpage-internal-link/apply-<YYYY-MM-DD>/`: plan, sổ duyệt, log chạy thử, log ghi, verify, kết quả đối chiếu. Thêm dòng bảng D `index.md`, append `log.md`, cập nhật `HANDOFF.md` nếu đợt kéo dài.
 
 ## Tự phản biện trước khi trình
 
@@ -184,6 +185,7 @@ Bản tốt nhất phải có:
 - [ ] Đổi slug có 301 từ URL cũ, đã kiểm 1 bước nhảy.
 - [ ] `verify.py` không còn dòng lệch, hoặc mỗi dòng lệch có lý do trong báo cáo.
 - [ ] `cache_variants.py` đạt trên URL sạch đã ghi: robots và canonical giống nhau ở 5 biến thể.
+- [ ] Site có CDN giữ HTML mà chưa tự purge: URL đã ghi được purge ở CDN, giờ lưu của CDN mới hơn giờ purge ở bản desktop và mobile. Site có CSS gọn theo path: path đổi thẻ hoặc class đã regen hoặc đã ghi vào file phối hợp. Lỗi đã gặp: từ 26/10 site mẫu GTV giữ HTML ở CDN 1 ngày cho khách ngoài châu Á, gồm Googlebot ở Mỹ.
 - [ ] Khi nhiều phiên cùng ghi một site: đã đọc khoá của phiên khác, và việc phụ thuộc bước khác chỉ ghi production sau khi người kiểm độc lập của bước đó báo đạt (`references/ghi-an-toan.md` mục 4b).
 - [ ] Không mục nào ghi trước ngày hẹn ghi trong nguồn duyệt. Lỗi đã gặp: thẻ `cm21-cp-backlink-3t` lên production 23/10 trong khi đề xuất đã duyệt ghi "chờ 18/11".
 - [ ] Mục gắn `applied` đã kiểm live. Thẻ bị thẻ duyệt sau thay thế được đóng, không ghi. Lỗi đã gặp: thẻ cũ `v2-qp-titles` suýt ghi đè title và H1 của thẻ `m24` duyệt sau.
@@ -208,6 +210,7 @@ Bản tốt nhất phải có:
 - Ghi template hay giao diện thẳng lên production. Thay đổi giao diện đi qua staging bằng `wp-staging-deploy`.
 - Lấy chuỗi cũ của `post_content` từ file đọc bằng Python `open()` text mode. Lệnh này đổi `\r\n` thành `\n`, nên DRY báo 0 vị trí. Lấy từ JSON đọc thẳng DB.
 - Nối hai câu bằng xuống dòng. LiteSpeed minify xoá `\r\n`, nên hai câu dính nhau trên trang. Nối bằng dấu cách.
+- Kết luận "đã lên site" chỉ từ máy ở cùng vùng origin khi site có CDN chia vùng. Máy đó đi thẳng origin, còn Googlebot ở vùng khác nhận bản ở edge.
 - Verify hay bỏ cache bằng `?utm_*`, `fbclid`, `gclid`. Bản `noindex` của URL có query vào cache của URL sạch.
 - Ghi staging khi staging là clone cũ. Chép từ production đúng bài và option sắp ghi trước khi DRY trên staging.
 - Ghi SQL thô khi site bật object cache mà không xoá key, hoặc purge trang trước khi xoá object cache.
@@ -220,6 +223,7 @@ Bản tốt nhất phải có:
 
 ## Changelog
 
+- v1.7 (2026-10-27): Bước 6 mục 1 "Tầng cache": purge CDN theo URL bằng lệnh trong hồ sơ server, kiểm giờ lưu ở edge, regen CSS gọn cho path đổi thẻ hoặc class. `ghi-an-toan.md` mục 1 bước 4b. Mục tầng cache mới trong mẫu `_TEMPLATES/wp-server.md`. Gate và anti-pattern thêm 1 mục. Nguồn: site mẫu GTV chuyển apex sang CDN chia vùng 26/10; đợt semantic HTML 27/10 chuỗi ghi dừng ở bước CDN vì đường dẫn tương đối và phải phối hợp regen CSS gọn bằng tay.
 - v1.6 (2026-10-25): nd-1 engine `apply.php` (vá `$has` trước khi lấy tham chiếu, op `text`, `fix`, `el_rm`, `el_restore`, field `usermeta`/`option`, log ra `OUT`, `FAIL_ON_SKIP`), `locate.php`, `references/thao-tac-ghi.md`. nd-2 `doi_chieu.py` và luật "duyệt tới đâu áp tới đó" ở Bước 4, `so_duyet.py` + `plan.py --so`. nd-3 `the_qa.py` và khối `qa` của trường, ma trận chữ người duyệt tự sửa, humanizer `references/chu-ngan-web.md`. wpr-1 trang duyệt lấy phần từ `summary.sections`, chia 3 truy vấn reviews, status `applied`; `check_cards.py`, `kiem_trang_duyet.mjs`, `so_duyet.py the`; tra quyết định cũ trước khi ghi; cổng ghi hàng loạt; WPForms, `proc_open`, marker JSON vào `ghi-an-toan.md`. wp-review-1 `fid` (`key#n`) trong trang. ops2-9 `mark_batch.py`, thẻ ảnh `img`. hs-10 `seed_batches.py --only-missing`, `status: applied` trong `hop-dong-du-lieu.md`. perf-10 `references/don-html-hang-loat.md` và 6 script dọn HTML có bất biến wpautop, rollback so md5. sec-5 biến sau `sudo`, `ssh -n`, base64, đếm backup vào `ghi-an-toan.md` mục 2. nd-5 bẫy Permalink Manager Pro và Rank Math vào `ghi-an-toan.md` mục 4. Thêm Phân việc model, Tự phản biện, 5 mục Gate. Test offline: `tests/run_all.py`.
 
 - v1.5 (2026-10-24): Bước 4 kiểm điều kiện ngày trong nguồn duyệt trước khi ghi. Bước 6 chỉ gắn `appliedAt` sau khi kiểm live, đóng thẻ bị thẻ duyệt sau thay thế. `ghi-an-toan.md` mục 4b: luật rebase 4 trường hợp khi `raw_before` lệch live. Gate thêm 2 mục. Nguồn: lane `ap-the-cu-2310` gtvseo.com 23/10 (`Deliverables/GTV-Brand/GTV-Website/content-review-2026-10/ap-the-cu-2310/kiem-doc-lap.md` mục 1 và dòng `v2-qp-titles`).

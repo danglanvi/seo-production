@@ -2,7 +2,7 @@
 name: wp-dang-bai
 description: "Đăng hoặc cập nhật bài lên WordPress qua REST bằng app password: file HTML format blog doc-kit giữ giao diện (bảng, tab, quiz, checklist, SVG, video), tự tải ảnh lên Media, điền SEO title, meta, keyword, chuyên mục, ảnh đại diện. Dùng khi đẩy bài từ repo lên site có web-profile."
 metadata:
-  version: "1.2.2"
+  version: "1.2.3"
 ---
 
 # wp-dang-bai — đăng bài lên WordPress qua API
@@ -54,6 +54,7 @@ Script tìm `web-profile.json` trong `00-context/` hoặc `00-client-context/`, 
    - `--featured first` lấy ảnh đầu bài làm ảnh đại diện. Ảnh đại diện chuẩn: engine trong `anh_dai_dien.engine` của profile.
    - `--tags` chỉ gán thẻ đã có trên site; thẻ mới nhờ SEO Leader tạo.
 4. Sửa bài: sửa file HTML rồi chạy lại đúng lệnh `push`. Script đọc ID bài trong `<bai.html>.wp.json` nên cập nhật bài cũ, không tạo bài mới. Ảnh đã tải không tải lại. Commit file `.wp.json` cùng bài.
+   - Profile có `cache.cdn_html` bằng `lead-purge`: CDN giữ HTML của bài cũ ở edge và site chưa tự xoá. Script in dòng "Nhắc". Gửi URL bài cho SEO Leader để purge CDN. Người đăng bài không có key CDN.
 5. Mở link script in ra, kiểm trên desktop và mobile: tab bấm được, bảng không tràn ngang, ảnh hiện. Kiểm trường SEO qua REST theo `wp-xuat-ban-bai/references/kiem-sau-dang.md`.
 6. Bỏ bài đã đăng từ một file vào thùng rác: `python3 skills/wp-dang-bai/scripts/wp_publish.py trash <bai.html> --site <mã site>`.
 
@@ -103,6 +104,7 @@ Script tự làm:
 
 ## Changelog
 
+- v1.2.3 (2026-10-27): sửa bài đã publish trên site có `cache.cdn_html: lead-purge` thì script nhắc gửi URL cho SEO Leader purge CDN. Lý do: site mẫu GTV từ 26/10 có CDN giữ HTML 1 ngày cho khách ngoài châu Á, gồm Googlebot ở Mỹ, và chưa có mu-plugin tự purge.
 - v1.2.2 (2026-10-27): mục xoá hẳn bài cũ và media (bản sao WPML); `evals/cases.yaml` 5 ca. Lý do: dọn bản nháp và media cũ trên site mẫu GTV.
 - v1.2.1 (2026-10-27): publish xong tự mở URL bài, không trả 200 thì thoát 1; ảnh đại diện trùng slug của bài được đổi tên `<slug>-anh-dai-dien`. Lý do: bài content-effort publish trên site mẫu GTV trả 404 vì plugin permalink chưa ghi URI và ảnh mang cùng slug.
 - v1.2 (2026-10-27): `--site` nhận mọi mã site; đọc `web-profile.json` (url, `brand_khac`) thay cho hằng số cứng; `--profile`, `--featured-alt`; slug, SEO title, keyword lấy từ thẻ meta của file khi không truyền cờ. Lý do: pilot content-effort 27/10, lần đẩy đầu slug tự sinh dài 70 ký tự và SEO title trống.
