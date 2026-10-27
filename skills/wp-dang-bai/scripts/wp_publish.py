@@ -23,6 +23,7 @@ import mimetypes
 import os
 import re
 import sys
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -271,7 +272,10 @@ def push(a):
             if hit:
                 post['featured_media'] = hit[0]['id']
         else:
-            post['featured_media'] = upload(wp, state, open(a.featured, 'rb').read(), os.path.basename(a.featured), a.featured_alt or title)['id']
+            # Ảnh trùng slug với bài thì WordPress hiểu URL bài là trang của ảnh (ca thật 27/10/2026: bài trả 404).
+            stem, ext = os.path.splitext(os.path.basename(a.featured))
+            name = f'{slug}-anh-dai-dien{ext}' if stem == slug else stem + ext
+            post['featured_media'] = upload(wp, state, open(a.featured, 'rb').read(), name, a.featured_alt or title)['id']
 
     pid = a.id or state.get('post_id')
     c, j = wp.req('POST', f'/wp/v2/posts/{pid}' if pid else '/wp/v2/posts', data=post)
@@ -287,6 +291,24 @@ def push(a):
     print(f'{"Cập nhật" if pid else "Tạo"} bài {j["id"]} · trạng thái {j["status"]} · {j["link"]}')
     if j['status'] != 'publish':
         print(f'Xem trước (cần đăng nhập): {wp.base}/?p={j["id"]}&preview=true')
+        return
+    # Plugin permalink riêng (Permalink Manager) có thể chưa ghi URI cho bài tạo qua REST: URL trả 404 (ca thật 27/10/2026).
+    code = 0
+    for _ in range(3):
+        try:
+            with urllib.request.urlopen(urllib.request.Request(j['link'] + '?v=' + str(int(time.time())), headers={'User-Agent': UA}), timeout=20) as r:
+                code = r.status
+        except urllib.error.HTTPError as e:
+            code = e.code
+        except Exception:
+            code = 0
+        if code == 200:
+            break
+        time.sleep(5)
+    if code != 200:
+        print(f'LOI: {j["link"]} trả HTTP {code}. Bài đã publish nhưng URL chưa mở được. Xem wp-xuat-ban-bai/references/kiem-sau-dang.md mục 2.')
+        sys.exit(1)
+    print(f'URL trả 200: {j["link"]}')
 
 
 def trash(a):

@@ -2,7 +2,7 @@
 name: wp-xuat-ban-bai
 description: "Xuất bản bài blog đã humanize lên WordPress: Markdown thành HTML doc-kit, media trong bài, ảnh đại diện, khối bấm thử, kiểm luật site và link nội bộ, render thử trên theme thật, đăng nháp, kiểm sau đăng. Dùng khi đưa bài mới lên site có web-profile."
 metadata:
-  version: "1.0"
+  version: "1.0.1"
 ---
 
 # wp-xuat-ban-bai — xuất bản bài blog lên WordPress
@@ -108,6 +108,7 @@ Nếu repo không có `tools/capabilities.py` (repo content), kiểm tay: `pytho
 
    - Script lấy slug, SEO title, keyword từ thẻ meta do Bước 2 sinh. Cờ dòng lệnh thắng thẻ meta.
    - Kiểm kết quả qua REST: slug, `doc_seo`, chuyên mục, ảnh đại diện, alt (`references/kiem-sau-dang.md` mục 1).
+   - Khi publish, script mở URL bài. URL trả 404 thì xử lý theo `references/kiem-sau-dang.md` mục 2.
 9. Gửi link xem trước cho người duyệt. Chỉ đăng thật khi người duyệt đồng ý: chạy lại lệnh Bước 8 với `--status publish`.
 10. Kiểm sau đăng theo `references/kiem-sau-dang.md`: `kiem_render.mjs --url`, link nội bộ, Rank Math, chỉ mục.
 
@@ -145,4 +146,5 @@ Bản tốt nhất phải có:
 
 ## Changelog
 
+- v1.0.1 (2026-10-27): `kiem_render.mjs --url` nhận doc-kit theo rule CSS và khối bấm chạy được (plugin cache gộp file). `kiem-sau-dang.md` thêm cách xử lý URL 404 sau publish do plugin permalink và ảnh trùng slug. Lý do: publish bài pilot trên site mẫu GTV.
 - v1.0 (2026-10-27): tạo mới. Pilot bài content-effort trên site mẫu GTV: `md_to_html.py` ra 7 khung media, `kiem_bai.py` bắt link chờ và link 404, `kiem_render.mjs` đạt ở 1366 px và 390 px, đăng nháp có slug, SEO title, chuyên mục, ảnh đại diện.

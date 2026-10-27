@@ -484,3 +484,7 @@ Luật ghi:
 - wp-xuat-ban-bai 1.0: md_to_html.py, kiem_bai.py, kiem_render.mjs, 4 reference, mẫu web-profile, test offline. anh-trong-bai 1.0: media_plan.py, svg_dung.py (7 kiểu), svg_kiem.mjs, chup_trang.mjs, anh_chu_thich.py, chen_media.py, 4 reference, test offline. wp-dang-bai 1.2: profile, --featured-alt, slug và SEO title từ thẻ meta.
 - Pilot bài content-effort: đăng nháp trên site mẫu GTV, 7 khung media, render đạt 1366 px và 390 px.
 - Files touched: skills/{wp-xuat-ban-bai,anh-trong-bai,wp-dang-bai}/, .claude/skills/, .agents/skills/, CLAUDE.md §11, MIGRATION.md, log.md
+
+## [2026-10-27] refactor | v2026.10.40 — Kiểm URL sau publish (wp-dang-bai 1.2.1, wp-xuat-ban-bai 1.0.1) — @claude
+- Publish bài pilot content-effort: URL 404 do plugin permalink chưa ghi URI và ảnh trùng slug. Đã sửa trên site, vá script và reference.
+- Files touched: skills/wp-dang-bai/, skills/wp-xuat-ban-bai/, .claude/skills/, .agents/skills/, MIGRATION.md, log.md

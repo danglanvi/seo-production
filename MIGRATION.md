@@ -1,5 +1,5 @@
 ---
-master_version: v2026.10.39
+master_version: v2026.10.40
 ---
 
 # MIGRATION — Cập nhật instance lên version master mới
@@ -15,6 +15,12 @@ master_version: v2026.10.39
 ---
 
 ## 1. Có gì mới
+
+### v2026.10.40 (2026-10-27) — wp-dang-bai 1.2.1, wp-xuat-ban-bai 1.0.1: kiểm URL sau publish
+
+- **Vì sao:** bài pilot publish trên site mẫu GTV trả 404: plugin permalink chưa ghi URI cho bài tạo qua REST, và ảnh đại diện mang cùng slug với bài.
+- **Sửa:** `wp_publish.py` mở URL sau publish và thoát 1 khi không trả 200; đổi tên ảnh đại diện trùng slug. `kiem_render.mjs --url` nhận doc-kit khi plugin cache gộp CSS, JS. `kiem-sau-dang.md` mục 2 có cách xử lý.
+- **Port sang instance:** GHI ĐÈ `skills/wp-dang-bai/`, `skills/wp-xuat-ban-bai/` và mirror. Cập nhật `master_version` thành `v2026.10.40`.
 
 ### v2026.10.39 (2026-10-27) — Skill mới `wp-xuat-ban-bai` và `anh-trong-bai`; `wp-dang-bai` 1.2 đọc web-profile
 

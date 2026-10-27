@@ -28,7 +28,16 @@ Người duyệt mở link xem trước (`?p=<ID>&preview=true`) khi đã đăng
 node skills/wp-xuat-ban-bai/scripts/kiem_render.mjs --url <URL bài> --profile <profile> --out <thư mục bài>/render-live
 ```
 
-- Script báo LOI khi thiếu doc-kit (CSS, JS hoặc class `.doc-kit`), tràn ngang, ảnh hỏng, khối bấm không chạy.
+- `wp_publish.py --status publish` tự mở URL bài. URL không trả 200 thì script thoát 1.
+- URL trả 404 ngay sau khi publish, trong khi `?p=<ID>` vẫn mở được: site có plugin permalink riêng (ví dụ Permalink Manager Pro) chưa ghi URI cho bài tạo qua REST. Người có quyền server ghi URI bằng WP-CLI, rồi purge cache:
+
+  ```bash
+  wp eval '$u=get_option("permalink-manager-uris"); $u[<ID>]="<slug>"; update_option("permalink-manager-uris",$u);'
+  ```
+
+  Không có quyền server: mở bài trong wp-admin và bấm Cập nhật một lần. Ca thật 27/10/2026, site mẫu GTV.
+- Kiểm `url_to_postid("<URL bài>")` trả đúng ID bài. Ảnh tải lên trùng slug với bài làm URL trỏ sang trang của ảnh. Từ bản 1.2.1, `wp_publish.py` đổi tên ảnh đại diện trùng slug thành `<slug>-anh-dai-dien`.
+- Script báo LOI khi thiếu doc-kit (class `.doc-kit`, rule CSS `.doc-kit`, khối bấm chạy được), tràn ngang, ảnh hỏng, khối bấm không chạy. Plugin cache gộp CSS, JS thành file mới, nên script không tìm theo tên file.
 - Mở `desktop.png` và `mobile.png`.
 - Xem nguồn trang: một thẻ `<title>`, một `meta description`, `canonical` trỏ về chính URL, schema Article của plugin SEO.
 

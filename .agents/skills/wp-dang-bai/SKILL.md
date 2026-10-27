@@ -2,7 +2,7 @@
 name: wp-dang-bai
 description: "Đăng hoặc cập nhật bài lên WordPress qua REST bằng app password: file HTML format blog doc-kit giữ giao diện (bảng, tab, quiz, checklist, SVG, video), tự tải ảnh lên Media, điền SEO title, meta, keyword, chuyên mục, ảnh đại diện. Dùng khi đẩy bài từ repo lên site có web-profile."
 metadata:
-  version: "1.2"
+  version: "1.2.1"
 ---
 
 # wp-dang-bai — đăng bài lên WordPress qua API
@@ -93,9 +93,11 @@ Script tự làm:
 - [ ] Không có key trong file commit, chat hay log.
 - [ ] Đăng lại cùng file thì cập nhật bài cũ (có `.wp.json`), không sinh bài trùng.
 - [ ] Bản nháp có slug, SEO title, meta, keyword, chuyên mục, ảnh đại diện có alt.
+- [ ] Bài publish mở được ở URL chuẩn (script in "URL trả 200").
 
 ## Changelog
 
+- v1.2.1 (2026-10-27): publish xong tự mở URL bài, không trả 200 thì thoát 1; ảnh đại diện trùng slug của bài được đổi tên `<slug>-anh-dai-dien`. Lý do: bài content-effort publish trên site mẫu GTV trả 404 vì plugin permalink chưa ghi URI và ảnh mang cùng slug.
 - v1.2 (2026-10-27): `--site` nhận mọi mã site; đọc `web-profile.json` (url, `brand_khac`) thay cho hằng số cứng; `--profile`, `--featured-alt`; slug, SEO title, keyword lấy từ thẻ meta của file khi không truyền cờ. Lý do: pilot content-effort 27/10, lần đẩy đầu slug tự sinh dài 70 ký tự và SEO title trống.
 - v1.1 (2026-10-27): lệnh `trash`, bài mẫu `examples/bai-thu.html`, link hướng dẫn trên site tài liệu.
 - v1.0 (2026-10-27): tạo mới. Thử trên staging hai site mẫu bằng bài content-effort (desktop 1366 px, mobile 390 px: không tràn ngang, 0 lỗi JS, 0 ảnh hỏng), và trên production bằng bản nháp (tác giả team, giữ svg, button, input, bỏ script).

@@ -100,9 +100,13 @@ const MEASURE = sel => `(async () => {
     await new Promise(r => setTimeout(r, 60));
     if (out.textContent === before) bam.calc_loi++;
   }
+  // Plugin cache có thể gộp CSS, JS thành file mới (ca thật 27/10/2026, LiteSpeed): không tìm theo tên file mà theo
+  // rule .doc-kit trong stylesheet và theo khối bấm chạy được.
+  const cssRule = [...document.styleSheets].some(s => { try { return [...s.cssRules].some(x => (x.selectorText || '').includes('.doc-kit')); } catch (e) { return false; } });
+  const n = bam.tab + bam.quiz + bam.chk + bam.calc, nl = bam.tab_loi + bam.quiz_loi + bam.chk_loi + bam.calc_loi;
   return {rong: W, scroll_w: document.documentElement.scrollWidth, tran, anh_hong, svg_nho, bam,
-    doc_kit: !!document.querySelector('.doc-kit'), css_doc_kit: !!document.querySelector('link[href*="doc-kit.css"]'),
-    js_doc_kit: !!document.querySelector('script[src*="doc-kit.js"]'), h1: document.querySelectorAll('h1').length};
+    doc_kit: !!document.querySelector('.doc-kit'), css_doc_kit: !!document.querySelector('link[href*="doc-kit.css"]') || cssRule,
+    js_doc_kit: !!document.querySelector('script[src*="doc-kit.js"]') || (n > 0 && nl === 0), h1: document.querySelectorAll('h1').length};
 })()`;
 
 const tab = await openTab();
