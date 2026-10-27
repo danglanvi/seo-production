@@ -25,7 +25,7 @@ def run_php(script, store, plan=None, env=None, as_file=None):
         d = Path(d)
         (d / "store.json").write_text(json.dumps(store, ensure_ascii=False), encoding="utf-8")
         e = dict(os.environ)
-        for k in ("PLAN", "DRY", "OUT", "SRC", "PURGE", "FAIL_ON_SKIP", "NEEDLES"):
+        for k in ("PLAN", "DRY", "OUT", "SRC", "PURGE", "FAIL_ON_SKIP", "NEEDLES", "FLUSH"):
             e.pop(k, None)
         if plan is not None:
             (d / "plan.json").write_text(json.dumps(plan, ensure_ascii=False), encoding="utf-8")
@@ -103,6 +103,25 @@ class ElementorPath(unittest.TestCase):
         ops = [{"item": "x1", "post": 10, "target": "elementor:w2:subtitle", "before": "", "value": "Mới"}]
         rc, _, _, st, log = apply(el_store(self.DATA), ops)
         self.assertEqual(el_after(st)[0]["elements"][1]["settings"]["subtitle"], "Mới")
+
+
+class ObjectCache(unittest.TestCase):
+    """27/10/2026: bản bỏ wp_cache_flush() làm cache mảnh của mu-plugin bám save_post giữ chữ cũ, vì apply.php ghi bằng $wpdb."""
+    OPS = [{"item": "x1", "post": 10, "target": "elementor:w1:editor", "before": "A", "value": "B"}]
+
+    def store(self):
+        return el_store([widget("w1", {"editor": "A"})])
+
+    def test_mac_dinh_xoa_object_cache(self):
+        rc, _, err, st, _ = apply(self.store(), self.OPS)
+        self.assertEqual(rc, 0, err)
+        self.assertIn("wp_cache_flush", st["calls"])
+
+    def test_flush_0_khong_xoa(self):
+        rc, _, err, st, _ = apply(self.store(), self.OPS, env={"FLUSH": "0"})
+        self.assertEqual(rc, 0, err)
+        self.assertNotIn("wp_cache_flush", st["calls"])
+        self.assertEqual(el_after(st)[0]["settings"]["editor"], "B")
 
 
 class TextTarget(unittest.TestCase):

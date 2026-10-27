@@ -1,5 +1,5 @@
 ---
-master_version: v2026.10.43
+master_version: v2026.10.44
 ---
 
 # MIGRATION — Cập nhật instance lên version master mới
@@ -15,6 +15,13 @@ master_version: v2026.10.43
 ---
 
 ## 1. Có gì mới
+
+### v2026.10.44 (2026-10-27) — Công cụ port skill, nhận khách có server, render-diff gỡ plugin, `FLUSH=0`
+
+- **Vì sao:** người duyệt duyệt 4 đề xuất còn lại của đợt rà skill web 16–27/10 (21:24).
+- **Thêm:** `tools/port_skill.py` (+ test 8 ca): chép skill đã sửa từ master sang instance hoặc fork, chạy thử mặc định, sao lưu bản cũ, chặn skill có lineage riêng. `_REFERENCE/nhan-khach-server.md`: secret riêng, khoá SSH qua cPanel, bảng quyền, tài khoản Google thứ hai cho `gws`. `SETUP.md` bước 3 thêm ý 5 trỏ tới file này.
+- **Nâng:** `wp-paid-plugin-exit` 1.3 (`render_snap.py`, `render_diff.py`, `acf_fields_sig.php`, test 4 ca; mục Elementor Pro thêm bước render-diff). `wp-content-review-apply` 1.7.1 (`apply.php` thêm `FLUSH=0`, mặc định vẫn xoá object cache; hồ sơ thêm dòng "Cache phụ thuộc nội dung").
+- **Port sang instance:** GHI ĐÈ `MIGRATION.md`, `SETUP.md`, `_REFERENCE/nhan-khach-server.md`, `_TEMPLATES/wp-server.md`, `tools/port_skill.py`, `tools/tests/test_port_skill.py`, 2 thư mục skill và mirror. Instance có server: điền dòng "Cache phụ thuộc nội dung" ở mục 2b của `00-client-context/wp-server.md`. Cập nhật `master_version` thành `v2026.10.44`.
 
 ### v2026.10.43 (2026-10-27) — Skill mới `wp-host-optimize`; nâng 5 skill web sau rà phiên 16–27/10
 

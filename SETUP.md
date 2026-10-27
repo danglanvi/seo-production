@@ -80,6 +80,7 @@ Claude thực hiện (theo Execution Rule — show plan, chờ duyệt, rồi gh
 2. Fill 3 file skeleton trong `00-client-context/`: `client-profile.md` · `marketing-foundation.md` · `kpi-commitments.md`.
 3. Tạo `00-client-context/hop-dong-cam-ket.md` từ `_TEMPLATES/hop-dong-cam-ket.md` — trích trường cam kết, công thức đo KPI, mốc nghiệm thu từ hợp đồng.
 4. Điền bảng A (Thông tin dự án) trong `index.md` — hết `{{PLACEHOLDER}}`.
+5. Dự án có quyền vào hosting hoặc đọc GSC, GA4 bằng tài khoản Google khác: làm theo `_REFERENCE/nhan-khach-server.md` (secret riêng, khoá SSH, bảng quyền, tài khoản `gws`), rồi điền `00-client-context/wp-server.md` từ `_TEMPLATES/wp-server.md`.
 
 ### Bước 4 — Chọn gói timeline 8/10/12 tháng
 

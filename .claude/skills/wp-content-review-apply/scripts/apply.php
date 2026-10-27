@@ -619,7 +619,10 @@ if ( ! $dry ) {
 		\RankMath\Sitemap\Cache::invalidate_storage();
 	}
 	// Xoá object cache (Redis, Memcached) trước khi purge trang: purge trước thì lượt tải kế có thể dựng lại HTML từ object cũ.
-	wp_cache_flush();
+	// FLUSH=0: không xoá. Chỉ dùng khi hồ sơ server ghi site không có cache phụ thuộc nội dung bám save_post: script ghi bằng $wpdb nên hook đó không chạy.
+	if ( getenv( 'FLUSH' ) !== '0' ) {
+		wp_cache_flush();
+	}
 	// PURGE=0: không purge toàn site, người chạy tự purge theo URL (site có hồ sơ server cấm purge toàn site).
 	$purge = getenv( 'PURGE' ) !== '0';
 	if ( ! $purge ) {

@@ -500,3 +500,7 @@ Luật ghi:
 ## [2026-10-27] refactor | v2026.10.43 — Skill mới wp-host-optimize; nâng 5 skill web — @claude
 - Rà phiên sửa website 16–27/10. Thêm wp-host-optimize 1.0; nâng wp-security-hardening 1.9, wp-content-review-apply 1.7, wp-dang-bai 1.2.3, wp-xuat-ban-bai 1.0.3, semantic-html-optimization 1.2. _TEMPLATES/wp-server.md thêm mục 2b.
 - Files touched: skills/{wp-host-optimize,wp-security-hardening,wp-content-review-apply,wp-dang-bai,wp-xuat-ban-bai,semantic-html-optimization}/, _TEMPLATES/wp-server.md, .claude/skills/, .agents/skills/, MIGRATION.md, log.md
+
+## [2026-10-27] refactor | v2026.10.44 — Công cụ port skill, nhận khách có server, render-diff gỡ plugin, FLUSH=0 — @claude
+- tools/port_skill.py + test; _REFERENCE/nhan-khach-server.md, SETUP.md bước 3; wp-paid-plugin-exit 1.3; wp-content-review-apply 1.7.1; _TEMPLATES/wp-server.md dòng "Cache phụ thuộc nội dung".
+- Files touched: tools/port_skill.py, tools/tests/test_port_skill.py, _REFERENCE/nhan-khach-server.md, SETUP.md, _TEMPLATES/wp-server.md, skills/{wp-paid-plugin-exit,wp-content-review-apply}/, .claude/skills/, .agents/skills/, MIGRATION.md, log.md

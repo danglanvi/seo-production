@@ -40,6 +40,7 @@ Skill ghi nội dung (`wp-content-review-apply`, `wp-dang-bai`, `semantic-html-o
 |---|---|
 | Page cache trên server | {{LiteSpeed Cache; option purge-post_all = 0/1}} |
 | Object cache | {{Redis DB số mấy / không}} |
+| Cache phụ thuộc nội dung | {{nhóm cache hay transient do mu-plugin, theme dựng từ nội dung và chỉ làm mới qua save_post / không có}}. Có thì `apply.php` giữ `wp_cache_flush()`, không chạy `FLUSH=0` |
 | CDN giữ HTML | {{không / có: nhà cung cấp, vùng khách đi qua CDN, TTL HTML ở edge}} |
 | CDN tự purge khi bài đổi | {{có: mu-plugin nào / không}} |
 | Lệnh purge CDN theo URL | {{ví dụ: python3 -I skills/wp-ucss/scripts/bunny_purge.py <paths.txt> --site <site.json> --apply --warm}} |

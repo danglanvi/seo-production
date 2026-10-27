@@ -2,7 +2,7 @@
 name: wp-paid-plugin-exit
 description: "Thay plugin và theme trả phí không có licence bằng bản free hoặc code tự viết: Elementor Pro sang widget free, ACF Pro sang SCF, Permalink Manager Pro sang bản đồ URL khoảng 80 dòng, Flatsome sang theme riêng. Kiểm kê trước, giữ bản tắt 7 ngày để rollback."
 metadata:
-  version: "1.2"
+  version: "1.3"
 ---
 
 # wp-paid-plugin-exit — bỏ plugin trả phí không licence
@@ -62,6 +62,7 @@ Test: `tests/test_permalink_uris.php` (chạy `php tests/test_permalink_uris.php
    - Widget posts, nav-menu, progress-tracker: shortcode của theme. Carousel testimonial, media, slides: HTML + CSS scroll-snap.
 3. Chạy `el_free_convert.php` với `IDS=<danh sách>` và `PREFIX=<tiền tố theme>` ở `DRY=1`. Đọc log rồi chạy `DRY=0 BK=<thư mục>`.
 4. Code thay thế chỉ chạy khi Pro tắt. Bật lại Pro là quay về trạng thái cũ.
+5. So trước và sau bằng render-diff như mục ACF → SCF bước 5: 2 lượt chụp khi Pro còn bật, 1 lượt sau khi tắt, đủ URL sitemap. Header, footer, popup và widget thay thế phải ra cùng chữ, link và ảnh.
 
 ### ACF Pro → Secure Custom Fields (SCF)
 
@@ -73,8 +74,8 @@ Test: `tests/test_permalink_uris.php` (chạy `php tests/test_permalink_uris.php
    - Kiểm: so HTML staging lượt ACF với lượt SCF, đếm riêng số thẻ `<script>` và mã GTM mỗi URL. Mọi URL phải trùng (site mẫu: 102/102) trước khi lên production.
 4. Nếu site chỉ cần đọc vài meta, đăng ký meta bằng `register_post_meta` trong mu-plugin và bỏ hẳn ACF.
 5. Trên production, so 3 lớp trước và sau khi chuyển. Lượt chạy thật ngày 24/10/2026 trên site agency mẫu dùng đúng 3 lớp này:
-   - **Render-diff**: chụp HTML bỏ cache (`?nc=`) của mọi URL trong sitemap, từ 350 URL trở lên. Chụp 2 lượt trước để thấy phần đổi ngẫu nhiên, 1 lượt sau. Giữ giới hạn tải của host (site mẫu: 1 request/giây, 2 luồng, khoảng 6 phút cho 352 URL). Chuẩn hoá trước khi so: bỏ container honeypot của WPForms (nhãn 3 chữ ngẫu nhiên, container có `position:absolute`). Nếu không bỏ, 11/352 URL báo khác dù không có gì đổi. Các ô form khác vẫn so.
-   - **Dữ liệu**: md5 kết quả `get_fields()` của từng đối tượng (post, term, options) trước và sau. Site mẫu: 376 đối tượng, lệch 0.
+   - **Render-diff**: chụp HTML bỏ cache của mọi URL trong sitemap, từ 350 URL trở lên: `scripts/render_snap.py --base https://<domain> --sitemap > urls.txt`, rồi `render_snap.py --base https://<domain> urls.txt <thư mục>` cho mỗi lượt. Script bỏ cache bằng cookie `_lscache_vary` ngẫu nhiên. Không dùng `?nc=` trên site có CSS gọn theo URL, vì tham số query sinh file CSS mới. So bằng `scripts/render_diff.py <trước1,trước2> <sau> --host <domain>`: mã thoát 1 khi có URL khác thật hoặc khác mã HTTP. Chụp 2 lượt trước để thấy phần đổi ngẫu nhiên, 1 lượt sau. Giữ giới hạn tải của host (site mẫu: 1 request/giây, 2 luồng, khoảng 6 phút cho 352 URL). Chuẩn hoá trước khi so: bỏ container honeypot của WPForms (nhãn 3 chữ ngẫu nhiên, container có `position:absolute`). Nếu không bỏ, 11/352 URL báo khác dù không có gì đổi. Các ô form khác vẫn so.
+   - **Dữ liệu**: md5 kết quả `get_fields()` của từng đối tượng (post, term, options) trước và sau: `OUT=<file> wp eval-file scripts/acf_fields_sig.php`. Site mẫu: 376 đối tượng, lệch 0.
    - **Admin**: mở các màn có repeater, gallery, trang Options. Đếm số trường, hàng repeater, ảnh gallery và ô. Không bấm lưu.
 6. SCF ghi `acf_version` mới (site mẫu: 6.0.5 → 6.9.6), có thể ngay khi màn admin mở. ACF Pro bản cũ không chạy upgrade khi số trong DB cao hơn. Vì vậy lệnh rollback phải đưa `acf_version` về số cũ trước khi bật lại ACF Pro.
 7. Theo dõi ít nhất 20 phút sau khi chuyển: 5xx, fatal, warning mới, "max children", URL đang `hit` vẫn `hit`. Không purge toàn site. Chỉ purge theo URL các trang mẫu rồi làm nóng.
@@ -158,6 +159,7 @@ Bản tốt nhất phải có:
 
 ## Changelog
 
+- v1.3 (2026-10-27): đóng gói render-diff thành script dùng cho mọi lượt gỡ plugin: `render_snap.py` (lấy URL từ sitemap, chụp HTML bỏ cache bằng cookie), `render_diff.py` (chuẩn hoá nonce, giờ, honeypot WPForms; tách khác thật khỏi nhiễu giữa 2 lượt trước), `acf_fields_sig.php` (md5 `get_fields()`), test 4 ca. Mục Elementor Pro thêm bước so bằng render-diff. Chạy thật 27/10/2026 trên site agency mẫu: 5 URL, 3 lượt đều `miss`, 0 khác thật.
 - v1.2 (2026-10-25): sec-12. ACF → SCF bước 3 thêm bẫy SCF lọc `<script>` trong `the_field()`, mu-plugin `allow_unsafe_html`, phép đếm `<script>` và GTM. Nguồn: render-diff staging gtvseo.com 23/10 (thiếu mu-plugin 87/102 URL lệch, có mu-plugin 0).
 - v1.1 (2026-10-24): mục ACF → SCF thêm bước 5–7 từ lượt production đã chạy thật trên gtvseo.com 24/10 08:13: render-diff 352 URL có chuẩn hoá honeypot WPForms (lệch 0), md5 `get_fields()` 376 đối tượng (lệch 0), đếm ô admin, `acf_version` đổi sau khi mở admin, theo dõi 20 phút. Thêm 1 mục tự phản biện. Nguồn: `Deliverables/GTV-Brand/GTV-Website/security-2026-10/acf-scf-2310/prod/bao-cao.md`, `kiem-doc-lap.md`.
 - v1.0 (2026-10-19): bản đầu. Gom script bỏ Elementor Pro (18/10) và bản thay Permalink Manager của 2 site nội bộ. Thêm `acf_inventory.php`, `pm_export.php` (xử lý tiền tố WPML), `permalink-uris.php`. Lượt thử 19/10, chỉ đọc: converter chạy lại trên bản backup 18/10 cho đúng 18 lượt đổi và cùng md5 nguồn; `pm_export.php` khớp 185/185 URL đang chạy.

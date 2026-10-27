@@ -2,7 +2,7 @@
 name: wp-content-review-apply
 description: "Đưa thay đổi SEO title, meta, H1, slug, link, đoạn văn, trường ACF/Elementor của site WordPress qua trang duyệt có nút Duyệt/E, rồi ghi an toàn bằng WP-CLI: dựng dữ liệu, QA, plan, chạy thử, ghi, kiểm. Dùng trước mọi lần sửa nội dung trên site có quyền server."
 metadata:
-  version: "1.7"
+  version: "1.7.1"
 ---
 
 # wp-content-review-apply — duyệt trước, ghi sau
@@ -223,7 +223,8 @@ Bản tốt nhất phải có:
 
 ## Changelog
 
-- v1.7 (2026-10-27): Bước 6 mục 1 "Tầng cache": purge CDN theo URL bằng lệnh trong hồ sơ server, kiểm giờ lưu ở edge, regen CSS gọn cho path đổi thẻ hoặc class. `ghi-an-toan.md` mục 1 bước 4b. Mục tầng cache mới trong mẫu `_TEMPLATES/wp-server.md`. Gate và anti-pattern thêm 1 mục. Nguồn: site mẫu GTV chuyển apex sang CDN chia vùng 26/10; đợt semantic HTML 27/10 chuỗi ghi dừng ở bước CDN vì đường dẫn tương đối và phải phối hợp regen CSS gọn bằng tay.
+- v1.7.1 (2026-10-27): `apply.php` thêm `FLUSH=0` (mặc định vẫn xoá object cache), test 2 ca. `ghi-an-toan.md` mục 1 bước 4 ghi điều kiện dùng. Hồ sơ server thêm dòng "Cache phụ thuộc nội dung". Lý do: đề xuất bỏ hẳn `wp_cache_flush()` sai trên site có cache mảnh bám `save_post`.
+- v1.7 (2026-10-27): Bước 6 mục 1 "Tầng cache": purge CDN theo URL bằng lệnh trong hồ sơ server, kiểm giờ lưu ở edge, regen CSS gọn cho path đổi thẻ hoặc class. `ghi-an-toan.md` mục 1 bước 4b. Mục tầng cache mới trong mẫu `_TEMPLATES/wp-server.md`. Gate và anti-pattern thêm 1 mục. Nguồn: site agency mẫu chuyển apex sang CDN chia vùng 26/10; đợt semantic HTML 27/10 chuỗi ghi dừng ở bước CDN vì đường dẫn tương đối và phải phối hợp regen CSS gọn bằng tay.
 - v1.6 (2026-10-25): nd-1 engine `apply.php` (vá `$has` trước khi lấy tham chiếu, op `text`, `fix`, `el_rm`, `el_restore`, field `usermeta`/`option`, log ra `OUT`, `FAIL_ON_SKIP`), `locate.php`, `references/thao-tac-ghi.md`. nd-2 `doi_chieu.py` và luật "duyệt tới đâu áp tới đó" ở Bước 4, `so_duyet.py` + `plan.py --so`. nd-3 `the_qa.py` và khối `qa` của trường, ma trận chữ người duyệt tự sửa, humanizer `references/chu-ngan-web.md`. wpr-1 trang duyệt lấy phần từ `summary.sections`, chia 3 truy vấn reviews, status `applied`; `check_cards.py`, `kiem_trang_duyet.mjs`, `so_duyet.py the`; tra quyết định cũ trước khi ghi; cổng ghi hàng loạt; WPForms, `proc_open`, marker JSON vào `ghi-an-toan.md`. wp-review-1 `fid` (`key#n`) trong trang. ops2-9 `mark_batch.py`, thẻ ảnh `img`. hs-10 `seed_batches.py --only-missing`, `status: applied` trong `hop-dong-du-lieu.md`. perf-10 `references/don-html-hang-loat.md` và 6 script dọn HTML có bất biến wpautop, rollback so md5. sec-5 biến sau `sudo`, `ssh -n`, base64, đếm backup vào `ghi-an-toan.md` mục 2. nd-5 bẫy Permalink Manager Pro và Rank Math vào `ghi-an-toan.md` mục 4. Thêm Phân việc model, Tự phản biện, 5 mục Gate. Test offline: `tests/run_all.py`.
 
 - v1.5 (2026-10-24): Bước 4 kiểm điều kiện ngày trong nguồn duyệt trước khi ghi. Bước 6 chỉ gắn `appliedAt` sau khi kiểm live, đóng thẻ bị thẻ duyệt sau thay thế. `ghi-an-toan.md` mục 4b: luật rebase 4 trường hợp khi `raw_before` lệch live. Gate thêm 2 mục. Nguồn: lane `ap-the-cu-2310` gtvseo.com 23/10 (`Deliverables/GTV-Brand/GTV-Website/content-review-2026-10/ap-the-cu-2310/kiem-doc-lap.md` mục 1 và dòng `v2-qp-titles`).
