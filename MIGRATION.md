@@ -1,5 +1,5 @@
 ---
-master_version: v2026.10.41
+master_version: v2026.10.42
 ---
 
 # MIGRATION — Cập nhật instance lên version master mới
@@ -15,6 +15,12 @@ master_version: v2026.10.41
 ---
 
 ## 1. Có gì mới
+
+### v2026.10.42 (2026-10-27) — Luật port giữ link fork của instance; trả chốt chặn GSC cho instance
+
+- **Vì sao:** khi port v2026.10.39–41 sang 2 instance, script so 3 chiều giữ 2 file khác master. Rà lại: `05-content-plan/README.md` khác vì instance đã điền link fork Content (data dự án). `tools/ai-assist/tasks/gsc-cannibal-pair.json` khác vì instance còn bản cũ, thiếu `must_be_empty: ["shared_queries"]` mà v2026.10.33 thêm để `jev.py` không gửi query GSC ra ngoài.
+- **Sửa:** mục 2.A thêm ngoại lệ: giữ dòng "Link fork:" của instance khi đè `05-content-plan/README.md`.
+- **Port sang instance:** GHI ĐÈ `MIGRATION.md`, `tools/ai-assist/tasks/gsc-cannibal-pair.json`. Không đổi `05-content-plan/README.md` của instance.
 
 ### v2026.10.41 (2026-10-27) — Eval cho 3 skill xuất bản; router đăng web
 
@@ -678,6 +684,8 @@ Bản đầu tiên của hệ SEO Production. Không có instance cũ để migr
 | Archive | `99-archive/` |
 
 > ⚠ **Điểm khéo:** workstream folder chứa CẢ `README.md` (infra) LẪN deliverable (data). Chỉ đè `README.md`, giữ nguyên deliverable. Vì vậy KHÔNG `cp -R` cả workstream folder — dùng cách Claude-assisted ở mục 3.
+>
+> ⚠ **Ngoại lệ trong nhóm A:** dòng "Link fork:" của `05-content-plan/README.md` là data dự án, điền ở SETUP bước 7. Khi đè file này, giữ nguyên dòng đó của instance. Instance còn `{{LINK_FORK_CONTENT}}` thì lấy bản master.
 
 ---
 
