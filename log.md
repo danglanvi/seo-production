@@ -466,3 +466,8 @@ Luật ghi:
 ## [2026-10-26] refactor | v2026.10.34 — backup_pull.sh không chép mode thư mục của server — @claude
 - wp-security-hardening 1.7.1: `rsync -rlt` + `chmod` thư mục đích. Kéo thật 2,7 GB đạt.
 - Files touched: skills/wp-security-hardening/, MIGRATION.md, log.md, .claude/skills/, .agents/skills/
+
+## [2026-10-27] refactor | v2026.10.36 — Nâng 7 skill tốc độ, crawl, bảo mật; thêm 4 skill điều phối, wf-status, sổ lượt gọi Jev — @claude
+- Nâng wp-ucss 1.1.0, wp-pagespeed 1.14, seo-logfile-analysis 1.4, cdn-speed-setup 1.2, wp-security-hardening 1.8, web-qa-gate 1.3.1, technical-seo-audit 1.10. Thêm 4 skill điều phối bản sinh từ master (web-lane-orchestration 1.2, decision-page 1.0.1, workstream-master-plan 1.0.1, runtime-handoff 1.3.1), không sửa tay.
+- Thêm `tools/wf-status.py`, `tools/shell-traps-macos.md`, `tools/ai-assist/jev_ledger.py`, `_REFERENCE/luat-duyet-dieu-phoi.md`. `jev.py` ghi sổ lượt gọi và có cờ `--label`. `ORCHESTRATOR.md` thêm mục 4.1 trỏ tới 4 skill điều phối. `master_version` đổi thành v2026.10.36.
+- Files touched: skills/{wp-ucss,wp-pagespeed,seo-logfile-analysis,cdn-speed-setup,wp-security-hardening,web-qa-gate,technical-seo-audit,web-lane-orchestration,decision-page,workstream-master-plan,runtime-handoff}/, tools/wf-status.py, tools/tests/test_wf_status.py, tools/shell-traps-macos.md, tools/ai-assist/jev.py, tools/ai-assist/jev_ledger.py, _REFERENCE/luat-duyet-dieu-phoi.md, ORCHESTRATOR.md, MIGRATION.md, log.md, .claude/skills/, .agents/skills/

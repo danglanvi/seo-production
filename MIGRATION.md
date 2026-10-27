@@ -1,5 +1,5 @@
 ---
-master_version: v2026.10.34
+master_version: v2026.10.36
 ---
 
 # MIGRATION — Cập nhật instance lên version master mới
@@ -15,6 +15,41 @@ master_version: v2026.10.34
 ---
 
 ## 1. Có gì mới
+
+### v2026.10.36 (2026-10-27) — Nâng 7 skill tốc độ, crawl và bảo mật; thêm 4 skill điều phối, công cụ theo dõi workflow, sổ lượt gọi Jev
+
+- **Vì sao:** đợt chạy đêm 26–27/10 trên site agency mẫu (CDN chia vùng, CSS gọn theo trang, 24 workflow) cho bài học về tốc độ, crawl, bảo mật tài khoản CDN và cách điều phối nhiều lane. Người duyệt chốt 27/10. Số version dưới đây lấy từ dòng `version:` và mục Changelog đầu của từng `SKILL.md`.
+- **wp-ucss 1.1.0:** `map_diff.py` thay đoạn heredoc trong `regen.sh` (cổng `MAX_LOST`, file `purge_paths.txt`). `qa_sau_giao.py` kiểm sau giao theo path × biến thể, link đã đổi, robots và canonical so baseline. Mẫu `site.json` thêm `swap_attr`. Eval 7 ca.
+- **wp-pagespeed 1.14:** `fcp-guest-mode.md` thêm mục khách mới bị tải lại trang (rewrite `guest.vary.php`, mẫu `templates/guest-tap.php`). `checklist-theo-lop.md` thêm bảng "Đã A/B và không áp". Bước 3 thêm mục 11–12.
+- **seo-logfile-analysis 1.4:** `scripts/kpi_html.py` tính KPI tỉ lệ HTML trong lượt Googlebot web. Mẫu số bỏ file hạ tầng. Có `--trust-xff` cho log sau CDN và cảnh báo khi mẫu số dưới 30. Bước 3 Tier C thêm cách đọc CSV Crawl Stats.
+- **cdn-speed-setup 1.2:** `warm.py` gửi HTML với `Accept` có `image/webp` (cờ `--accept`), đúng với `origin-sau-cdn.md` §2. Thêm mục "Quyền hành động trên Cloudflare" và cách làm nóng đúng trạm bot dùng bằng ECS.
+- **wp-security-hardening 1.8:** nhánh C và `references/ra-tai-khoan-cdn.md` rà Worker, route, token, thành viên, 2FA, audit log, SSL. Kiểm từ ngoài bằng UA trình duyệt và UA Googlebot. Có 8 bước khi secret bị lộ. Chưa có script đọc tài khoản.
+- **web-qa-gate 1.3.1:** `_cdp.mjs` thêm `dnsRules()`: host tracking bị chặn thêm ở tầng DNS. Beacon gửi lúc đóng tab không đi qua `Network.setBlockedURLs`, nên Chrome headless trước đây làm lọt sự kiện thử vào GA4 của site sống. Test `tests/test_dns_block.py` chạy Chrome thật.
+- **technical-seo-audit 1.10:** mục "Chọn skill theo triệu chứng": 11 triệu chứng, cách đo, skill bắt đầu. `evals/cases.yaml` thêm 4 ca định tuyến.
+- **Bốn skill điều phối mới, bản sinh từ master:** `web-lane-orchestration` 1.2 (workflow nhiều lane trên site sống, chạy đêm từ phiên mới), `decision-page` 1.0.1 (trang HTML chờ Lead quyết, trả lời thành danh sách việc), `workstream-master-plan` 1.0.1 (sổ yêu cầu và master plan của workstream dài), `runtime-handoff` 1.3.1 (HANDOFF, bàn giao phiên, đổi runtime). Đầu mỗi `SKILL.md` có dòng ghi đây là bản sinh. Không sửa tay. Muốn đổi, đề xuất một câu theo `_REFERENCE/self-improving.md` vòng 2.
+- **Tài liệu mới `_REFERENCE/luat-duyet-dieu-phoi.md`:** luật duyệt (quyền hành động, việc cần duyệt từng lần), luật sub-agent (chỉ khi Lead yêu cầu rõ, trần 2 agent cùng lúc trong mỗi phiên theo `.claude/settings.json` của repo, 6 agent mỗi workflow; effort theo model: Opus high, Sonnet và Haiku xhigh, mỗi dòng dùng bản mới nhất), luật HANDOFF (5 mục, dưới 60 dòng), luật đặt tên, mục "Khi Lead vắng". Bốn skill điều phối trỏ về file này. Khi file này vênh `CLAUDE.md`, `CLAUDE.md` thắng. `ORCHESTRATOR.md` thêm mục 4.1 trỏ tới 4 skill.
+- **Tool mới:** `tools/wf-status.py` (lệnh `lint-script`, `tokens`, `result`, `slots`, `stale`; Python stdlib) và `tools/tests/test_wf_status.py`. `tools/shell-traps-macos.md` ghi các lệnh shell hay hỏng trên Mac và 2 dòng `~/.zshenv`. `tools/leak_scan.sh` dò secret trong file trước khi giao (skill `runtime-handoff` gọi).
+- **tools/ai-assist:** `jev.py` ghi mỗi lượt có gọi API vào sổ `~/.cache/ai-assist/jev-ledger.jsonl` (đổi đường dẫn bằng `JEV_LEDGER`), thêm cờ `--label`. `jev_ledger.py` (mới) tổng hợp số lượt, lỗi và chi phí theo ngày và theo task: `python3 tools/ai-assist/jev_ledger.py [--since YYYY-MM-DD] [--label <chuỗi>]`. Sổ nằm ngoài repo, không commit.
+- **Port sang instance:** THÊM 4 thư mục skill điều phối, `_REFERENCE/luat-duyet-dieu-phoi.md`, `tools/wf-status.py`, `tools/tests/test_wf_status.py`, `tools/shell-traps-macos.md`, `tools/leak_scan.sh`, `tools/ai-assist/jev_ledger.py`. GHI ĐÈ 7 thư mục skill còn lại, `tools/ai-assist/jev.py`, `ORCHESTRATOR.md` và mirror. Bước instance cần làm:
+  1. Instance đã chạy job tái tạo `wp-ucss`: chép `map_diff.py`, `qa_sau_giao.py`, `regen.sh` mới vào thư mục làm việc của đợt, rồi chạy `regen.sh` một lần ở chế độ thử.
+  2. Instance dùng CDN: làm nóng lại bằng `warm.py` mới để HTML có `Accept` WebP.
+  3. Instance có `guest.vary` trong mu-plugin: đọc `fcp-guest-mode.md` mục khách mới bị tải lại trang. Mu-plugin trên server là config sống, xin Lead duyệt riêng trước khi đổi.
+  4. Script `web-qa-gate` chạy trên site có GA4: dùng `_cdp.mjs` mới để chặn beacon ở tầng DNS.
+  5. Mỗi máy của Lead: thêm 2 dòng vào `~/.zshenv` theo `tools/shell-traps-macos.md`. Syncthing không đồng bộ dotfile.
+  6. Instance chưa có `HANDOFF.md` cho workstream nhiều phiên: tạo theo `_REFERENCE/luat-duyet-dieu-phoi.md` mục HANDOFF. Không cần làm gì với sổ Jev, `jev.py` tự tạo file khi chạy lượt đầu.
+  7. Cập nhật frontmatter `master_version` của `MIGRATION.md` trong instance thành `v2026.10.36`.
+
+### v2026.10.35 (2026-10-27) — CSS gọn theo trang (wp-ucss), bài học speed và crawl của một site OLS + LiteSpeed Cache
+
+- **Vì sao:** site WordPress mẫu (OLS 1.8.1 + LiteSpeed Cache 7.9.1, CDN Bunny chia vùng) có file CSS gộp 0,96–1,48 MB chặn render. Đợt 26–27/10 tự dựng CSS gọn theo trang thay cho UCSS trả phí: PSI mobile trung vị 7 template 94 → 98, trang chủ LCP 2,9 → 2,3 s, FCP 2,0 → 1,4 s.
+- **Skill mới `wp-ucss` 1.0.0:** chọn URL đại diện (`chon_url.py`), quét 4 biến thể `m`, `d`, `p`, `q`, sinh bằng engine Chrome, kiểm computed style A/B/A2 có lượt xác nhận, map theo (md5 file gộp, path), mu-plugin đổi `href`, deploy DRY rồi thật, purge 12 path mỗi lệnh, làm nóng, purge và làm nóng Bunny bằng bản WebP (`bunny_purge.py --warm`), job tái tạo launchd (`regen.sh`), kiểm khoảng hở critical CSS (`ccss_gap.mjs`). Rubric Jev `tools/ai-assist/tasks/ucss-diff.json` (chưa hiệu chuẩn, chỉ xếp thứ tự).
+- **wp-pagespeed 1.13:** Bước 1 chọn URL bằng `chon_url.py`; Bước 3 thêm CSS gọn, 404 dò quét trả trước PHP (`references/ttfb-cache-trang.md` §4b), CDN không tách HTML theo Accept; checklist lớp 1 và lớp 5 thêm bẫy `-V` của `guest.vary`, Googlebot dùng bản `Accept: */*`, TBT tăng khi critical CSS kèm file gộp lớn, `.screen-reader-text` gây CLS.
+- **Kiểm:** `wp-ucss/scripts/tests/run.sh` đạt mọi phần (cần css-tree 3.x; thư mục module khác đặt `UCSS_NODE_MODULES`). `skill_struct_check.py --moi` đạt. Chạy thật trên site mẫu: 66 path, 128 cặp bản `*/*` lệch 0.
+- **wp-pagespeed 1.13.1:** `psi_run.py` cách lượt cùng URL + thiết bị `--min-gap` 60 giây và đo lại lượt trùng `fetchTime` (PSI trả kết quả đã lưu khi gọi lại quá sớm; 27/10 một lane báo "3 lượt" nhưng chỉ có 1). 162 ca test đạt.
+- **wp-ucss 1.0.1:** `gen.mjs` lấy URL file gộp gốc trong `onerror` ở trang đã đổi sang CSS gọn. Bản 1.0.0 ghi hash null nên job tái tạo sinh lại các cặp đó mỗi lượt.
+- **wp-pagespeed 1.13.2:** Bước 3 mục 8 thêm luật so md5 file gộp ở cả 4 biến thể `m`, `d`, `p`, `q` khi site đã có CSS gọn.
+- **wp-ucss 1.0.2:** `verify.mjs` dùng chung hàm `combinedHref()` với `gen.mjs`; bản cũ bỏ qua mọi cặp đã đổi link và làm map mới mất path. `regen.sh` thêm cổng `MAX_LOST` (mặc định 3 path). Instance đã chạy job tái tạo: thay `gen.mjs`, `verify.mjs`, `lib-ucss.mjs`, `regen.sh` trong thư mục làm việc của đợt.
+- **Port sang instance:** GHI ĐÈ `skills/wp-ucss` (mới), `skills/wp-pagespeed`, `tools/ai-assist/tasks/ucss-diff.json` và mirror. Instance dùng CDN Bunny điền `cdn_host`, `cdn_warm_ecs` trong `site.json` của đợt.
 
 ### v2026.10.34 (2026-10-26) — Kéo backup về máy không chép mode thư mục của server
 

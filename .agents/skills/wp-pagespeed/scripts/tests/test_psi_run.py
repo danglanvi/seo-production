@@ -1,6 +1,7 @@
 # Test offline cho psi_run.py bằng server PSI giả trên 127.0.0.1 (không gọi Google, không dùng key thật).
 # Ca hỏng thật: tháng 10/2026 chờ PSI tuần tự 388-630 phút mỗi phiên, lệnh tiền cảnh quá lâu làm treo phiên (perf-1, hs-7).
 import glob
+import json
 import os
 import sys
 import tempfile
@@ -12,7 +13,7 @@ from fixtures import PsiStub, run  # noqa: E402
 
 KEY = 'KEY-GIA-0123456789'
 ENV = {'PAGESPEED_API_KEY': KEY}
-FAST = ['--sleep', '0', '--retry-wait', '0', '--no-warm']
+FAST = ['--sleep', '0', '--retry-wait', '0', '--no-warm', '--min-gap', '0']
 
 
 class PsiRun(unittest.TestCase):
@@ -49,6 +50,30 @@ class PsiRun(unittest.TestCase):
         with open(os.path.join(self.out, 'PSI_STATE.txt')) as f:
             self.assertIn('DONE lỗi=0 exit=0', f.read())
         self.assertNotIn(KEY, r.stdout + r.stderr)
+
+    def test_cached_result_is_retried_not_saved(self):
+        # Ca hỏng thật 27/10/2026: PSI trả kết quả đã lưu cho lượt 2 và 3 (cùng fetchTime, mỗi lượt khoảng 1 giây),
+        # nên "trung vị 3 lượt" thật ra là 1 lượt. Lượt trùng fetchTime phải bị bỏ và đo lại.
+        self.write_urls(1)
+        with PsiStub(cache_hits=1) as s:
+            r = self.go(s.api, '--runs', '2', '--devices', 'mobile', '--jobs', '1', *FAST)
+            self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+            self.assertIn('fetchTime', r.stdout)
+            self.assertEqual(len(s.calls), 3, 'lượt 2 phải gọi lại sau khi gặp kết quả đã lưu')
+        fts = set()
+        for f in glob.glob(os.path.join(self.out, '*.json')):
+            with open(f) as fh:
+                fts.add(json.load(fh)['lighthouseResult']['fetchTime'])
+        self.assertEqual(len(fts), 2, '2 file phải có 2 fetchTime khác nhau')
+
+    def test_min_gap_spaces_same_url(self):
+        self.write_urls(1)
+        with PsiStub() as s:
+            t0 = time.time()
+            r = self.go(s.api, '--runs', '2', '--devices', 'mobile', '--jobs', '2', '--sleep', '0', '--retry-wait', '0', '--no-warm', '--min-gap', '1.5')
+            self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+            self.assertGreaterEqual(time.time() - t0, 1.5, 'hai lượt cùng URL + thiết bị phải cách nhau --min-gap')
+            self.assertEqual(s.max_inflight, 1, 'cùng URL + thiết bị không chạy đồng thời')
 
     def test_jobs1_is_sequential(self):
         self.write_urls(2)

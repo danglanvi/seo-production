@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "source_version": "v1.4",
+  "execution_status": "27/10/2026: 5 ca. kpi_html.py chạy trên log origin thật của site agency mẫu (đêm 26–27/10) cho đúng số tính tay; test offline tests/test_kpi_html.py 6 ca. Ca crawl-stats-metadata dựa trên lỗi thật của plan bản đầu ngày 26/10. Chưa chạy lại cả quy trình với một agent.",
+  "cases": [
+    {
+      "id": "kpi-html-20261027",
+      "input": "Tính tỉ lệ HTML trong lượt Googlebot web từ 21:22 tối qua tới giờ, theo từng giờ.",
+      "expected_behavior": "Chạy kpi_html.py với --ranges googlebot.json, --since, --by-hour. Báo % KPI (mẫu số bỏ robots, sitemap, ads.txt, llm(s).txt, assetlinks) và % gốc, kèm mẫu số. Mẫu số dưới 30 thì không kết luận theo giờ. Tách số mã 200 và 301/404/410 trong tử số.",
+      "forbidden_behavior": "Tính tay bằng awk trên cột cố định. Tính lượt UA Googlebot có IP ngoài dải. Báo % theo giờ như xu hướng khi mỗi giờ chỉ vài lượt. In IP ra chat.",
+      "rubric": ["đúng định nghĩa mẫu số", "IP Googlebot đã xác minh", "nêu cỡ mẫu"],
+      "source_version": "v1.4"
+    },
+    {
+      "id": "cdn-xff-20261026",
+      "input": "Site vừa đặt CDN trước origin. Log origin có cột X-Forwarded-For. Đếm Googlebot giúp.",
+      "expected_behavior": "Đọc Bước 0b mục 3b. Xác định mốc origin bắt đầu tin IP CDN. Trước mốc đó, %h là IP trạm CDN: dùng --trust-xff cho kpi_html.py nếu origin chặn request không qua CDN, hoặc bỏ khung giờ đó và ghi giới hạn. Ghi rõ hit trúng cache ở edge không có trong log origin, kéo log CDN nếu cần.",
+      "forbidden_behavior": "Xếp Googlebot đi qua CDN vào nhóm giả. Tin X-Forwarded-For khi origin còn nhận request trực tiếp mà không ghi rủi ro.",
+      "rubric": ["xử lý IP qua CDN", "ghi cận dưới"],
+      "source_version": "v1.4"
+    },
+    {
+      "id": "crawl-stats-metadata-20261026",
+      "input": "Đây là bản xuất Crawl Stats (Chart.csv, Table.csv, Metadata.csv). Lấy average response time của site làm mốc.",
+      "expected_behavior": "Đọc Metadata.csv trước. Nếu dòng Type là một loại file, báo số trong Chart.csv chỉ là của loại đó. Xin người dùng xuất bản không lọc cho cả host và từng loại. Không dùng chuỗi của một loại làm mốc cả host.",
+      "forbidden_behavior": "Lấy Chart.csv làm số cả host khi Metadata.csv ghi một loại file. Đếm 410 từ Crawl Stats.",
+      "rubric": ["đọc Metadata.csv", "đúng phạm vi số"],
+      "source_version": "v1.4"
+    },
+    {
+      "id": "verify-truoc-20261019",
+      "input": "Đếm xem Googlebot crawl bao nhiêu URL tuần qua.",
+      "expected_behavior": "Chạy verify_googlebot.py (dải IP trước, rDNS song song) trước mọi số về Googlebot. Ghi số IP unchecked và % giả.",
+      "forbidden_behavior": "Kết luận từ UA-match. rDNS tuần tự mọi IP.",
+      "rubric": ["verify trước", "khai fake-bot %"],
+      "source_version": "v1.3"
+    },
+    {
+      "id": "wrong-trigger-20261027-pagespeed",
+      "input": "Trang chủ chậm trên PageSpeed, tối ưu giúp.",
+      "expected_behavior": "Không dùng skill này. Dùng wp-pagespeed.",
+      "forbidden_behavior": "Phân tích log để tăng điểm PSI.",
+      "rubric": ["đúng skill"],
+      "source_version": "v1.4"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "doc_id": "lead",
+  "data": {
+    "choices": {
+      "s1": "Dựng decision-page ở đợt 1, có bản artifact lưu câu trả lời",
+      "s3": "Chỉ thêm checklist form vào web-qa-gate",
+      "s5": "Không dựng workstream-master-plan",
+      "l2": "Cài hook SessionStart và thêm 6 dòng CLAUDE.md"
+    },
+    "notes": {
+      "s2": "Làm xong s1 trước, s2 sau.\nKhông đụng memory khác.",
+      "l1": "Chưa quyết, để tôi nghĩ thêm"
+    },
+    "text": "Trả lời trang Duyệt skill web site-mau (artifact, bản 2):\nSkill 1 — Skill decision-page: Dựng decision-page ở đợt 1, có bản artifact lưu câu trả lời\nSkill 2 — Skill artifact-account-migration: (để trống, theo đề xuất); Ghi chú: Làm xong s1 trước, s2 sau.\nKhông đụng memory khác.\nSkill 3 — Skill wp-form-delivery-audit: Chỉ thêm checklist form vào web-qa-gate\nSkill 4 — Skill wp-ui-fix: (để trống, theo đề xuất)\nSkill 5 — Skill workstream-master-plan: Không dựng workstream-master-plan\nLuật 1 — Hook chặn hộp duyệt: (để trống, chưa làm); Ghi chú: Chưa quyết, để tôi nghĩ thêm\nLuật 2 — Hook sau compact: Cài hook SessionStart và thêm 6 dòng CLAUDE.md\nLuật 4 — Bẫy shell macOS: (để trống, chưa làm)\nNâng cấp — Nâng cấp 22 skill: (để trống, theo đề xuất)\nCách dựng — Cách dựng: (để trống, theo đề xuất)",
+    "done": true,
+    "updated": "2026-10-25T08:00:00.000Z"
+  }
+}

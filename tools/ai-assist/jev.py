@@ -10,6 +10,8 @@ Mỗi dòng input: {"id": "...", "state": {...}, "criteria": {"<câu hỏi>": {.
 dùng khi lựa chọn khác nhau theo từng dòng (ví dụ trang đích redirect).
 Ảnh (Jev 1.14): đặt {"image_path": "<file .png/.jpg>"} trong state; đường dẫn tương đối tính từ thư mục file input.
 Output không chép lại state, chỉ ghi nhãn, xác suất, model, độ trễ và chi phí.
+Sổ lượt gọi: mỗi lượt có gọi API ghi 1 dòng JSON (giờ, task, số dòng, số lượt gọi, lỗi, chi phí, --label) vào
+JEV_LEDGER hoặc ~/.cache/ai-assist/jev-ledger.jsonl. Tổng hợp: python3 jev_ledger.py [--since YYYY-MM-DD].
 """
 import argparse
 import base64
@@ -29,6 +31,7 @@ import zlib
 from pathlib import Path
 
 ENDPOINT = "https://openrouter.ai/api/alpha/decisions"
+LEDGER = Path.home() / ".cache" / "ai-assist" / "jev-ledger.jsonl"
 MODEL = "typesafe/jev-1.14"
 KEY_NAME = "OPENROUTER_JEV_API_KEY"
 MAX_BODY_BYTES = 60_000
@@ -341,6 +344,20 @@ def call(key, state, questions, timeout=30):
             raise ValueError("network_error") from None
 
 
+def log_run(task, items, results, cost, n_calls, args, mode):
+    """Ghi 1 dòng vào sổ lượt gọi. Lỗi ghi sổ chỉ cảnh báo, không làm hỏng lượt chạy."""
+    path = Path(os.environ.get("JEV_LEDGER") or LEDGER)
+    row = {"t": time.strftime("%Y-%m-%dT%H:%M:%S"), "task": task.get("name"), "task_version": task.get("version"),
+           "mode": mode, "items": len(items), "calls": n_calls, "errors": sum(1 for r in results if "error" in r),
+           "cost": round(cost, 6), "label": args.label, "out": str(args.out or "")}
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open("a", encoding="utf-8") as f:
+            f.write(json.dumps(row, ensure_ascii=False) + "\n")
+    except OSError as e:
+        print(f"cảnh báo: không ghi được sổ lượt gọi {path}: {e}", file=sys.stderr)
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--task", required=True, type=Path)
@@ -355,6 +372,7 @@ def main(argv=None):
     ap.add_argument("--dry-run", action="store_true", help="kiểm input và ảnh, không gọi API, không ghi file")
     ap.add_argument("--preflight-only", action="store_true", help="kiểm key, thử 1 mẫu thật rồi dừng, không ghi file")
     ap.add_argument("--no-preflight", action="store_true", help="bỏ bước thử 1 mẫu trước lượt chạy (không khuyến nghị)")
+    ap.add_argument("--label", default="", help="nhãn ghi vào sổ lượt gọi, ví dụ tên lane hay đợt")
     args = ap.parse_args(argv)
     if not (args.dry_run or args.preflight_only or args.out):
         ap.error("thiếu --out")
@@ -386,6 +404,7 @@ def main(argv=None):
         return 3
 
     spent = [0.0]
+    calls = [0]
     consecutive = [0]
     abort = [None]
     lock = threading.Lock()
@@ -400,6 +419,8 @@ def main(argv=None):
         for name, crit in (item.get("criteria") or {}).items():
             questions[name]["criteria"] = crit
         started = time.monotonic()
+        with lock:
+            calls[0] += 1
         try:
             payload = call(key, load_images(redact(item["state"]), args.inp.parent, args.min_image_side), questions)
             answers = check_answers(payload, questions)
@@ -431,12 +452,15 @@ def main(argv=None):
             if r["error"] in ITEM_ERRORS:
                 continue  # lỗi riêng của dòng này, thử dòng kế
             print(f"Dừng: mẫu thử {r['id']} lỗi {r['error']}. Chưa chạy phần còn lại.", file=sys.stderr)
+            log_run(task, items, first_results, spent[0], calls[0], args, "preflight")
             return 3
         else:
             print("Dừng: 3 mẫu thử đầu đều lỗi riêng của dòng, kiểm input.", file=sys.stderr)
+            log_run(task, items, first_results, spent[0], calls[0], args, "preflight")
             return 3
         print(f"preflight đạt: mẫu {first_results[-1]['id']}, chi phí {spent[0]:.5f} USD.", file=sys.stderr)
         if args.preflight_only:
+            log_run(task, items, first_results, spent[0], calls[0], args, "preflight")
             return 0
 
     with cf.ThreadPoolExecutor(max_workers=args.workers) as ex:
@@ -446,6 +470,7 @@ def main(argv=None):
         for r in results:
             f.write(json.dumps(r, ensure_ascii=False) + "\n")
     errors = sum(1 for r in results if "error" in r)
+    log_run(task, items, results, spent[0], calls[0], args, "run")
     print(f"{len(results)} dòng, lỗi {errors}, chi phí {spent[0]:.5f} USD -> {args.out}", file=sys.stderr)
     if abort[0]:
         skipped = sum(1 for r in results if r.get("error") == "aborted_consecutive_errors")

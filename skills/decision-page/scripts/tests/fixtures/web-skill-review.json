@@ -1,0 +1,543 @@
+{
+  "project": "web-skill-review",
+  "version": 2,
+  "eyebrow": "Rà soát skill web site agency mẫu 16–24/10/2026 · bản 2 · phiên bf61eacd",
+  "title": "Chờ anh quyết: skill mới, nâng cấp skill và cách chạy nhanh hơn",
+  "page_title": "Duyệt skill web site-mau",
+  "intro": "Tôi đọc nguyên văn 12 phiên làm web, gồm 54 phần transcript. Có 100 đề xuất thô, phản biện giữ lại 76. Trang này còn 10 câu cần anh quyết. Ô viền vàng là phương án tôi đề xuất. Lựa chọn tự lưu lên artifact, tôi đọc trực tiếp.",
+  "key_note": "**Câu nào anh để trống, phiên dựng sẽ làm theo đề xuất.** Ngoại lệ: hook trong `.claude/settings.json` và `~/.zshenv` chỉ làm khi anh chọn rõ ô đó, vì đây là config sống.",
+  "answer_title": "Trả lời trang Duyệt skill web site-mau (artifact, bản 2):",
+  "db": {
+    "collection": "answers",
+    "doc": "lead"
+  },
+  "report_html_file": "web-skill-review_bao-cao.fragment.html",
+  "report_label": "Báo cáo đầy đủ",
+  "cards": [
+    {
+      "id": "dalam",
+      "label": "Đã làm",
+      "title": "Hai việc anh đã duyệt trong chat",
+      "kind": "done",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            "**Luật chọn model và trần agent.** Đã áp 24/10 vào 3 file: AGENTS.md mục SUB-AGENT, `_REFERENCE/luat-duyet-dieu-phoi.md` mục Sub-agent, §7 luật tổng hợp site-mau. Việc chỉ đọc, trích ý, kiểm, áp cơ học dùng Sonnet effort high. Opus cho quyết định khó, hiệu chuẩn, viết luật và skill. Trần 10 agent cùng lúc, 6 agent mỗi workflow.",
+            "**13 mục bổ sung cho `web-lane-orchestration`.** Đã gửi cho phiên song song `marketing-tag-a2` bằng SendMessage. Phiên đó vá skill thành bản 1.1."
+          ]
+        },
+        {
+          "type": "p",
+          "text": "Lưu ý: `.claude/settings.json` đang đặt tối đa 2 sub-agent chạy cùng lúc, thấp hơn trần 10 của luật. Runtime theo số thấp hơn cho tới khi anh đổi settings."
+        }
+      ]
+    },
+    {
+      "id": "tongquan",
+      "label": "Thông tin",
+      "title": "Thời gian đi đâu",
+      "kind": "info",
+      "blocks": [
+        {
+          "type": "stats",
+          "items": [
+            {
+              "n": "87",
+              "label": "workflow trong tuần, tổng 7.275 phút"
+            },
+            {
+              "n": "~117 triệu",
+              "label": "token của 87 workflow"
+            },
+            {
+              "n": "23%",
+              "label": "token nằm ở 18 workflow bị kill (26,8 triệu, 2.528 phút)"
+            },
+            {
+              "n": "85",
+              "label": "tin anh phải nhắc lại cùng một ý"
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "head": [
+            "Nguyên nhân chậm",
+            "Bằng chứng",
+            "Cách sửa"
+          ],
+          "rows": [
+            [
+              "Treo vì hộp duyệt khi anh vắng",
+              "ArtifactData ở phiên chính và cron: 607 phút (21/10), 321 phút ×2 (20/10). Monitor có `$(...)`: 480 phút",
+              "Hook chặn (câu Luật 1). Cấm Monitor (phiên song song)"
+            ],
+            [
+              "Chờ PageSpeed đo tuần tự",
+              "388–630 phút chờ mỗi phiên, khoảng 1.400 agent-phút ở 2 phiên",
+              "Đo song song trong `wp-pagespeed` 1.12"
+            ],
+            [
+              "Chạm hạn mức",
+              "13–17 agent Opus chạy cùng lúc. Script vẫn khởi 12 và 7 agent sau khi chạm, các agent chết với 0 tool",
+              "Luật model và trần agent (đã làm). Cờ dừng trong workflow"
+            ],
+            [
+              "Vòng kiểm độc lập quá nặng",
+              "Phiên 106e: 1.180 phút kiểm (31%). Phiên e297: 850 phút (49%)",
+              "Cổng tất định trước, Sonnet soát mục gắn cờ, kiểm song song với lô sau"
+            ],
+            [
+              "Poll và sleep",
+              "899 phút ở phiên 106e",
+              "Không poll, watchdog chạy ngoài phiên"
+            ],
+            [
+              "Ngữ cảnh phình",
+              "Agent khởi đầu khoảng 67k token. HANDOFF bị đọc 35–142 lần. Lane dài 250–517k token",
+              "Brief tối đa 3 KB, truyền kết quả bằng đường dẫn"
+            ],
+            [
+              "Viết lại script đã có",
+              "855 file script tạm. `shot.mjs` của skill: 0 lần dùng",
+              "Đưa script vào skill, brief ghi đích danh script"
+            ]
+          ],
+          "num_cols": []
+        },
+        {
+          "type": "h3",
+          "text": "Góp ý anh phải nhắc lại nhiều nhất"
+        },
+        {
+          "type": "table",
+          "head": [
+            "Chủ đề",
+            "Số lần",
+            "Cách chặn"
+          ],
+          "rows": [
+            [
+              "Dùng Jev 1.14 và EmbeddingGemma 2 cho audit",
+              "9",
+              "Dòng \"Model phụ\" bắt buộc trong brief lane, bảng rubric trong `web-ai-triage`"
+            ],
+            [
+              "Ảnh: góp ý áp cả lô, mỗi bài một concept, prompt JSON",
+              "9",
+              "Cổng lô của `featured-image-seo`, luật ảnh §6"
+            ],
+            [
+              "Trần agent và chọn model",
+              "8",
+              "Đã làm (luật model)"
+            ],
+            [
+              "Hỏi lại điều đã chốt hoặc đã có dữ liệu",
+              "8",
+              "`site-fact-consistency` lan truyền fact, `decisions.md` nguyên văn"
+            ],
+            [
+              "Trang chờ quyết phải là HTML, chỉ vấn đề lớn",
+              "6",
+              "Câu Skill 1"
+            ],
+            [
+              "Việc hoặc góp ý đã giao bị quên",
+              "6",
+              "Câu Skill 5"
+            ]
+          ],
+          "num_cols": [
+            1
+          ]
+        },
+        {
+          "type": "p",
+          "text": "Cách làm tốt cần giữ: mỗi lane có CHECKPOINT, báo cáo và rollback. Kiểm độc lập bắt được noindex cho Googlebot smartphone trên production. Jev tốn 0,0008–0,16 USD mỗi lô. Lô cơ học có dữ liệu dựng sẵn: 266 bài xong trong 8 phút."
+        }
+      ]
+    },
+    {
+      "id": "s1",
+      "label": "Skill 1",
+      "title": "Skill mới: máy sinh trang chờ quyết như trang này",
+      "kind": "question",
+      "toc": "Trang chờ quyết tự sinh",
+      "context": [
+        "Tuần qua có 8 bản trang chờ quyết dựng tay, tổng khoảng 1,5 giờ. Bản v5 mất 30 phút. Anh nhắc lại cách trình bày ít nhất 6 lần. Ghi chú bị mất 1 lần.",
+        "Skill `decision-page`: script dựng trang từ JSON, bản local và bản artifact có lưu câu trả lời như trang này. Số bản tự tăng, tự test nút Chép. Script thứ hai đọc câu trả lời và đổi thành danh sách việc.",
+        "Cổng \"chỉ trình vấn đề lớn\" giữ ở §10 luật tổng hợp site-mau. Skill chỉ trỏ tới §10."
+      ],
+      "questions": [
+        {
+          "short": "Skill decision-page",
+          "text": "Dựng skill này?",
+          "options": [
+            {
+              "label": "Dựng ở đợt 1, có bản artifact lưu câu trả lời.",
+              "value": "Dựng decision-page ở đợt 1, có bản artifact lưu câu trả lời",
+              "recommended": true
+            },
+            {
+              "label": "Dựng ở đợt 2.",
+              "value": "Dựng decision-page ở đợt 2",
+              "recommended": false
+            },
+            {
+              "label": "Không dựng. Giữ cách dựng tay theo mẫu.",
+              "value": "Không dựng decision-page, giữ dựng tay theo mẫu",
+              "recommended": false
+            }
+          ]
+        }
+      ],
+      "risk_if_skipped": "Anh tiếp tục nhận trang chờ quyết dựng tay, mỗi bản mất 10 đến 30 phút và có thể mất ghi chú.",
+      "touches_live": false,
+      "note": {
+        "placeholder": "Ghi chú"
+      }
+    },
+    {
+      "id": "s2",
+      "label": "Skill 2",
+      "title": "Skill mới: đổi tài khoản Claude không mất artifact",
+      "kind": "question",
+      "toc": "Đổi tài khoản Claude",
+      "context": [
+        "Ngày 19/10, 3 lần đổi tài khoản tốn hơn 100 phút agent và khoảng 1,58 triệu token republish thừa. Anh bấm duyệt vô ích khoảng 20 lần. Còn lại 2 artifact rác.",
+        "Skill `artifact-account-migration`: một script sao lưu, nạp lại db, đối chiếu 0 lệch, đổi link trong file nguồn. Registry dùng thư mục `Artifact-Registry/` có sẵn.",
+        "Sửa kèm memory: dòng \"ArtifactData đã nằm trong allow, không cần duyệt\" là sai."
+      ],
+      "questions": [
+        {
+          "short": "Skill artifact-account-migration",
+          "text": "Dựng skill này?",
+          "options": [
+            {
+              "label": "Dựng ở đợt 1, sửa memory kèm theo.",
+              "value": "Dựng artifact-account-migration ở đợt 1, sửa memory kèm theo",
+              "recommended": true
+            },
+            {
+              "label": "Chỉ sửa memory. Chưa dựng skill.",
+              "value": "Chỉ sửa memory, chưa dựng skill",
+              "recommended": false
+            }
+          ]
+        }
+      ],
+      "risk_if_skipped": "Mỗi lần đổi tài khoản tốn 25 đến 46 phút, và memory vẫn giữ dòng sai về quyền ArtifactData.",
+      "touches_live": false,
+      "note": {
+        "placeholder": "Ghi chú"
+      }
+    },
+    {
+      "id": "s3",
+      "label": "Skill 3",
+      "title": "Skill mới: kiểm lead từ form tới hộp thư thật",
+      "kind": "question",
+      "toc": "Kiểm đường đi của lead",
+      "context": [
+        "TAG mất lead khoảng 4 tháng vì mail và Google Sheet không nhận dữ liệu. Dữ liệu này không khôi phục được.",
+        "Lần điều tra và sửa đầu mất khoảng 64 phút cho 2 site. Với skill, lần sau ước còn khoảng 10 phút.",
+        "Skill `wp-form-delivery-audit` gửi form thử rồi đối chiếu từng chặng: form, mail, Sheet, CMS, hộp thư. Skill đặt trong `SEO Production/` để dùng cho site khách."
+      ],
+      "questions": [
+        {
+          "short": "Skill wp-form-delivery-audit",
+          "text": "Dựng skill này?",
+          "options": [
+            {
+              "label": "Dựng ở đợt 1. Chạy thử trên site agency mẫu và site khoá học mẫu.",
+              "value": "Dựng wp-form-delivery-audit ở đợt 1, chạy thử trên site agency mẫu và site khoá học mẫu",
+              "recommended": true
+            },
+            {
+              "label": "Chỉ thêm checklist form vào `web-qa-gate`.",
+              "value": "Chỉ thêm checklist form vào web-qa-gate",
+              "recommended": false
+            }
+          ]
+        }
+      ],
+      "risk_if_skipped": "Lead từ form có thể tiếp tục mất mà không ai biết.",
+      "touches_live": false,
+      "note": {
+        "placeholder": "Ghi chú"
+      }
+    },
+    {
+      "id": "s4",
+      "label": "Skill 4",
+      "title": "Skill mới: sửa giao diện WordPress đang chạy",
+      "kind": "question",
+      "toc": "Sửa giao diện site đang chạy",
+      "context": [
+        "Hồi quy Bước C tốn 2,2 triệu token review. Lỗi slider tốn 268 phút và 823k token. Hai lane thang chữ chạy 347 và 270 phút, mỗi lane 3–4 vòng kiểm. Anh nhắc thang chữ 3 tin liên tiếp ngày 19/10.",
+        "Skill `wp-ui-fix`: truy 7 nguồn CSS để tìm rule thắng, sửa có scope, pilot 2 trang, ảnh trước và sau, trả về bằng quarantine. Có script đo chữ theo component.",
+        "Số riêng của site-mau đặt ở `PROJECTS/site-mau/00-client-context/ui-rules.md`, không nằm trong skill."
+      ],
+      "questions": [
+        {
+          "short": "Skill wp-ui-fix",
+          "text": "Dựng skill riêng hay gộp?",
+          "options": [
+            {
+              "label": "Dựng skill riêng ở đợt 2. Lý do: quy trình sửa khác quy trình kiểm của `web-qa-gate`.",
+              "value": "Dựng skill riêng wp-ui-fix ở đợt 2",
+              "recommended": true
+            },
+            {
+              "label": "Gộp vào `web-qa-gate`. Skill đó sẽ dài hơn 500 dòng.",
+              "value": "Gộp phần sửa giao diện vào web-qa-gate",
+              "recommended": false
+            }
+          ]
+        }
+      ],
+      "risk_if_skipped": "Mỗi lần sửa giao diện sống tiếp tục tốn hàng trăm phút và nhiều vòng kiểm.",
+      "touches_live": false,
+      "note": {
+        "placeholder": "Ghi chú"
+      }
+    },
+    {
+      "id": "s5",
+      "label": "Skill 5",
+      "title": "Skill mới: mọi yêu cầu của anh vào sổ trước khi làm",
+      "kind": "question",
+      "toc": "Sổ yêu cầu và master plan",
+      "context": [
+        "Việc hoặc góp ý đã giao bị quên 6 lần. Có hơn 10 lần agent ghi giờ sai. Agent mất khoảng 15 phút dựng lại sổ yêu cầu sau compact.",
+        "Skill `workstream-master-plan`: một lệnh thêm yêu cầu vào `plan.json`. Script dựng master plan và báo cáo phiên từ file, giờ do code đóng dấu. Lệnh `audit_open.py` rà tin của anh trong transcript và liệt kê yêu cầu chưa có trong sổ.",
+        "Script chỉ dùng Python, nên Codex cũng chạy được."
+      ],
+      "questions": [
+        {
+          "short": "Skill workstream-master-plan",
+          "text": "Dựng cho runtime nào?",
+          "options": [
+            {
+              "label": "Dựng ở đợt 2, loại portable cho mọi runtime.",
+              "value": "Dựng workstream-master-plan ở đợt 2, loại portable cho mọi runtime",
+              "recommended": true
+            },
+            {
+              "label": "Dựng ở đợt 2, chỉ cho Claude Code.",
+              "value": "Dựng workstream-master-plan ở đợt 2, chỉ cho Claude Code",
+              "recommended": false
+            },
+            {
+              "label": "Không dựng.",
+              "value": "Không dựng workstream-master-plan",
+              "recommended": false
+            }
+          ]
+        }
+      ],
+      "risk_if_skipped": "Việc anh đã giao tiếp tục bị quên và mốc giờ tiếp tục sai.",
+      "touches_live": false,
+      "note": {
+        "placeholder": "Ghi chú"
+      }
+    },
+    {
+      "id": "l1",
+      "label": "Luật 1",
+      "title": "Hook chặn lệnh cần duyệt khi anh vắng",
+      "kind": "question",
+      "toc": "Chặn hộp duyệt khi anh vắng",
+      "context": [
+        "Đây là nguyên nhân chậm lớn nhất. ArtifactData, kể cả lệnh chỉ đọc, làm phiên chính và cron đứng 607 phút (21/10) và 321 phút ×2 (20/10). Memory có luật \"ban đêm không ghi\" nhưng agent vẫn vi phạm.",
+        "Hook UserPromptSubmit ghi mốc tin cuối của anh. Hook PreToolUse chặn ArtifactData và Artifact khi anh không nhắn từ 10 phút. Lệnh bị chặn được ghi vào `mark_applied.json` để sáng ghi một batch.",
+        "Hook sửa `.claude/settings.json`. Đây là config sống, chỉ làm khi anh chọn rõ."
+      ],
+      "questions": [
+        {
+          "short": "Hook chặn hộp duyệt",
+          "text": "Cài hook nào?",
+          "options": [
+            {
+              "label": "Theo mốc tin cuối: chặn khi anh không nhắn từ 10 phút.",
+              "value": "Cài hook theo mốc tin cuối: chặn ArtifactData và Artifact khi tôi không nhắn từ 10 phút",
+              "recommended": true
+            },
+            {
+              "label": "Theo giờ cố định: chặn từ 23:00 đến 07:00. Ban ngày anh vắng vẫn có thể treo.",
+              "value": "Cài hook theo giờ cố định: chặn ArtifactData và Artifact từ 23:00 đến 07:00",
+              "recommended": false
+            },
+            {
+              "label": "Không cài hook. Chỉ ghi luật trong skill.",
+              "value": "Không cài hook, chỉ ghi luật trong skill",
+              "recommended": false
+            }
+          ]
+        }
+      ],
+      "risk_if_skipped": "Phiên chính và cron tiếp tục đứng hàng trăm phút khi anh vắng.",
+      "touches_live": true,
+      "note": {
+        "placeholder": "Ghi chú"
+      }
+    },
+    {
+      "id": "l2",
+      "label": "Luật 2",
+      "title": "Hook sau compact: nhắc tiếng Việt và giờ thật",
+      "kind": "question",
+      "toc": "Nhắc tiếng Việt và giờ sau compact",
+      "context": [
+        "Anh đọc ít nhất 9 báo cáo bằng tiếng Anh sau compact. Agent sửa giờ sai hơn 10 lần, có lần phải sửa lại artifact báo cáo phiên.",
+        "Hook SessionStart (compact, resume) đưa vào ngữ cảnh 2 dòng: trả lời tiếng Việt có dấu, và giờ máy hiện tại.",
+        "Thêm tối đa 6 dòng vào `CLAUDE.md`: tự quyết việc đảo ngược được, kiểm thật trước khi báo \"bị chặn\", trả lời tin gửi giữa lượt."
+      ],
+      "questions": [
+        {
+          "short": "Hook sau compact",
+          "text": "Cài hook này?",
+          "options": [
+            {
+              "label": "Cài hook và thêm 6 dòng `CLAUDE.md`.",
+              "value": "Cài hook SessionStart và thêm 6 dòng CLAUDE.md",
+              "recommended": true
+            },
+            {
+              "label": "Chỉ thêm 6 dòng `CLAUDE.md`.",
+              "value": "Chỉ thêm 6 dòng CLAUDE.md, không cài hook",
+              "recommended": false
+            },
+            {
+              "label": "Không làm.",
+              "value": "Không làm luật 2",
+              "recommended": false
+            }
+          ]
+        }
+      ],
+      "risk_if_skipped": "Sau compact, báo cáo tiếp tục ra tiếng Anh và giờ ghi file tiếp tục lệch.",
+      "touches_live": true,
+      "note": {
+        "placeholder": "Ghi chú"
+      }
+    },
+    {
+      "id": "l4",
+      "label": "Luật 4",
+      "title": "Trang bẫy shell macOS dùng chung",
+      "kind": "question",
+      "toc": "Bẫy shell macOS",
+      "context": [
+        "Lỗi zsh \"no matches found\" xảy ra 90 lần ở 39 agent. Lệnh `timeout` không có trên macOS: 11 lần. Đợt ops có 33 mục lỗi shell ở 6 phiên.",
+        "File `tools/shell-traps-macos.md` có bảng lệnh hỏng và lệnh thay thế. Codex cũng đọc được file này.",
+        "Dòng `setopt NO_NOMATCH` trong `~/.zshenv` chặn phần lớn lỗi glob. Syncthing không sync dotfile, nên phải thêm tay ở 3 máy."
+      ],
+      "questions": [
+        {
+          "short": "Bẫy shell macOS",
+          "text": "Làm phần nào?",
+          "options": [
+            {
+              "label": "Viết file bẫy. Thêm `NO_NOMATCH` vào `~/.zshenv` máy đang chạy, ghi hướng dẫn cho 2 máy còn lại.",
+              "value": "Viết tools/shell-traps-macos.md và thêm setopt NO_NOMATCH vào ~/.zshenv của máy đang chạy, ghi hướng dẫn cho 2 máy còn lại",
+              "recommended": true
+            },
+            {
+              "label": "Chỉ viết file bẫy.",
+              "value": "Chỉ viết tools/shell-traps-macos.md, không sửa ~/.zshenv",
+              "recommended": false
+            }
+          ]
+        }
+      ],
+      "risk_if_skipped": "Lỗi glob zsh tiếp tục lặp lại ở mọi agent.",
+      "touches_live": true,
+      "note": {
+        "placeholder": "Ghi chú"
+      }
+    },
+    {
+      "id": "u1",
+      "label": "Nâng cấp",
+      "title": "Nâng cấp 22 skill hiện có",
+      "kind": "question",
+      "toc": "22 skill hiện có",
+      "context": [
+        "Bảng đầy đủ ở mục 6 của tab Báo cáo. 5 bản có ưu tiên cao nhất:",
+        "`wp-pagespeed` 1.12: đo PSI song song và script quyết định trong nhiễu. Thời gian chờ PSI ước giảm 60–70%.",
+        "`wp-security-hardening` 1.7 và 2 script ở `tools/`: áp khối htaccess, vhost có backup và rollback tự sinh. Quét lộ host staging, slug, secret trước khi báo xong. Tuần qua có 3 lần lộ slug, 2 token phải roll.",
+        "`wp-content-review-apply` 1.6: vá engine ghi, đối chiếu thẻ đã duyệt với site thật, cổng humanizer trước khi nạp thẻ.",
+        "`web-qa-gate` 1.3: kiểm menu, slider, lưới, OG và cổng trước production.",
+        "`featured-image-seo`: dựng 20–30 mẫu ngẫu nhiên trước khi dựng cả lô, quota phong cách.",
+        "8 skill trong danh sách đã được phiên song song vá ngày 24/10. Phiên dựng đọc diff 24/10 trước và bỏ phần trùng."
+      ],
+      "questions": [
+        {
+          "short": "Nâng cấp 22 skill",
+          "text": "Duyệt phạm vi nào?",
+          "options": [
+            {
+              "label": "Duyệt cả 22 bản theo bảng, dựng theo 3 đợt.",
+              "value": "Duyệt cả 22 bản nâng cấp theo bảng mục 6, dựng theo 3 đợt",
+              "recommended": true
+            },
+            {
+              "label": "Chỉ duyệt bản P0. P1 và P2 trình lại sau.",
+              "value": "Chỉ duyệt các bản P0, P1 và P2 trình lại sau",
+              "recommended": false
+            }
+          ]
+        }
+      ],
+      "risk_if_skipped": "22 bản nâng cấp không được dựng, các lỗi đã đo vẫn còn.",
+      "touches_live": false,
+      "note": {
+        "placeholder": "Ghi chú, ví dụ bỏ skill nào"
+      }
+    },
+    {
+      "id": "b1",
+      "label": "Cách dựng",
+      "title": "Ai dựng, model nào, bao nhiêu agent",
+      "kind": "question",
+      "toc": "Ai dựng, model nào",
+      "context": [
+        "Đợt 1: Luật 1, `wp-pagespeed` phần PSI song song, 2 script quét lộ và helper staging, Skill 1, Skill 2, Skill 3.",
+        "Đợt 2: Skill 4, Skill 5, 5 bản nâng cấp P0 còn lại, `runtime-handoff` 1.3, Luật 2. Đợt 3: phần còn lại.",
+        "Main loop Opus viết SKILL.md và luật. Sub-agent Sonnet effort high viết script và ca test, 1 agent cho 1 skill, theo trần trong luật model. Một agent Sonnet kiểm một lần cuối mỗi đợt.",
+        "Jev QA chữ của SKILL.md. EmbeddingGemma 2 so description của skill mới với 194 skill hiện có để chặn trigger trùng."
+      ],
+      "questions": [
+        {
+          "short": "Cách dựng",
+          "text": "Dựng ở đâu?",
+          "options": [
+            {
+              "label": "Phiên mới đọc `HANDOFF.md` rồi dựng theo 3 đợt, dùng sub-agent Sonnet như mô tả. Phiên này đã dài.",
+              "value": "Mở phiên mới đọc HANDOFF.md của Web-Skill-Review-2026-10 rồi dựng theo 3 đợt, dùng sub-agent Sonnet như mô tả",
+              "recommended": true
+            },
+            {
+              "label": "Dựng tiếp ngay trong phiên này.",
+              "value": "Dựng tiếp ngay trong phiên này",
+              "recommended": false
+            },
+            {
+              "label": "Dựng không dùng sub-agent. Chậm hơn, tốn ít token hơn.",
+              "value": "Dựng không dùng sub-agent",
+              "recommended": false
+            }
+          ]
+        }
+      ],
+      "risk_if_skipped": "Phiên dựng không có cách làm thống nhất, dễ chạy quá trần agent.",
+      "touches_live": false,
+      "note": {
+        "placeholder": "Ghi chú"
+      }
+    }
+  ]
+}

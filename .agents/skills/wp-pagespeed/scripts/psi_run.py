@@ -31,6 +31,9 @@ ap.add_argument('--max-fg-min', type=float, default=8.0)
 ap.add_argument('--est-sec', type=float, default=30.0, help='ước thời gian một lượt PSI (giây)')
 ap.add_argument('--sleep', type=float, default=3.0, help='nghỉ sau mỗi lượt của mỗi worker (giây)')
 ap.add_argument('--retry-wait', type=float, default=20.0)
+# PSI API trả lại kết quả đã lưu khi gọi lại cùng URL + thiết bị quá sớm: 3 file cùng fetchTime, lượt 2 và 3 mất khoảng 1 giây
+# (một site mẫu 27/10/2026). Mỗi cặp URL + thiết bị chạy lần lượt, cách nhau --min-gap giây; trùng fetchTime thì chờ rồi đo lại.
+ap.add_argument('--min-gap', type=float, default=60.0, help='giây tối thiểu giữa hai lượt cùng URL + thiết bị')
 ap.add_argument('--no-warm', action='store_true')
 ap.add_argument('--api-base', default='https://www.googleapis.com/pagespeedonline/v5/runPagespeed', help='chỉ đổi khi test với server giả')
 a = ap.parse_args()
@@ -136,29 +139,50 @@ if not a.no_warm:
     say('warm xong')
 
 
+# fetchTime đã có của từng cặp URL + thiết bị (gồm file của lượt trước khi chạy tiếp), giờ xong lượt gần nhất, khoá theo cặp.
+seen, last_end, key_lock = {}, {}, {}
+for r, n, u, st, out in [(r, n, u, st, os.path.join(a.out, f"{n}_{st}_run{r}.json")) for r in range(1, a.runs + 1) for n, u in urls for st in devs]:
+    key_lock.setdefault((u, st), threading.Lock())
+    if os.path.exists(out) and os.path.getsize(out) > 10000:
+        try:
+            seen.setdefault((u, st), set()).add(json.load(open(out))['lighthouseResult'].get('fetchTime'))
+        except Exception:
+            pass
+
+
 def work(t):
     r, n, u, st, out = t
     q = urllib.parse.urlencode([('url', u), ('strategy', st)] + [('category', c) for c in a.categories.split(',')] + [('locale', 'vi'), ('key', key)])
     ok = False
-    for attempt in (1, 2, 3):
-        t0 = time.time()
-        try:
-            with urllib.request.urlopen(a.api_base + '?' + q, timeout=180) as resp:
-                data = resp.read()
-            j = json.loads(data)
-            if 'lighthouseResult' not in j:
-                raise RuntimeError('không có lighthouseResult')
-            s = data.decode('utf-8')
-            assert key not in s
-            open(out, 'w').write(s)
-            sc = ' '.join(f"{k}={v.get('score')}" for k, v in j['lighthouseResult']['categories'].items())
-            say(f"{time.strftime('%H:%M:%S')} {n} {st} run{r} {sc} {time.time()-t0:.0f}s")
-            ok = True
-            break
-        except Exception as e:
-            say(f"{time.strftime('%H:%M:%S')} {n} {st} run{r} lần {attempt} lỗi: {str(e)[:160]}")
-            if attempt < 3:
-                time.sleep(a.retry_wait)
+    with key_lock[(u, st)]:
+        for attempt in (1, 2, 3):
+            wait = last_end.get((u, st), 0) + a.min_gap - time.time()
+            if wait > 0:
+                time.sleep(wait)
+            t0 = time.time()
+            try:
+                with urllib.request.urlopen(a.api_base + '?' + q, timeout=180) as resp:
+                    data = resp.read()
+                j = json.loads(data)
+                if 'lighthouseResult' not in j:
+                    raise RuntimeError('không có lighthouseResult')
+                ft = j['lighthouseResult'].get('fetchTime')
+                if ft and ft in seen.get((u, st), set()):
+                    raise RuntimeError(f'PSI trả kết quả đã lưu (fetchTime {ft} trùng lượt trước)')
+                s = data.decode('utf-8')
+                assert key not in s
+                open(out, 'w').write(s)
+                seen.setdefault((u, st), set()).add(ft)
+                sc = ' '.join(f"{k}={v.get('score')}" for k, v in j['lighthouseResult']['categories'].items())
+                say(f"{time.strftime('%H:%M:%S')} {n} {st} run{r} {sc} {time.time()-t0:.0f}s")
+                ok = True
+                break
+            except Exception as e:
+                say(f"{time.strftime('%H:%M:%S')} {n} {st} run{r} lần {attempt} lỗi: {str(e)[:160]}")
+                if attempt < 3:
+                    time.sleep(a.retry_wait)
+            finally:
+                last_end[(u, st)] = time.time()
     time.sleep(a.sleep)
     return ok
 

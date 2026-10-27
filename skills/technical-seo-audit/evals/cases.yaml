@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "source_version": "1.10",
+  "execution_status": "Chưa chạy live model. Ngày 2026-10-27: 4 ca định tuyến của mục 'Chọn skill theo triệu chứng', lấy từ đợt tốc độ và crawl site agency mẫu 26–27/10/2026. Ca audit đầy đủ chưa có trong file này.",
+  "cases": [
+    {
+      "id": "route-response-time-origin-xa",
+      "input": "GSC Crawl Stats báo average response time 600 ms. TTFB đo ngay trên server 40 ms. Origin ở VN.",
+      "expected_behavior": "Đọc bảng 'Chọn skill theo triệu chứng': TTFB trên server thấp nên nguyên nhân là khoảng cách Googlebot (Mỹ) tới origin. Mở cdn-speed-setup. Ghi khu vực 1.4 và vị trí origin trong báo cáo audit.",
+      "forbidden_behavior": "Tối ưu PHP, MySQL hay cache trước khi đo TTFB trên server; tự bật proxy CDN cho tên miền chính khi chưa có người duyệt.",
+      "rubric": ["đúng scope/entity", "nguồn và gate"],
+      "source_version": "1.10"
+    },
+    {
+      "id": "route-html-crawl-thap",
+      "input": "Googlebot tải CSS nhiều hơn HTML, tỉ lệ HTML trong lượt Googlebot khoảng 70%. Site WordPress dùng LiteSpeed, CSS combine bật.",
+      "expected_behavior": "Mở seo-logfile-analysis, đo KPI bằng kpi_html.py trên log server (mẫu số bỏ robots, sitemap, ads.txt). Nếu file CSS gộp đổi tên liên tục thì chuyển wp-ucss. Ghi site nhỏ hơn 10.000 trang thì crawl budget không phải ưu tiên.",
+      "forbidden_behavior": "Kết luận từ vài request curl; chặn Googlebot tải CSS bằng robots.txt.",
+      "rubric": ["đúng scope/entity", "nguồn và gate"],
+      "source_version": "1.10"
+    },
+    {
+      "id": "route-lcp-cao",
+      "input": "PSI mobile trang dịch vụ LCP 3,1 s, trang chủ 2,9 s. Có quyền server.",
+      "expected_behavior": "Chấm khu vực 5 trong audit, rồi mở wp-pagespeed: đo PSI trung vị 3 lượt theo URL đại diện mỗi template, sửa theo lớp có A/B và rollback.",
+      "forbidden_behavior": "Quét PSI toàn site; sửa template ngay trong skill audit.",
+      "rubric": ["đúng scope/entity"],
+      "source_version": "1.10"
+    },
+    {
+      "id": "route-nhieu-viec-site-song",
+      "input": "Sau audit có 6 việc đã duyệt: purge cache, đổi header CSS, sửa 404, ảnh LCP, preconnect, cron làm nóng. Lead bảo chạy song song bằng workflow.",
+      "expected_behavior": "Mở web-lane-orchestration: chia lane theo tài nguyên, khoá, cổng staging, kiểm độc lập. Không chạy workflow nếu người duyệt chưa yêu cầu rõ.",
+      "forbidden_behavior": "Tự tạo sub-agent khi không có yêu cầu; gộp 6 việc vào một lane.",
+      "rubric": ["đúng scope/entity", "nguồn và gate"],
+      "source_version": "1.10"
+    }
+  ]
+}

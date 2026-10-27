@@ -1,0 +1,712 @@
+<p class="muted">Bản HTML của <code>web-skill-review_bao-cao_v1.md</code>. Các file đặc tả và dữ liệu gốc nằm ở máy, thư mục <code>Deliverables/AI-Internal/Web-Skill-Review-2026-10/</code>.</p>
+<h2>Rà soát cách làm web site agency mẫu 16–24/10/2026: skill mới, nâng cấp skill và cách chạy nhanh hơn</h2>
+<p>Trạng thái: chờ Lead duyệt, 24/10/2026. Phiên rà soát: <code>bf61eacd</code>. Trang chờ quyết: web-skill-review_cho-anh-quyet_v1.html.</p>
+<h3>1. Kết luận</h3>
+<ul>
+<li>Tôi đọc nguyên văn 12 phiên, chia thành 54 phần transcript, không dùng bản summary. Kết quả có 100 đề xuất thô. Sau vòng phản biện còn 76 đề xuất. Tôi gộp 76 đề xuất thành 5 skill mới, 22 bản nâng cấp skill, 5 luật vận hành và 1 gói bổ sung cho phiên song song.</li>
+<li>Agent chậm chủ yếu vì 4 nguyên nhân sau, không phải vì model chậm:</li>
+<li>Phiên treo vì hộp duyệt quyền khi anh vắng.</li>
+<li>Agent chờ PageSpeed đo tuần tự.</li>
+<li>Phiên chạm hạn mức vì chạy 13–17 agent Opus cùng lúc.</li>
+<li>Agent tự viết lại script mà skill đã có.</li>
+<li>87 workflow trong tuần chạy tổng 7.275 phút và tốn khoảng 117 triệu token. 18 workflow bị kill, chiếm 2.528 phút và 26,8 triệu token (23%).</li>
+<li>Có 85 tin anh phải nhắc lại cùng một ý. Nhóm lớn nhất là: dùng Jev và EmbeddingGemma (9 lần), trang chờ quyết bằng HTML (6 lần), trần agent và model (8 lần), việc đã giao bị quên (6 lần).</li>
+<li>Đề xuất dựng theo 3 đợt. Đợt 1 có 7 việc chặn treo, chặn lộ secret, rút thời gian đo PSI và dựng 3 skill mới. Mục 10 có danh sách.</li>
+<li>Phần nào chạm <code>web-lane-orchestration</code> thì chuyển cho phiên <code>e7b9fcfa</code>. Tôi không sửa skill đó. File chuyển: web-lane-orchestration_bo-sung_v1.md.</li>
+</ul>
+<h3>2. Phạm vi và cách làm</h3>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>Phiên</th>
+<th>Thời gian</th>
+<th>Nội dung chính</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0632744c</td>
+<td>16/10 21:41 → 17/10</td>
+<td>Ứng cứu và hardening 2 VPS, audit GSC</td>
+</tr>
+<tr>
+<td>d61dfcca</td>
+<td>17/10 → 19/10</td>
+<td>Web TAG site khoá học mẫu: PageSpeed, landing, bỏ newsletter</td>
+</tr>
+<tr>
+<td>6cae27d5</td>
+<td>17/10 → 20/10 (19 phần)</td>
+<td>Mở workstream site agency mẫu: giao diện, nội dung, ảnh, bảo mật</td>
+</tr>
+<tr>
+<td>7ecaa7b8</td>
+<td>18/10 → 19/10</td>
+<td>Mạng nội dung SCN site agency mẫu</td>
+</tr>
+<tr>
+<td>e9051f09, ab98e818</td>
+<td>18/10</td>
+<td>2 phiên ngắn: logo khách, câu hỏi lẻ</td>
+</tr>
+<tr>
+<td>4c5a9faa</td>
+<td>19/10</td>
+<td>Rà skill 4 ngày, dựng lớp model SEO</td>
+</tr>
+<tr>
+<td>84cabbc3</td>
+<td>19/10</td>
+<td>Chương trình SEO Model Layer</td>
+</tr>
+<tr>
+<td>187c2ee6</td>
+<td>20/10</td>
+<td>Master plan site agency mẫu, 1.303 thẻ PUe6</td>
+</tr>
+<tr>
+<td>e297d7d3</td>
+<td>20/10 → 21/10</td>
+<td>Nhận lại workstream sau khi hết hạn mức</td>
+</tr>
+<tr>
+<td>106e7e1d</td>
+<td>21/10 → 22/10</td>
+<td>Gói tốc độ 1, câu trả lời bản hỏi 4</td>
+</tr>
+<tr>
+<td>f00d80af</td>
+<td>22/10 → 23/10</td>
+<td>Kiểm kê hạng mục còn lại, bản hỏi 7</td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li>Loại trừ: phiên <code>e7b9fcfa</code> và 8 skill mà phiên đó vá ngày 24/10. Đề xuất chạm các skill này tăng sang bản kế tiếp. Lúc dựng, agent phải đọc diff ngày 24/10 trước và bỏ phần trùng.</li>
+<li>Model phụ: tôi không dùng Jev và EmbeddingGemma cho đợt rà này. Lý do: việc chính là đúc kết từ transcript dài, không phải phân loại theo rubric. Đợt dựng skill có dùng hai model này (mục 10).</li>
+<li>Chi phí đợt rà: workflow đọc đầu tiên chạy Opus, tốn 16,4 triệu token và chạm hạn mức (44 agent lỗi). Phần nối chạy Sonnet 5.5 và tốn khoảng 4,5 triệu token.</li>
+<li>Dữ liệu gốc nằm ở <code>_data/</code>:</li>
+<li>de-xuat-chi-tiet_76.md: đặc tả đầy đủ 76 đề xuất (WHAT, DELTA, PLACE, COST, bằng chứng).</li>
+<li>bang-100-de-xuat.json: 100 đề xuất kèm kết quả phản biện.</li>
+<li>bang-87-workflow.md: thời gian và token của từng workflow.</li>
+<li>extract.py, agentstats.py: script trích transcript và đo thời gian agent. Đợt rà sau dùng lại hai script này.</li>
+</ul>
+<h3>3. Thời gian đi đâu: 11 pattern</h3>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Pattern</th>
+<th>Bằng chứng</th>
+<th>Cách sửa</th>
+<th>Nơi sửa</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Treo vì hộp duyệt khi anh vắng</td>
+<td>ArtifactData, kể cả lệnh đọc, ở phiên chính và cron: 607 phút (21/10), 321 phút ×2 (20/10). Monitor có <code>$(...)</code>: 480 phút (agent <code>kiem-ap1701-ui-2</code>), 49 phút (lane <code>toi-font</code>)</td>
+<td>Hook chặn lệnh cần duyệt khi anh vắng. Cấm Monitor. Watchdog bằng script</td>
+<td>Luật L1 + phiên song song</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Chạm hạn mức</td>
+<td>Có lúc 13–17 agent Opus chạy cùng lúc. Script vẫn khởi 12 và 7 agent sau khi chạm hạn mức, các agent này chết với 0 tool. Hơn 7 giờ dừng cộng dồn</td>
+<td>Trần 10 agent, 6 agent mỗi workflow. Việc đọc chạy Sonnet. Cờ dừng khi agent trả null</td>
+<td>Luật L3 + phiên song song</td>
+</tr>
+<tr>
+<td>3</td>
+<td>PSI đo tuần tự</td>
+<td>388–630 phút chờ mỗi phiên, khoảng 1.400 agent-phút ở 106e và f00d</td>
+<td><code>psi_run --jobs</code>, <code>psi_decide.py</code>, đo CrUX trước, thử 4 URL trước khi áp toàn site</td>
+<td><code>wp-pagespeed</code> 1.12</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Poll và sleep</td>
+<td>899 phút ở phiên 106e</td>
+<td>Không poll. Harness tự báo khi việc nền xong. Watchdog chạy ngoài phiên</td>
+<td>Phiên song song</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Ngữ cảnh phình</td>
+<td>Agent khởi đầu khoảng 67k token. HANDOFF và luật tổng hợp bị đọc 35–142 lần. Lane dài 250–517k token, nhiều agent bị auto-compact</td>
+<td>Brief tối đa 3 KB. Truyền kết quả bằng đường dẫn</td>
+<td>Phiên song song</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Viết lại script đã có</td>
+<td>855 file script tạm, <code>overflow.mjs</code> viết 21 lần. <code>shot.mjs</code> và <code>browser_probe.mjs</code> của skill: 0 lần dùng</td>
+<td>Đưa script vào skill. Biến <code>$WPS</code> trỏ thư mục script. Brief ghi đích danh script</td>
+<td><code>wp-pagespeed</code>, <code>wp-ui-fix</code>, phiên song song</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Chuỗi tuần tự và barrier</td>
+<td>Chuỗi UI 7 lane: lane thứ 4 bắt đầu sau 175 phút</td>
+<td>Xếp lane theo đồ thị phụ thuộc. Dùng <code>pool(tasks, N)</code> và pipeline thay cho <code>parallel()</code></td>
+<td>Phiên song song</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Launch hụt, ghi chồng</td>
+<td>Launch ngay sau một câu hỏi của anh: 10 agent trả <code>not_applied</code>, tốn 1,09 triệu token. SendMessage sinh agent chạy trùng, 2 bên ghi chồng lô L4 (khoảng 35 phút)</td>
+<td>Khối NGUỒN PHÊ DUYỆT trong brief. Dùng <code>inbox.md</code> thay cho SendMessage</td>
+<td>Phiên song song</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Model và effort lệch luật</td>
+<td>Mọi script đặt effort xhigh. 99,7% lượt trả lời chạy Opus</td>
+<td>Bảng chọn model theo loại việc</td>
+<td>Luật L3</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Workflow bị kill</td>
+<td>18/87 workflow: 2.528 phút, 26,8 triệu token</td>
+<td>Workflow tối đa 90 phút. Dùng <code>budget_min</code> và <code>early_stop</code></td>
+<td>Phiên song song</td>
+</tr>
+<tr>
+<td>11</td>
+<td>Vòng kiểm độc lập quá nặng</td>
+<td>Phiên 106e: 47 lượt kiểm, 1.180 phút (31% thời gian agent). Phiên e297: 30 agent kiểm, 850 phút (49%, gồm 499 phút treo)</td>
+<td>Cổng tất định chạy trước. Agent Sonnet chỉ soát mục gắn cờ và mẫu 10–15% URL. Kiểm lô N song song với ghi lô N+1. Tách lỗi production và lỗi báo cáo</td>
+<td>Phiên song song</td>
+</tr>
+</tbody>
+</table></div>
+<p>Cách làm tốt cần giữ:</p>
+<ul>
+<li>Mỗi lane có <code>CHECKPOINT.md</code>, <code>bao-cao.md</code> và <code>rollback.md</code>.</li>
+<li>Kiểm độc lập bắt được lỗi production thật, ví dụ noindex cho Googlebot smartphone.</li>
+<li>Jev rẻ: 0,0008–0,16 USD mỗi lô.</li>
+<li>Khoá lane chặn ghi đè giữa các lane.</li>
+<li>Workflow nhỏ 2–3 agent xong nhanh.</li>
+<li>Lô cơ học có dữ liệu dựng sẵn bằng script chạy nhanh: 266 bài xong trong 8 phút.</li>
+</ul>
+<h3>4. Góp ý anh phải nhắc lại</h3>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>Chủ đề</th>
+<th>Số lần</th>
+<th>Ngày</th>
+<th>Vì sao lặp</th>
+<th>Cách chặn</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dùng Jev 1.14 và EmbeddingGemma 2 cho audit</td>
+<td>9</td>
+<td>17–20/10</td>
+<td>AGENTS.md có luật từ 18/10. Brief lane và script workflow không có dòng phân việc model</td>
+<td>Dòng "Model phụ" bắt buộc trong mẫu brief (phiên song song). <code>web-ai-triage</code> có bảng rubric và preflight key (jev-1)</td>
+</tr>
+<tr>
+<td>Trần agent và chọn model</td>
+<td>8</td>
+<td>19–24/10</td>
+<td>Luật chỉ nằm trong prompt của từng phiên</td>
+<td>Luật L3</td>
+</tr>
+<tr>
+<td>Hỏi lại điều đã chốt hoặc đã có dữ liệu</td>
+<td>8</td>
+<td>17–19/10</td>
+<td>Fact đã chốt không lan sang file nguồn. Agent không tra Gmail, wiki trước</td>
+<td><code>site-fact-consistency</code> lan truyền fact. <code>decisions.md</code> ghi nguyên văn (hs-6)</td>
+</tr>
+<tr>
+<td>Ảnh: góp ý áp cả lô, mỗi bài một concept, prompt JSON</td>
+<td>9</td>
+<td>18–20/10</td>
+<td>Agent hiểu góp ý có ví dụ là chỉ sửa ví dụ</td>
+<td>Cổng lô của <code>featured-image-seo</code> (media-1). Luật ảnh §6 (media-11)</td>
+</tr>
+<tr>
+<td>Trang chờ quyết phải là HTML, chỉ vấn đề lớn</td>
+<td>6</td>
+<td>19–23/10</td>
+<td>Mỗi bản dựng tay, agent quên mẫu</td>
+<td>Skill mới <code>decision-page</code></td>
+</tr>
+<tr>
+<td>Việc hoặc góp ý đã giao bị quên</td>
+<td>6</td>
+<td>19–20/10</td>
+<td>Yêu cầu nằm rải trong chat. Compact làm mất</td>
+<td>Skill mới <code>workstream-master-plan</code>, lệnh <code>audit_open.py</code></td>
+</tr>
+<tr>
+<td>Lưu artifact local, ArtifactData hỏi duyệt</td>
+<td>4</td>
+<td>19–21/10</td>
+<td>Quyền allow không tắt được hộp duyệt</td>
+<td>Skill mới <code>artifact-account-migration</code> + luật L1</td>
+</tr>
+<tr>
+<td>Chữ mới chưa qua humanizer</td>
+<td>3</td>
+<td>17/10</td>
+<td>Agent nạp thẻ trước khi chạy humanizer</td>
+<td>Cổng <code>the_qa.py</code> (nd-3)</td>
+</tr>
+<tr>
+<td>PageSpeed chưa tối đa, đo theo template</td>
+<td>3</td>
+<td>17–18/10</td>
+<td>Agent nghiệm thu ở 85 điểm</td>
+<td>Bảng "phần còn trừ điểm" (perf-3)</td>
+</tr>
+<tr>
+<td>Tự quyết việc nhỏ, duyệt tới đâu làm tới đó</td>
+<td>3</td>
+<td>17, 19, 23/10</td>
+<td>Agent dừng xin duyệt việc đảo ngược được</td>
+<td>Luật L2</td>
+</tr>
+</tbody>
+</table></div>
+<p>Số lần đếm theo tin anh gửi. Hai phiên nhận cùng một tin thì tính một lần.</p>
+<h3>5. Skill mới (5)</h3>
+<h4>5.1 <code>decision-page</code> (P0, gộp coord-3 + ops2-1)</h4>
+<ul>
+<li>Vấn đề: 8 bản trang chờ quyết dựng tay, tổng khoảng 1,5 giờ. Bản v5 mất 30 phút, bản v7 mất 11 phút. Anh nhắc lại ít nhất 6 lần. Ghi chú bị mất 1 lần (khoảng 6 phút).</li>
+<li>Nội dung:</li>
+<li><code>gen_decision.py</code> dựng trang HTML từ JSON theo mẫu <code>gtv-website_cho-anh-quyet_v6.html</code>. Số bản N tự tăng.</li>
+<li>Trang có ảnh, phương án đề xuất viền vàng, ô ghi chú, nút "Chép câu trả lời", lưu <code>localStorage</code>.</li>
+<li>Script tự test nút Chép bằng Chrome headless.</li>
+<li><code>parse_answer.py</code> đọc câu trả lời anh dán và đổi thành danh sách việc.</li>
+<li>Mở bằng <code>open -a "Google Chrome"</code> và in link <code>file://</code>.</li>
+<li>Cổng "chỉ trình vấn đề lớn" giữ ở §10 luật tổng hợp. SKILL.md chỉ trỏ tới §10.</li>
+<li>Nơi đặt: <code>skills/decision-page/</code>, loại <code>tool-dependent</code>.</li>
+</ul>
+<h4>5.2 <code>artifact-account-migration</code> (P0, gộp coord-2 + ops2-3 + một phần hs-5)</h4>
+<ul>
+<li>Vấn đề: 3 lần đổi tài khoản ngày 19/10 tốn hơn 100 phút agent và khoảng 1,58 triệu token cho republish thừa. Anh bấm duyệt vô ích khoảng 20 lần. Còn 2 artifact rác.</li>
+<li>Nội dung:</li>
+<li><code>artifact_db.py</code> có các lệnh <code>seed</code>, <code>diff</code>, <code>count</code>, <code>replace-urls</code>, <code>registry</code>.</li>
+<li>Quy trình: sao lưu, nạp lại db, đối chiếu 0 lệch, đổi link trong file nguồn, giữ trang khách.</li>
+<li>Dữ liệu registry nằm ở <code>Deliverables/AI-Internal/Artifact-Registry/</code>, không chép vào skill.</li>
+<li>Sửa kèm: memory <code>feedback_artifact_backup_local</code> có dòng "ArtifactData đã nằm trong allow, không cần duyệt". Dòng này sai và phải sửa.</li>
+<li>Nơi đặt: <code>skills/artifact-account-migration/</code>, loại <code>claude-only</code>.</li>
+</ul>
+<h4>5.3 <code>wp-form-delivery-audit</code> (P0, qa-1)</h4>
+<ul>
+<li>Vấn đề: TAG mất lead khoảng 4 tháng vì mail và Sheet không nhận dữ liệu. Không khôi phục được. Lần điều tra và sửa đầu mất khoảng 64 phút cho 2 site.</li>
+<li>Nội dung: kiểm đường đi của lead theo thứ tự form → mail → Sheet → CMS → hộp thư thật. Có lệnh gửi form thử và đối chiếu từng chặng.</li>
+<li><code>web-qa-gate</code> chỉ thêm 1 dòng trỏ sang skill này ở hạng mục Form.</li>
+<li>Nơi đặt: <code>skills/wp-form-delivery-audit/</code> (client-neutral).</li>
+</ul>
+<h4>5.4 <code>wp-ui-fix</code> (P0, gộp ui-1 + phần đo chữ của ui-3)</h4>
+<ul>
+<li>Vấn đề:</li>
+<li>Hồi quy Bước C tốn 2,2 triệu token review.</li>
+<li>Lỗi slider tốn 268 phút và 823k token.</li>
+<li>Lane thang chữ m34ap chạy 347 phút, lane <code>thang-chu</code> chạy 270 phút với 3–4 vòng kiểm.</li>
+<li>Anh nhắc thang chữ 3 tin liên tiếp ngày 19/10.</li>
+<li>Nội dung:</li>
+<li><code>css_sources.sh</code> truy 7 nguồn CSS, <code>match.mjs</code> tìm rule thắng.</li>
+<li>Sửa có scope bằng <code>theme_patch.py</code>, trả về bằng quarantine.</li>
+<li>Pilot 2 trang, chụp ảnh trước và sau.</li>
+<li><code>type_probe.mjs</code> và <code>type_check.py</code> đo chữ theo component, có thang mặc định kèm nguồn.</li>
+<li>Số riêng site-mau đặt ở <code>PROJECTS/site-mau/00-client-context/ui-rules.md</code>.</li>
+<li>Nơi đặt: <code>skills/wp-ui-fix/</code>.</li>
+</ul>
+<h4>5.5 <code>workstream-master-plan</code> (P1, gộp coord-1 + ops2-2)</h4>
+<ul>
+<li>Vấn đề: việc đã giao bị quên 6 lần. Hơn 10 lần sửa giờ ghi sai. Mất khoảng 15 phút dựng lại sổ yêu cầu. Anh phàn nàn nặng 2 lần.</li>
+<li>Nội dung:</li>
+<li><code>plan.py</code> thêm yêu cầu của anh vào <code>plan.json</code> bằng 1 lệnh.</li>
+<li><code>build.py</code> dựng master plan và báo cáo phiên từ <code>plan.json</code>, có assert. Giờ do code đóng dấu.</li>
+<li><code>audit_open.py</code> rà tin của anh trong transcript và liệt kê yêu cầu chưa có trong plan.</li>
+<li>Thư mục master plan của site-mau giữ vai trò instance.</li>
+<li>Nơi đặt: <code>skills/workstream-master-plan/</code>. Tôi đề xuất loại <code>portable</code> vì script chỉ dùng Python.</li>
+</ul>
+<p>Không tạo skill riêng cho 3 ý sau:</p>
+<ul>
+<li><code>wp-html-cruft-clean</code> (perf-10): đưa vào reference của <code>wp-content-review-apply</code>.</li>
+<li><code>web-anh-that</code> (media-3): đưa vào <code>event-landing-taste</code> và <code>semantic-media</code>.</li>
+<li><code>workflow-ops</code> (hs-1 đến hs-4): vá <code>web-lane-orchestration</code> (phiên song song).</li>
+</ul>
+<h3>6. Nâng cấp skill</h3>
+<p>Version ghi theo trạng thái file lúc 23:10 ngày 24/10.</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>Skill</th>
+<th>Bản</th>
+<th>Gộp từ</th>
+<th>Nội dung chính</th>
+<th>Ưu tiên</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>wp-security-hardening</code></td>
+<td>1.6 → 1.7</td>
+<td>sec-1, 2, 4, 6, 8, 9</td>
+<td><code>apply_server_block.sh</code> (htaccess, vhost; backup, md5, snapshot mã HTTP, rollback tự sinh). Preflight backup và dump, <code>--no-create-info --replace</code>. Reference vá OS và PHP. Checklist xoá. Bảng Phân việc model và Tự phản biện</td>
+<td>P0</td>
+</tr>
+<tr>
+<td><code>tools/</code> root</td>
+<td>mới</td>
+<td>sec-2</td>
+<td><code>leak_scan.sh</code> quét host staging, slug và secret trước khi báo xong. <code>env_get.py</code> đọc <code>.env</code> bằng Python, bắt buộc <code>--site</code></td>
+<td>P0</td>
+</tr>
+<tr>
+<td><code>wp-staging-deploy</code></td>
+<td>1.0 → 1.1</td>
+<td>sec-3</td>
+<td><code>stg_env.sh</code>, <code>stg_tunnel.sh</code> tự nối lại, <code>stg_get.sh</code>, hàm che host <code>stg_mask</code></td>
+<td>P0</td>
+</tr>
+<tr>
+<td><code>wp-pagespeed</code></td>
+<td>1.11 → 1.12</td>
+<td>perf-2 đến 8, hs-7, media-10, trk-1</td>
+<td><code>psi_run --jobs</code>, <code>psi_decide.py</code>. <code>$WPS</code> cho đường dẫn script, guard <code>--expect</code>. 5 category và bảng "phần còn trừ điểm". <code>psi_cls_dump.py</code>, <code>lh_local.mjs</code>. <code>optm-gm_js_exc</code>. <code>lam_nong.sh</code>. <code>psi_ab</code> tự gắn noindex. <code>fallback_faces.py</code>, <code>fa_subset</code>, <code>img_variants.py</code>, <code>img_display_width.mjs</code>. Loader tái phát <code>gtm.linkClick</code></td>
+<td>P0</td>
+</tr>
+<tr>
+<td><code>wp-content-review-apply</code></td>
+<td>1.5 → 1.6</td>
+<td>nd-1, 2, 3, wpr-1, wp-review-1, ops2-9, hs-10, perf-10</td>
+<td>Vá engine (<code>$has</code>, target <code>text</code>/<code>fix</code>/<code>el_rm</code>). <code>doi_chieu.py</code>, <code>so_duyet.py</code>. Bỏ <code>.limit(1000)</code> dòng 505. <code>the_qa.py</code>. Sửa ORDER template dòng 167. <code>fid</code>, <code>check_cards.py</code>, <code>mark_batch.py</code>. Reference dọn HTML thừa</td>
+<td>P0</td>
+</tr>
+<tr>
+<td><code>web-qa-gate</code></td>
+<td>1.2 → 1.3</td>
+<td>ui-2, qa-2</td>
+<td><code>interact_probe.mjs</code> (menu, slider, forcePseudoState, màu kit, lưới). Đo tràn trên bản có cache. Kiểm OG. Cổng trước production. Hạng mục mới đánh số sau mục 12 của bản 24/10</td>
+<td>P0</td>
+</tr>
+<tr>
+<td><code>web-ai-triage</code> + <code>jev.py</code></td>
+<td>+1</td>
+<td>jev-1, media-9</td>
+<td>Bảng 29 rubric. Preflight key và thử 1 mẫu. Tự dừng khi lỗi liên tiếp. Đệm ảnh lên ít nhất 320 px</td>
+<td>P0</td>
+</tr>
+<tr>
+<td><code>runtime-handoff</code></td>
+<td>1.2 → 1.3</td>
+<td>coord-4, coord-5, ops2-5, hs-5, hs-6</td>
+<td>Lệnh <code>stamp</code> lấy giờ máy. <code>--supersedes</code>. Chế độ <code>switch</code> và <code>limit</code>. Lint <code>night check</code>. <code>transcript_recall.py</code>. Sổ công thức lệnh <code>RECIPES.md</code> của workstream</td>
+<td>P1</td>
+</tr>
+<tr>
+<td><code>featured-image-seo</code></td>
+<td>+1</td>
+<td>media-1, media-2</td>
+<td><code>--quota</code> phong cách, 20–30 mẫu ngẫu nhiên trước khi dựng cả lô, soát ảnh AI cỡ từ 900 px. Reference <code>og-trang.md</code></td>
+<td>P0</td>
+</tr>
+<tr>
+<td><code>brand-image-gen-gtv-tag</code></td>
+<td>2.0 → 2.1</td>
+<td>media-5</td>
+<td>Một runner Kie duy nhất, sổ credit bền, <code>--workers</code>. Sửa <code>scroll-craft</code> để không sinh ảnh Seedream</td>
+<td>P1</td>
+</tr>
+<tr>
+<td><code>semantic-media</code></td>
+<td>1.0 → 1.1</td>
+<td>media-7</td>
+<td>Sửa lỗi <code>minFont</code> null ở <code>diagram_render.mjs</code> dòng 65 và 87. Kiểm chữ sơ đồ với thân bài. Kiểm entity người nói trong video</td>
+<td>P1</td>
+</tr>
+<tr>
+<td><code>event-landing-taste</code></td>
+<td>+1</td>
+<td>media-3</td>
+<td>Reference <code>anh-that.md</code>: nguồn gốc ảnh, chống trùng giữa trang, ảnh thẻ, crop</td>
+<td>P1</td>
+</tr>
+<tr>
+<td><code>seo-geo-case-study</code></td>
+<td>1.1 → 1.2</td>
+<td>nd-6, media-6</td>
+<td><code>che-bang-chung.md</code> (che tên, domain, ngành). Cờ <code>--doi-chieu</code></td>
+<td>P1</td>
+</tr>
+<tr>
+<td><code>site-fact-consistency</code></td>
+<td>+1</td>
+<td>nd-7, fact-1</td>
+<td>Sửa lớp 7. Thứ bậc nguồn theo ngày. Cổng fact chờ chốt. <code>claim_evidence.py</code>, quét chữ cấm theo vùng</td>
+<td>P1</td>
+</tr>
+<tr>
+<td><code>content-inventory-audit</code></td>
+<td>1.0 → 1.1</td>
+<td>nd-5</td>
+<td>Đổi cây chuyên mục an toàn. Vòng đời URL: khôi phục trước khi 301, trang ngừng bán</td>
+<td>P1</td>
+</tr>
+<tr>
+<td><code>internal-linking</code></td>
+<td>1.3.3 → 1.4</td>
+<td>nd-10</td>
+<td><code>the_link.py</code>, <code>link_code_audit.py</code>, anchor từ query GSC. Sync cả bản trong <code>SEO Production/</code></td>
+<td>P1</td>
+</tr>
+<tr>
+<td><code>seo-logfile-analysis</code></td>
+<td>1.2 → 1.3</td>
+<td>log-1</td>
+<td><code>verify_googlebot.py</code> lọc dải IP trước rDNS. Đường log aaPanel và OLS. Phân loại 3xx, 410, 404</td>
+<td>P1</td>
+</tr>
+<tr>
+<td><code>technical-seo-audit</code></td>
+<td>1.8.2 → 1.9</td>
+<td>tech-1</td>
+<td>Index chuyên mục trên Rank Math. Quy trình chọn đích 301 hoặc 410. Bẫy Screaming Frog headless</td>
+<td>P1</td>
+</tr>
+<tr>
+<td><code>wp-theme-build</code></td>
+<td>1.0 → 1.1</td>
+<td>ui-4</td>
+<td>Bảng token màu và <code>contrast.py</code>. Đo trang tham chiếu trước mockup</td>
+<td>P1</td>
+</tr>
+<tr>
+<td><code>model-calibration</code></td>
+<td>1.3 → 1.4</td>
+<td>cal-1</td>
+<td>Lệnh <code>gold-sheet</code>, <code>gold-merge</code>, <code>pipeline</code>, trạng thái draft</td>
+<td>P1</td>
+</tr>
+<tr>
+<td><code>wp-paid-plugin-exit</code></td>
+<td>1.1 → 1.2</td>
+<td>sec-12</td>
+<td>2–3 dòng về bẫy SCF lọc thẻ <code>&lt;script&gt;</code></td>
+<td>P2</td>
+</tr>
+<tr>
+<td><code>skill-creator</code></td>
+<td>+1</td>
+<td>skill-1</td>
+<td>Chốt canonical và client-neutral trước khi viết</td>
+<td>P1</td>
+</tr>
+<tr>
+<td><code>agent-config-lint</code></td>
+<td>+1</td>
+<td>skill-2</td>
+<td>Cờ <code>--only</code> và <code>--baseline</code>. Sửa <code>tools/sync-agent-skills.rb</code> để bỏ <code>__pycache__</code></td>
+<td>P1</td>
+</tr>
+</tbody>
+</table></div>
+<p>Việc sửa tay, không cần skill:</p>
+<ul>
+<li>nd-12: cập nhật <code>PROJECTS/site-mau/00-client-context/wp-server.md</code> (link trang duyệt PUe6, SCF 6.9.6, GSC URL-prefix).</li>
+<li>media-11: thêm 4–5 dòng luật ảnh vào §6 luật tổng hợp site-mau. Nội dung: góp ý có ví dụ là luật cho cả lô, ghi mẫu đã duyệt, đo tổng byte trước khi xin kiểm.</li>
+</ul>
+<h3>7. Luật vận hành (cần anh duyệt riêng)</h3>
+<p>Các luật này sửa config sống hoặc file luật chung. Mỗi luật cần anh duyệt rõ.</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>Mã</th>
+<th>Luật</th>
+<th>Gộp từ</th>
+<th>Nơi sửa</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>L1</td>
+<td>Hook PreToolUse chặn ArtifactData và Artifact khi anh vắng. Hook UserPromptSubmit ghi mốc tin cuối của anh. Anh không nhắn từ 10 phút thì lệnh cần duyệt bị chặn và ghi vào <code>mark_applied.json</code></td>
+<td>ops2-4, hs-1</td>
+<td><code>.claude/settings.json</code>, <code>tools/hooks/</code></td>
+</tr>
+<tr>
+<td>L2</td>
+<td>Hook SessionStart (compact, resume) nhắc trả lời tiếng Việt và đưa giờ thật vào ngữ cảnh. Thêm luật "tự quyết việc đảo ngược được" và "kiểm thật trước khi báo bị chặn"</td>
+<td>ops2-8, ops-rule-3 a/c/d</td>
+<td><code>.claude/settings.json</code>, <code>CLAUDE.md</code> (tối đa 6 dòng)</td>
+</tr>
+<tr>
+<td>L3</td>
+<td>Chọn model theo việc: đọc, trích, kiểm, áp cơ học dùng Sonnet 5.5 effort high. Opus dùng cho quyết định khó, hiệu chuẩn, viết luật và skill. Trần 10 agent cùng lúc, 6 agent mỗi workflow</td>
+<td>op-1, ops-rule-2, hs-2</td>
+<td><code>tools/runtime-model-routing.md</code>, 1 dòng trong AGENTS.md mục SUB-AGENT, §7 luật tổng hợp site-mau</td>
+</tr>
+<tr>
+<td>L4</td>
+<td>Trang bẫy shell macOS: glob <code>nomatch</code>, dấu <code>=</code> đầu từ, lệnh thay thế. Thêm <code>setopt NO_NOMATCH</code> vào <code>~/.zshenv</code> của từng máy</td>
+<td>ops-rule-1, ops2-12</td>
+<td><code>tools/shell-traps-macos.md</code>, <code>~/.zshenv</code></td>
+</tr>
+<tr>
+<td>L5</td>
+<td>Hồ sơ server site-mau đúng ngày 24/10</td>
+<td>nd-12</td>
+<td><code>PROJECTS/site-mau/00-client-context/wp-server.md</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>L3 đã áp ngày 24/10 sau khi Lead duyệt: AGENTS.md mục SUB-AGENT, <code>tools/runtime-model-routing.md</code> mục Sub-agent, §7 luật tổng hợp site-mau. Lưu ý: <code>.claude/settings.json</code> đang đặt <code>CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS=2</code>, thấp hơn trần 10 của luật. Runtime theo số thấp hơn cho tới khi Lead đổi settings.</p>
+<h3>8. Bổ sung cho phiên song song</h3>
+<p>Phiên <code>e7b9fcfa</code> đang dựng <code>web-lane-orchestration</code> v1.0. Bản v1.0 chưa có 13 mục sau. Lead duyệt chuyển ngày 24/10. Tôi đã gửi cho phiên đó (tên <code>marketing-tag-a2</code>) bằng SendMessage. Chi tiết và bằng chứng ở web-lane-orchestration_bo-sung_v1.md.</p>
+<ul>
+<li>Cấm Monitor. Cổng "anh vắng 10 phút" áp cho cả phiên chính và cron.</li>
+<li><code>wf_watchdog.py</code> đọc tail transcript, báo tool chưa có kết quả quá 12 phút.</li>
+<li><code>tools/wf-status.py</code>: <code>--lint-script</code>, <code>--tokens</code>, <code>--result</code>.</li>
+<li>Hàm <code>goi()</code> có cờ dừng khi agent trả null.</li>
+<li><code>make_brief.py</code> sinh brief tối đa 3 KB, có dòng Model phụ và khối NGUỒN PHÊ DUYỆT.</li>
+<li><code>pool(tasks, N)</code>, trần 6 agent và 90 phút mỗi workflow, <code>budget_min</code>, <code>early_stop</code>, trạng thái <code>held</code>.</li>
+<li>Khoá <code>_server-maint</code>.</li>
+<li>Không SendMessage vào agent đang chạy, dùng <code>inbox.md</code>.</li>
+<li>Schema kiểm tách <code>loi_production</code> và <code>loi_bao_cao</code>.</li>
+<li>Agent kiểm lane chữ chạy Sonnet sau cổng tất định.</li>
+<li><code>references/chon-model.md</code> trỏ về <code>tools/runtime-model-routing.md</code>.</li>
+<li><code>mau-workflow.js</code>: lane readOnly đặt <code>model: 'sonnet'</code>, effort high.</li>
+<li>8 bẫy shell vào <code>luat-lane.md</code> §1 và khối COMMON của brief.</li>
+</ul>
+<h3>9. Đề xuất không dựng thành skill</h3>
+<p>Người phản biện xác nhận 24 đề xuất sau có thật. Các đề xuất này không đáng dựng thành skill hoặc reference riêng. Ý nhỏ còn giá trị đi vào chỗ ghi ở cột phải, khi dựng skill tương ứng.</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>Mã</th>
+<th>Đi vào đâu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sec-5</td>
+<td>Vài dòng trong <code>wp-content-review-apply/references/ghi-an-toan.md</code>, 1 dòng ở <code>wp-staging-deploy</code> Bước 3</td>
+</tr>
+<tr>
+<td>sec-7</td>
+<td>2 dòng checklist trong <code>ung-cuu-su-co.md</code> của <code>wp-security-hardening</code></td>
+</tr>
+<tr>
+<td>sec-10</td>
+<td>Probe URL ngẫu nhiên phải 404 vào <code>exposure_default.txt</code>. Luật 410/404 sửa sau bản vá <code>seo-logfile-analysis</code> của phiên song song</td>
+</tr>
+<tr>
+<td>sec-11</td>
+<td>1 dòng ngày hết hạn cert vào <code>memory/operations/vietnix-servers.md</code></td>
+</tr>
+<tr>
+<td>perf-1</td>
+<td>Phần nhỏ vào <code>psi_run.py</code>, <code>perf_probe.mjs</code> của <code>wp-pagespeed</code>. Không dựng <code>bg.sh</code></td>
+</tr>
+<tr>
+<td>perf-9</td>
+<td>Không đóng gói. Cờ <code>--diff-req</code> nếu cần thì vào <code>psi_table.py</code></td>
+</tr>
+<tr>
+<td>perf-11</td>
+<td>Script purge Cloudflare nếu cần thì đặt ở <code>tools/</code>, không vào <code>wp-pagespeed</code></td>
+</tr>
+<tr>
+<td>ui-5</td>
+<td><code>landmarks.mjs</code> vào <code>web-qa-gate</code> hoặc <code>wp-ui-fix</code>. Không nâng <code>semantic-html-optimization</code></td>
+</tr>
+<tr>
+<td>ui-6</td>
+<td>2 dòng vào <code>wp-staging-deploy</code>: URL tuyệt đối trong CSS staging, opcache 1 phút</td>
+</tr>
+<tr>
+<td>ui-7</td>
+<td>1 dòng vào memory <code>feedback_cho_quyet_bang_html</code>. Phần còn lại nằm trong <code>decision-page</code></td>
+</tr>
+<tr>
+<td>nd-4</td>
+<td>Đóng gói skill bản ngôn ngữ phụ sau khi bản EN chạy xong 1 lần</td>
+</tr>
+<tr>
+<td>nd-8</td>
+<td>Giữ ở luật tổng hợp §4 và <code>PROJECTS/site-mau</code></td>
+</tr>
+<tr>
+<td>nd-9</td>
+<td>3 mục nhẹ vào <code>semantic-content-network</code>. Phần brief chuyển phiên song song</td>
+</tr>
+<tr>
+<td>nd-11</td>
+<td>Giữ script ở thư mục workstream</td>
+</tr>
+<tr>
+<td>rpt-1</td>
+<td>1–2 dòng vào luật tổng hợp, mục báo cáo</td>
+</tr>
+<tr>
+<td>vendor-1</td>
+<td>Thêm reference vào <code>wp-paid-plugin-exit</code> khi gặp vendor thứ 3</td>
+</tr>
+<tr>
+<td>media-4, media-8</td>
+<td>Ghi vào luật workstream và HANDOFF của M16</td>
+</tr>
+<tr>
+<td>ops2-10</td>
+<td>Sửa <code>scroll-craft</code> một lần (đã nằm trong bản nâng cấp <code>brand-image-gen-gtv-tag</code>)</td>
+</tr>
+<tr>
+<td>ops2-11</td>
+<td><code>tools/gsc/README.md</code> ngắn về Request indexing qua Chrome</td>
+</tr>
+<tr>
+<td>hs-8</td>
+<td>Thêm <code>--tabs</code>, <code>--resume</code>, <code>--sample</code> vào <code>browser_probe.mjs</code>. Không tạo <code>sweep.mjs</code></td>
+</tr>
+<tr>
+<td>hs-11</td>
+<td>1 dòng vào §11 luật tổng hợp: kết thúc lượt bằng việc đã duyệt</td>
+</tr>
+<tr>
+<td>hs-12</td>
+<td>8 bẫy shell vào <code>luat-lane.md</code> §1 (phiên song song) và luật L4. Hook chặn lệnh hỏng để sau</td>
+</tr>
+</tbody>
+</table></div>
+<h3>10. Thứ tự dựng</h3>
+<p>Đợt 1 (P0, chặn treo, chặn lộ, rút thời gian chờ):</p>
+<ol>
+<li>L1: hook chặn hộp duyệt khi anh vắng. Phiên song song thêm luật cấm Monitor.</li>
+<li>L3: luật chọn model và trần agent.</li>
+<li><code>wp-pagespeed</code> 1.12, phần <code>psi_run --jobs</code> và <code>psi_decide.py</code>.</li>
+<li><code>tools/leak_scan.sh</code>, <code>tools/env_get.py</code>, helper staging của <code>wp-staging-deploy</code> 1.1.</li>
+<li>Skill mới <code>decision-page</code>.</li>
+<li>Skill mới <code>artifact-account-migration</code>.</li>
+<li>Skill mới <code>wp-form-delivery-audit</code>.</li>
+</ol>
+<p>Đợt 2 (P0 và P1 lớn): <code>wp-ui-fix</code>, <code>workstream-master-plan</code>, <code>wp-content-review-apply</code> 1.6, <code>web-qa-gate</code> 1.3, <code>wp-security-hardening</code> 1.7, <code>web-ai-triage</code>, <code>featured-image-seo</code>, <code>runtime-handoff</code> 1.3, L2.</p>
+<p>Đợt 3: các bản nâng cấp P1 và P2 còn lại, L4, L5.</p>
+<p>Cách dựng:</p>
+<ul>
+<li>Main loop (Opus 5.5) viết SKILL.md và luật.</li>
+<li>Sub-agent Sonnet 5.5 effort high viết script và ca test, 1 agent cho 1 skill, tối đa 6 agent cùng lúc.</li>
+<li>Một agent Sonnet kiểm cả đợt, một lần cuối đợt.</li>
+<li>Jev QA chữ của SKILL.md và reference: câu dài, thiếu dấu, thuật ngữ lệch.</li>
+<li>EmbeddingGemma 2 so description của skill mới với 194 skill hiện có để chặn trigger trùng.</li>
+<li>Mỗi đợt chạy sync mirror và lint theo luật `_REFERENCE/luat-duyet-dieu-phoi.md`.</li>
+<li>Một phiên mới dựng từ <code>HANDOFF.md</code> của thư mục này.</li>
+</ul>
+<h3>11. Giới hạn dữ liệu</h3>
+<ul>
+<li>Số phút lấy từ timestamp trong transcript (giờ VN). Thời gian chờ tool của các agent song song có thể chồng lên nhau.</li>
+<li>Mục GAIN trong <code>_data/de-xuat-chi-tiet_76.md</code> phần lớn là ước tính, chưa đo.</li>
+<li>Đợt rà đọc 54/54 phần transcript. Hai phiên ngắn (e9051f09, ab98e818) gộp chung một phần đọc.</li>
+<li>Version "+1" nghĩa là SKILL.md không có dòng <code>version:</code> trong frontmatter. Lúc dựng, agent lấy version từ <code>skills/manifest.yaml</code>.</li>
+</ul>

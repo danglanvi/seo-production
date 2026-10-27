@@ -1,0 +1,2 @@
+# regex selector đã bỏ pseudo luôn giữ
+^\.unused-widget \.item$

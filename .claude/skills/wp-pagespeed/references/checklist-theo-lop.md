@@ -30,6 +30,12 @@ Mỗi mu-plugin chạy trên filter của LiteSpeed (`litespeed_buffer_before` h
   - Script: `bash "$WPS/scripts/lam_nong.sh" --host https://example.com <path vừa purge> ... -W both`. Không có path thì script làm nóng mọi URL trong sitemap. Chỉ làm nóng toàn site sau purge toàn site. Chạy `-n` trước để xem kế hoạch.
   - Site agency mẫu 21/10: lane nội bộ chỉ làm nóng bằng UA desktop, nên lượt đầu của khách mobile hit 5%, desktop hit 95%. Sau khi làm nóng đủ biến thể: lượt đầu mobile vào cache ở 39/40 URL nhiều khách nhất.
   - Kiểm sau khi làm nóng: `scripts/cache_variants.py` cho robots, canonical và nhãn cache ở 5 biến thể.
+  - Site chặn hoặc thay `guest.vary.php` (khách ẩn danh không tải lại trang, site agency mẫu 26/10): script không lấy được cookie của bản khách quay lại. Chạy `-V guest-d,guest-m -W both`. Bản khách quay lại để cron trên server làm nóng.
+- Googlebot smartphone dùng chung bản cache với khách mobile gửi `Accept: */*`. Site agency mẫu 27/10: 66/66 path trỏ cùng file CSS gộp. Tối ưu nào chỉ áp cho bản WebP thì Googlebot không nhận.
+- CDN đứng trước origin (skill `cdn-speed-setup`):
+  - CDN có thể chỉ tách HTML theo thiết bị, không theo `Accept`. Bunny 27/10: vary WebP chỉ áp cho ảnh, và không ghi đè được header `Accept` bằng edge rule (API trả 400). Bản HTML ở edge là bản của lượt đầu sau purge, rồi trả cho mọi người.
+  - Hệ quả: mọi thay đổi HTML theo biến thể (CSS gọn, critical CSS) phải áp cho cả bản WebP lẫn bản plain. Nếu chưa áp được, purge CDN theo URL rồi làm nóng ngay bằng Accept có `image/webp`, đủ UA desktop và mobile.
+  - Purge Bunny theo URL: gọi mặc định, không thêm `exactPath=true`. Tham số đó chỉ xoá bản desktop. URL kết thúc bằng `/` được thêm ký tự đại diện, nên purge `/muc/` có thể xoá cả bài con. Sau purge, kiểm header `cdn-cachedat` bằng cả 2 UA: giờ lưu phải sau giờ purge.
 - Đo bản miss bằng tham số nằm trong `cache-exc_qs` (không vào cache). Tham số lạ khác vẫn tạo một bản cache mới với TTL đầy đủ, làm phình kho cache. Không dùng `utm_*`, `fbclid`, `gclid` (`do-dac.md` mục 2).
 - Object cache (Redis, Memcached), khi `wp_using_ext_object_cache()` trả true:
   - Ghi bằng WP API (`update_post_meta`, `update_option`, `wp_update_post`) thì cache tự cập nhật.
@@ -158,7 +164,8 @@ Mỗi mu-plugin chạy trên filter của LiteSpeed (`litespeed_buffer_before` h
   1. Plugin in CSS lớn vào `<head>` thì chuyển ra file (site mẫu: Max Mega Menu `css=fs`, HTML giảm khoảng 189 KB).
   2. Gộp CSS ngoài và inline bằng LiteSpeed. Chụp lại để kiểm thứ tự cascade.
   3. Critical CSS theo template bằng `scripts/ccss_gen.mjs`. Chèn `<style>` trước file CSS gộp. Nạp file gộp bằng `media="print"` + `onload`, kèm `<noscript>`.
-  4. Cắt CSS không dùng (UCSS) khi file gộp vẫn gây TBT lớn.
+  4. Cắt CSS không dùng (UCSS) khi file gộp lớn hơn khoảng 100 KB brotli hoặc vẫn gây TBT. Dùng skill `wp-ucss`: CSS gọn theo file gộp, kiểm computed style từng trạng thái giao diện, chỉ đổi link ở path đã kiểm. Site agency mẫu 26–27/10: file gộp 1,41 MB (174 KB brotli) còn 28–50 KB brotli. PSI mobile trung vị 3 lượt của 7 template từ 94 lên 98; trang chủ LCP 2,9 → 2,3 s, FCP 2,0 → 1,4 s.
+  5. Có CSS gọn thì dựng critical CSS từ CSS gọn, không từ file gộp.
 - Critical CSS bắt buộc A/B từng template: đo `perf_probe.mjs` có và không có critical CSS, cùng PSI. Site mẫu: 5/11 template chậm hơn và đã tắt (trang chủ, tuyển dụng, dịch vụ, blog, giới thiệu desktop).
 - Bẫy:
   - Lấy CSS đầu vào từ CSSOM của Chrome, không lấy text gốc. Text gốc có đoạn lỗi cú pháp, penthouse sửa và đưa quy tắc Chrome đã bỏ vào critical CSS.
@@ -168,6 +175,8 @@ Mỗi mu-plugin chạy trên filter của LiteSpeed (`litespeed_buffer_before` h
   - Icon font có thể hiện ô vuông vài trăm ms khi chỉ có critical CSS. Không thêm `@font-face` icon vào critical CSS nếu file font nặng.
   - LiteSpeed bật "CSS Combine External and Inline" (`optm-css_comb_ext_inl` = 1) gom cả `<style>` inline in ở `wp_head` vào file gộp tải async. Nếu `@font-face` của font chữ chính nằm trong `<style>` đó, lần vẽ đầu chỉ có critical CSS nên chữ hiện bằng font hệ thống, rồi đổi dòng khi file gộp tải xong. Site mẫu: H1 bài viết 2 dòng thành 3 dòng, CLS desktop 0,35. Sửa: nối `@font-face` và biến font vào đầu critical CSS qua filter của mu-plugin, dùng chung hàm sinh CSS với `wp_head`. Kiểm: chặn `*.css` trong Chrome rồi so khung phần tử với bản đủ CSS; chỉ còn khác chiều cao phần dưới màn hình đầu.
   - Dựng lại critical CSS sau mỗi lần đổi font, header hoặc tắt plugin dựng trang. Site mẫu: critical CSS dựng trước đợt đổi font làm header co 19 px khi file gộp tải xong, CLS desktop 0,53.
+  - Critical CSS kèm file gộp 1,48 MB nạp async: FCP giảm nhưng TBT tăng khoảng 244 ms vì Chrome parse file lớn sau FCP. Site agency mẫu 26/10 đã trả lại bản này. Làm CSS gọn trước, rồi mới xét critical CSS.
+  - Critical CSS thiếu quy tắc ẩn của `.screen-reader-text` làm link "skip to content" hiện ra trong lần vẽ đầu, rồi biến mất: CLS 0,026–0,028. Desktop thiếu quy tắc của menu thả xuống thì menu con hiện ra trong lần vẽ đầu. Kiểm bằng cách so khung phần tử giữa bản "chỉ critical CSS" và bản đủ CSS trong 1,5 màn hình (`ccss_gap.mjs` của `wp-ucss`).
 - Rollback: chuyển thư mục critical CSS ra ngoài. Mu-plugin thấy thiếu file thì giữ HTML cũ.
 - Trang dài, `mainthread-work-breakdown` của PSI báo `styleLayout` từ 500 ms: thêm `content-visibility:auto` cho section từ thứ 3 trở đi.
   - `contain-intrinsic-size: auto <chiều cao>`: lấy chiều cao trung bình đo thật của section, tách mobile và desktop. Site mẫu 2: landing mobile ~2.600 px, desktop ~1.600 px. Ước tính 900 px làm chiều cao trang lệch 50%.
@@ -256,3 +265,16 @@ Rollback: mỗi việc ghi file đã sửa và bản backup. Speculation rules v
 - Mọi cách hoãn đều giữ GTM tải ngay ở trang thanh toán và trang cảm ơn. Đơn ghi phía server (form, cổng thanh toán) không bị ảnh hưởng.
 - Trang thanh toán, cảm ơn giữ GTM nạp ngay thì TBT còn lại đến từ tracking. Site mẫu 2: Meta Pixel (`fbevents.js` + `signals/config`) 330–510 ms, `gtag/js` của GA4 140–290 ms, `gtm.js` 60–170 ms, JS riêng của trang 5–19 ms. Điểm mobile 81–94 sau khi sửa CLS. Không còn việc gì ở phía trang. Ghi vào báo cáo 3 lựa chọn cho người duyệt: giữ nguyên (trang thường `noindex`, điểm chỉ là số lab), hoãn GTM cả ở trang này (sự kiện đẩy vào `dataLayer` trước vẫn được xử lý, chỉ mất khi khách rời trang trước khi GTM nạp), hoặc sửa container (Pixel bắn theo sự kiện thay vì mọi trang).
 - CrUX đã đạt thì đề xuất giữ nguyên, vì lợi ích chủ yếu là điểm lab. Site mẫu 2: GTM, gtag và Pixel nặng khoảng 570 KB, TBT mobile 221–588 ms. Người duyệt giữ nguyên lúc đầu, rồi duyệt hoãn 5 s khi muốn tối đa điểm PSI.
+
+## Đã A/B và không áp
+
+Đọc bảng này trước khi đề xuất một việc trong cột đầu. Nếu site mới có cùng điều kiện, ghi số ở đây vào plan và chỉ thử khi có lý do mới. Số là PSI mobile lab, trung vị nhiều lượt, site agency mẫu 26–27/10/2026 (OLS, LiteSpeed Cache, Guest Mode).
+
+| Việc | Điều kiện | Kết quả A/B | Xét lại khi |
+|---|---|---|---|
+| Critical CSS (lớp 5) | File CSS gộp 1,4 MB, chưa có CSS gọn | Trang chủ: TBT +244 ms. 96 lượt ở 5 trang: xấu hơn, LCP +240 đến +525 ms | Đã có CSS gọn (`wp-ucss`), và trang dài đã có `content-visibility` |
+| Face dự phòng `local()` + `size-adjust` cho chữ đậm (lớp 4) | CLS lab 0,05–0,07 do H1 đổi số dòng khi web font về; field CLS = 0 | LCP mô phỏng +225–633 ms ở 5 bài; 1 trang nhãn "xấu hơn" | Field CLS p75 vượt 0,1 |
+| Preload font `fetchpriority="low"` (lớp 4) | Trang chủ, trang dịch vụ, bài GEO | Xấu hơn ở cả 3 | Không xét lại ở trang không có CLS do font |
+| Như trên, giữ ở 1 bài pillar | CLS lab 0,118 do font | Giữ: CLS 0,118 → 0, điểm 94,5 → 97. Đổi lại: lần vẽ đầu muộn ở 22/22 lượt, LCP +189 ms | Có cách sửa CLS không làm vẽ đầu muộn |
+| Đưa script inline ra file ngoài (lớp 6) | KPI có tỉ lệ HTML trong lượt Googlebot | HTML nhẹ 9–11 KB, nhưng bot tải thêm file JS, ngược KPI | KPI không có mục crawl |
+| Beacon RUM bằng mu-plugin (lớp 7) | Trang dịch vụ mobile | LCP +225 ms, nhiễu A/A 150 ms | Gắn qua tag GTM nạp sau tương tác |

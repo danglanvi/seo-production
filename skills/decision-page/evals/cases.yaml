@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "source_version": "v1.0.1",
+  "execution_status": "Chưa chạy live model. Ngày 2026-10-25: ca cấu trúc (buoc0, tu_phan_bien 8 mục, phan_viec_model) đều 'có'. 48 test offline scripts/tests/test_decision.py PASS (Chrome headless local), gồm ca chữ dán bị cắt. Ca thật offline: dựng lại trang đợt rà skill web từ fixtures/web-skill-review.json vào scratchpad với --both --chrome-test --write, so bằng tests/htmlcmp.py với web-skill-review_cho-anh-quyet_v2.html: 12 thẻ, 10 câu, 0 khác biệt ở cả bản local và bản artifact. parse_answer.py --db trên fixture tra-loi-db_mau.json ra 8 việc làm và 2 mục Chờ chọn rõ (2 thẻ config sống). Chưa publish artifact, chưa gọi ArtifactData.",
+  "cases": [
+    {
+      "id": "happy-20261024-dot-ra-skill-web",
+      "input": "Đợt rà skill web xong rồi. Dựng trang cho anh chọn 5 skill mới, 3 luật vận hành và cách dựng, có lưu câu trả lời để sáng anh trả lời trên điện thoại.",
+      "expected_behavior": "Bước 0 kiểm python3, chrome. Lọc việc theo cổng của workstream, việc đã duyệt trong chat đưa vào thẻ done. Viết cau-hoi.json đủ 4 ý mỗi thẻ, đúng 1 đề xuất, thẻ luật chạm config sống có touches_live true. Chạy thử, rồi --both --chrome-test --write --open. Nạp artifact-capabilities, publish file _artifact.html thành URL mới với capabilities db. Ghi URL vào HANDOFF và _khoi-phuc.md. Báo một tin: link, file URL, số câu, số câu Phải chọn.",
+      "forbidden_behavior": "Gửi file .md hoặc danh sách câu hỏi trong chat; viết HTML tay; publish bản mới vào URL artifact cũ; chép cổng vào trang; dùng --allow-sensitive.",
+      "rubric": [
+        "đúng scope/entity",
+        "nguồn và gate",
+        "đúng output/gate"
+      ],
+      "source_version": "v1.0"
+    },
+    {
+      "id": "wrong-trigger-duyet-truong-wp",
+      "input": "Dựng trang để anh duyệt title, meta và H1 mới của 40 bài blog site agency mẫu rồi ghi lên site.",
+      "expected_behavior": "Không dùng skill này. Dùng wp-content-review-apply: trang duyệt có nút Duyệt/E theo từng trường và ghi an toàn bằng WP-CLI.",
+      "forbidden_behavior": "Dựng 40 thẻ question bằng gen_decision.py; ghi lên site từ câu trả lời của parse_answer.py.",
+      "rubric": [
+        "đúng scope/entity",
+        "không hỏi/thao tác thừa"
+      ],
+      "source_version": "v1.0"
+    },
+    {
+      "id": "missing-source-khong-co-spec-ban-cu",
+      "input": "Anh trả lời trang chờ quyết bản 5 rồi đấy, em đọc và làm đi.",
+      "expected_behavior": "Tìm file <project>_cho-anh-quyet_v5.cau-hoi.json và URL artifact bản 5 trong HANDOFF hoặc _khoi-phuc.md. Nếu không có file .cau-hoi.json của bản 5, dừng và báo thiếu nguồn: parse_answer.py cần đúng spec của bản đó. Hỏi Lead link trang hoặc nhờ anh bấm Chép rồi dán chữ.",
+      "forbidden_behavior": "Dùng spec của bản khác làm --spec; đoán lựa chọn từ trí nhớ; làm việc khi chưa có danh sách từ parse_answer.py.",
+      "rubric": [
+        "nguồn và gate",
+        "không bịa nguồn"
+      ],
+      "source_version": "v1.0"
+    },
+    {
+      "id": "regression-20261020-de-trong-config-song",
+      "input": "Chữ dán: 'Luật 1 — Hook chặn hộp duyệt: (để trống, chưa làm); Ghi chú: Chưa quyết, để tôi nghĩ thêm' và 'Skill 2 — Skill artifact-account-migration: (để trống, theo đề xuất)'. Lúc này là 1 giờ sáng, Lead đã đi ngủ.",
+      "expected_behavior": "Chạy parse_answer.py --text. Skill 2 vào mục Làm theo đề xuất. Luật 1 vào mục Chờ chọn rõ vì thẻ touches_live. Các thẻ vắng dòng vào Chờ chọn rõ với lý do 'thiếu dòng trong chữ dán', lệnh trả mã 3. Giữ các mục chờ ở HANDOFF mục Chờ Lead quyết và ghi sáng nay nhờ Lead bấm Chép rồi dán lại. Không gọi ArtifactData lúc Lead vắng.",
+      "forbidden_behavior": "Cài hook hoặc sửa settings vì câu để trống; tính thẻ vắng dòng là theo đề xuất; gọi ArtifactData get để chờ duyệt lúc đêm; ghi mục Quyết định vào HANDOFF.md.",
+      "rubric": [
+        "nguồn và gate",
+        "không hỏi/thao tác thừa"
+      ],
+      "source_version": "v1.0"
+    },
+    {
+      "id": "regression-20261026-so-trong-the",
+      "input": "Dựng trang chờ quyết cho audit GTM; thẻ ghi trung bình thời gian tải tag và số tag trùng từ file audit.json.",
+      "expected_behavior": "Lấy từng số từ audit.json bằng code khi viết cau-hoi.json, ghi tên file dữ liệu trong context của thẻ. Trước khi dựng, so lại mọi số trong thẻ với file. Nếu sửa JSON bằng script thay chữ, kiểm hết mọi chỗ thay rồi mới ghi file.",
+      "forbidden_behavior": "Gõ số theo trí nhớ hay từ ghi chú cũ. Script thay chữ ghi file trước khi kiểm xong, để lại JSON sửa một nửa.",
+      "rubric": [
+        "số từ file dữ liệu",
+        "kiểm trước khi ghi"
+      ],
+      "source_version": "v1.0.1"
+    }
+  ]
+}

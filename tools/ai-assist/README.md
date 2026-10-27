@@ -40,6 +40,7 @@ Thực thi  backup → sửa → kiểm → ghi HANDOFF/log theo skill
 8. Lỗi mạng, lỗi schema, hết budget đều trả `route: review`, không bao giờ trả "pass".
 9. Ghim model `typesafe/jev-1.14`. `jev.py` từ chối response của model khác.
 10. Mỗi lượt chạy có `--budget` (mặc định 0,5 USD). Báo cáo ghi tổng chi phí.
+11. Mỗi lượt `jev.py` có gọi API ghi 1 dòng vào sổ lượt gọi: `JEV_LEDGER` hoặc `~/.cache/ai-assist/jev-ledger.jsonl` (giờ, task, số dòng, số lượt gọi, lỗi, chi phí). Đặt `--label <lane hoặc đợt>` để lọc. Xem tổng: `python3 jev_ledger.py --since <YYYY-MM-DD> [--label <chuỗi>]`. Báo cáo đợt lấy số Jev từ lệnh này, không cộng tay. Nguồn: đêm 26–27/10/2026 phiên không đếm được số lượt gọi Jev. Dry-run không ghi sổ.
 
 ## 4. Rubric và ngưỡng
 

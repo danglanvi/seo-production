@@ -62,10 +62,12 @@ def write_psi(d, name, **kw):
 
 
 class PsiStub:
-    """Server PSI giả trên 127.0.0.1. mode 'ok' trả JSON, 'fail' trả 500. Ghi lại thứ tự gọi và số request đồng thời lớn nhất."""
+    """Server PSI giả trên 127.0.0.1. mode 'ok' trả JSON, 'fail' trả 500. Ghi lại thứ tự gọi và số request đồng thời lớn nhất.
+    cache_hits=N: sau lượt đầu của mỗi cặp URL + thiết bị, N lượt kế tiếp trả lại đúng fetchTime cũ (PSI trả kết quả đã lưu)."""
 
-    def __init__(self, mode='ok', delay=0.0):
+    def __init__(self, mode='ok', delay=0.0, cache_hits=0):
         self.mode, self.delay, self.calls, self.inflight, self.max_inflight = mode, delay, [], 0, 0
+        self.cache_hits, self.n, self.ft = cache_hits, {}, {}
         self.lock = threading.Lock()
         stub = self
 
@@ -92,7 +94,14 @@ class PsiStub:
                         self.end_headers()
                         self.wfile.write(b'loi')
                         return
-                    body = json.dumps(psi_json(dev=q.get('strategy', ['mobile'])[0])).encode()
+                    k = (q.get('url', [''])[0], q.get('strategy', [''])[0])
+                    with stub.lock:
+                        i = stub.n[k] = stub.n.get(k, 0) + 1
+                        if i == 1 or i > 1 + stub.cache_hits:
+                            stub.ft[k] = '2026-10-27T00:00:%02d.%03dZ' % (len(stub.calls) % 60, i)
+                    j = psi_json(dev=q.get('strategy', ['mobile'])[0])
+                    j['lighthouseResult']['fetchTime'] = stub.ft[k]
+                    body = json.dumps(j).encode()
                     self.send_response(200)
                     self.send_header('Content-Type', 'application/json')
                     self.end_headers()

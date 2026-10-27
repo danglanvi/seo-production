@@ -1,0 +1,62 @@
+{
+  "_doc": "Cấu hình site cho wp-ucss. Chép thành <thư mục làm việc>/site.json rồi truyền --site <file> hoặc UCSS_SITE. Thư mục chứa site.json là thư mục làm việc của regen.sh (chon/, out-chon/, runs/). Khoá có mặc định trong code: rate_ms (1000), cache_dir (~/.cache/wp-ucss/cache/<host>), safelist (safelist.json cạnh site.json), ucss_dir (wp-content/ucss), mu_plugin (ucss-swap.php), swap_attr (data-ucss, thuộc tính mu-plugin gắn vào link đã đổi; qa_sau_giao.py đọc), lock_file (~/.cm/locks/prod-http.lock), maint_lockdir (~/.cm/locks/_server-maint.lockdir), cdn (none), ccss_style_id (ucss-ccss, id thẻ <style> critical CSS cho ccss_gap.mjs), states.submenu (.mega-sub-menu, .mega-menu-column). Mọi khoá khác bắt buộc, trừ cdn_host và cdn_warm_ecs: chỉ cần khi cdn là bunny và chạy bunny_purge.py --warm (hostname pull zone; dải ECS cho dig +subnet để ra IP trạm khách chính dùng, ví dụ trạm Googlebot vào). asset_hosts: host ngoài site được tải tài nguyên (host của site chỉ tải file css, js, font, svg). block_dns: host đo lường chặn bằng --host-resolver-rules. ua, accept, viewport: một khoá cho mỗi biến thể: m, d (khách mobile, desktop, Accept có WebP), g (Googlebot), q, p (khách mobile, desktop gửi Accept */*; CDN giữ bản Accept của lượt đầu sau purge nên p, q cũng cần CSS gọn). p, d là desktop, còn lại là mobile. stub_vary, stub_ajax: regex URL trả JSON rỗng tại chỗ. states: selector cho các trạng thái giao diện (menu mobile, hover desktop, accordion, slider, form); thêm class accordion riêng của theme vào states.accordion. test_prefix: path giả cùng độ sâu với combined_css_path để url() tương đối trong CSS gọn trỏ đúng chỗ khi kiểm.",
+  "host": "example.com",
+  "asset_hosts": ["fonts.googleapis.com", "fonts.gstatic.com"],
+  "block_dns": [
+    "analytics.google.com", "*.analytics.google.com", "*.google-analytics.com", "*.doubleclick.net", "www.googleadservices.com", "*.googleadservices.com",
+    "www.google.com", "www.google.com.vn", "*.googlesyndication.com", "*.facebook.com", "connect.facebook.net", "*.run.app", "*.on.aws",
+    "*.hotjar.com", "www.googletagmanager.com", "script.google.com", "*.clarity.ms"
+  ],
+  "ua": {
+    "m": "Mozilla/5.0 (Linux; Android 14; SM-A546E) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Mobile Safari/537.36 WpUcss",
+    "d": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 WpUcss",
+    "g": "Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Mobile Safari/537.36 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
+    "p": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 WpUcss",
+    "q": "Mozilla/5.0 (Linux; Android 14; SM-A546E) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Mobile Safari/537.36 WpUcss"
+  },
+  "accept": {
+    "m": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+    "d": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+    "g": "*/*",
+    "p": "*/*",
+    "q": "*/*"
+  },
+  "accept_language": "vi-VN,vi;q=0.9",
+  "viewport": {
+    "m": { "width": 390, "height": 844, "deviceScaleFactor": 1, "isMobile": true, "hasTouch": true },
+    "d": { "width": 1366, "height": 900, "deviceScaleFactor": 1 },
+    "g": { "width": 390, "height": 844, "deviceScaleFactor": 1, "isMobile": true, "hasTouch": true },
+    "p": { "width": 1366, "height": 900, "deviceScaleFactor": 1 },
+    "q": { "width": 390, "height": 844, "deviceScaleFactor": 1, "isMobile": true, "hasTouch": true }
+  },
+  "combined_css_path": "/wp-content/litespeed/css/",
+  "test_prefix": "/wp-content/litespeed/ucss-test/",
+  "rate_ms": 1000,
+  "js_ready_event": "DOMContentLiteSpeedLoaded",
+  "js_deferred_selector": "script[type=\"litespeed/javascript\"]",
+  "stub_vary": "guest\\.vary\\.php",
+  "stub_ajax": "admin-ajax\\.php|\\/wp-json\\/",
+  "states": {
+    "menu_toggle": "button.mega-toggle-animated, .mega-menu-toggle",
+    "menu_indicator": ".mega-indicator",
+    "hover": "li.mega-menu-item-has-children > a, li.menu-item-has-children > a",
+    "accordion": "[aria-expanded=\"false\"]:not(.mega-menu-link):not(button.mega-toggle-animated), details > summary, [role=\"tab\"], .nav-tabs a, .tab-title, .accordion-title, .faq-question, [data-toggle], [data-bs-toggle]",
+    "slider_next": ".slick-next, .swiper-button-next, .owl-next",
+    "form_inputs": "form input[type=\"text\"], form input[type=\"email\"], form input[type=\"tel\"], form textarea"
+  },
+  "safelist": "safelist.json",
+  "cache_dir": "~/.cache/wp-ucss/cache/example.com",
+  "ucss_dir": "wp-content/ucss",
+  "mu_plugin": "ucss-swap.php",
+  "ssh": "example-vps",
+  "docroot": "/www/wwwroot/example.com",
+  "php_bin": "/usr/local/lsws/lsphp83/bin/php",
+  "wp_bin": "/usr/local/bin/wp",
+  "wp_user": "www",
+  "remote_dir": "/root/wp-ucss",
+  "lock_file": "~/.cm/locks/prod-http.lock",
+  "maint_lockdir": "~/.cm/locks/_server-maint.lockdir",
+  "cdn": "bunny",
+  "cdn_host": "example-zone.b-cdn.net",
+  "cdn_warm_ecs": ["73.44.0.0/24"]
+}

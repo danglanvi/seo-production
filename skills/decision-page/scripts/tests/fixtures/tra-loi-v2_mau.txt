@@ -1,0 +1,12 @@
+Trả lời trang Duyệt skill web site-mau (artifact, bản 2):
+Skill 1 — Skill decision-page: Dựng decision-page ở đợt 1, có bản artifact lưu câu trả lời
+Skill 2 — Skill artifact-account-migration: (để trống, theo đề xuất); Ghi chú: Làm xong s1 trước, s2 sau.
+Không đụng memory khác.
+Skill 3 — Skill wp-form-delivery-audit: Chỉ thêm checklist form vào web-qa-gate
+Skill 4 — Skill wp-ui-fix: (để trống, theo đề xuất)
+Skill 5 — Skill workstream-master-plan: Không dựng workstream-master-plan
+Luật 1 — Hook chặn hộp duyệt: (để trống, chưa làm); Ghi chú: Chưa quyết, để tôi nghĩ thêm
+Luật 2 — Hook sau compact: Cài hook SessionStart và thêm 6 dòng CLAUDE.md
+Luật 4 — Bẫy shell macOS: (để trống, chưa làm)
+Nâng cấp — Nâng cấp 22 skill: (để trống, theo đề xuất)
+Cách dựng — Cách dựng: (để trống, theo đề xuất)

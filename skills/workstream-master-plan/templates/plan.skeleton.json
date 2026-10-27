@@ -1,0 +1,20 @@
+{
+ "title": "Master plan <tên workstream>",
+ "updated": "",
+ "rules": [
+  "Mọi yêu cầu mới của Lead vào file này trước khi làm: thêm yêu cầu, thêm việc, gắn phụ thuộc, ghi nguồn.",
+  "Xong việc nào thì đổi trạng thái và ghi bằng chứng.",
+  "Việc chờ Lead quyết chỉ ghi sau khi đã kiểm Lead chưa duyệt ở thẻ, chat hoặc ủy quyền chung."
+ ],
+ "phases": [
+  {
+   "id": "P1",
+   "name": "Đợt 1",
+   "when": "",
+   "why": "Việc đã có quyết định và gói sẵn."
+  }
+ ],
+ "items": [],
+ "done": [],
+ "requests": []
+}

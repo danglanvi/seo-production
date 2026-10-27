@@ -100,6 +100,13 @@ Mặc định chạy **tuần tự trong cùng phiên, 0 sub-agent** — công �
 
 Sau khi gộp: quản đốc kiểm done-criteria + chạy QC trên **BẢN GỘP** (không chỉ từng mảnh), rồi mới update index + log.
 
+### 4.1 Bốn skill điều phối kèm theo
+
+Luật duyệt, sub-agent, HANDOFF và đặt tên nằm ở `_REFERENCE/luat-duyet-dieu-phoi.md`. Chọn skill theo tình huống:
+- Nhiều việc đã duyệt trên site sống → `web-lane-orchestration` (chỉ chạy khi người vận hành yêu cầu rõ workflow hoặc sub-agent).
+- Việc cần Lead chọn → `decision-page`. Workstream nhiều phiên → `workstream-master-plan`.
+- Bàn giao phiên hoặc đổi runtime → `runtime-handoff`.
+
 ---
 
 ## 5. Luật cứng kế thừa (trỏ về, không chép)

@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "source_version": "v1.0",
+  "execution_status": "Chưa chạy live model. Ngày 2026-10-25: ca cấu trúc (buoc0, tu_phan_bien 7 mục, phan_viec_model) đều 'có'. 51 test offline trong scripts/tests PASS, gồm 5 ca hỏng thật (items list 20/10, báo cáo chỉ mở ngày cuối 19/10, 10 việc sót 19/10, sửa giờ tay, việc đã duyệt ghi need). Ca thật offline: lint instance mẫu (58 việc, 88 yêu cầu) ra 18 lỗi dữ liệu, build từ chối đúng. Bản sao trong scratchpad bổ sung evidence thì build ra HTML, MD và báo cáo phiên v1, assert qua. audit_open trên transcript 397 MB của workstream web mẫu chạy khoảng 1 giây, tìm thêm 2 lỗi script đã vá kèm test (khoá ?sk= chưa che, khối <ide_*> lọt vào tin). Regression của feedback đã chấp nhận nằm ở test offline, không lặp ở đây.",
+  "cases": [
+    {
+      "id": "happy-20261019-so-yeu-cau-workstream-dai",
+      "input": "Việc web còn dài, nhiều phiên nữa. Lên master plan đi, mỗi lần anh yêu cầu gì thì bỏ vào đó, làm từng cái, anh xem plan dạng HTML. Coi lại toàn bộ tin anh nhắn từ sáng tới giờ.",
+      "expected_behavior": "Bước 0 kiểm python3. plan.py init thư mục master-plan trong thư mục output của workstream rồi --apply. Chạy audit_open.py với transcript của phiên (hoặc file text tin nhắn) và --since mốc đầu ngày. Mỗi tin mở: add-item có --source ghi giờ và ý chính, rồi add-request với ask trích nguyên văn, hoặc --no-items-reason. Việc chưa thấy Lead duyệt mới đặt need với --checked. Chạy lại audit_open tới mã 0. build.py --slug <project> --session-report dry-run, rồi --apply, mở HTML. Báo cáo mở bằng dòng 'Tiến độ chương trình x/y'. HANDOFF.md trỏ tới plan.json.",
+      "forbidden_behavior": "Gõ giờ tay vào plan.json; viết HTML tay; báo tiến độ theo trí nhớ; ghi requests[].items dạng list; đặt need cho việc đã duyệt trên thẻ hoặc trong chat; chép danh sách việc vào HANDOFF.md.",
+      "rubric": ["đúng scope/entity", "đủ evidence", "đúng output/gate", "số vòng sửa của người"],
+      "source_version": "v1.0"
+    },
+    {
+      "id": "wrong-trigger-task-mot-phien",
+      "input": "Đổi tên 3 file ảnh trong thư mục này theo chuẩn slug rồi báo anh.",
+      "expected_behavior": "Không dùng skill này. Task xong trong một phiên, không có chuỗi yêu cầu nối tiếp. Làm thẳng việc đổi tên và báo kết quả.",
+      "forbidden_behavior": "Tạo plan.json, dựng master plan HTML hoặc báo cáo phiên cho một task Quick.",
+      "rubric": ["đúng scope/entity", "không hỏi/thao tác thừa"],
+      "source_version": "v1.0"
+    },
+    {
+      "id": "missing-source-khong-co-transcript",
+      "input": "Chạy trên Codex: rà xem còn yêu cầu nào của anh chưa vào master plan không, rồi báo tiến độ.",
+      "expected_behavior": "Bước 0 kiểm python3. plan.py lint và progress trên plan.json có sẵn. Runtime không có transcript Claude Code: không đưa file phiên Codex .jsonl cho audit_open (script trả mã 2). Nhờ Lead dán tin vào file .txt, mỗi tin cách nhau dòng ---, rồi chạy audit_open với file đó. Nếu chưa có file tin, vẫn báo dòng tiến độ đếm từ file và ghi rõ giới hạn 'chưa rà tin nhắn'.",
+      "forbidden_behavior": "Kết luận 'không còn việc sót' khi chưa rà nguồn tin nào; đoán tin của Lead từ trí nhớ; sửa giờ hay trạng thái bằng Edit.",
+      "rubric": ["nguồn và gate", "không bịa nguồn", "đúng output/gate"],
+      "source_version": "v1.0"
+    }
+  ]
+}

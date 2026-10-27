@@ -1,0 +1,28 @@
+{
+  "name": "ucss-diff",
+  "version": "2026-10-26.1",
+  "_doc": "So ảnh vùng phần tử khi trang dùng CSS gốc (trái) và CSS gọn UCSS (phải). Chỉ gửi cặp đã khác pixel (lớp tất định). Claude xem mọi cặp có visible_change từ ngưỡng. Nguồn: site WordPress mẫu (OLS + LiteSpeed Cache), 26/10/2026.",
+  "questions": {
+    "visible_change": {
+      "type": "noul",
+      "instructions": "state has a short description and one image made of two screenshots of the same region of a web page, placed side by side with a solid magenta bar between them. LEFT is the page with its original stylesheet. RIGHT is the same page with a reduced stylesheet. Would a visitor notice a difference between LEFT and RIGHT: different text, a missing or extra element, a different color, font, size, border, shadow, icon or image, or a shifted layout? Ignore differences of one or two pixels, anti-aliasing, and a blinking text cursor."
+    },
+    "change_kind": {
+      "type": "choice",
+      "instructions": "If LEFT and RIGHT differ, which difference is the most visible?",
+      "criteria": [
+        "none: they look the same",
+        "layout: an element moved, resized, wrapped differently or overlaps",
+        "unstyled: an element on the right lost its styling (plain text, no background, default list bullets, default link color)",
+        "missing: an element, icon or image is visible on one side only",
+        "color: same layout but a color, border or shadow differs",
+        "font: same layout but the font family, weight or size differs",
+        "unknown"
+      ]
+    },
+    "change_box": {
+      "type": "box",
+      "instructions": "the most visible difference between the LEFT and RIGHT halves, drawn on the RIGHT half"
+    }
+  }
+}

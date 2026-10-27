@@ -2,7 +2,7 @@
 name: seo-logfile-analysis
 description: "Phân tích server log để thấy Googlebot và AI crawler thật sự crawl gì: crawl budget theo section và theo cụm chủ đề, status code bot gặp, đối chiếu sitemap ↔ cấu trúc ↔ log, crawl waste, tần suất crawl URL quan trọng. Dùng ở công đoạn 27 (T7) hoặc audit crawl định kỳ."
 metadata:
-  version: "1.3"
+  version: "1.4"
 ---
 
 # SEO Logfile Analysis
@@ -64,6 +64,10 @@ Chạy "python3 tools/capabilities.py check --need 'python3,curl?,ssh?,gws?'" t�
 1. Đọc `sop/06-self-checklist/tier-3-technical-advance.md` mục 0 (cách đọc GSC Crawl Stats) + mục 2 (3 checkpoint) — canonical cho ngưỡng crawl health; và `skills/technical-seo-audit/references/audit-checklist-by-area.md` khu vực 1 — tránh chấm lại item technical-seo-audit đã cover.
 2. Xác định `$LOG_SOURCE`: `ls 02-raw/logfiles/` trong SEO Production instance của `$CLIENT`. Không có file → hỏi user; user không có log → tuyên bố Tier C ngay, không giả vờ có log. Log còn trên server aaPanel + OpenLiteSpeed: đọc `references/aapanel-ols.md` §1–2 để tìm file và kéo về máy.
 3. Nhận diện `$LOG_FORMAT`: đọc 5 dòng đầu log — combined có `"referer" "user-agent"` cuối dòng, common không có. Không khớp format chuẩn → xin user 2-3 dòng mẫu, build custom regex, test parse trước khi chạy full. Log OpenLiteSpeed có thể bọc dòng trong nháy đơn và thêm trường đầu `'-`; log khác trên cùng server có thể không có trường đó. Vì vậy dò cột từ dòng mẫu của từng file, không gán cứng `$9`/`$10`. Mẫu `logFormat` của OpenLiteSpeed và nghĩa từng trường: `references/aapanel-ols.md` §3.
+3b. Site có CDN (skill `cdn-speed-setup`): đọc kỹ 3 điểm trước khi đếm.
+   - Lượt bot trúng cache ở edge không vào log origin. Hit trong log origin là cận dưới. Kéo log CDN về (Bunny: log pull zone; Cloudflare: Logpush, gói trả phí) và ghép theo giờ.
+   - Dòng đi qua CDN có trường `X-Forwarded-For` khác `-`. Khi origin đã khai IP trạm CDN là tin cậy, `%h` là IP khách thật (site VN 26/10/2026: 161/163 dòng). Trước mốc đó, `%h` là IP trạm CDN, nên `verify_googlebot.py` xếp Googlebot đi qua CDN vào nhóm giả. Bỏ khung giờ đó khỏi bước verify, hoặc ghi rõ phần sai trong báo cáo.
+   - `%D` ở log origin chỉ đo thời gian origin xử lý. Average response time trong GSC đo cả đường đi qua CDN.
 4. Xác định `$PERIOD` + hỏi `$COMMITTED_URLS` nếu chưa có (workbook client) — thiếu thì phân tích tần suất chỉ theo section, ghi chú thiếu.
 5. Báo user: tier + số dòng log ước tính + việc sẽ chạy → **chờ xác nhận** rồi mới parse (log file lớn có thể tốn thời gian đáng kể).
 
@@ -118,6 +122,10 @@ UA-match KHÔNG đủ — fake Googlebot (scraper giả UA) phổ biến ở hos
 ### Bước 3 — Phân tích chuẩn (7 khối, Tier A)
 
 1. **Crawl budget theo section/URL type** — group hits Googlebot theo directory cấp 1-2 (`/blog/`, `/product/`, `/category/`…) + file type (HTML vs ảnh vs JS/CSS). Đối chiếu: section nào quan trọng cho SEO nhưng nhận ít hits? JS/CSS mang `?ver=` chiếm nhiều = cache tắt (bài học Crawl Stats, technical-seo-audit v1.2).
+   - KPI "tỉ lệ HTML trong lượt Googlebot web": chạy `python3 -I skills/seo-logfile-analysis/scripts/kpi_html.py --log <file> --ranges <googlebot.json> [--since ...] [--by-hour] [--trust-xff] --json <W>/kpi.json`.
+   - Mẫu số bỏ robots.txt, sitemap, ads.txt, llm(s).txt, assetlinks. Tử số là mọi lượt GET vào URL trang, mọi mã. Script chia thêm theo loại file, mã HTML, smartphone/desktop và theo giờ.
+   - Log origin sau CDN: thêm `--trust-xff` cho khung giờ trước khi origin tin IP CDN. Chỉ bật khi origin chặn request không qua CDN, vì client gửi thẳng tới origin có thể giả `X-Forwarded-For`.
+   - Mẫu số dưới 30 thì script cảnh báo. Không kết luận theo giờ từ mẫu nhỏ. Site agency mẫu 27/10/2026: % KPI theo giờ dao động 46–100% với 3–13 lượt mỗi giờ.
 2. **Status codes Googlebot gặp** — phân bố 200/304/3xx/4xx/5xx trên verified hits. Ngưỡng theo bảng dưới. Liệt kê: 3xx chains (URL bị crawl lặp qua nhiều hop), top 404 (pattern theo prefix = đổi URL structure không 301), mọi 5xx/503.
    - Chạy `python3 -B skills/seo-logfile-analysis/scripts/log_checks.py redirects --log <file> --site https://<domain> --verified-ips <W>/verify/verified_ips.txt [--remove-list bo.txt] [--hub-urls hub.txt] --out-dir <W>/checks`. `bo.txt` là danh sách bỏ đã duyệt, `hub.txt` là URL trang danh mục hoặc hub, mỗi dòng một URL. Script chỉ tính hit HTML của Googlebot đã xác minh và bỏ URL có query. Output không chứa IP.
    - Thêm `--probe` để đo status hiện tại, số bước, đích cuối và status đích. Probe gửi GET tới site thật: chỉ chạy khi được phép, giữ `--workers 4`. Hit của probe là hit công cụ nội bộ, không tính là bot.
@@ -139,6 +147,13 @@ UA-match KHÔNG đủ — fake Googlebot (scraper giả UA) phổ biến ở hos
    - Không có map `topical-focus` thì chạy skill đó trước, hoặc bỏ khối này và ghi ⬜ THIẾU DATA.
 
 **Tier C** thay bằng: 3 checkpoint GSC Crawl Stats (avg response time / by response / by file type) + By purpose + By Googlebot type theo tier-3 SOP mục 0 — chấm được khối 1, 2 ở mức toàn site; khối 3-6 chấm ⬜ THIẾU DATA kèm hướng dẫn xin log từ hosting/CDN.
+
+Đọc bản xuất CSV của GSC Crawl Stats (cũng áp khi dùng Crawl Stats để đối chiếu log ở Tier A):
+
+- Mở `Metadata.csv` trước. Dòng `Type` cho biết biểu đồ đã lọc theo loại nào. `Chart.csv` chỉ là số của cả host khi bản xuất không lọc. Site agency mẫu 26/10/2026: bản xuất ghi `Type,Other file type`, nên chuỗi "535–690 ms/ngày" chỉ là của nhóm Other. Số cả host chỉ có 1 điểm (765 ms). Plan bản đầu dùng nhầm chuỗi đó làm mốc.
+- Xin người dùng xuất 2 lượt: biểu đồ không lọc (cả host), rồi từng loại file (HTML, Image, Other) và từng Googlebot type. Crawl Stats không có API.
+- Danh sách response của Crawl Stats không có 410. Lượt 410 có thể nằm trong "Other client error (4XX)". Đếm 410 từ log.
+- Số Crawl Stats trễ 2–3 ngày và gồm cả http lẫn https. Ghi múi giờ của ngày là CANNOT-VERIFY nếu chưa so với log theo giờ.
 
 ### Bước 4 — Findings + action list
 
@@ -166,7 +181,7 @@ Mỗi finding: evidence (số + URL mẫu + khoảng ngày log) → hành độn
 | File upload thiếu | response dưới 2 KB (404 tĩnh, không chạy WordPress). Ngưỡng nội bộ, không phải chuẩn Google | tiêu chí nghiệm thu audit log gtvseo.com 19/10/2026; đo sau sửa 21/10: 1.249 byte, trước sửa 132 KB |
 
 ### Tự phản biện trước khi trình
-Chấm bản nháp theo checklist "Bản tốt nhất phải có". Mục chưa đạt thì sửa, hoặc ghi lý do bỏ. Nếu có output của Codex hay agent khác cho cùng việc, so từng mục và lấy phần tốt hơn trước khi trình Vincent.
+Chấm bản nháp theo checklist "Bản tốt nhất phải có". Mục chưa đạt thì sửa, hoặc ghi lý do bỏ. Nếu có output của Codex hay agent khác cho cùng việc, so từng mục và lấy phần tốt hơn trước khi trình Lead.
 
 Bản tốt nhất phải có:
 - [ ] Report dựa trên file log thật và nêu tỷ lệ dòng parse lỗi; không có log thì ghi Tier C. Nguồn lỗi: 19/10 thư mục `02-raw/logfiles/` của 4 instance đều rỗng; file tên "access-log" duy nhất tìm được là bản tóm tắt 4 dòng.
@@ -261,6 +276,8 @@ Bản tốt nhất phải có:
 
 ## Changelog
 
+- **v1.4 (2026-10-27):** `scripts/kpi_html.py`: KPI tỉ lệ HTML trong lượt Googlebot web, mẫu số bỏ infra, chia theo loại file, mã HTML, bot, giờ; `--trust-xff` cho log sau CDN; cảnh báo mẫu số dưới 30; không in IP. Chạy trên log origin thật site agency mẫu 26–27/10: 41 lượt, HTML 23, infra 8, % KPI 69,7, khớp số tính tay của lane đêm. Test `tests/test_kpi_html.py` 6 ca. Bước 3 Tier C: cách đọc CSV Crawl Stats (`Metadata.csv`, 410 không có trong danh sách response). Eval 5 ca.
+- **v1.3.1 (2026-10-26):** Bước 0b thêm mục 3b cho site có CDN: hit trúng cache ở edge không vào log origin, `%h` là IP trạm CDN trước khi origin tin IP CDN, `%D` không phải số GSC. Nguồn: đợt CDN site VN 26/10/2026 (`cdn-speed-setup` v1.0), đếm trên log OLS sau khi đổi apex.
 - **v1.3 (2026-10-25):** log-1: `verify_googlebot.py` lọc dải IP trước rDNS (song song, 4 trạng thái, mã thoát 0–3, bỏ đuôi `googleusercontent.com`); `log_checks.py` kiểm uploads và redirect, 404/410 theo nhóm; `references/aapanel-ols.md`. Chạy offline trên 28 file log gtvseo.com 06–19/10: uploads 284.139 hit, 45,1/119,3 GB, khớp báo cáo 19/10.
 - **v1.2 (2026-10-24):** thêm `scripts/log_health.py` (4xx/5xx theo khung giờ, mã thoát 2 khi không đọc được dòng nào) và test `tests/test_log_health.py`, có ca awk `$10` đọc nhầm số byte. Chạy thật trên 6 file log gtvseo.com 06–19/10: đọc 249.105/249.139 dòng, số 5xx khớp awk `$10` và awk tách theo `"` (175/175/175). Bước 0b và Anti-patterns: dò cột từ dòng mẫu. Nguồn: `Deliverables/GTV-Brand/GTV-Website/perf-20261020/toi-uu-khong-nang-vps-2310/dot1-2410/d1a/kiem-doc-lap.md`, `b0/kiem-doc-lap.md`.
 - **v1.1.1 (2026-10-19):** `log_clusters.py` đọc được log OpenLiteSpeed (dòng bọc nháy đơn, có trường proxy trước IP client). Nhận thêm bot GoogleOther, Applebot, Meta, Bytespider, Amazonbot, CCBot. Chạy thật trên log gtvseo.com 06–19/10: parse 48.803/48.803 dòng. Test `test_ols_line_and_more_bots`.

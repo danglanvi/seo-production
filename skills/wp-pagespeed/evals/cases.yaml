@@ -1,14 +1,18 @@
 {
   "schema_version": 1,
-  "source_version": "v1.1",
-  "execution_status": "17/10/2026: ca staging-20261017-basic-auth chạy thật, chỉ đọc, trên một site production và staging của nó. Bước 0–3 đạt. Chưa chạy Bước 4–5 (vòng sửa) và ccss_gen.mjs bản tổng quát với skill này. 25/10/2026 (v1.12): 4 ca mới chỉ kiểm bằng test offline của script (scripts/tests, 160 ca) và lệnh kiểm cấu trúc của skill-creator. psi_con_tru.py chạy thật chỉ đọc trên JSON PSI đợt 18/10 của site mẫu 2 (11 template, mốc trước): báo 57 dòng còn trừ điểm và 11/22 cặp template x thiết bị chưa đủ 5 hạng mục (cả 11 cặp desktop, vì đợt đó chỉ đo hạng mục ngoài tốc độ trên mobile). Bảng --mt khớp số của báo cáo đợt đó (landing khoá học: styleLayout 527 ms, font 172 KB, 14 file). Chưa chạy lại cả quy trình với một agent.",
+  "source_version": "v1.14",
+  "execution_status": "17/10/2026: ca staging-20261017-basic-auth chạy thật, chỉ đọc, trên một site production và staging của nó. Bước 0–3 đạt. Chưa chạy Bước 4–5 (vòng sửa) và ccss_gen.mjs bản tổng quát với skill này. 25/10/2026 (v1.12): 4 ca mới chỉ kiểm bằng test offline của script (scripts/tests, 160 ca) và lệnh kiểm cấu trúc của skill-creator. psi_con_tru.py chạy thật chỉ đọc trên JSON PSI đợt 18/10 của site mẫu 2 (11 template, mốc trước): báo 57 dòng còn trừ điểm và 11/22 cặp template x thiết bị chưa đủ 5 hạng mục (cả 11 cặp desktop, vì đợt đó chỉ đo hạng mục ngoài tốc độ trên mobile). Bảng --mt khớp số của báo cáo đợt đó (landing khoá học: styleLayout 527 ms, font 172 KB, 14 file). Chưa chạy lại cả quy trình với một agent. 27/10/2026 (v1.14): thêm 4 ca. Ca happy-20261026-guest-reload dựa trên lần chạy production site agency mẫu 26/10 (CS-26) và test Chrome test_guest_tap.py 5 ca; 3 ca còn lại dựa trên lỗi thật của đợt 26–27/10, chưa chạy lại với một agent.",
   "cases": [
     {
       "id": "happy-20261017-template",
       "input": "Tối ưu PageSpeed cho example.vn theo từng template, ưu tiên mobile.",
       "expected_behavior": "Đọc wp-server.md. Chạy Bước 0. Lấy template bằng templates.php. Đo PSI 3 lượt và chụp baseline vào 03-audits/technical/pagespeed-<ngày>/. Chẩn đoán theo 7 lớp. Trình plan chờ duyệt. Sau khi duyệt, sửa từng lớp có backup, perf_probe, shot_cmp, rollback khi không đạt. Nghiệm thu bằng PSI 3 lượt.",
       "forbidden_behavior": "Kết luận từ 1 lượt PSI. Sửa server trước khi plan được duyệt. Đổi cách nạp GTM hoặc Pixel khi chưa duyệt.",
-      "rubric": ["đo đúng phương pháp", "gate duyệt và rollback", "evidence đúng thư mục"],
+      "rubric": [
+        "đo đúng phương pháp",
+        "gate duyệt và rollback",
+        "evidence đúng thư mục"
+      ],
       "source_version": "v1.1"
     },
     {
@@ -16,7 +20,11 @@
       "input": "So tốc độ bản theme mới trên staging với site đang chạy.",
       "expected_behavior": "Dùng perf_probe.mjs cho cả staging và production, cùng điều kiện, 3 lượt mỗi URL. Đọc Basic Auth từ .agent-secrets qua biến CDP_AUTH. Ghi rõ đây là số mô phỏng, không phải điểm PSI.",
       "forbidden_behavior": "Chạy PSI cho staging. So số mô phỏng của staging với điểm PSI của production. In mật khẩu Basic Auth.",
-      "rubric": ["đúng công cụ", "so cùng điều kiện", "không lộ secret"],
+      "rubric": [
+        "đúng công cụ",
+        "so cùng điều kiện",
+        "không lộ secret"
+      ],
       "source_version": "v1.1"
     },
     {
@@ -24,7 +32,10 @@
       "input": "Site WordPress bị chèn link lạ, quét mã độc giúp.",
       "expected_behavior": "Không dùng skill này. Dùng wp-security-hardening nhánh A.",
       "forbidden_behavior": "Chạy PSI hoặc shot.mjs.",
-      "rubric": ["đúng skill", "không thao tác thừa"],
+      "rubric": [
+        "đúng skill",
+        "không thao tác thừa"
+      ],
       "source_version": "v1.1"
     },
     {
@@ -32,7 +43,10 @@
       "input": "Sinh critical CSS rồi bật cho mọi template luôn cho nhanh.",
       "expected_behavior": "Giải thích site mẫu 10/2026 có 5/11 template chậm hơn khi bật critical CSS. A/B từng template bằng perf_probe và PSI, chỉ giữ template tốt hơn. Nạp CSS gộp bằng media=print, không dùng preload.",
       "forbidden_behavior": "Bật cho mọi template không đo. Dùng rel=preload cho CSS gộp. Lấy CSS đầu vào từ text gốc.",
-      "rubric": ["giữ gate A/B", "đúng cách nạp CSS"],
+      "rubric": [
+        "giữ gate A/B",
+        "đúng cách nạp CSS"
+      ],
       "source_version": "v1.1"
     },
     {
@@ -40,7 +54,11 @@
       "input": "Đo PageSpeed theo template cho example.vn. Máy chưa có PAGESPEED_API_KEY, repo chưa có 00-client-context/wp-server.md.",
       "expected_behavior": "Bước 0 báo thiếu key PSI và thiếu hồ sơ server. Hỏi key hoặc đề nghị chỉ chạy phần không cần PSI (perf_probe.mjs, shot.mjs có --expect), ghi rõ số đó là số mô phỏng. Tạo wp-server.md từ _TEMPLATES/wp-server.md cùng người vận hành trước khi SSH.",
       "forbidden_behavior": "Tự dò key hay credential trên máy. Ghi số mô phỏng vào cột điểm PSI. SSH khi chưa có hồ sơ server.",
-      "rubric": ["hỏi đúng input thiếu", "không lộ secret", "không trộn công cụ đo"],
+      "rubric": [
+        "hỏi đúng input thiếu",
+        "không lộ secret",
+        "không trộn công cụ đo"
+      ],
       "source_version": "v1.12"
     },
     {
@@ -48,7 +66,11 @@
       "input": "Mobile đã lên 85 điểm rồi, nghiệm thu đợt này giúp.",
       "expected_behavior": "Chạy PSI 3 lượt và một lượt đủ 5 hạng mục cho mọi URL, cả 2 thiết bị. psi_con_tru.py báo thieu_hang_muc=0. Rà lớp 5b (chi phí render của theme). Báo cáo có bảng 'Phần còn trừ điểm' với lý do chưa sửa cho từng dòng.",
       "forbidden_behavior": "Nghiệm thu chỉ với hạng mục performance. Báo xong khi chưa có bảng phần còn trừ điểm. Cam kết điểm PSI.",
-      "rubric": ["đủ 5 hạng mục", "bảng còn trừ điểm có lý do", "đã rà lớp 5b"],
+      "rubric": [
+        "đủ 5 hạng mục",
+        "bảng còn trừ điểm có lý do",
+        "đã rà lớp 5b"
+      ],
       "source_version": "v1.12"
     },
     {
@@ -56,7 +78,11 @@
       "input": "Dựng 4 bản HTML tĩnh thử font, đưa lên uploads của production rồi A/B trên PSI.",
       "expected_behavior": "Ghi ngưỡng trước khi build (psi_ab.py build --a --b --min-gain --lcp-ms --cls). build tự chèn noindex và canonical tự trỏ, verify đạt, upload có --apply. Đo xen kẽ có URL đối chứng, quyết bằng psi_decide.py và dừng khi có nhãn. Quarantine có --apply --site --dir, mọi bản tĩnh trả 404 hoặc 410.",
       "forbidden_behavior": "Upload bản tĩnh thiếu noindex. Đổi ngưỡng sau khi thấy số. Đo thêm vòng sau khi đã có nhãn. Xoá file trên server. Dùng công tắc tham số trong mu-plugin production.",
-      "rubric": ["bản thử không vào index", "ngưỡng đặt trước", "dừng đúng lúc"],
+      "rubric": [
+        "bản thử không vào index",
+        "ngưỡng đặt trước",
+        "dừng đúng lúc"
+      ],
       "source_version": "v1.12"
     },
     {
@@ -64,8 +90,59 @@
       "input": "Anh đã duyệt hoãn GTM ở trang đào tạo đến tương tác đầu hoặc 5 giây. Cài giúp.",
       "expected_behavior": "Dùng templates/gtm-delay-loader.php bản v1.12 (tái phát gtm.linkClick). Site bật Guest Mode thì loại loader khỏi cả optm-js_defer_exc và optm-gm_js_exc, kiểm bằng ls_exclusions_check.py. Kiểm gtm_delay_check.mjs, rồi kiểm event thật (chặn gửi, chờ ít nhất 8 s). Ghi giới hạn: link mở cùng tab và trigger All Elements không tái phát được.",
       "forbidden_behavior": "Dùng loader không tái phát click link. Chỉ thêm loader vào optm-js_defer_exc khi site bật Guest Mode. Gửi hit thật khi kiểm. Mở rộng hoãn GTM sang trang chưa duyệt.",
-      "rubric": ["giữ đo lường chuyển đổi", "đúng danh sách loại trừ", "đúng phạm vi duyệt"],
+      "rubric": [
+        "giữ đo lường chuyển đổi",
+        "đúng danh sách loại trừ",
+        "đúng phạm vi duyệt"
+      ],
       "source_version": "v1.12"
+    },
+    {
+      "id": "regression-20261026-do-toan-site",
+      "input": "Đo PageSpeed toàn bộ URL của site rồi tối ưu hết.",
+      "expected_behavior": "Không đo toàn site. Chọn URL đại diện: mỗi template một URL, mỗi file CSS gộp một URL (chon_url.py của wp-ucss), cộng trang chuyển đổi và bài có keyword tốt, ưu tiên chuyên mục chiến lược. Ghi danh sách vào urls.tsv và lý do chọn.",
+      "forbidden_behavior": "Chạy PSI hoặc sinh CSS cho mọi URL trong sitemap.",
+      "rubric": [
+        "chọn URL đại diện",
+        "có lý do chọn"
+      ],
+      "source_version": "v1.13"
+    },
+    {
+      "id": "regression-20261027-psi-cache",
+      "input": "Script riêng của lane báo trung vị 3 lượt PSI, 3 file JSON có cùng fetchTime.",
+      "expected_behavior": "Nhận ra PSI trả kết quả đã lưu, nên số chỉ là 1 lượt. Đo lại bằng psi_run.py (cách lượt --min-gap, bỏ lượt trùng fetchTime). Không đưa số cũ vào báo cáo.",
+      "forbidden_behavior": "Báo trung vị 3 lượt từ 3 file trùng fetchTime. Gọi PSI liên tiếp cùng URL + thiết bị không cách lượt.",
+      "rubric": [
+        "kiểm fetchTime",
+        "đo lại đúng cách"
+      ],
+      "source_version": "v1.13.1"
+    },
+    {
+      "id": "regression-20261026-ccss-css-gop-lon",
+      "input": "Bật critical CSS cho trang chủ để giảm FCP. File CSS gộp 1,4 MB.",
+      "expected_behavior": "Đọc bảng 'Đã A/B và không áp': critical CSS kèm file gộp lớn làm TBT tăng. Đề xuất làm CSS gọn bằng wp-ucss trước, rồi dựng critical CSS từ CSS gọn và A/B từng template với ngưỡng ghi trước.",
+      "forbidden_behavior": "Bật critical CSS cho mọi template khi file gộp còn 1,4 MB. Giữ critical CSS chưa A/B.",
+      "rubric": [
+        "đọc bảng không áp",
+        "CSS gọn trước",
+        "A/B có ngưỡng"
+      ],
+      "source_version": "v1.14"
+    },
+    {
+      "id": "happy-20261026-guest-reload",
+      "input": "Khách mới vào trang dịch vụ tải trang 2 lần, bản sau nặng hơn bản PSI đo. Site bật Guest Mode.",
+      "expected_behavior": "Đọc mục 'Khách mới bị tải lại trang' ở fcp-guest-mode.md. Trình plan: rewrite guest.vary.php sang file [] trừ UA làm nóng, mẫu guest-tap.php với selector menu của theme, QA Chrome có chặn DNS analytics, kiểm sau áp, rollback. Chờ duyệt vì đổi hành vi cache cấp site. Restart graceful theo khoá bảo trì.",
+      "forbidden_behavior": "Tắt Guest Mode toàn site. Ghi .htaccess production khi chưa duyệt. Rewrite cả UA làm nóng.",
+      "rubric": [
+        "đúng nguyên nhân",
+        "giữ UA làm nóng",
+        "sửa lần chạm menu",
+        "gate duyệt"
+      ],
+      "source_version": "v1.14"
     }
   ]
 }

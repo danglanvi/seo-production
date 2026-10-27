@@ -1,0 +1,38 @@
+{
+  "project": "mau-thu",
+  "title": "Chờ anh quyết: mẫu thử",
+  "eyebrow": "Mẫu thử · bản 1",
+  "intro": "Trang mẫu có 3 thẻ hỏi, 1 thẻ thông tin và 1 thẻ chạm config sống.",
+  "key_note": "Câu nào anh để trống, phiên làm theo đề xuất, trừ việc xoá và config sống.",
+  "cards": [
+    {"id": "a1", "label": "A1", "title": "Dựng **skill** `decision-page`", "toc": "Dựng skill",
+     "context": ["Có 8 bản dựng tay.", "Mỗi bản mất 10 đến 30 phút."],
+     "risk_if_skipped": "Anh tiếp tục nhận bản dựng tay, mỗi bản mất thêm thời gian.",
+     "touches_live": false,
+     "blocks": [{"type": "table", "head": ["Bản", "Phút"], "rows": [["v5", "30"], ["v7", "11"]], "num_cols": [1]}],
+     "questions": [{"text": "Dựng skill này?", "short": "Skill decision-page", "options": [
+        {"label": "Dựng ở đợt 1.", "value": "Dựng ở đợt 1", "recommended": true, "consequence": "Mất khoảng 1 giờ."},
+        {"label": "Dựng ở đợt 2.", "value": "Dựng ở đợt 2"},
+        {"label": "Không dựng.", "value": "Không dựng"}]}]},
+    {"id": "i1", "label": "Thông tin", "kind": "info", "title": "Số liệu tuần qua", "toc": "Số liệu", "note": true,
+     "blocks": [{"type": "stats", "items": [{"n": "87", "label": "workflow"}, {"n": "23%", "label": "token ở workflow bị kill"}]},
+                {"type": "bars", "title": "Điểm PSI", "max": 100, "rows": [{"label": "Hiện tại", "value": 61.5, "tone": "bad", "display": "61,5"}, {"label": "Sau sửa", "value": 95, "tone": "ok"}]}]},
+    {"id": "d1", "label": "D1", "title": "Xoá file nháp cũ", "toc": "Xoá nháp",
+     "context": ["Có 12 file nháp trong thư mục tạm."],
+     "risk_if_skipped": "Thư mục tạm giữ thêm 40 MB.",
+     "touches_live": false,
+     "questions": [{"text": "Xoá file nháp?", "options": [
+        {"label": "Xoá 12 file.", "value": "Xoá 12 file", "recommended": true, "destructive": true},
+        {"label": "Giữ lại.", "value": "Giữ lại"}]}]},
+    {"id": "l1", "label": "L1", "title": "Sửa `.htaccess` trên server", "toc": "Config sống",
+     "context": ["Rule mới chặn PHP trong thư mục upload."],
+     "risk_if_skipped": "Thư mục upload còn chạy được PHP.",
+     "touches_live": true,
+     "questions": [{"key": "rule", "text": "Áp rule?", "short": "Rule chặn PHP", "options": [
+        {"label": "Áp rule, có backup.", "value": "Áp rule", "recommended": true},
+        {"label": "Chưa áp.", "value": "Chưa áp"}]},
+       {"key": "backup", "text": "Giữ backup bao lâu?", "short": "Backup", "options": [
+        {"label": "7 ngày.", "value": "7 ngày", "recommended": true},
+        {"label": "30 ngày.", "value": "30 ngày"}]}]}
+  ]
+}

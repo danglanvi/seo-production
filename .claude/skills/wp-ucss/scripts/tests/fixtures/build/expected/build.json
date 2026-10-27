@@ -1,0 +1,35 @@
+[
+ {
+  "hash": "edc1344da9f5f7bd77e238b8e05c2a47",
+  "pages": 2,
+  "paths": 2,
+  "devs": "dm",
+  "selUniq": 32,
+  "keep": 24,
+  "keepDom": 21,
+  "keepRelax": 2,
+  "keepSafe": 1,
+  "origInvalid": 2,
+  "scan": {
+   "layer": 1,
+   "container": 0,
+   "scope": 0,
+   "nestRules": 2,
+   "parseFail": 2,
+   "relUrl": []
+  },
+  "rawIn": 2143,
+  "rawOut": 1806,
+  "brIn": 887,
+  "brOut": 742,
+  "rulesIn": 37,
+  "rulesOut": 29,
+  "selIn": 43,
+  "selOut": 34,
+  "ffIn": 3,
+  "ffOut": 3,
+  "kfIn": 3,
+  "kfOut": 3,
+  "fontRewrite": 1
+ }
+]

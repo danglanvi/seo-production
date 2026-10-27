@@ -2,7 +2,7 @@
 name: wp-pagespeed
 description: "Đo và tối ưu PageSpeed site WordPress theo template khi có quyền vào server: PSI trung vị 3 lượt, mô phỏng Chrome cho staging, sửa theo 7 lớp có A/B và rollback, phối hợp Jev + EmbeddingGemma. Dùng khi tăng điểm PageSpeed, Core Web Vitals hoặc so staging với production."
 metadata:
-  version: "1.12"
+  version: "1.14"
 ---
 
 # wp-pagespeed — tối ưu PageSpeed WordPress theo template
@@ -78,6 +78,7 @@ ssh -o BatchMode=yes <alias> 'echo ssh: có'
    ```
 
 2. Chọn một URL cho mỗi template có traffic, tối đa 15 URL. Ưu tiên URL có click cao trong GSC nếu có quyền (`tools/gsc/gsc.sh`).
+   - Site dùng CSS gộp LiteSpeed: nhóm theo md5 file gộp chính xác hơn nhóm theo `_wp_page_template`. `chon_url.py` của skill `wp-ucss` chọn một URL mỗi file gộp, cộng trang tiền, bài core và outer nhiều click, và mọi bài của chuyên mục ưu tiên. Người duyệt site agency mẫu 26/10/2026: đo và tối ưu trên URL template đại diện và bài có keyword tốt, ưu tiên chuyên mục chiến lược, không đo toàn bộ URL.
    - Template có trang con dựng khác nhau (landing khoá học kèm trang thanh toán, trang cảm ơn) thì đo mọi trang con, kể cả trang `noindex`. Blog: đo 3–5 bài có ảnh đại diện khác định dạng (PNG, JPG, WebP, AVIF). Site mẫu 2: một URL đại diện cho mỗi template bỏ sót 3 trang thanh toán 37–68 điểm và ảnh PNG 944 KB của một bài.
 3. Ghi `urls.tsv` dạng `tên<TAB>url` vào thư mục evidence.
 4. Chỉ gom HTML bằng EmbeddingGemma khi DB không cho biết template, ví dụ site HTML tĩnh hoặc headless.
@@ -116,6 +117,15 @@ ssh -o BatchMode=yes <alias> 'echo ssh: có'
    - Stack `font-family` riêng của trang rơi thẳng xuống `system-ui`, không có face dự phòng. Mac đo CLS nhỏ, máy Linux của PSI đo lớn (lớp 4).
    - Lab trên máy không tái hiện CLS của PSI: làm theo `references/cls-chi-psi-thay.md` trước khi viết bản sửa.
 7. CrUX TTFB p75 trên 0,8 s: chạy nhánh chỉ đọc ở `references/ttfb-cache-trang.md`.
+8. File CSS gộp từ 100 KB brotli, hoặc critical CSS kèm file gộp làm TBT tăng: dùng skill `wp-ucss` (CSS gọn theo trang, kiểm computed style trước khi đổi link). Site đã có CSS gọn: mọi thay đổi có purge phải so md5 file gộp ở cả 4 biến thể `m`, `d`, `p`, `q` trước và sau, không chỉ `m`, `d`. Bản `Accept: */*` có thể dựng lại bằng file gộp khác mà map chưa có (site mẫu 27/10/2026); khi đó chạy job tái tạo của `wp-ucss`.
+9. KPI crawl hoặc thời gian phản hồi Googlebot nằm trong phạm vi: 404 của bot dò quét dựng qua PHP thì đọc `references/ttfb-cache-trang.md` mục 4b.
+10. Site có CDN (skill `cdn-speed-setup`):
+   - Biết PSI đi đường nào trước khi kết luận. Site VN ngày 26/10/2026 chia vùng: PSI chạy từ châu Á, đi thẳng origin, không qua CDN. Điểm PSI và LCP lab không đổi sau khi bật CDN.
+   - CrUX là cửa sổ 28 ngày. Field data chỉ phản ánh CDN khoảng 28 ngày sau ngày đổi.
+   - Đo TTFB theo vùng bằng `geo_verify.py` của `cdn-speed-setup`. Không dùng PSI để chứng minh CDN giảm TTFB cho khách nước ngoài.
+   - CDN có thể không tách HTML theo `Accept`. Thay đổi HTML theo biến thể WebP phải áp cả cho bản `Accept: */*`, rồi purge CDN theo URL và làm nóng ngay (`checklist-theo-lop.md` lớp 1).
+11. Trước khi đề xuất critical CSS, face font dự phòng, preload font ưu tiên thấp, tách script inline hay beacon RUM: đọc bảng "Đã A/B và không áp" cuối `checklist-theo-lop.md`. Ghi số của bảng vào plan.
+12. Site bật Guest Mode và khách mới tải trang 2 lần (gọi `guest.vary.php` rồi reload): đọc mục "Khách mới bị tải lại trang" ở `references/fcp-guest-mode.md`. Cách sửa có mẫu `templates/guest-tap.php` cho lần chạm menu đầu.
 
 ### Tự phản biện trước khi trình
 
@@ -129,6 +139,7 @@ Bản tốt nhất phải có:
 - [ ] Config cấp site có lượt A/B trên 4 URL mẫu trước khi áp toàn site. Nguồn lỗi: một lane đo khoảng 80 lượt PSI cho một URL rồi vẫn không áp, 23/10/2026.
 - [ ] Việc lớp 7 tách riêng, có bảng "hoãn GTM có mất gì" và giữ tái phát click link. Nguồn lỗi: mất click Zalo đầu tiên khi hoãn GTM, 22/10/2026.
 - [ ] Site sắp deploy lại thì plan chỉ có đo mốc và checklist cho bản mới. Nguồn lỗi: tối ưu site sắp đổi bản, bị huỷ sau 25 phút, 16/10/2026.
+- [ ] Trước khi kết luận "phải trả phí" hay "không làm được", đã xét phương án tự build và mã nguồn mở. Nguồn lỗi: site agency mẫu 26/10/2026, người duyệt nhắc 2 lần (12:07, 22:26); cả 2 lần phương án sau tốt hơn (CDN chia vùng, CSS gọn tự build).
 
 ## Bước 4 — sửa theo lớp
 
@@ -220,12 +231,18 @@ Hoãn GTM đã được duyệt: cài `"$WPS/templates/gtm-delay-loader.php"`. M
 - A/B trên PSI bằng công tắc tham số trong mu-plugin đang chạy production (ví dụ `?ab=` đổi CSS). Cách này sửa code production chỉ để đo. Nếu tham số nằm trong `cache-drop_qs`, bản thử ghi đè cache của URL sạch. Dùng `psi_ab.py` với HTML tĩnh (`do-dac.md` mục 3).
 - Kết luận từ hai nhóm lượt PSI đo khác giờ mà không xem `benchmarkIndex` (`do-dac.md` mục 2).
 - Chạy `psi_run.py` tiền cảnh khi ước tính trên 8 phút, hoặc chờ bằng vòng `sleep`. Dùng chạy nền có báo xong hoặc `--detach`.
+- Gọi PSI cùng URL + thiết bị liên tiếp mà không cách lượt. PSI trả lại kết quả đã lưu: 3 file cùng `fetchTime`, lượt 2 và 3 mất khoảng 1 giây (site agency mẫu 27/10/2026). `psi_run.py` từ 1.13.1 chạy cặp đó lần lượt, cách `--min-gap` (mặc định 60 giây), và đo lại lượt trùng `fetchTime`. Số "trung vị 3 lượt" từ script khác: kiểm `fetchTime` trước khi tin.
 - Chép script của skill vào thư mục lane rồi sửa. Gọi bản `"$WPS/scripts/…"`.
 - Deploy bản sửa CLS khi lab chưa tái hiện được nguyên nhân (`references/cls-chi-psi-thay.md`).
 - Đo A/B thêm vòng sau khi `psi_decide.py` đã có nhãn, hoặc đổi ngưỡng sau khi thấy số.
 
 ## Changelog
 
+- v1.14 (2026-10-27): `fcp-guest-mode.md` thêm mục khách mới bị tải lại trang: rewrite `guest.vary.php` sang file `[]` trừ UA làm nóng, mẫu `templates/guest-tap.php` bấm lại lần chạm menu đầu, QA và kiểm sau áp. Đã chạy production site agency mẫu 26/10 (CS-26): mỗi URL tải 1 lần thay vì 2, 5xx 0. Test Chrome `test_guest_tap.py` 5 ca, bắt được bản bỏ bước bấm lại. `checklist-theo-lop.md` thêm bảng "Đã A/B và không áp" (critical CSS khi CSS gộp lớn, face dự phòng, font ưu tiên thấp, tách script inline, beacon RUM). Bước 3 mục 11–12. Checklist tự phản biện thêm mục phương án tự build. Eval thêm 4 ca.
+- v1.13.2 (2026-10-27): Bước 3 mục 8: site có CSS gọn thì so md5 file gộp ở cả 4 biến thể khi purge (QA cuối đêm site mẫu: lane chỉ so `m`, `d`, bản `p`, `q` của 2 bài đổi sang file gộp ngoài map).
+- v1.13.1 (2026-10-27): `psi_run.py` thêm `--min-gap` (60 giây giữa hai lượt cùng URL + thiết bị, không chạy đồng thời cùng cặp) và bỏ lượt trùng `fetchTime` rồi đo lại. Nguồn: kiểm độc lập lane config 27/10 03:2x, "PSI 3 lượt" thật ra là 1 lượt. Test mới: `test_cached_result_is_retried_not_saved`, `test_min_gap_spaces_same_url`; 162 ca đạt.
+- v1.13 (2026-10-27): rút từ đợt site agency mẫu 26–27/10. Bước 1 chọn URL theo md5 file gộp (`chon_url.py` của `wp-ucss`). Bước 3 trỏ sang skill mới `wp-ucss` và mục 404 dò quét. Lớp 1: Googlebot dùng chung bản cache `Accept: */*`, CDN không tách HTML theo Accept, purge Bunny không `exactPath`, `lam_nong.sh -V` khi chặn `guest.vary.php`. Lớp 5: CSS gọn trước critical CSS, bẫy TBT của file gộp lớn, bẫy `.screen-reader-text`. `ttfb-cache-trang.md` mục 4b: khối `.htaccess` trả 404 trước PHP (1,1–2,8 s còn 13–21 ms), `speculationrules`.
+- v1.12.1 (2026-10-26): Bước 3 mục 8: site có CDN, PSI có thể đi thẳng origin (site VN chia vùng, PSI chạy từ châu Á), CrUX trễ 28 ngày, đo TTFB theo vùng bằng `cdn-speed-setup`. Nguồn: đợt CDN site VN 26/10/2026.
 - v1.12 (2026-10-25): rút từ rà soát web 16–24/10 (perf-1 đến perf-8, hs-7, media-10, trk-1). Biến `WPS` cho đường dẫn script. Bước 0b đọc lộ trình site, parity staging bằng `diff -rq`, `BASELINE.md`. Script mới: `psi_decide.py`, `psi_cls_dump.py`, `lh_local.mjs`, `lam_nong.sh`, `ls_exclusions_check.py`, `psi_con_tru.py`, `fallback_faces.py`, `fa_subset/`, `img_variants.py`, `img_display_width.mjs`, `img_width_report.py`. `psi_run.py` chạy song song `--jobs 2`, từ chối tiền cảnh quá 8 phút, `--detach`. `perf_probe.mjs`, `shot.mjs` có guard `--expect`. `psi_ab.py` tự gắn noindex, khoá ngưỡng, `--split-bench`, `--apply`. Mẫu loader GTM tái phát `gtm.linkClick`. Bước 3 đọc field trước lab, checklist tự phản biện. Bước 5 mặc định 5 hạng mục và bảng "Phần còn trừ điểm". Reference mới `cls-chi-psi-thay.md`, `fcp-guest-mode.md`, `ttfb-cache-trang.md`. Lớp 5b chi phí render của theme. Test offline 160 ca, chạy thật chỉ đọc `psi_con_tru.py` trên JSON PSI cũ của site mẫu 2. Chưa làm kho psi-cache chung của hs-7.
 
 - v1.11 (2026-10-24): rút từ lane tối gtvseo.com 23–24/10. Bước 4 và Gate: backup theo phiên bản, rollback về `v0`, thử rollback sau vòng sửa. `do-dac.md` mục 2: tách lượt theo `benchmarkIndex`, đối chứng cùng khung giờ (bản A 94,5 so với bản C 88,5 do máy PSI). Mục 3: cấm công tắc tham số trong mu-plugin production. `checklist-theo-lop.md` lớp 2: bản sao hero cho desktop làm mobile tải 2 file. Lớp 4: preload font `/website/` làm FCP lab chậm 0,4–0,7 s. Nguồn: `Deliverables/GTV-Brand/GTV-Website/perf-20261020/toi-2310/lcp-anh/kiem-doc-lap.md`, `toi-2310/font/kiem-doc-lap.md`, `ui-20261020/doc-de-2310/sua/kiem-doc-lap.md`.

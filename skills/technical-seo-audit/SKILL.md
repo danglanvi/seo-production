@@ -2,7 +2,7 @@
 name: technical-seo-audit
 description: "Audit technical SEO tầng SITE theo bộ audit nội bộ GTV/TAG (crawl, PageSpeed, DataForSEO): index, crawl, redirect, CWV, crawl budget. Use when: 'audit technical [domain]', 'kiểm tra technical SEO [site]', 'site không được index / crawl chậm', 'check Core Web Vitals'."
 metadata:
-  version: "1.9"
+  version: "1.10"
 ---
 
 # Technical SEO Audit
@@ -29,6 +29,25 @@ Audit technical SEO **tầng SITE** — chẩn đoán những gì cản Google c
 | Tối ưu PageSpeed theo template, sửa trên server | `wp-pagespeed` (site WordPress có quyền server) | Skill này chấm CWV khu vực 5 và flag nguyên nhân; đo A/B, sửa theo lớp, rollback thuộc skill kia |
 | Mã độc, IOC, hardening (khu vực 2.2 Security) | `wp-security-hardening` | Skill này flag dấu hiệu (GSC Security issues, cloaking, file lộ); ứng cứu và siết bảo mật thuộc skill kia |
 | Ghi sửa title, meta, H1, slug, link lên site | `wp-content-review-apply` | Skill này lập fix list; ghi lên site phải qua trang duyệt của skill kia |
+| CDN để giảm average response time Googlebot (GSC Crawl Stats) và TTFB khách ở xa origin | `cdn-speed-setup` | Skill này chấm 1.4 và ghi vị trí origin; chọn, dựng, kiểm CDN thuộc skill kia |
+
+## Chọn skill theo triệu chứng
+
+Bắt đầu từ triệu chứng đo được, không từ tên skill. Đo theo cột 2, rồi mở skill ở cột 3. Nếu cột 3 ghi "A, rồi B", làm A trước, B sau. Nếu cột 3 ghi điều kiện, chọn một skill theo điều kiện. Nguồn: đợt tốc độ và crawl site agency mẫu 26–27/10/2026. Lý do thêm mục này: nhân sự mới không biết bắt đầu từ skill nào.
+
+| Triệu chứng | Đo bằng | Mở skill | Ghi chú |
+|---|---|---|---|
+| Average response time trong GSC Crawl Stats cao | CSV Crawl Stats; TTFB đo ngay trên server | TTFB đo trên server từ 200 ms: `wp-pagespeed` (lớp cache, PHP, MySQL). Dưới 200 ms: `cdn-speed-setup` | Ngưỡng TTFB đầy đủ ở mục Bảng ngưỡng. Origin ở VN hoặc châu Á: Googlebot đi từ Mỹ, mỗi lượt request đi và về khoảng 200 ms |
+| Tỉ lệ HTML trong lượt Googlebot thấp, Googlebot tải nhiều CSS, JS | Log server bằng `kpi_html.py`; Crawl Stats theo loại file | `seo-logfile-analysis`, rồi `wp-ucss` khi file CSS gộp đổi tên liên tục | Site dưới khoảng 10.000 trang: crawl budget không phải ưu tiên, nhưng tỉ lệ thấp vẫn là dấu hiệu lãng phí |
+| LCP, CLS hoặc INP kém | PSI trung vị 3 lượt theo template; CrUX | `wp-pagespeed` | Đo URL đại diện mỗi template, không quét toàn site |
+| PSI báo unused CSS hoặc render-blocking với file CSS gộp lớn | PSI; kích thước file `litespeed/css/<md5>.css` | `wp-ucss` | Chỉ site bật CSS combine của LiteSpeed |
+| Khách ở xa origin tải chậm | TTFB theo vùng | `cdn-speed-setup` | Việc bật proxy CDN cho tên miền chính cần người duyệt |
+| Googlebot gặp nhiều 404, 5xx; bot lạ ăn tài nguyên | Log server | `seo-logfile-analysis`; chặn bot xấu: `wp-security-hardening` | Không chặn Googlebot, Bingbot, AhrefsBot, bot AI |
+| Trang không vào index, noindex nhầm, canonical sai | GSC Page indexing; `index_probe.py` | Skill này, khu vực 2 và 3 | Đo bằng URL không tham số, không qua redirect |
+| Spam, mã độc, cloaking, file lạ trên server | GSC Security issues; quét file | `wp-security-hardening` | |
+| Lỗi giao diện sau khi sửa: tràn ngang, chữ dính, nút hỏng | Chụp và đo DOM | `web-qa-gate` | Chạy sau mọi lượt sửa CSS hoặc template |
+| Cần thử thay đổi trên staging trước production | Không cần đo | `wp-staging-deploy` | |
+| Có từ 3 việc đã duyệt trên một site sống, mỗi việc dùng một tài nguyên riêng (file, cấu hình, post) | Không cần đo | `web-lane-orchestration` | Chỉ chạy workflow khi người duyệt yêu cầu rõ |
 
 ## Input
 
@@ -96,7 +115,7 @@ Chạy "python3 tools/capabilities.py check --need 'python3,curl,screaming-frog?
 
 Chạy checklist từng khu vực theo references/audit-checklist-by-area.md:
 
-1. **Crawl & Log File** — 404/soft-404, 5xx/503, orphan URL, wasted budget, spam bots, AI crawler hits (GEO baseline), 3 checkpoint GSC Crawl Stats.
+1. **Crawl & Log File** — 404/soft-404, 5xx/503, orphan URL, wasted budget, spam bots, AI crawler hits (GEO baseline), 3 checkpoint GSC Crawl Stats. Origin ở VN hoặc châu Á: Googlebot crawl chủ yếu từ Mỹ, mỗi vòng đi về khoảng 200 ms. Origin nhanh vẫn khó đạt average response time dưới 250 ms. Ghi vị trí origin, chuyển `cdn-speed-setup` khi chỉ số trên ngưỡng tối thiểu.
 2. **Index Coverage** — GSC Page indexing taxonomy hiện hành, Index Pollution/Bloat playbook.
 3. **Redirect & Canonical** — chain ≥2 hops, 302→301, 9 biến thể homepage, self-canonical, parameter URLs.
 4. **Sitemap & Robots.txt** — 100% URL 200, ≤50.000 URL / ≤50MB, robots không thay noindex, không chặn CSS/JS, AI bot access chủ đích theo **bot-purpose matrix** (search/training/user-triggered — xem checklist 1.17): OAI-SearchBot·GPTBot·ChatGPT-User / Claude-SearchBot·ClaudeBot·Claude-User / PerplexityBot·Perplexity-User / Google-Extended (control token).
@@ -190,7 +209,7 @@ Khu vực 4 mặc định chỉ VALIDATE. Khi user yêu cầu generate → sinh 
 - Kết report: đề xuất re-audit sau khi fix P0/P1 (validate qua GSC + re-crawl).
 
 ### Tự phản biện trước khi trình
-Chấm bản nháp theo checklist "Bản tốt nhất phải có". Mục chưa đạt thì sửa, hoặc ghi lý do bỏ. Nếu có output của Codex hay agent khác cho cùng việc, so từng mục và lấy phần tốt hơn trước khi trình Vincent.
+Chấm bản nháp theo checklist "Bản tốt nhất phải có". Mục chưa đạt thì sửa, hoặc ghi lý do bỏ. Nếu có output của Codex hay agent khác cho cùng việc, so từng mục và lấy phần tốt hơn trước khi trình Lead.
 
 Bản tốt nhất phải có:
 - [ ] Số đếm từ crawl có completeness check (Status 0, timeout) và đã tách nút chia sẻ, widget chat khỏi redirect nội bộ. Nguồn lỗi: crawl 10/07/2026 bị shared hosting chặn ở 29%; site mẫu 18/10, 756/4.544 inlink tới redirect là Zalo và Messenger.
@@ -337,6 +356,8 @@ Bản tốt nhất phải có:
 
 ## Changelog
 
+- **v1.10 (2026-10-27):** mục mới "Chọn skill theo triệu chứng": 11 triệu chứng → cách đo → skill bắt đầu (đề xuất T2 của đợt rà phiên tốc độ và crawl 26–27/10, người duyệt chốt 27/10). `evals/cases.yaml` 4 ca định tuyến.
+- **v1.9.1 (2026-10-26):** bảng Phân vai thêm `cdn-speed-setup`; khu vực 1 ghi giới hạn RTT của origin ở VN hoặc châu Á với Googlebot ở Mỹ (đợt CDN site VN 26/10/2026).
 - **v1.9 (2026-10-25, tech-1):** reference `index-chuyen-muc-rank-math.md` (option Rank Math, hàm theme tự noindex, bảng quyết định chuyên mục và phân trang, thử staging, schema tắt) và `gsc-ghi.md` (nộp sitemap bằng service account); script `index_probe.py`, `pagerank.py`, mu-plugin tạm `robots-public-test.php`, 11 test mới; luật URL sạch khi kiểm robots; bẫy SF headless trong `data-paths.md`; checklist 3.6 thêm ngoại lệ phân trang giả; chọn đích 301/410 trỏ sang `content-inventory-audit`.
 - **v1.8.2 (2026-10-19):** rút description còn 267 ký tự. Thay tên khách thật ở changelog v1.2, `references/data-paths.md` và `references/audit-checklist-by-area.md` bằng "site khách shared hosting" để master trung lập.
 - **v1.8.1 (2026-10-19):** mục 3.7 checklist trỏ tới `internal-linking` `link-js.md` §7 (dạng mã link của filter, sắp xếp, phân trang).

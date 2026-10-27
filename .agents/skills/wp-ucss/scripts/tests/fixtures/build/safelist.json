@@ -1,0 +1,9 @@
+{
+ "_doc": "Safelist cho test build: chỉ font_src_rewrite ảnh hưởng build.mjs.",
+ "font_src_rewrite": [
+  {
+   "family": "dashicons",
+   "data_to": "url(\"/wp-includes/fonts/dashicons.woff2?99ac726223c749443b642ce33df8b800\") format(\"woff2\")"
+  }
+ ]
+}

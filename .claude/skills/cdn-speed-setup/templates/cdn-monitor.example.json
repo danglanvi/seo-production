@@ -1,0 +1,41 @@
+{
+  "label": "vn.<cong-ty>.cdn-monitor.<site>",
+  "domain": "example.com",
+  "path": "/",
+  "origin_file": "~/.cm/<site>.origin",
+  "cdn_host": "<pull-zone>.b-cdn.net",
+  "geo_name": "geo.<tên ủy quyền>",
+  "geo_ns": [
+    "kiki.bunny.net",
+    "coco.bunny.net"
+  ],
+  "cf_ns": [
+    "<ns1>.ns.cloudflare.com",
+    "<ns2>.ns.cloudflare.com"
+  ],
+  "resolvers": [
+    "sys",
+    "1.1.1.1",
+    "8.8.8.8"
+  ],
+  "ecs_far": "8.8.8.0/24",
+  "alert_cmd": [
+    "~/.local/bin/hermes",
+    "-p",
+    "<profile>",
+    "send",
+    "--to",
+    "telegram",
+    "-q"
+  ],
+  "unswitch_hint": "cd \"<thư mục work của đợt>\" && python3 cdn_dns_switch.py unswitch --zone example.com --name example.com --origin-file ~/.cm/<site>.origin --apply",
+  "state_dir": "~/.cm/cdn-monitor/<site>",
+  "bunny_billing": true,
+  "interval_s": 300,
+  "fail_after": 2,
+  "repeat_min": 120,
+  "heartbeat_hour": 8,
+  "trial_warn_days": 3,
+  "cert_warn_days": 30,
+  "min_balance_usd": 3
+}

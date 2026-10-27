@@ -1,0 +1,42 @@
+/* CSS gộp tự viết cho test build: đủ các nhánh của model.mjs */
+@font-face{font-family:dashicons;src:url("data:application/font-woff2;charset=utf-8;base64,d09GMgABAAAAAA") format("woff2");font-weight:400}
+@font-face{font-family:"Body Sans";src:url(/wp-content/uploads/fonts/body.woff2) format("woff2");font-display:swap}
+@font-face{font-family:Unused Face;src:url(/wp-content/uploads/fonts/unused.woff2) format("woff2")}
+:root{--e-global-typography-text-font-family:"Body Sans";--spin:spin}
+html,body{margin:0;padding:0}
+body{font-family:"Body Sans",sans-serif;color:#222}
+.site-header{display:flex;align-items:center}
+.site-header .logo img{height:40px}
+.mega-menu-toggle{display:none}
+.mega-menu-toggle.mega-menu-open+#mega-menu{display:block}
+.menu-item:hover>.sub-menu,.menu-item:focus-within>.sub-menu{display:block}
+.sub-menu{display:none;position:absolute}
+a[href^="tel:"]{white-space:nowrap}
+.btn,.button,.wp-block-button__link{padding:8px 16px;border-radius:4px}
+.btn:hover{opacity:.9}
+.card .card-title{font-size:20px}
+.unused-widget{display:grid}
+.unused-widget .item{gap:4px}
+.post-content pre code{font-family:monospace}
+.post-content table td{border:1px solid #ddd}
+.faq-question[aria-expanded=true]+.faq-answer{display:block}
+.faq-answer{display:none}
+.slick-slide{float:left}
+.slick-arrow.slick-disabled{opacity:.3}
+input::-moz-placeholder,input::placeholder{color:#999}
+.a::-moz-selection,.a::selection{background:#ff0}
+.dashicons:before{font-family:dashicons;content:"\f347"}
+.spinner{animation:spin 1s linear infinite}
+.fade-in{animation-name:fadeIn}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes unusedPulse{50%{opacity:.5}}
+@media (max-width:767px){.site-header{flex-direction:column}.unused-widget{display:block}}
+@media (min-width:1200px){.unused-widget .item{gap:8px}}
+@supports (display:grid){.card-grid{display:grid}}
+@layer reset{.unused-widget{margin:0}}
+.nested-block{color:red;.child{color:blue}}
+.stray{x:1}}.after-stray{color:green}
+.nbsp-rule{margin:0;  color:red}
+.lg\:w-full{width:100%}
+.footer{padding:24px}

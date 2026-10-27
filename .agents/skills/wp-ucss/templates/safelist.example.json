@@ -1,0 +1,69 @@
+{
+  "_doc": "Safelist wp-ucss (khởi điểm cho WordPress + Elementor + Max Mega Menu + slick + LiteSpeed + WPForms, bài học site WordPress OLS + LiteSpeed Cache, 26/10/2026). Chép thành safelist.json cạnh site.json. keep_class: regex trên tên class; class khớp được coi là có thể xuất hiện (JS thêm hoặc nội dung đổi), selector chứa nó giữ khi phần còn lại khớp DOM. keep_selector: '.class' (coi như keep_class) hoặc tên thẻ (bỏ khỏi selector khi thử bản nới, vì nội dung có thể thêm thẻ đó). font_src_rewrite: thay font nhúng data: (base64) trong @font-face bằng URL file font có sẵn trên site; chỉ thêm khi đã kiểm URL trả 200 đúng kiểu font. Ví dụ: {\"family\": \"dashicons\", \"data_to\": \"url(\\\"/wp-includes/fonts/dashicons.woff2?99ac726223c749443b642ce33df8b800\\\") format(\\\"woff2\\\")\", \"reason\": \"dashicons nhúng base64 khoảng 42 KB trong CSS chặn hiển thị; WordPress có sẵn dashicons.woff2 khoảng 26 KB\", \"src\": \"đo trên site, kiểm HTTP 200 font/woff2\"}.",
+  "keep_class": [
+    {
+      "p": "^(rtl|home|blog|archive|date|error404|no-customize-support|custom-background|wp-custom-logo)$",
+      "reason": "class body WordPress",
+      "src": "purgecss-with-wordpress index.js:2-43"
+    },
+    {
+      "p": "^(alignnone|alignright|alignleft|aligncenter|alignwide|alignfull|wp-caption|wp-caption-text|screen-reader-text|comment-list|wp-social-link)$",
+      "reason": "class nội dung WordPress",
+      "src": "purgecss-with-wordpress, Perfmatters"
+    },
+    {
+      "p": "^(search|attachment|page|author|category|tag)(-.*)?$|^(.*)-template(-.*)?$|^(postid|attachmentid|tax|term|wp-embed|blocks-gallery|wp-block)-",
+      "reason": "class body/khối WordPress đổi theo trang và nội dung",
+      "src": "purgecss-with-wordpress index.js"
+    },
+    {
+      "p": "^(toggled|animated|lazy-enabled|n2-ss-loaded)$|^elementor-(invisible|loading|sticky--active|ken-burns)|^swiper-",
+      "reason": "trạng thái JS",
+      "src": "Debloat elementor.php:64-91"
+    },
+    {
+      "p": "^mega-",
+      "reason": "Max Mega Menu thêm class bằng JS (mega-toggle-on, mega-menu-open)",
+      "src": "bài học repo UCSS"
+    },
+    {
+      "p": "^slick-",
+      "reason": "slick thêm class khi khởi tạo và chuyển slide",
+      "src": "bài học repo UCSS"
+    },
+    {
+      "p": "^litespeed-|^lazyload(ed|ing)?$",
+      "reason": "lazyload LiteSpeed",
+      "src": "bài học repo UCSS"
+    },
+    {
+      "p": "^(is-open|active|show|fixed|sticky|scrolled|open|opened|current|selected|visible|hidden|collapsed|collapsing|in)$",
+      "reason": "class trạng thái chung",
+      "src": "bài học repo UCSS"
+    },
+    {
+      "p": "^wpforms-",
+      "reason": "WPForms thêm class khi kiểm lỗi, gửi form",
+      "src": "bài học repo UCSS"
+    }
+  ],
+  "keep_selector": [
+    { "p": "pre", "src": "Perfmatters common exclusions" },
+    { "p": "code", "src": "Perfmatters" },
+    { "p": "blockquote", "src": "Perfmatters" },
+    { "p": "table", "src": "nội dung bài: bảng" },
+    { "p": "figcaption", "src": "nội dung bài" },
+    { "p": ".wp-block-quote", "src": "Perfmatters" },
+    { "p": ".wp-block-preformatted", "src": "Perfmatters" },
+    { "p": ".wp-block-code", "src": "Perfmatters" },
+    { "p": ".wp-block-columns", "src": "Perfmatters" },
+    { "p": ".comment", "src": "Perfmatters" },
+    { "p": ".comment-content", "src": "Perfmatters" },
+    { "p": ".wp-caption", "src": "Perfmatters" },
+    { "p": ".alignleft", "src": "Perfmatters" },
+    { "p": ".alignright", "src": "Perfmatters" },
+    { "p": ".aligncenter", "src": "WordPress" },
+    { "p": ".screen-reader-text", "src": "WordPress" }
+  ],
+  "font_src_rewrite": []
+}

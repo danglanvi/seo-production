@@ -2,7 +2,7 @@
 name: web-qa-gate
 description: "Kiểm site WordPress sau mỗi lần ghi, trước khi lên production và đầu workstream web: tràn ngang có và không cache, axe, focus, form, tracking, plugin, HTTP, redirect, canonical, schema, OG, menu và slider bấm thật, bố cục, landmark, Jev ui-visual. Một lệnh ra PASS/FAIL."
 metadata:
-  version: "1.3"
+  version: "1.3.1"
 ---
 
 # web-qa-gate — cổng kiểm sau mỗi lần ghi lên site
@@ -178,7 +178,7 @@ Cách dùng kết quả:
 ## Trước khi trình
 
 ### Tự phản biện trước khi trình
-Chấm bản nháp theo checklist "Bản tốt nhất phải có". Mục chưa đạt thì sửa, hoặc ghi lý do bỏ. Nếu có output của Codex hay agent khác cho cùng việc, so từng mục và lấy phần tốt hơn trước khi trình Vincent.
+Chấm bản nháp theo checklist "Bản tốt nhất phải có". Mục chưa đạt thì sửa, hoặc ghi lý do bỏ. Nếu có output của Codex hay agent khác cho cùng việc, so từng mục và lấy phần tốt hơn trước khi trình Lead.
 
 Bản tốt nhất phải có:
 
@@ -213,6 +213,7 @@ Bản tốt nhất phải có:
 - Kiểm canonical hay robots trên URL có query, hoặc chỉ trên bản desktop → kiểm URL sạch ở 5 biến thể bằng `cache_variants.py`.
 - Đặt bề rộng dưới 500 px bằng `--window-size` → dùng `Emulation.setDeviceMetricsOverride`. Chrome headless ép tối thiểu 500 px.
 - Chụp production mà không chặn tracking → chặn từ đầu phiên. Cuộn và rê chuột làm GTM hoãn chạy rồi gửi hit.
+- Script Chrome tự viết cho lane chỉ chặn tracking bằng request interception → beacon gửi lúc đóng tab vẫn lọt. Dùng `dnsRules()` của `scripts/_cdp.mjs` để thêm `--host-resolver-rules` cho cùng danh sách host.
 - Kết luận thiếu chỉ báo focus chỉ vì không có outline → so style lúc có và không có focus. Ô nhập hay dùng màu viền làm chỉ báo.
 - Dùng nhãn từng câu của Jev làm kết luận → xem ảnh. Lượt hiệu chuẩn đầu: `cut_off`, `media_problem`, `spacing` không có tín hiệu. Không dùng điểm `polish` để loại.
 - Chỉ xem ảnh Jev gắn cờ → xem thêm 1 màn mỗi template ở mỗi bề rộng. Jev bỏ sót 22/57 ảnh có lỗi ở lượt hiệu chuẩn đầu.
@@ -229,6 +230,7 @@ Bản tốt nhất phải có:
 
 ## Changelog
 
+- v1.3.1 (2026-10-27): `_cdp.mjs` thêm `dnsRules()`: mọi host trong danh sách chặn tracking bị chặn thêm ở tầng DNS (`--host-resolver-rules ... ~NOTFOUND`), vì beacon gửi lúc đóng tab không đi qua `Network.setBlockedURLs`. Ca thật 26/10/2026: Chrome headless của một lane trên production lọt khoảng 12 page_view và 15 sự kiện thử vào GA4. Test `tests/test_dns_block.py` chạy Chrome thật (có luật: 0 lượt tới host chặn; không luật: 1 lượt). Eval thêm 1 ca.
 - v1.3 (2026-10-25): ui-2, qa-2, qa-1, ui-5, hs-8. `references/hang-muc-13-15.md` mục 15 thêm dòng trỏ `featured-image-seo/references/og-trang.md` mục 8 (og:image, og:image:type, Scrape Again) khi chạy trong workspace của Vincent. Hạng mục 13 tương tác (`interact_probe.mjs`: menu bấm thật, slider chạm thật, `forcePseudoState`, màu kit hai chiều), 14 bố cục (lưới, số heading, CTA trùng, cặp VI/EN, landmark bằng `landmarks.mjs`), 15 OG; `--cache both`, `--tabs`, `--resume`, `--sample`, `--plan`, `--page-timeout`; chụp đủ màn, ẩn nút nổi, `chrome_cleanup.mjs`; checklist đường đi lead ở mục 4; chế độ cổng trước production, audit đầu workstream, kiểm độc lập (3 reference mới, `truoc_production.py`: skeleton, diff, controls, headers, urls); 14a, 14c, 14d về WARN theo đặc tả; checklist gộp còn 8 mục. Test 40/40 offline, `truoc_production.py` thử trên 22 trang HTML đã lưu của site mẫu.
 - v1.2 (2026-10-24): `pad_image` thu ảnh gửi Jev về ≤ 0,8 MP và đệm ảnh dẹt lên tỉ lệ cao/rộng 0,3, vì Jev trả `http_400` với ảnh trên khoảng 1 MP hoặc dẹt hơn 0,3. Test thêm ca màn desktop 1366×768 và ô 1200×200. `hang-muc.md` mục 12 mới: chữ dễ đọc sau khi thêm copy (dòng chữ dính, line-height, đoạn dài căn giữa, tràn sau khi thêm chữ) ở 6 bề rộng; LiteSpeed hoãn JS tới tương tác nên rê chuột trước khi đo. Nguồn: `Deliverables/GTV-Brand/GTV-Website/ui-20261020/doc-de-2310/sua/CHECKPOINT.md` và `bao-cao.md` (line-height < 1,6 từ 1.122 xuống 339 ô, đoạn dài căn giữa từ 367 xuống 14).
 - v1.1 (2026-10-21): `browser_probe.mjs` không bật cờ `mobile` của CDP. Fixture 390 px: bản cũ cho JS đọc `innerWidth` 421 lúc load và báo thủ phạm giả `button.slick-next`, bản mới đọc 390 và vẫn bắt tràn. `hang-muc.md` mục 1 thêm 6 bẫy: `isMobile`, UA `HeadlessChrome` làm slick không khởi tạo, tải một lần rồi đổi cỡ, chặn ảnh tạo tràn giả, bộ bề rộng thưa bỏ sót 800 và 900 px, `visibility:hidden` vẫn tính vùng cuộn. Mục 9: canonical chỉ đọc một bản cache, kiểm 5 biến thể bằng `wp-pagespeed/scripts/cache_variants.py`. Rút từ đợt gtvseo.com 20–21/10.

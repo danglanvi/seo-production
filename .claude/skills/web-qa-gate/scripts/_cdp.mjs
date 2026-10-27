@@ -73,11 +73,21 @@ export function args(argv, bools = []) {
   return opt;
 }
 
+// Chặn thêm ở tầng DNS mọi host trong block (mẫu *host* không có path): beacon gửi lúc đóng tab không đi qua Network.setBlockedURLs.
+// Ca thật 26/10/2026: Chrome headless trên production lọt khoảng 12 page_view và 15 sự kiện thử vào GA4.
+export function dnsRules(block = [], resolve) {
+  const hosts = [...new Set(block.map(b => String(b).replace(/^\*+|\*+$/g, '')).filter(h => h && !h.includes('/')))];
+  const rules = hosts.flatMap(h => [`MAP ${h} ~NOTFOUND`, `MAP *.${h} ~NOTFOUND`]);
+  if (resolve) { const [h, ip] = String(resolve).split('='); rules.unshift(`MAP ${h} ${ip}`); }
+  return rules.length ? `--host-resolver-rules=${rules.join(', ')}` : null;
+}
+
 export async function openTab({host, resolve, cookie, block = []} = {}) {
   const port = 9300 + Math.floor(Math.random() * 400), prof = mkdtempSync(join(tmpdir(), 'wqg-'));
   const flags = ['--headless=new', '--disable-gpu', '--hide-scrollbars', `--remote-debugging-port=${port}`, `--user-data-dir=${prof}`,
     '--no-first-run', '--no-default-browser-check', '--ignore-certificate-errors'];
-  if (resolve) { const [h, ip] = String(resolve).split('='); flags.push(`--host-resolver-rules=MAP ${h} ${ip}`); }
+  const dns = dnsRules(block, resolve);
+  if (dns) flags.push(dns);
   try { writeFileSync(join(prof, 'owner.pid'), String(process.pid)); } catch {}
   const chrome = spawn(chromeBin(), [...flags, 'about:blank'], {stdio: 'ignore'});
   liveChrome.add(chrome);

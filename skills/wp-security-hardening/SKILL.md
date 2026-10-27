@@ -2,7 +2,7 @@
 name: wp-security-hardening
 description: "Ứng cứu sự cố và hardening site WordPress khi có quyền vào server (SSH + WP-CLI): backup, tìm IOC, cách ly, đổi credentials, siết server và site, kiểm, báo cáo việc chờ duyệt. Dùng khi site bị xâm nhập, có mã độc, cần rà bảo mật định kỳ hoặc vá OS, PHP."
 metadata:
-  version: "1.7.1"
+  version: "1.8"
 ---
 
 # wp-security-hardening — ứng cứu và siết bảo mật WordPress
@@ -36,6 +36,7 @@ Gốc đường dẫn là root repo. Script nằm ở `skills/wp-security-harden
 - `references/ap-config-song.md`: cấp site hay cấp server, script áp khối, HSTS tăng dần. Đọc trước khi sửa `.htaccess`, vhost.
 - `references/va-os-php.md`: vá OS, vá PHP theo advisory. Đọc khi vá.
 - `references/xoa-an-toan.md`: checklist trước mọi thao tác xoá trên server.
+- `references/ra-tai-khoan-cdn.md`: rà tài khoản Cloudflare, CDN; quy trình khi secret bị lộ. Đọc ở nhánh C.
 - `tools/ai-assist/README.md` trước khi gọi Jev hoặc EmbeddingGemma.
 
 ## Input
@@ -76,6 +77,7 @@ Kiểm thêm dependency riêng và backup. Lệnh dưới chạy từ root repo,
 
 - **Nhánh A, ứng cứu sự cố:** có IOC hoặc nghi xâm nhập. Làm Bước 2 → 6.
 - **Nhánh B, rà soát định kỳ:** chưa thấy IOC. Bỏ Bước 3. Làm Bước 2, 4, 5, 6.
+- **Nhánh C, tài khoản Cloudflare hoặc CDN, secret bị lộ:** trang lạ chỉ hiện qua edge (CAPTCHA giả, redirect lạ), rà tài khoản CDN định kỳ, hoặc secret lọt vào transcript, chat, file. Làm theo `references/ra-tai-khoan-cdn.md`, rồi Bước 6. Agent chỉ đọc và lập danh sách. Người dùng tự bấm xoá và đổi bảo mật.
 
 ## Bước 2 — thu thập, chỉ đọc
 
@@ -102,6 +104,13 @@ Kiểm thêm dependency riêng và backup. Lệnh dưới chạy từ root repo,
 4. Vá OS, vá PHP: theo `references/va-os-php.md`. Xoá site phụ, DB, user, dịch vụ: theo `references/xoa-an-toan.md`, người duyệt từng lần.
 5. Sau mỗi mốc: `scripts/sitecheck.sh https://<domain> <mốc> <paths.txt>`. Mốc nào có lỗi thì rollback mốc đó trước khi làm tiếp.
 6. Việc nằm ngoài phạm vi đã duyệt: ghi vào danh sách chờ duyệt, kèm lệnh làm và rollback.
+7. Site có CDN (skill `cdn-speed-setup`):
+   - Khai IP trạm CDN là tin cậy ở web server. Nếu không khai, Wordfence, giới hạn tần suất và log chỉ thấy IP trạm CDN.
+   - Khai đúng từng IP lấy từ log origin sau khi đổi DNS. Không gộp thành /24: máy khác trong cùng dải sẽ giả được IP khách.
+   - OpenLiteSpeed: `useIpInProxyHeader 2`, mỗi IP dạng `a.b.c.dT`. OLS 1.8.1 không nhận `/32T`. Việc này cần restart OLS theo luật restart ở trên.
+   - Wordfence: khi web server đã đặt `REMOTE_ADDR` đúng, để Wordfence đọc `REMOTE_ADDR`. Lệnh `wfConfig::set` qua `wp eval-file` không lưu được (site VN, 26/10/2026).
+   - Chặn `xmlrpc.php` và `wp-login.php` ở edge CDN. Ghi vào HANDOFF: admin ở nước ngoài cần VPN về VN để đăng nhập.
+   - Apex DNS-only không có WAF và bot rule của Cloudflare. Ghi rõ trong báo cáo.
 
 ## Bước 5 — kiểm
 
@@ -109,6 +118,7 @@ Kiểm thêm dependency riêng và backup. Lệnh dưới chạy từ root repo,
 - Kiểm cloaking: cùng URL với UA Chrome, Googlebot, mobile kèm referer Google phải trả cùng mã, cùng title, cùng tập host.
 - Kiểm PHP trong `uploads`, `languages`, `upgrade`: gọi `.php`, `.PHP` và biến thể path-info `.php/a`, mong 403. Mã 404 hoặc 410 nghĩa là rule chưa có. Nếu tạo file thử, chuyển file vào quarantine sau khi kiểm.
 - Kiểm cổng từ ngoài bằng `nc -z`. Kiểm các site khác trên cùng server vẫn trả 200.
+- Site có CDN: request qua CDN phải ghi IP khách thật vào `REMOTE_ADDR` và log. Header `X-Forwarded-For` giả gửi thẳng tới origin phải bị bỏ qua.
 - Chụp template chính trước và sau bằng `skills/wp-pagespeed/scripts/shot.mjs` và `shot_cmp.py`.
 
 ## Bước 6 — báo cáo
@@ -116,7 +126,7 @@ Kiểm thêm dependency riêng và backup. Lệnh dưới chạy từ root repo,
 - File `<CLIENT>_bao-cao-su-co-bao-mat_v<N>.md` (nhánh A) hoặc `<CLIENT>_bao-mat-ra-soat_v<N>.md` (nhánh B) trong `03-audits/technical/security-<YYYY-MM>/`.
 - Cấu trúc: tóm tắt, IOC và timeline, đã gỡ, thay đổi cấu hình, credentials đã đổi (chỉ tên key, không giá trị), bằng chứng kiểm, rủi ro còn lại, việc chờ duyệt (mỗi việc có lệnh và rollback), chi phí Jev.
 - Không kết luận "sạch tuyệt đối" khi chưa rõ đường vào hoặc còn plugin không có checksum.
-- Trước khi báo xong, quét lộ secret trong thư mục evidence và báo cáo: `bash skills/wp-staging-deploy/scripts/stg_leak_check.sh <thư mục> --env-file <file secret của đợt>`. Thêm `--no-host` nếu đợt không chạm staging. Mã thoát 1: che hoặc bỏ chuỗi lộ khỏi file rồi chạy lại. Bước tuỳ chọn khi chạy trong workspace của Vincent: `bash tools/leak_scan.sh <thư mục>` ở root workspace.
+- Trước khi báo xong, quét lộ secret trong thư mục evidence và báo cáo: `bash skills/wp-staging-deploy/scripts/stg_leak_check.sh <thư mục> --env-file <file secret của đợt>`. Thêm `--no-host` nếu đợt không chạm staging. Mã thoát 1: che hoặc bỏ chuỗi lộ khỏi file rồi chạy lại. Bước tuỳ chọn khi chạy trong workspace gốc có `tools/leak_scan.sh`: `bash tools/leak_scan.sh <thư mục>` ở root workspace.
 - Cập nhật `HANDOFF.md` của đợt, bảng D `index.md`, append `log.md`.
 
 ### Tự phản biện trước khi trình
@@ -156,6 +166,8 @@ Bản tốt nhất phải có:
 
 ## Changelog
 
+- v1.8 (2026-10-27): nhánh C và `references/ra-tai-khoan-cdn.md`: rà Worker, route, token, thành viên, 2FA, audit log, SSL theo host; kiểm từ ngoài bằng UA trình duyệt và UA Googlebot; ranh giới agent đọc, người dùng bấm; 8 bước khi secret bị lộ. Nguồn: sự cố Worker độc trên tài khoản Cloudflare của site agency mẫu (phát hiện 26/10/2026, người dùng xoá 14:1x, agent kiểm lại sạch) và 4 lần lộ secret tháng 10/2026. Eval thêm 2 ca. Chưa có script đọc tài khoản: token hiện có trả 403 ở Workers Routes.
+- v1.7.2 (2026-10-26): Bước 4 mục 7 và Bước 5 thêm phần site có CDN: khai IP trạm CDN tin cậy (đúng từng IP, OLS dạng `IPT`), Wordfence đọc `REMOTE_ADDR`, chặn đăng nhập ở edge, kiểm XFF giả. Nguồn: đợt CDN site VN 26/10/2026 (`cdn-speed-setup` v1.0).
 - v1.7.1 (2026-10-26): `backup_pull.sh` kéo bằng `rsync -rlt` thay `-a` rồi `chmod -R u+rwX,go-rwx` thư mục đích. Lần kéo đầu từ site khoá học mẫu lỗi `fstatat: Permission denied` vì thư mục trên server mang mode 600 và `-a` chép mode đó về máy. openrsync của macOS không có `--chmod`.
 - v1.7 (2026-10-25): sec-1, sec-4, sec-6, sec-7, sec-8, sec-9, sec-10. `references/checklist-hardening.md` mục 1 trỏ dòng Status hygiene trong Bảng ngưỡng của `seo-logfile-analysis` cho luật 410 và 404. Script `apply_server_block.sh` (backup md5, diễn tập, mã HTTP trước và sau, `rollback.sh`), `preflight_remote.sh`, `verify_backup.sh`; sửa `backup_pull.sh`, `site-backup.sh`, `backup-cnf.php`; probe URL ngẫu nhiên phải 404. Reference mới `ap-config-song.md`, `va-os-php.md`, `xoa-an-toan.md`. Bước 0 thêm preflight, `--no-tablespaces`, dump một phần `--no-create-info --replace`. Thêm Phân việc model, Tự phản biện, quét lộ secret ở Bước 6. Test offline `scripts/tests/test_sec_scripts.py`. Nguồn: `Deliverables/AI-Internal/Web-Skill-Review-2026-10/web-skill-review_bao-cao_v1.md`.
 - v1.6 (2026-10-24): `ung-cuu-su-co.md` mục 1: log OLS xoay vòng `.gz`, cột mã trạng thái khác nhau giữa các log trên cùng server, dòng "max children" không có giờ, PHP warning ở `lsws/logs/error.log`. Anti-patterns: awk cột cứng, đếm bằng `seo-logfile-analysis/scripts/log_health.py`. Nguồn: `Deliverables/GTV-Brand/GTV-Website/perf-20261020/toi-uu-khong-nang-vps-2310/dot1-2410/d1a/kiem-doc-lap.md`, HANDOFF gtvseo.com mục Bẫy.

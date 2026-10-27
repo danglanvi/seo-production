@@ -1,0 +1,14 @@
+{
+  "_doc": "Cấu hình chon_url.py (chép thành chon/chon.json cạnh site.json). must: path luôn chọn (trang chủ, trang dịch vụ, liên hệ, blog, trang template riêng). priority_cats: slug chuyên mục lấy hết bài. core_cats: chuyên mục lõi, lấy top_core bài nhiều click; bài còn lại (outer) lấy top_outer. top_impr: thêm bài nhiều hiển thị có vị trí trung bình <= max_pos. min_clicks/min_impr: ngưỡng để một file CSS gộp được lấy URL đại diện. extra_per_hash: {\"<8 ký tự đầu md5 file gộp>\": N} lấy thêm N URL cho file gộp dùng chung nhiều trang. skip: path bỏ qua.",
+  "min_clicks": 5,
+  "min_impr": 500,
+  "top_core": 14,
+  "top_outer": 7,
+  "top_impr": 5,
+  "max_pos": 15,
+  "must": ["/", "/lien-he/", "/blog/"],
+  "priority_cats": [],
+  "core_cats": ["seo"],
+  "extra_per_hash": {},
+  "skip": []
+}

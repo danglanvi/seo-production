@@ -1,0 +1,16 @@
+# wp-ucss: cache 1 năm cho CSS gọn (tên file = md5 gộp + hash nội dung). Gỡ: xoá khối context này rồi restart graceful.
+# extraHeaders: thay bằng đúng các dòng header bảo mật đang có ở context /wp-content/litespeed/ của vhost này.
+context /@UCSS_DIR@/ {
+  location                $DOC_ROOT/@UCSS_DIR@/
+  allowBrowse             1
+  enableExpires           1
+  expiresByType           text/css=A31536000
+  extraHeaders            <<<END_extraHeaders
+set X-Content-Type-Options nosniff
+set X-Frame-Options SAMEORIGIN
+set Referrer-Policy strict-origin-when-cross-origin
+set Permissions-Policy camera=(),microphone=(),geolocation=()
+set Strict-Transport-Security max-age=86400
+  END_extraHeaders
+}
+

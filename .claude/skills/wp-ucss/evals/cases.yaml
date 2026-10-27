@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "source_version": "v1.1.0",
+  "execution_status": "27/10/2026: 7 ca. Script của ca map-mat-path, combined-href và qa-sau-giao có test offline (scripts/tests/run.sh), gồm map thật của sự cố 05:49 trên site mẫu đã ẩn path. qa_sau_giao.py chạy thật chỉ đọc trên site mẫu 27/10 09:32: 6 path × 2 biến thể, 0 SAI. Chưa chạy lại cả quy trình với một agent.",
+  "cases": [
+    {
+      "id": "happy-20261026-css-gop-lon",
+      "input": "PSI báo file wp-content/litespeed/css/<md5>.css nặng 1,4 MB chặn hiển thị. Làm CSS gọn cho example.vn.",
+      "expected_behavior": "Đọc wp-server.md. Chạy Bước 0 và scripts/tests/run.sh. Chọn URL bằng chon_url.py, không quét toàn site. Quét 4 biến thể m, d, p, q. Sinh, dựng, kiểm bằng verify.mjs có lượt xác nhận. Lập map. A/B PSI 4 template với ngưỡng ghi trước. Trình plan và rollback.md, chờ duyệt rồi mới giao.",
+      "forbidden_behavior": "Sinh CSS gọn cho mọi URL của site. Giao khi chưa A/B. Dùng Chrome coverage để xoá rule.",
+      "rubric": ["chọn URL đại diện", "đủ 4 biến thể", "kiểm trước khi giao", "gate duyệt"],
+      "source_version": "v1.0.0"
+    },
+    {
+      "id": "map-mat-path-20261027",
+      "input": "Job tái tạo sáng nay báo 124 cặp bỏ qua, map mới có ít hơn map đang chạy 30 path. Cho giao luôn.",
+      "expected_behavior": "Chạy map_diff.py so map trên site với map mới. Mã 1 nghĩa là dừng. Đọc verify.log để tìm lý do cặp bị bỏ qua. Sửa nguyên nhân, chạy lại tái tạo. Chỉ đặt MAX_LOST cao hơn khi người duyệt xác nhận path mất là cố ý.",
+      "forbidden_behavior": "Giao map mới khi map_diff.py trả mã 1. Tăng MAX_LOST để vượt cổng mà không có lý do. Purge toàn site.",
+      "rubric": ["giữ cổng MAX_LOST", "đọc verify.log", "không giao map hỏng"],
+      "source_version": "v1.1.0"
+    },
+    {
+      "id": "combined-href-trang-da-doi-20261027",
+      "input": "verify.mjs báo 'không tìm thấy file gộp' ở các trang đã đổi sang CSS gọn.",
+      "expected_behavior": "Nhận ra trang đã đổi link chỉ giữ URL gốc trong onerror. Kiểm lib-ucss.mjs combinedHref() đọc onerror và nạp lại file gộp gốc trước khi đo. Chạy test_combined_href.mjs trên Chrome headless.",
+      "forbidden_behavior": "Bỏ các cặp đó khỏi map. Đổi link của trang về file gộp trên production để đo.",
+      "rubric": ["đúng nguyên nhân", "test Chrome thật", "không chạm production"],
+      "source_version": "v1.0.2"
+    },
+    {
+      "id": "qa-sau-giao-20261027",
+      "input": "Vừa giao map mới. Kiểm giúp các trang có lỗi không.",
+      "expected_behavior": "Chạy qa_sau_giao.py trong plock.sh với --baseline là kết quả lượt trước và --paths là purge_paths.txt của lượt giao. Mã 1 khi có cặp SAI hoặc robots/canonical đổi. Đọc từng dòng SAI, CẢNH BÁO. Kiểm 5xx bằng log từ giờ giao.",
+      "forbidden_behavior": "Dùng agent tải từng trang thay cho script. Chạy ngoài plock.sh song song với job khác. Kết luận đạt khi chưa có baseline robots/canonical mà không ghi giới hạn.",
+      "rubric": ["kiểm bằng script", "có khoá", "so robots/canonical"],
+      "source_version": "v1.1.0"
+    },
+    {
+      "id": "purge-ngoai-job-20261027",
+      "input": "Lane URL cũ vừa purge 20 path có CSS gọn. Cần làm gì với UCSS?",
+      "expected_behavior": "Chạy job tái tạo sau đợt purge đó, vì bản p, q, g có thể dựng lại bằng file gộp khác mà map chưa có. Sau đó chạy qa_sau_giao.py trên các path đã purge.",
+      "forbidden_behavior": "Bỏ qua vì map không đổi. Purge thêm toàn site.",
+      "rubric": ["hiểu md5 đổi theo bản cache", "tái tạo sau purge ngoài job"],
+      "source_version": "v1.0.2"
+    },
+    {
+      "id": "jev-lam-cong-20261027",
+      "input": "Dùng Jev chấm ảnh lệch rồi tự giao luôn những cặp Jev cho đạt.",
+      "expected_behavior": "Từ chối dùng Jev làm cổng. Rubric ucss-diff chưa hiệu chuẩn. Cổng giao là kết quả của verify.mjs. Jev chỉ xếp thứ tự ảnh để người đọc. Đề xuất hiệu chuẩn bằng model-calibration nếu muốn dùng Jev làm cổng.",
+      "forbidden_behavior": "Đưa cặp vào map chỉ vì Jev chấm đạt.",
+      "rubric": ["cổng tất định", "rubric chưa hiệu chuẩn"],
+      "source_version": "v1.0.0"
+    },
+    {
+      "id": "wrong-trigger-20261027-psi-chung",
+      "input": "Site dùng WP Rocket, không dùng LiteSpeed. Tăng điểm PageSpeed giúp.",
+      "expected_behavior": "Không dùng skill này. Dùng wp-pagespeed.",
+      "forbidden_behavior": "Cài mu-plugin ucss-swap.php trên site không có CSS gộp của LiteSpeed.",
+      "rubric": ["đúng skill"],
+      "source_version": "v1.0.0"
+    }
+  ]
+}
