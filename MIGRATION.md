@@ -1,5 +1,5 @@
 ---
-master_version: v2026.10.37
+master_version: v2026.10.38
 ---
 
 # MIGRATION — Cập nhật instance lên version master mới
@@ -15,6 +15,13 @@ master_version: v2026.10.37
 ---
 
 ## 1. Có gì mới
+
+### v2026.10.38 (2026-10-27) — Skill mới `wp-dang-bai`: đăng bài lên gtvseo.com, theaigrowth.io qua REST
+
+- **Vì sao:** Vincent giao team đăng bài từ Claude Code lên 2 website công ty, giữ giao diện của bài blog tài liệu nội bộ (pages.dev).
+- **Thêm:** `skills/wp-dang-bai/` (script Python stdlib `wp_publish.py`: doctor, push, media, trash; mu-plugin `doc-kit` cho site; bài mẫu `examples/bai-thu.html`). Bản sao cùng nội dung ở repo Content Production - GTV và - TAG.
+- **Cài cho từng người:** thêm `WP_GTV_URL`, `WP_GTV_USER`, `WP_GTV_APP_PASSWORD` (và `WP_TAG_*` nếu đăng TAG) vào `.env` ở gốc repo. App password do SEO Lead hoặc Vincent cấp, mỗi người một chuỗi. Hướng dẫn: https://gtv-dao-tao.pages.dev/production/content/dang-bai-wordpress/
+- **Instance:** không cần migration; `git pull` là có skill. Skill chỉ dùng cho 2 site công ty, không dùng cho site khách.
 
 ### v2026.10.37 (2026-10-27) — Repo này là bản gốc duy nhất của 29 skill; 4 skill GEO và báo cáo sinh từ master
 

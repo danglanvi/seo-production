@@ -1,0 +1,51 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8">
+<title>Bài thử đăng bằng API</title>
+<meta name="description" content="Bài thử của skill wp-dang-bai: kiểm bảng, tab, câu hỏi tự kiểm, checklist và sơ đồ SVG trên WordPress. Xoá sau khi thử.">
+<style>
+/* CSS riêng của bài thử: script gắn tiền tố .doc-kit rồi lưu vào meta _doc_kit_css */
+.thu-note{border-left:4px solid var(--blue);padding:8px 14px;background:var(--card);border-radius:6px}
+</style></head><body data-doc="bai-thu">
+<main>
+<header class="hd"><p class="eyebrow">Bài thử</p><h1>Bài thử đăng bằng API</h1><p class="date">27/10/2026</p></header>
+
+<div class="prose">
+<p class="lead">Bài này dùng để thử công cụ đăng bài. Đăng ở dạng nháp, xem trước, rồi bỏ vào thùng rác.</p>
+<p class="thu-note"><strong>Kiểm gì:</strong> bảng, tab bấm chuyển, câu hỏi tự kiểm, checklist nhớ trạng thái, sơ đồ SVG.</p>
+<h2>Bảng</h2>
+</div>
+
+<div class="tbl wide"><table>
+<tr><th>Khối</th><th>Class</th><th>Mức</th></tr>
+<tr><td>Bảng</td><td class="k">tbl</td><td><span class="pill hi">Cao</span></td></tr>
+<tr><td>Tab bấm chuyển</td><td class="k">btabs</td><td><span class="pill md">Vừa</span></td></tr>
+<tr><td>Checklist</td><td class="k">bchk</td><td><span class="pill lo">Thấp</span></td></tr>
+</table></div>
+
+<div class="prose"><h2>Tab bấm chuyển</h2></div>
+<div class="btabs wide">
+<div class="btab-bar"><button type="button">Bước 1</button><button type="button">Bước 2</button><button type="button">Bước 3</button></div>
+<div class="btab-pane"><h4>Chạy thử</h4><p>Chạy lệnh push với --dry-run.</p></div>
+<div class="btab-pane"><h4>Đăng nháp</h4><p>Chạy lệnh push với --status draft.</p></div>
+<div class="btab-pane"><h4>Dọn</h4><p>Chạy lệnh trash để bỏ bài thử vào thùng rác.</p></div>
+</div>
+
+<div class="prose"><h2>Sơ đồ</h2></div>
+<figure class="wide svgfig"><svg viewBox="0 0 600 120" role="img" aria-label="File HTML qua API thành bài WordPress">
+<rect x="10" y="30" width="160" height="60" rx="10" fill="#E6F3FC" stroke="#0693E3"/><text x="90" y="65" text-anchor="middle" font-size="16">File HTML</text>
+<rect x="220" y="30" width="160" height="60" rx="10" fill="#F3E8FD" stroke="#9900EF"/><text x="300" y="65" text-anchor="middle" font-size="16">REST API</text>
+<rect x="430" y="30" width="160" height="60" rx="10" fill="#E6F3FC" stroke="#0693E3"/><text x="510" y="65" text-anchor="middle" font-size="16">Bài WordPress</text>
+<line x1="170" y1="60" x2="220" y2="60" stroke="#141413" stroke-width="2"/><line x1="380" y1="60" x2="430" y2="60" stroke="#141413" stroke-width="2"/>
+</svg><figcaption>Đường đi của bài: file HTML, REST API, bài WordPress.</figcaption></figure>
+
+<div class="prose"><h2>Câu hỏi tự kiểm</h2></div>
+<div class="bquiz wide">
+<div class="qz"><p>Đăng lại cùng file thì sao?</p><div class="opts"><button type="button" data-ok>Cập nhật bài cũ</button><button type="button">Tạo bài mới</button></div><p class="fb" hidden><span class="res"></span>Script đọc ID bài trong file .wp.json.</p></div>
+</div>
+
+<div class="prose"><h2>Checklist</h2></div>
+<div class="bchk wide" data-key="thu"><div class="grp">
+<label><input type="checkbox"><span>Bảng hiện đủ 3 dòng</span></label>
+<label><input type="checkbox"><span>Tab đổi nội dung khi bấm</span></label>
+<label><input type="checkbox"><span>Câu hỏi báo Đúng hoặc Chưa đúng</span></label>
+</div><div class="bchk-foot"><span class="bchk-n"></span><button type="button" class="bchk-reset">Làm lại</button></div></div>
+</main></body></html>

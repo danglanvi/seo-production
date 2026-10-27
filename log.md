@@ -475,3 +475,7 @@ Luật ghi:
 ## [2026-10-27] refactor | v2026.10.37 — Gộp skill hai bản: repo này là bản gốc của 29 skill, 4 skill sinh từ master — @claude
 - 19 skill gộp giữ nguyên, 10 skill hợp nhất nội dung của master, 4 skill GEO và báo cáo sinh bằng công cụ port của master. Chi tiết: MIGRATION.md v2026.10.37.
 - Files touched: skills/<29 skill>/, skills/<4 skill sinh>/, .claude/skills/, .agents/skills/, MIGRATION.md
+
+## [2026-10-27] refactor | v2026.10.38 — Skill wp-dang-bai đăng bài lên gtvseo.com, theaigrowth.io qua REST — @claude
+- Script wp_publish.py (doctor, push, media, trash), mu-plugin doc-kit, bài mẫu. Đã thử staging và production 2 site.
+- Files touched: skills/wp-dang-bai/, .claude/skills/wp-dang-bai/, .agents/skills/wp-dang-bai/, CLAUDE.md §11, MIGRATION.md

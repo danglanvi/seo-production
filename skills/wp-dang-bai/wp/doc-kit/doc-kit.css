@@ -1,0 +1,104 @@
+/* doc-kit.css: sinh bằng scripts/build_kit.py từ _format/blog.css của site tài liệu GTV. Không sửa tay.
+   Áp trong <div class="doc-kit"> của bài có meta _doc_kit. */
+.doc-kit{--bg:#FAF9F5;--ink:#141413;--mut:#5E5D59;--line:#E3E0D6;--card:#F0EEE6;--blue:#0693E3;--pur:#9900EF;--blue-ink:#0570AE}
+.doc-kit *{box-sizing:border-box}
+.doc-kit{-webkit-text-size-adjust:100%}
+.doc-kit{color:var(--ink);font-family:inherit;line-height:1.7}
+.doc-kit.doc-kit a{color:var(--blue-ink);text-underline-offset:3px}
+.doc-kit.doc-kit .prose{max-width:680px;margin-left:auto;margin-right:auto}
+.doc-kit.doc-kit .wide{max-width:880px;margin-left:auto;margin-right:auto}
+.doc-kit.doc-kit h2,.doc-kit.doc-kit h3{font-weight:500;letter-spacing:-.01em;color:var(--ink)}
+.doc-kit.doc-kit .hero{margin-top:8px;margin-bottom:48px;background:linear-gradient(135deg,#E6F3FC,#F3E8FD);border-radius:16px;padding:28px}
+.doc-kit.doc-kit .hero img{display:block;width:100%;height:auto;border-radius:8px;box-shadow:0 1px 3px rgba(20,20,19,.12)}
+.doc-kit.doc-kit figcaption{font-size:13px;color:var(--mut);margin-top:12px;line-height:1.5}
+.doc-kit.doc-kit .lead{font-size:20px;line-height:1.6}
+.doc-kit.doc-kit h2{font-size:32px;line-height:1.2;margin:64px 0 16px}
+.doc-kit.doc-kit h3{font-size:22px;line-height:1.3;margin:40px 0 8px}
+.doc-kit.doc-kit p{margin:0 0 18px}
+.doc-kit.doc-kit strong{font-weight:600}
+.doc-kit.doc-kit code{font-size:.88em;background:var(--card);padding:1px 6px;border-radius:4px}
+.doc-kit.doc-kit sup a{text-decoration:none;font-size:11px;padding:0 2px}
+.doc-kit.doc-kit .tbl{overflow-x:auto;margin-top:8px;margin-bottom:32px;-webkit-overflow-scrolling:touch}
+.doc-kit.doc-kit table{width:100%;border-collapse:collapse;font-size:15px;line-height:1.5;min-width:520px}
+.doc-kit.doc-kit th{text-align:left;font-weight:600;font-size:13px;color:var(--mut);border-bottom:1px solid var(--ink);padding:10px 12px 10px 0}
+.doc-kit.doc-kit td{border-bottom:1px solid var(--line);padding:12px 12px 12px 0;vertical-align:top}
+.doc-kit.doc-kit td.k{font-weight:600;color:var(--pur);width:28px}
+.doc-kit.doc-kit .pill{display:inline-block;font-size:12px;font-weight:600;border-radius:999px;padding:2px 10px;white-space:nowrap}
+.doc-kit.doc-kit .pill.hi{background:#F3E8FD;color:#6B00A8}
+.doc-kit.doc-kit .pill.md{background:#E6F3FC;color:#05609A}
+.doc-kit.doc-kit .pill.lo{background:var(--card);color:var(--mut)}
+.doc-kit.doc-kit blockquote.q{margin-top:8px;margin-bottom:28px;display:grid;grid-template-columns:1fr 1fr;gap:0;background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.doc-kit.doc-kit .qc{padding:20px 22px}
+.doc-kit.doc-kit .qc+.qc{border-left:1px solid var(--line);background:#FCFBF8}
+.doc-kit.doc-kit .ql{display:block;font-size:12px;font-weight:600;color:var(--mut);margin-bottom:6px}
+.doc-kit.doc-kit .qc p{margin:0;font-size:17px;line-height:1.6}
+.doc-kit.doc-kit blockquote.q cite{grid-column:1/-1;font-style:normal;font-size:13px;color:var(--mut);border-top:1px solid var(--line);padding:10px 22px}
+.doc-kit.doc-kit .svgfig{margin-top:8px;margin-bottom:32px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px}
+.doc-kit.doc-kit .svgfig svg{display:block;width:100%;height:auto}
+.doc-kit.doc-kit .cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:0;margin-bottom:28px}
+.doc-kit.doc-kit .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px 22px;border-top:3px solid var(--blue)}
+.doc-kit.doc-kit .card:nth-child(even){border-top-color:var(--pur)}
+.doc-kit.doc-kit .card h3{margin:0 0 10px;font-size:22px}
+.doc-kit.doc-kit .card .en{font-style:italic;font-size:15px;line-height:1.55;color:var(--mut);margin-bottom:8px}
+.doc-kit.doc-kit .card .vi{font-size:15px;line-height:1.55;font-weight:500;margin-bottom:10px}
+.doc-kit.doc-kit .card .ex{font-size:14px;line-height:1.55;color:var(--mut);margin:0;border-top:1px dashed var(--line);padding-top:10px}
+.doc-kit.doc-kit .rule{background:#fff;border:1px solid var(--line);border-left:3px solid var(--pur);border-radius:10px;padding:16px 20px;font-size:16px;margin:8px 0 8px}
+.doc-kit.doc-kit .notes{margin-top:72px;border-top:1px solid var(--line);padding-top:24px;font-size:14px;line-height:1.6;color:var(--mut)}
+.doc-kit.doc-kit .notes h4{font-size:14px;font-weight:600;color:var(--ink);margin:0 0 8px}
+.doc-kit.doc-kit .notes ol{padding-left:20px;margin:0 0 16px}
+.doc-kit.doc-kit .notes li{margin-bottom:6px}
+.doc-kit.doc-kit .fine{font-size:13px}
+@media (max-width:700px){.doc-kit{}
+.doc-kit.doc-kit .hero{padding:14px;border-radius:12px;margin-bottom:36px}
+.doc-kit.doc-kit .lead{font-size:18px}
+.doc-kit.doc-kit h2{font-size:26px;margin-top:48px}
+.doc-kit.doc-kit h3{font-size:20px}
+.doc-kit.doc-kit blockquote.q{grid-template-columns:1fr}
+.doc-kit.doc-kit .qc+.qc{border-left:0;border-top:1px solid var(--line)}
+.doc-kit.doc-kit .cards{grid-template-columns:1fr}
+.doc-kit.doc-kit .svgfig{padding:10px}
+.doc-kit.doc-kit table{font-size:14px}}
+.doc-kit.doc-kit .vid video{display:block;width:100%;height:auto;border-radius:8px;background:#000}
+.doc-kit.doc-kit .btabs{margin-top:8px;margin-bottom:32px;background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.doc-kit.doc-kit .btab-bar{display:flex;gap:4px;flex-wrap:wrap;padding:10px 10px 0;border-bottom:1px solid var(--line);background:#FCFBF8}
+.doc-kit.doc-kit .btab-bar button{font:inherit;font-size:14px;font-weight:600;color:var(--mut);background:none;border:0;border-bottom:2px solid transparent;padding:8px 12px 10px;cursor:pointer}
+.doc-kit.doc-kit .btab-bar button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--pur)}
+.doc-kit.doc-kit .btab-pane{padding:18px 22px 6px;font-size:15px;line-height:1.6}
+.doc-kit.doc-kit .btab-pane h4{font-size:13px;font-weight:600;color:var(--mut);margin:0 0 4px;text-transform:none}
+.doc-kit.doc-kit .btab-pane ul{margin:0 0 14px;padding-left:20px}
+.doc-kit.doc-kit .btab-pane li{margin-bottom:4px}
+.doc-kit.doc-kit .btab-pane .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.doc-kit.doc-kit .bquiz{margin-top:8px;margin-bottom:32px;display:grid;gap:12px}
+.doc-kit.doc-kit .qz{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 20px}
+.doc-kit.doc-kit .qz p{margin:0 0 10px;font-size:15px;line-height:1.55}
+.doc-kit.doc-kit .opts{display:flex;flex-wrap:wrap;gap:8px}
+.doc-kit.doc-kit .opts button{font:inherit;font-size:14px;font-weight:600;border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:6px 14px;cursor:pointer;color:var(--ink)}
+.doc-kit.doc-kit .opts button.ok{background:#E6F3FC;border-color:var(--blue);color:#05609A}
+.doc-kit.doc-kit .opts button.no{background:#FDECEF;border-color:#EF004B;color:#A3002F}
+.doc-kit.doc-kit .qz .fb{margin:10px 0 0;font-size:14px;color:var(--mut);line-height:1.55}
+.doc-kit.doc-kit .qz .fb .res{font-weight:600;color:var(--ink)}
+.doc-kit.doc-kit .say2{margin-top:8px;margin-bottom:32px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.doc-kit.doc-kit .say2>div{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 20px;font-size:15px;line-height:1.55}
+.doc-kit.doc-kit .say2 h4{margin:0 0 8px;font-size:14px}
+.doc-kit.doc-kit .say2 .yes h4{color:#05609A}
+.doc-kit.doc-kit .say2 .no h4{color:#A3002F}
+.doc-kit.doc-kit .say2 ul{margin:0;padding-left:18px}
+.doc-kit.doc-kit .say2 li{margin-bottom:6px}
+.doc-kit.doc-kit .bcmd{display:flex;align-items:center;gap:10px;background:#141413;color:#F0EEE6;border-radius:10px;padding:10px 12px 10px 16px;margin:4px 0 18px;overflow-x:auto}
+.doc-kit.doc-kit .bcmd code{background:none;color:inherit;padding:0;font-size:14px;white-space:nowrap;flex:1}
+.doc-kit.doc-kit .bcmd button{font:inherit;font-size:13px;font-weight:600;background:#fff;color:#141413;border:0;border-radius:6px;padding:5px 12px;cursor:pointer;flex:none}
+.doc-kit.doc-kit .bchk{padding:6px 22px 14px}
+.doc-kit.doc-kit .bchk .grp{font-size:12px;font-weight:600;color:var(--mut);margin:14px 0 4px;text-transform:uppercase;letter-spacing:.04em}
+.doc-kit.doc-kit .bchk label{display:flex;gap:12px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.doc-kit.doc-kit .bchk input{width:18px;height:18px;margin-top:3px;flex:none;accent-color:var(--pur)}
+.doc-kit.doc-kit .bchk label span{font-size:15px;line-height:1.5}
+.doc-kit.doc-kit .bchk label small{display:block;font-size:13px;color:var(--mut)}
+.doc-kit.doc-kit .bchk-foot{display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-size:14px;color:var(--mut)}
+.doc-kit.doc-kit .bchk-n{font-weight:600;color:var(--ink)}
+.doc-kit.doc-kit .bchk-reset{font:inherit;font-size:13px;background:none;border:1px solid var(--line);border-radius:999px;padding:4px 12px;cursor:pointer;color:var(--mut)}
+@media (max-width:700px){.doc-kit.doc-kit .btab-pane .grid3,.doc-kit.doc-kit .say2{grid-template-columns:1fr}
+.doc-kit.doc-kit .btab-pane{padding:16px 16px 4px}
+.doc-kit.doc-kit .bchk{padding:4px 16px 12px}
+.doc-kit.doc-kit .btab-bar button{padding:8px 8px 10px;font-size:13px}}
+.doc-kit.doc-kit img{max-width:100%;height:auto}
+.doc-kit [hidden]{display:none}
