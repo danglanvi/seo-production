@@ -66,7 +66,7 @@ class Uploads(Base):
         return L
 
     def test_ca_hong_that_410_nang_cho_file_thieu(self):
-        # Ca thật gtvseo.com 06–19/10/2026: file upload thiếu trả 410 kèm trang 404 WordPress, khoảng 95 KB mỗi lần.
+        # Ca thật site agency mẫu 06–19/10/2026: file upload thiếu trả 410 kèm trang 404 WordPress, khoảng 95 KB mỗi lần.
         log = self.log("a.access_log", self.lines_ca_that())
         code, out, _ = self.run_main(["uploads", "--log", log, "--site", SITE, "--json"])
         s = json.loads(out)

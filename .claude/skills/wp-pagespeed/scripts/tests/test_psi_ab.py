@@ -117,6 +117,41 @@ class PsiAb(unittest.TestCase):
         self.assertIn('Ngưỡng đặt trước', r.stdout)
         self.assertIn('lệch máy PSI', r.stdout)
 
+    def test_table_page_with_underscore_and_spec_min_runs(self):
+        # Ca hỏng thật 29/10/2026 (lane font-chu, anh-lcp): tên trang product_cat làm table dừng với ValueError,
+        # và table dùng min_runs 3 trong khi spec ghi 4.
+        self.build('--a', 'v0', '--b', 'v4', '--min-runs', '4', '--max-runs', '5', '--bench-gap', '0.2')
+        spec = json.load(open(os.path.join(self.dir, 'spec.json')))
+        self.assertEqual(spec['decision']['min_runs'], 4)
+        spec['pages']['product_cat'] = 'https://site-a.example/c/'
+        json.dump(spec, open(os.path.join(self.dir, 'spec.json'), 'w'))
+        psi = os.path.join(self.d, 'psi')
+        for k in (1, 2, 3):
+            write_psi(psi, 'product_cat-v0-r%d_mobile_run1.json' % k, score=80)
+            write_psi(psi, 'product_cat-v4-r%d_mobile_run1.json' % k, score=90)
+            write_psi(psi, 'post-v0-r%d_mobile_run1.json' % k, score=80)  # trang ngoài spec
+            write_psi(psi, 'post-v4-r%d_mobile_run1.json' % k, score=60)
+        r = run('psi_ab.py', 'table', '--psi', psi, '--dir', self.dir)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertIn('mobile | product_cat | v0 | ', r.stdout)
+        self.assertIn('4-5 lượt mỗi nhánh', r.stdout)
+        verdict = [l for l in r.stdout.splitlines() if 'v0→v4' in l]
+        self.assertEqual(len(verdict), 1, verdict)  # post không có dòng nhãn
+        self.assertIn('chưa đủ lượt', verdict[0])  # 3 lượt < min_runs 4
+
+    def test_table_reads_min_runs_at_spec_root(self):
+        # spec.json do lane ghi tay min_runs ở gốc (ab.json), decision không có min_runs.
+        self.build('--a', 'v0', '--b', 'v4')
+        spec = json.load(open(os.path.join(self.dir, 'spec.json')))
+        spec['min_runs'] = 4
+        json.dump(spec, open(os.path.join(self.dir, 'spec.json'), 'w'))
+        for k in (1, 2, 3):
+            self.fill_psi('v0', 900, 80, k=k)
+            self.fill_psi('v4', 900, 90, k=k)
+        r = run('psi_ab.py', 'table', '--psi', os.path.join(self.d, 'psi'), '--dir', self.dir)
+        self.assertIn('4-5 lượt', r.stdout)
+        self.assertIn('chưa đủ lượt', [l for l in r.stdout.splitlines() if 'v0→v4' in l][0])
+
     def test_table_without_decision_warns_not_fails(self):
         for k in (1, 2, 3):
             self.fill_psi('v0', 900, 90, k=k)

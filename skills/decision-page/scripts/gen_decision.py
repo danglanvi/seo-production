@@ -33,7 +33,7 @@ BLANK_DEFAULT = "(để trống, theo đề xuất)"
 BLANK_HOLD = "(để trống, chưa làm)"
 RESERVED_IDS = {
     "toc", "out", "copy", "done", "clear", "cnt", "sync", "view-quyet",
-    "view-baocao", "tab-quyet", "tab-baocao", "dp-root",
+    "view-baocao", "tab-quyet", "tab-baocao", "dp-root", "flt",
 }
 ID_RE = re.compile(r"^[a-z0-9][a-z0-9_-]*$")
 SENSITIVE = [
@@ -106,6 +106,10 @@ def load_spec(path, check_files=True, artifact=False):
     base = path.resolve().parent
     spec = dict(raw)
     spec["_base"] = str(base)
+    schema = raw.get("schema", 2)
+    if schema not in (1, 2):
+        pr.append("schema chỉ nhận 1 hoặc 2")
+        schema = 2
     for k in ("project", "title"):
         if not str(raw.get(k, "")).strip():
             pr.append("thiếu trường bắt buộc: %s" % k)
@@ -173,6 +177,8 @@ def load_spec(path, check_files=True, artifact=False):
             key = str(q.get("key", "")).strip()
             q["name"] = cid if not key else "%s.%s" % (cid, key)
             q["short"] = str(q.get("short") or q.get("text") or "").strip()
+            if schema >= 2 and not str(q.get("why", "")).strip():
+                pr.append("%s: thiếu why (một câu lý do của phương án đề xuất)" % qw)
             opts = q.get("options")
             if not isinstance(opts, list) or len(opts) < 2:
                 pr.append("%s: cần ít nhất 2 phương án" % qw)
@@ -217,6 +223,14 @@ def load_spec(path, check_files=True, artifact=False):
         for b in c.get("blocks") or []:
             if not isinstance(b, dict) or b.get("type") not in BLOCK_TYPES:
                 pr.append("%s: block lạ %r (nhận %s)" % (where, (b or {}).get("type") if isinstance(b, dict) else b, ", ".join(sorted(BLOCK_TYPES))))
+            elif b["type"] == "code" and not any(isinstance(b.get(k), str) and b[k].strip() for k in ("before", "after", "code")):
+                pr.append("%s: block code cần before, after hoặc code" % where)
+        if kind == "question" and schema >= 2:
+            if INTERNAL_CODE_RE.search(re.sub(r"\([^)]*\)", "", str(c.get("title", "")))):
+                pr.append("%s: title có mã nội bộ, viết tác dụng của việc; đặt mã trong ngoặc hoặc ở label" % where)
+            visual = nimg or any(isinstance(b, dict) and b.get("type") in VISUAL_BLOCKS for b in c.get("blocks") or [])
+            if not visual and not str(c.get("no_visual_reason", "")).strip():
+                pr.append("%s: thiếu minh hoạ (ảnh, hoặc block code/table/bars/stats); không minh hoạ được thì ghi no_visual_reason" % where)
         out_cards.append(c)
     spec["cards"] = out_cards
     rf = raw.get("report_html_file")
@@ -233,7 +247,10 @@ def load_spec(path, check_files=True, artifact=False):
     return spec
 
 
-BLOCK_TYPES = {"p", "h3", "list", "table", "stats", "note", "bars"}
+BLOCK_TYPES = {"p", "h3", "list", "table", "stats", "note", "bars", "code"}
+VISUAL_BLOCKS = {"code", "table", "bars", "stats"}
+# Mã nội bộ kiểu SA-43, C-07, W6-23, W101 trong title (schema 2). Mã trong ngoặc được bỏ qua.
+INTERNAL_CODE_RE = re.compile(r"\b(?:[A-Z]{1,4}\d*-\d{1,4}|W\d{2,4})\b")
 
 
 # ---------------------------------------------------------------- dựng HTML
@@ -274,6 +291,14 @@ def render_blocks(blocks):
             cap = '<figcaption>%s</figcaption>' % inline(b["caption"]) if b.get("caption") else ""
             out.append('<figure class="chartbox"><div class="ctitle">%s</div><div class="chart">%s</div>%s</figure>'
                        % (inline(b.get("title", "")), "".join(rows), cap))
+        elif t == "code":
+            panes = [(lab, b[k]) for k, lab in (("before", "Trước"), ("after", "Sau"), ("code", ""))
+                     if isinstance(b.get(k), str) and b[k].strip()]
+            cells = "".join('<div class="pane">%s<pre><code>%s</code></pre></div>'
+                            % ('<span class="ptag">%s</span>' % lab if lab else "", esc(txt)) for lab, txt in panes)
+            title = '<div class="ctitle">%s</div>' % inline(b["title"]) if b.get("title") else ""
+            cap = '<figcaption>%s</figcaption>' % inline(b["caption"]) if b.get("caption") else ""
+            out.append('<figure class="codecmp">%s<div class="panes">%s</div>%s</figure>' % (title, cells, cap))
     return "\n".join(out)
 
 
@@ -332,8 +357,9 @@ def render_card(c, base, out_dir):
             cons = '<small class="cons">%s</small>' % inline(o["consequence"]) if o.get("consequence") else ""
             opts.append('<label class="%s"><input type="radio" name="%s" value="%s"><span class="ot">%s%s</span>%s</label>'
                         % ("rec" if o["recommended"] else "", esc(q["name"]), esc(o["value"]), inline(o["label"]), cons, chips))
-        parts.append('  <div class="q" data-q="%s"%s><b>%s</b><div class="opts">\n    %s</div></div>'
-                     % (esc(q["short"]), ' data-hold="1"' if is_hold_q(c, q) else "", inline(q["text"]), "\n    ".join(opts)))
+        why = '<p class="why"><b>Vì sao đề xuất:</b> %s</p>' % inline(q["why"]) if str(q.get("why", "")).strip() else ""
+        parts.append('  <div class="q" data-q="%s"%s><b>%s</b>%s<div class="opts">\n    %s</div></div>'
+                     % (esc(q["short"]), ' data-hold="1"' if is_hold_q(c, q) else "", inline(q["text"]), why, "\n    ".join(opts)))
     want_note = c.get("note", kind == "question")
     if want_note:
         ph = c["note"].get("placeholder", "Ghi chú") if isinstance(c.get("note"), dict) else "Ghi chú"
@@ -372,6 +398,9 @@ h1{font:700 clamp(26px,4vw,34px)/1.15 var(--f-display);margin:4px 0 8px;text-wra
 .toc{display:flex;flex-wrap:wrap;gap:8px}
 .toc a{font-size:14px;text-decoration:none;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:5px 12px}
 .toc a b{color:var(--need)}
+.toc a.answered{opacity:.55}.toc a.answered b{color:var(--good)}
+.f-open .card.answered,.f-open .card.info,.f-open .card.done,.f-open .q.answered,.f-open .toc a.answered,.f-open .toc a.nq{display:none}
+.bar button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
 .card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:14px;scroll-margin-top:12px;min-width:0}
 .card h2{margin:0;font:700 20px/1.3 var(--f-display);display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;text-wrap:balance}
 .id{font:500 12px var(--f-mono);color:#fff;background:var(--need);border-radius:6px;padding:3px 8px;letter-spacing:.02em}
@@ -415,6 +444,13 @@ figure img{display:block;width:100%;height:auto;max-height:420px;object-fit:cove
 figure.full img{max-height:none;object-fit:contain}
 figcaption{font-size:13px;padding:6px 10px;color:var(--muted)}
 .chartbox{padding:12px 14px;background:var(--paper)}
+.codecmp{padding:12px 14px;background:var(--paper)}
+.panes{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}
+.pane{min-width:0}
+.ptag{display:inline-block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:4px}
+.pane pre{margin:0;background:var(--soft);border-radius:8px;padding:10px;font:500 12.5px/1.5 var(--f-mono);white-space:pre-wrap;overflow-wrap:anywhere}
+.pane pre code{background:none;padding:0;font:inherit;word-break:normal}
+.why{margin:4px 0 8px;font-size:14px}
 .ctitle{font-weight:600;font-size:15px;margin-bottom:10px}
 .chart{display:flex;flex-direction:column;gap:9px}
 .row{display:grid;grid-template-columns:minmax(140px,230px) 1fr 64px;gap:10px;align-items:center;font-size:14px}
@@ -461,7 +497,18 @@ function apply(){
   document.querySelectorAll('input[type=radio]').forEach(r=>{r.checked=st.choices[r.name]===r.value});
   document.querySelectorAll('textarea[data-note]').forEach(t=>{t.value=st.notes[t.dataset.note]||''});
 }
-function count(){const qs=document.querySelectorAll('.q');let n=0;qs.forEach(q=>{if(q.querySelector('input:checked'))n++});const c=document.getElementById('cnt');if(c)c.textContent='Đã chọn '+n+'/'+qs.length+' câu'}
+function count(){const qs=document.querySelectorAll('.q');let n=0;qs.forEach(q=>{if(q.querySelector('input:checked'))n++});const c=document.getElementById('cnt');if(c)c.textContent='Đã chọn '+n+'/'+qs.length+' câu';marks(qs.length-n)}
+/* Lọc: chỉ hiện câu chưa chọn. Thẻ và mục lục đã chọn đủ được đánh dấu answered */
+const root=document.getElementById('dp-root');const fltBtn=document.getElementById('flt');let fltOn=false;
+try{fltOn=localStorage.getItem(CFG.key+':flt')==='1'}catch(e){}
+function marks(open){
+  cards.forEach(c=>{const qs=[...c.querySelectorAll('.q')];qs.forEach(q=>q.classList.toggle('answered',!!q.querySelector('input:checked')));
+    const done=qs.length>0&&qs.every(q=>q.classList.contains('answered'));c.classList.toggle('answered',done);
+    const a=document.querySelector('.toc a[href="#'+c.id+'"]');if(a){a.classList.toggle('answered',done);a.classList.toggle('nq',!qs.length)}});
+  if(root)root.classList.toggle('f-open',fltOn);
+  if(fltBtn){fltBtn.setAttribute('aria-pressed',fltOn?'true':'false');fltBtn.textContent=fltOn?'Hiện tất cả ('+open+' câu chưa chọn)':'Chỉ câu chưa chọn ('+open+')'}
+}
+if(fltBtn)fltBtn.onclick=()=>{fltOn=!fltOn;try{localStorage.setItem(CFG.key+':flt',fltOn?'1':'0')}catch(e){}count();if(fltOn&&root)root.scrollIntoView({block:'start'})};
 function saveLocal(){try{localStorage.setItem(CFG.key,JSON.stringify(st))}catch(e){}}
 function compose(){
   const out=[CFG.answerTitle];
@@ -589,7 +636,8 @@ def build_html(spec, version, out_dir, artifact=False):
 </div>
 
 <div class="bar"><div class="in">
-  %(btn_done)s<button id="copy" class="%(copycls)s" type="button">Chép câu trả lời</button>
+  %(btn_done)s<button id="flt" class="ghost" type="button" aria-pressed="false">Chỉ câu chưa chọn</button>
+  <button id="copy" class="%(copycls)s" type="button">Chép câu trả lời</button>
   %(btn_clear)s<span class="cnt" id="cnt"></span>
   <span class="sync" id="sync" role="status" aria-live="polite"></span>
   <textarea id="out" readonly aria-label="Câu trả lời" hidden></textarea>

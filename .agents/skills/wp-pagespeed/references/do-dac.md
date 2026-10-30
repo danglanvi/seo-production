@@ -27,6 +27,7 @@
 | Bảng "Phần còn trừ điểm", chi phí theo nguyên nhân | `psi_con_tru.py [--mt]` | Audit có trọng số dưới 0,9 ở 5 hạng mục, `styleLayout`, font, TBT |
 | Bề rộng hiển thị của ảnh ở 360–1920 px | `img_display_width.mjs`, `img_width_report.py` | Ảnh thừa hoặc mờ, trước khi đổi `srcset`, `sizes` |
 | Loại trừ JS của LiteSpeed cho loader, pixel | `ls_exclusions_check.py` | Guest Mode dùng danh sách riêng (`fcp-guest-mode.md`) |
+| Long task do hàm JS nào, hay do layout | `trace_fn.mjs --url <URL sạch> --dev mobile --cpu 4` | Tên hàm, file, dòng của lệnh gọi trong long task (`checklist-theo-lop.md` lớp 6) |
 
 ## 2. PSI
 
@@ -49,11 +50,13 @@ python3 -I "$WPS/scripts/psi_table.py" psi-base [psi-sau ...] [--detail]
 - `psi_run.py` tìm `PAGESPEED_API_KEY` trong `.agent-secrets/.env` từ thư mục hiện tại trở lên. Script không ghi key vào file hay log.
 - Script làm nóng cache bằng UA có chữ `Chrome-Lighthouse` trước lượt đầu. LiteSpeed tách cache theo UA, nên làm nóng bằng UA thường không đủ. Lượt làm nóng gửi `Accept` có `image/webp` như Chrome của PSI, vì rewrite WebP theo `Accept` tách thêm một biến thể cache (`checklist-theo-lop.md` lớp 1).
 - Script bỏ qua file đã có. Lượt lỗi chạy lại thì chỉ đo phần thiếu.
-- Chỉ đo URL sạch, hoặc URL có một tham số nằm trong danh sách không cache của plugin (LiteSpeed: option `cache-exc_qs`). `psi_run.py` từ chối URL có `utm_*`, `fbclid`, `gclid`, `_ga`. Lý do:
+- Chỉ đo URL sạch. URL có một tham số trong danh sách không cache của plugin (LiteSpeed: option `cache-exc_qs`) không làm số của trang (xem dưới). `psi_run.py` từ chối URL có `utm_*`, `fbclid`, `gclid`, `_ga`. Lý do:
   - LiteSpeed bỏ các tham số này khỏi khoá cache (option `cache-drop_qs`).
   - Nhiều theme và plugin SEO trả `noindex` và bỏ canonical cho URL có query.
   - Lượt PSI đầu khi cache trống ghi bản `noindex` đó vào cache của URL sạch. Site agency mẫu 21/10: 4 lượt PSI `?utm_source=` lúc 21:57–21:58 làm Googlebot smartphone nhận `noindex` ở trang chủ và /blog/ khoảng 50 phút.
-- PSI trả kết quả cache cho cùng một URL trong vài phút. Cần nhiều lượt liên tiếp trên trang thật thì xen kẽ nhiều URL, hoặc dùng tham số nằm trong `cache-exc_qs` (ví dụ `?nc=<số>`). Đọc option trước. Thêm tham số vào option là đổi config, cần duyệt riêng.
+- PSI trả kết quả cache cho cùng một URL trong vài phút. Cần nhiều lượt trên trang thật thì xen kẽ nhiều URL và dùng `psi_run.py --min-gap` (mặc định 60 giây giữa hai lượt cùng URL + thiết bị). Đo URL sạch.
+  - Không lấy số của URL có tham số không cache (nằm trong `cache-exc_qs`, ví dụ `?nc=<số>`) làm số của trang. Bản này là HTML khác bản cache: không qua tối ưu của plugin cache, có thể khác lazy-load và có thể `noindex`. Site agency mẫu 27/10/2026: một trang bản `?nc=` điểm 91, LCP 3,45 s; URL sạch 98, 2,40 s.
+  - A/B hai nhánh dùng cùng dạng URL. Bản HTML tĩnh của `psi_ab.py` dùng `?r=<số>` là đúng, vì file tĩnh không qua cache trang.
 - Sau mỗi đợt PSI, chạy `cache_variants.py` trên URL sạch đã đo. Lệnh trả exit 1 khi robots hoặc canonical lệch giữa các biến thể.
 - Mặc định chỉ đo hạng mục performance. `--categories performance,accessibility,best-practices,seo,agentic-browsing` đo cả 5 hạng mục trong một lượt (khoảng 12–15 giây mỗi URL). Bước 5 bắt buộc một lượt 5 hạng mục cho mọi URL, cả 2 thiết bị.
 - Lập bảng "Phần còn trừ điểm" cho báo cáo nghiệm thu:
@@ -79,6 +82,16 @@ python3 -I "$WPS/scripts/psi_table.py" psi-base [psi-sau ...] [--detail]
 - Lượt chậm có thể dồn cả 3 lượt vào một URL. Site mẫu 2 (18/10): trang Doanh nghiệp đạt 61–63 điểm với 3/3 lượt FCP observed 1,48–1,56 s. Đo lại được 84, 90, 82. Nếu một URL có từ 2/3 lượt chậm, đo lại 3 lượt xen kẽ với 2 URL khác trước khi kết luận trang bị lùi.
 - So trước và sau trong cùng một buổi đo. Mốc của buổi khác có thể lệch nhiều dù code không đổi. Site mẫu 2: trung vị mobile 11 template đạt 88 lúc rạng sáng và 75 lúc 15:30 cùng ngày.
 - Tách lượt theo tốc độ máy PSI: đọc `lighthouseResult.environment.benchmarkIndex` trong JSON từng lượt. Hai nhóm lượt đo nối tiếp nhau có thể rơi vào máy nhanh và máy chậm. Site agency mẫu 24/10 (preload font `/website/`): bản A trung vị 94,5, bản C 88,5. Ba lượt A đầu chạy máy có `benchmarkIndex` 890–1088. Chỉ so lượt dưới 800 thì A và C cùng quanh 87–88. Đo xen kẽ hai bản cùng URL đối chứng trong cùng khung giờ, rồi so theo từng nhóm máy. Quyết định khi đó dựa vào chỉ số lệch nhất quán ở cả hai nhóm máy (ở đây FCP lab chậm hơn ở 11/12 lượt). `psi_decide.py` và `psi_ab.py table --split-bench` tách nhóm máy tự động (mục 3).
+- `benchmarkIndex` không bắt hết lượt máy chậm. Trước khi tự trả lại một thay đổi vì 1 trang tụt, đọc thêm thời gian `parseHTML` của từng lượt (trace trong JSON PSI), rồi đo lại trên cùng nhóm máy. Site agency mẫu 26/10/2026: một bài tụt 98 → 91 sau khi đổi font. Hai lượt tụt có `parseHTML` 78 và 168 ms, các lượt khác 44–59 ms với cùng HTML. Áp lại và đo lại: trang chủ 88 → 91, một trang dịch vụ 85 → 90.
+- Chrome của PSI vẽ đầu muộn ở 35–45% số lượt, độc lập với thay đổi đang thử. Lượt vẽ đầu muộn cho LCP cao hơn hẳn, nên trung vị 3 lượt dao động mạnh. Site agency mẫu 27/10/2026: 17 lượt của cùng bản một trang có LCP trung vị 2,40 s, khoảng 1,35–3,00 s. Chỉ 4/17 lượt dưới 1,95 s.
+  - Quyết A/B hoặc trả lại bằng 8 lượt mỗi nhánh. Một trang ở site mẫu có nhãn "xấu hơn" sau 3 lượt và "tốt hơn" sau 5 lượt.
+  - Gộp mọi bộ đo của cùng một bản. Ghi trung vị và khoảng, không ghi mốc thấp nhất.
+- Người duyệt gửi ảnh PSI 1 lượt: đo 8 lượt cùng URL và thiết bị, báo trung vị, khoảng và `benchmarkIndex`. Site mẫu 27/10: ảnh 1 lượt ghi TBT 160 ms; trung vị 8 lượt là 15,25 ms, lượt cao nhất 442 ms chạy trên máy có `benchmarkIndex` 276.
+- Trước khi tin một lô đo trên site có nhiều lane:
+  - Khoá bảo trì server (restart, đổi cấu hình) không được giữ trong khung đo. Cache trống sau bảo trì làm lượt đo chậm. Site mẫu 27/10: 12 file đo trong khung khoá phải loại.
+  - md5 file CSS gộp không đổi trong khung đo.
+  - URL đo đang hit cache.
+  - Có URL đối chứng không đổi gì, đo cùng khung giờ.
 - CrUX (field) cập nhật theo cửa sổ 28 ngày. Không dùng CrUX để nghiệm thu một đợt sửa vừa xong.
 - Đọc field trước khi đuổi chỉ số lab: `loadingExperience` (URL) và `originLoadingExperience` (origin) trong JSON PSI. `psi_table.py --detail` và `psi_cls_dump.py` in phần này. Luật dùng field: SKILL.md Bước 3 mục 0.
 - Nguyên nhân CLS trong `layout-shifts` và `cls-culprits-insight` ("Phông chữ web") là phỏng đoán theo thời điểm font tải. Site mẫu 2: CLS 0,92 do JS ẩn khối sau lần vẽ đầu, PSI vẫn ghi nguyên nhân là font. Xem `screenshot-thumbnails`, `boundingRect` của phần tử, rồi đo bằng `cls_trace.mjs` (cả `--net fast`) trước khi sửa font.
@@ -87,7 +100,9 @@ python3 -I "$WPS/scripts/psi_table.py" psi-base [psi-sau ...] [--detail]
 
 ## 3. A/B trên PSI
 
-Dùng khi PSI thấy một hiện tượng mà `perf_probe.mjs` không tái hiện. Site mẫu 2 tìm ra lỗi script nạp font bằng cách này.
+Từ v1.19, không A/B từng việc. Mặc định là sửa theo lô rồi mới đo (`luot-lon.md`). Chỉ dùng mục này trong 4 trường hợp ở `luot-lon.md` mục 1: việc đổi giao diện, tham số chọn theo số đo (ví dụ số giây hoãn GTM), thay đổi khó trả lại nhanh, hoặc lô đo xấu hơn và cần chia đôi để tìm việc gây tụt.
+
+Site mẫu 2 tìm ra lỗi script nạp font bằng cách này, khi PSI thấy một hiện tượng mà `perf_probe.mjs` không tái hiện.
 
 1. Lưu HTML của trang thật bằng `curl`. Tạo một file cho bản gốc (`v0`) và một file cho mỗi thay đổi.
 2. Đặt các file vào `wp-content/uploads/psi-ab/` của production. OpenLiteSpeed phục vụ file tĩnh này như trang thật, cùng server và cùng CDN.
@@ -105,18 +120,20 @@ Không A/B bằng công tắc tham số trong mu-plugin đang chạy production.
 `scripts/psi_ab.py` làm các bước trên (lệnh mẫu ở đầu script):
 
 ```bash
-python3 -I "$WPS/scripts/psi_ab.py" build --spec ab.json --dir <ev>/psi-ab-<tag> --site https://example.com --tag <tag> --a v0 --b v4 --min-gain 3 --lcp-ms 200 --cls 0.02
+python3 -I "$WPS/scripts/psi_ab.py" build --spec ab.json --dir <ev>/psi-ab-<tag> --site https://example.com --tag <tag> --a v0 --b v4 --min-gain 3 --lcp-ms 200 --cls 0.02 --min-runs 4 --max-runs 5 --bench-gap 0.2
 python3 -I "$WPS/scripts/psi_ab.py" verify --dir <ev>/psi-ab-<tag>
 python3 -I "$WPS/scripts/psi_ab.py" upload --dir <ev>/psi-ab-<tag> --ssh <alias> --root <web root> --tag <tag> --apply
 python3 -I "$WPS/scripts/psi_ab.py" urls --dir <ev>/psi-ab-<tag> --site https://example.com --tag <tag> > <ev>/urls-ab.tsv
 python3 -I "$WPS/scripts/psi_run.py" --urls <ev>/urls-ab.tsv --out <ev>/psi-ab --runs 1 --devices mobile --detach
-python3 -I "$WPS/scripts/psi_decide.py" <ev>/psi-ab --a v0 --b v4 --dev mobile
-python3 -I "$WPS/scripts/psi_ab.py" table --psi <ev>/psi-ab --split-bench
+python3 -I "$WPS/scripts/psi_decide.py" <ev>/psi-ab --spec <ev>/psi-ab-<tag> --dev mobile
+python3 -I "$WPS/scripts/psi_ab.py" table --psi <ev>/psi-ab --dir <ev>/psi-ab-<tag> --split-bench
 python3 -I "$WPS/scripts/psi_ab.py" quarantine --ssh <alias> --root <web root> --tag <tag> --site https://example.com --dir <ev>/psi-ab-<tag> --apply
 ```
 
 - `upload` và `quarantine` ghi lên server. Không có `--apply`, hai lệnh chỉ in lệnh sẽ chạy.
-- `build` ghi ngưỡng vào `spec.json` (mục `decision`) và khoá ngưỡng sau lần build đầu. Build lại với ngưỡng khác bị từ chối (mã 2). Không đổi ngưỡng sau khi thấy số.
+- `build` ghi ngưỡng vào `spec.json` (mục `decision`) và khoá ngưỡng sau lần build đầu. Ngưỡng gồm số lượt (`--min-runs`, `--max-runs`) và lệch máy (`--bench-gap`). Build lại với ngưỡng khác bị từ chối (mã 2). Không đổi ngưỡng sau khi thấy số.
+- Quyết bằng `psi_decide.py --spec <thư mục psi_ab>`. Script chỉ xét trang của spec đó và lấy ngưỡng từ `spec.json`. Ngưỡng ghi trên dòng lệnh thắng spec. Thiếu `--spec` thì script gộp mọi trang của thư mục PSI và in cảnh báo. Site bán lẻ mẫu 29/10/2026: thư mục PSI chứa trang của 2 spec cùng biến thể v0, v1, nên trang post lọt vào nhãn chung của spec 4 trang (instance của site, `03-audits/technical/toi-uu-pagespeed/dot-2910/anh-lcp/bao-cao.md` mục 5.1).
+- `table --dir` in nhãn theo đủ ngưỡng của `spec.json`, kể cả số lượt ghi ở gốc file. Bản trước 1.17 dùng `min_runs` 3 dù spec ghi 4, và dừng khi tên trang có dấu gạch dưới như `product_cat` (cùng đợt, `dot-2910/font-chu/bao-cao.md` mục 7).
 - `ab.json` khai trang gốc và biến thể. Mỗi biến thể là danh sách phép thay `re`/`sub` (khớp đúng `count` lần, sai thì script dừng) hoặc `html_class` (thêm class lên `<html>`).
 - Bảng kết quả có điểm từng lượt, trung vị, TBT, LCP, `observedTraceEnd − observedLoad` lớn nhất (để chọn mốc hoãn GTM) và số lượt có long task của tracking.
 - Trang cần regex khớp số lần khác nhau (ví dụ stack font có 2 chỗ ở landing, 0 chỗ ở bài viết): tách mỗi nhóm trang một spec, chạy `build` từng spec vào cùng `--dir`. `spec.json` gộp danh sách trang, nên `urls` và `table` thấy đủ.
@@ -128,10 +145,11 @@ Quyết định trong nhiễu bằng `psi_decide.py`:
 - Nhãn: tốt hơn, không đổi, xấu hơn, chưa đủ lượt. Dòng cuối là `PSI_DECIDE label=<...>`.
 - Ngưỡng mặc định lấy từ site agency mẫu 10/2026: điểm 3, LCP 200 ms, CLS 0,02. Site khác hiệu chuẩn lại (skill `model-calibration`).
 - Mỗi nhánh đo 3–5 lượt xen kẽ. Mã 0 là đã có nhãn: dừng đo. Mã 3 là chưa đủ lượt: đo thêm một vòng xen kẽ, tối đa `--max-runs 5`. Sau 5 lượt mà chênh vẫn dưới ngưỡng, nhãn là "không đổi".
+- Ngoại lệ: nhãn dẫn tới trả lại hoặc sửa thêm trên production, hoặc trang có vẽ đầu muộn (mục 2), thì đo 8 lượt mỗi nhánh và chạy `psi_decide.py --min-runs 8 --max-runs 8`. Ghi số lượt vào ngưỡng trước khi đo bằng `psi_ab.py build --min-runs 8 --max-runs 8`.
 - Hai nhánh lệch `benchmarkIndex` trên 20% thì script chỉ so trong nhóm máy có đủ lượt của cả hai nhánh.
 - Site agency mẫu 23/10: một lane đo 7 đợt, khoảng 80 lượt mobile cho một URL, rồi vẫn kết luận không áp. Dừng ở nhãn đầu tiên tiết kiệm phần lớn số lượt đó.
 
-Thử config cấp site trên mẫu trước. Trước khi áp một thay đổi cho mọi template (option LiteSpeed, font, mu-plugin dùng chung), A/B trên 4 URL thuộc 4 template khác nhau. Chỉ áp toàn site khi nhãn chung của `psi_decide.py` là "tốt hơn". Nhãn chung là "xấu hơn" khi một URL mẫu xấu hơn, và là "chưa đủ lượt" khi một URL mẫu chưa đủ lượt.
+Thử config cấp site trên mẫu trước. Trước khi áp một thay đổi cho mọi template (option LiteSpeed, font, mu-plugin dùng chung), kiểm chức năng và ảnh trên 4 URL thuộc 4 template khác nhau. Chỉ A/B PSI trên 4 URL này khi thay đổi đổi giao diện hoặc lô trước đo xấu hơn. Khi đó, chỉ áp toàn site khi nhãn chung của `psi_decide.py` là "tốt hơn". Nhãn chung là "xấu hơn" khi một URL mẫu xấu hơn, và là "chưa đủ lượt" khi một URL mẫu chưa đủ lượt.
 
 ## 4. perf_probe.mjs (mô phỏng Chrome)
 
@@ -148,6 +166,8 @@ CDP_AUTH="$STG_AUTH" node "$WPS/scripts/perf_probe.mjs" --url https://stg.exampl
   - LCP dưới 100 ms: dấu hiệu đo nhầm trang lỗi. Desktop trên máy nhanh có thể hợp lệ dưới 100 ms, khi đó đặt `--min-lcp 0`.
   - Có `--resolve` mà cổng của IP không mở: tunnel staging đã tắt.
 - Luôn truyền `--expect`. Đợt 10/2026 có 2 lần đo nhầm đích, cho số đo vô nghĩa. `--no-guard` chỉ dùng khi cố ý đo trang lỗi.
+- `lh_local.mjs` và `trace_fn.mjs` kiểm thêm path: path thật khác path của `--url` (redirect sang trang khác), hoặc khác `--expect-path`, thì thoát mã 4. `lh_local.mjs` ghi path thật vào trường `path` của `results.jsonl`.
+- Vòng lặp đo nhiều trang: truyền `--expect` riêng cho từng trang. Lấy `--expect-path` từ tên trang của vòng lặp, không suy từ cùng biến chứa URL. Trước khi tính trung vị, đếm path thật (`path` trong `results.jsonl`, hoặc `finalDisplayedUrl` trong JSON Lighthouse) của mọi lượt. Site agency mẫu 27/10/2026: mảng kết hợp `declare -A` không chạy trên bash 3.2 của macOS. Cả 75 lượt lab của "5 trang × 3 nhánh" đo một trang. Kiểm độc lập bắt lỗi này bằng `requestedUrl`. Lượt đo lại kiểm path từng lượt: 105/105 đúng.
 - Chạy nền: `--done <file>` ghi `PROBE_DONE exit=<mã>` khi xong. Đọc file đó bằng một lệnh ngắn, không đọc log liên tục.
 - Mobile: 412×823, DPR 1,75, 1,6 Mbps, trễ 150 ms, CPU x4. Desktop: 1350×940, không giới hạn mạng.
 - Mỗi lượt mở Chrome mới với profile mới và tắt cache. DNS, TLS và tài nguyên tải lại từ đầu.

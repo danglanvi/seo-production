@@ -1,8 +1,8 @@
 # Bẫy shell trên máy Mac của Lead
 
-Trang này ghi các lệnh hay hỏng khi agent (Claude Code, Codex) chạy shell trên 3 máy Mac. Mỗi dòng là một cách viết sai và cách viết đúng. Nguồn: đợt rà hội thoại 16–24/10/2026, 33 mục lỗi ở 6 phiên, khoảng 150 lượt tool hỏng hoặc chạy lại.
+Trang này ghi các lệnh hay hỏng khi agent (Claude Code, Codex) chạy shell trên 3 máy Mac. Mỗi dòng là một cách viết sai và cách viết đúng. Nguồn: đợt rà hội thoại 16–24/10/2026, 33 mục lỗi ở 6 phiên, khoảng 150 lượt tool hỏng hoặc chạy lại. Thêm 3 dòng ngày 27/10/2026 (`IFS`, `declare -A`, `${n:+…}`), đã tái hiện bằng `/bin/bash` 3.2 và `zsh -c`.
 
-Bản rút 8 dòng cho brief của lane nằm ở `skills/web-lane-orchestration/references/luat-lane.md`, khối "### Bẫy shell". Khi sửa một bẫy, sửa cả hai nơi.
+Bản rút 11 dòng cho brief của lane nằm ở `skills/web-lane-orchestration/references/luat-lane.md`, khối "### Bẫy shell". Khi sửa một bẫy, sửa cả hai nơi.
 
 ## Option zsh trong `~/.zshenv`
 
@@ -41,6 +41,9 @@ Codex không đặt biến `CLAUDECODE`. Trên Codex, các bẫy dưới vẫn �
 | Đường dẫn workspace không nháy | `"/Users/<user>/<thư mục có dấu cách>/..."` | Tên thư mục có 2 dấu cách liền nhau và dấu `&` |
 | `cd thư-mục && lệnh` qua nhiều lượt | Đường dẫn tuyệt đối, hoặc đặt biến `W` cho thư mục workstream | Bash tool reset cwd sau mỗi lệnh |
 | `for u in $urls` | `while read -r u; do …; done < urls.txt` | zsh không tách biến theo dòng. Một vòng đo ra kết quả giả "000" |
+| `IFS=' '` đặt cho cả script, rồi `for n in $(ls dir)` | `while IFS= read -r n; do …; done < danh-sach.txt`, hoặc `unset IFS` sau vòng cần tách | `IFS` chỉ có dấu cách thì không tách theo dòng. Ngày 27/10/2026 vòng chép gộp 8 tên file thành 1, không chép file nào; 4 trang dùng CSS gộp khoảng 2 phút |
+| `declare -A` trong script `#!/bin/bash` | Python, hoặc file TSV đọc bằng `while read` | `/bin/bash` của macOS là 3.2, không có mảng kết hợp. Ngày 27/10/2026 mảng URL hỏng, 75 lượt Lighthouse đo cùng một trang |
+| `lenh ${n:+--flag "$n"}` trong zsh | `args=(); [[ -n $n ]] && args=(--flag "$n"); lenh "${args[@]}"` | zsh không tách kết quả `${n:+…}` thành 2 đối số. Lệnh nhận một đối số `--flag X` và báo lỗi |
 | `set -- $x` để tách "slug MÃ" | `${=x}`, hoặc ghép `slug:MÃ` rồi `${c%%:*}`, `${c##*:}` | zsh không tách biến không nháy |
 | `.hooks.$e[]` trong chuỗi jq | `.hooks.${e}[]` | zsh hiểu `$e[` là chỉ số mảng và báo "invalid subscript" |
 | `grep -oE` với regex dài có `{0,N}` lớn | Python `re`, hoặc `rg` | `grep` trong Bash tool là ugrep, báo "exceeds complexity limit" |

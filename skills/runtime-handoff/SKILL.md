@@ -2,7 +2,7 @@
 name: runtime-handoff
 description: "Bàn giao giữa phiên chat, runtime, tài khoản Claude và lượt chạy đêm: HANDOFF.md có giờ máy, prompt phiên mới, bản có hash, PLAN đêm. Use when: 'prompt qua chat khác', 'bàn giao sang Codex', 'đổi tài khoản', 'sắp hết usage', 'tạm stop', 'tổng kết rồi đóng phiên', 'chạy đêm'."
 metadata:
-  version: "1.3.1"
+  version: "1.3.2"
 ---
 
 # runtime-handoff — tiếp tục từ trạng thái đã xác minh
@@ -84,7 +84,7 @@ python3 -B skills/runtime-handoff/scripts/transcript_recall.py assistant <id> --
 python3 -B skills/runtime-handoff/scripts/transcript_recall.py tools <id> --name "Bash" --results 150
 ```
 
-Script chỉ đọc. Script che key, token, JWT, IP, mật khẩu sau `-u`, và ẩn mọi đoạn nhắc BRAIN/journal. Tool result lớn chỉ in kích thước. Để che host staging hoặc slug riêng, đặt biến `STG_HOST` hoặc dùng `--needle-file <file>`. Không lưu file needle trong repo. Script in giờ dạng `dd/mm HH:MM`, nên thêm năm khi chép vào HANDOFF hoặc `decisions.md`.
+Script chỉ đọc. Script che key, token, JWT, IP, mật khẩu sau `-u`, và ẩn mọi đoạn nhắc BRAIN/journal. Script che cả key dán vào chat không có tên biến: dạng `<chữ>.<chuỗi dài>` (QUIC.cloud) và hai UUID nối liền (Bunny). Lệnh `user` in cả tin Lead gõ giữa lượt (nhãn "Lead (giữa lượt)"). Lệnh `user` và `assistant` mặc định in toàn văn. Chỉ thêm `--width N` khi cần bản cắt; script báo số tin bị cắt trên stderr. Tool result lớn chỉ in kích thước. Để che host staging hoặc slug riêng, đặt biến `STG_HOST` hoặc dùng `--needle-file <file>`. Không lưu file needle trong repo. Script in giờ dạng `dd/mm HH:MM`, nên thêm năm khi chép vào HANDOFF hoặc `decisions.md`.
 
 ### Chế độ chạy đêm
 
@@ -135,6 +135,7 @@ Chép cả transcript · grep cả file transcript sau compact · viết prompt 
 
 ## Changelog
 
+- v1.3.2 (2026-10-27): `transcript_recall.py` sửa 3 lỗi đã gặp thật. (1) Che 2 dạng key dán vào chat: phản biện đợt rà skill speed thấy lệnh `user` của phiên 06e8cc9a và 057e6f9a in nguyên key QUIC.cloud và Bunny; sau vá, chạy lại trên 2 phiên đó còn 0 chuỗi dạng key. (2) Đọc tin `queued_command` (cùng điều kiện với `workstream-master-plan/scripts/audit_open.py`); lượt rà 27/10 bỏ sót tin 20:21 gõ giữa lượt. (3) Lệnh `user` và `assistant` mặc định không cắt tin, có cảnh báo khi cắt; lỗi cắt 500 ký tự ngày 19/10 và 600 ký tự ngày 27/10. Không dùng chung `che_secret.py` của `web-lane-orchestration`: skill đó claude-only, skill này chạy cả Codex và Antigravity. Test thêm key giả, tin giữa lượt, tin dài. Nguồn: `Deliverables/AI-Internal/Web-Skill-Review-2026-10/speed-2710/de-xuat_v1.md` mục 2.4, `phan-bien.md` mục 5.5.
 - v1.3.1 (2026-10-27): `stamp` giữ dòng `Lane:` trong mục Trạng thái, thêm `--drop-lanes` cho lúc đóng đợt; test ca hỏng thật. Nguồn: phiên 06e8cc9a ngày 26/10, stamp xoá dòng `Lane:` ít nhất 4 lần (`Deliverables/AI-Internal/Web-Skill-Review-2026-10/web-skill-review_tong-ket-phien-2610_v1.md` mục 5).
 - v1.3 (2026-10-25): lệnh `stamp`, `prompt --supersedes`, chế độ đổi tài khoản (`limit`, `switch`), `check` bắt mốc giờ thiếu năm hoặc ở tương lai và resume `wf_`, lint `night check` cho tool hỏi quyền và 4 mục mới, `transcript_recall.py`, reference `so-quyet-dinh-va-lenh.md`, description mới. Đề xuất coord-4, coord-5, ops2-5, hs-5, hs-6 (báo cáo `Deliverables/AI-Internal/Web-Skill-Review-2026-10/web-skill-review_bao-cao_v1.md` mục 6).
 - v1.2 (2026-10-24): chế độ phiên mới thêm bước liệt kê lịch hẹn (lịch CronCreate mất khi phiên đóng), `Trạng thái` một đoạn sửa đè, HANDOFF quá 60 dòng thì sao `Archive/` rồi viết lại. Thêm 2 mục tự phản biện. Nguồn: phiên f00d80af site agency mẫu (`Deliverables/GTV-Brand/GTV-Website/gtv-website_tong-ket-phien-2410_v1.md` mục 2–3, `Archive/HANDOFF_20261024-1232.md`).

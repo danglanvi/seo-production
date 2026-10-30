@@ -1,4 +1,4 @@
-// Mẫu script Workflow nhiều lane sửa site sống (v1.1).
+// Mẫu script Workflow nhiều lane sửa site sống (v1.3).
 // Nguồn: 7 script phiên f00d80af (22–24/10/2026) và đợt rà transcript 16–24/10 (phiên bf61eacd, mục hs-1 đến hs-12).
 // Cách dùng: chép file, thay phần <…>, giữ đúng một mẫu ở cuối file (A, B, C hoặc D), xoá các mẫu còn lại.
 // Trước khi chạy: python3 tools/wf-status.py lint-script <file> --args <args.json> --base <thư mục workstream>. Còn ERROR thì sửa, không chạy.
@@ -16,6 +16,7 @@ export const meta = {
 
 const B = args.base
 // Trần mỗi workflow: 6 agent, tính cả agent kiểm và sửa, chạy khoảng 90 phút. Việc nhiều hơn thì tách workflow theo đồ thị phụ thuộc.
+// Đếm agent tệ nhất trước khi xếp lane: lane ghi 4, lane chỉ đọc có kiểm 2, lane noCheck 1. Tổng không vượt MAX_AGENTS (goi() chạm trần thì bỏ agent sau, 27/10/2026 mất 1 lane và 1 lượt kiểm 2).
 // Script không đo được giờ (không có Date.now). Trần 90 phút thực thi bằng budget_min: tổng budget_min trên chuỗi dài nhất, cộng lượt kiểm, không quá 90.
 const MAX_AGENTS = 6
 // Số agent chạy cùng lúc: min(CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS (repo này đặt 2, tính theo từng phiên), slot còn trống của phiên này theo "wf-status.py slots <thư mục session>").
@@ -65,6 +66,7 @@ const CHECK = {
 }
 
 // Model theo references/chon-model.md. Lane chỉ đọc: Sonnet high. core: true cho lane chạm theme, template, mu-plugin hoặc config sống.
+// noCheck: true chỉ cho lane readOnly mà kết quả không ghi lên site (soát, gom số): 1 agent, không kiểm. Lane ghi production luôn có kiểm.
 const LANES = [
   { key: '<lane-1>', model: '<sonnet|opus>', effort: '<high|xhigh>', folder: `${B}/<đợt>/<lane-1>`, readOnly: false, core: false, budget_min: 45,
     task: `<1. việc cụ thể, lệnh hoặc giá trị, file nguồn>
@@ -73,7 +75,12 @@ const LANES = [
   { key: '<lane-doc>', model: 'sonnet', effort: 'xhigh', folder: `${B}/<đợt>/<lane-doc>`, readOnly: true, core: false, budget_min: 30,
     task: `<việc chỉ đọc hoặc chỉ đo>`,
     accept: `<số đo cần có, file kết quả>` },
+  { key: '<lane-soat>', model: 'sonnet', effort: 'xhigh', folder: `${B}/<đợt>/<lane-soat>`, readOnly: true, noCheck: true, core: false, budget_min: 30,
+    task: `<việc soát chỉ đọc, kết quả chỉ là file báo cáo>`,
+    accept: `<file kết quả>` },
 ]
+// EXTRA: phần nối thêm vào task của từng lane khi chạy lại hoặc chạy tiếp (khối EXTRA ở theo-doi-va-cuu.md §3 bước 4). Lane không có mục trong EXTRA thì task giữ nguyên.
+const EXTRA = {}
 
 // goi(): mọi agent đi qua hàm này. Agent trả null (hạn mức, lỗi API, bị bỏ qua) thì dừng khởi agent mới.
 let STOP = ''
@@ -113,7 +120,7 @@ function fixPrompt(L) {
 
 async function runLane(L, extra) {
   const work = await goi(workPrompt(L, extra), { label: `lam:${L.key}`, phase: 'Làm', model: L.model, effort: L.effort, schema: RESULT })
-  if (!work || work.status === 'held') return { lane: L.key, work }
+  if (!work || work.status === 'held' || L.noCheck) return { lane: L.key, work, noCheck: !!L.noCheck }
   const check = await goi(checkPrompt(L, 1), { label: `kiem:${L.key}`, phase: 'Kiểm', ...checkOpts(L), schema: CHECK })
   // Lane chỉ đọc: một lượt kiểm, không vòng sửa. Mục thiếu chuyển cho lane sau đo bổ sung.
   // loi_bao_cao không mở vòng sửa: phiên chính sửa bằng Edit khi đóng đợt.
@@ -124,7 +131,8 @@ async function runLane(L, extra) {
   return { lane: L.key, work, check, fix, check2 }
 }
 const lastCheck = r => r && (r.check2 || r.check)
-const passed = r => !!lastCheck(r) && lastCheck(r).loi_production.length === 0
+// Lane noCheck không có lượt kiểm: đạt khi lane tự báo done.
+const passed = r => r && r.noCheck ? (r.work || {}).status === 'done' : !!lastCheck(r) && lastCheck(r).loi_production.length === 0
 const final = r => r && (r.fix || r.work)
 const rolledBack = r => !!r && (!!(lastCheck(r) || {}).rolled_back || (final(r) || {}).status === 'rolled_back')
 // Trả bản tóm tắt ngắn kèm đường dẫn. Báo cáo đợt do phiên chính hoặc một workflow riêng làm, không nối vào workflow ghi.
@@ -136,11 +144,11 @@ const summary = r => r && ({
 
 // ---------- Mẫu A: đồ thị phụ thuộc, chuỗi độc lập chạy song song (bản 7, 23/10) ----------
 // Mỗi chuỗi là các lane có phụ thuộc thật (cùng URL, post, file, hoặc cần dữ liệu lane trước). Chuỗi độc lập chạy ngay trong pool.
-const CHAINS = [[LANES[0]], [LANES[1]]]
+const CHAINS = [[LANES[0]], [LANES[1]], [LANES[2]]]
 const outA = await pool(CHAINS, SLOTS, async chain => {
   const out = []
   for (const L of chain) {
-    const r = await runLane(L); out.push(r)
+    const r = await runLane(L, EXTRA[L.key] || ''); out.push(r)
     if (!r || !passed(r) || rolledBack(r)) break
   }
   return out

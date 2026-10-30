@@ -2,7 +2,10 @@
 # Chỉ đọc file JSON do psi_run.py ghi. Không gọi mạng, không ghi file.
 #   python3 -I "$WPS/scripts/psi_decide.py" <psi-dir> --a v0 --b v4 [--dev mobile] [--page <tên>] [--max-runs 5] [--json]
 #   python3 -I "$WPS/scripts/psi_decide.py" --a-dir <psi-A> --b-dir <psi-B>      (hai thư mục psi_run, ghép theo <tên>_<thiết bị>)
+#   python3 -I "$WPS/scripts/psi_decide.py" <psi-dir> --spec <thư mục psi_ab hoặc spec.json>   (chỉ xét trang của spec, ngưỡng lấy từ spec)
 # Tên file kiểu psi_ab: <trang>-<biến thể>-r<k>_<thiết bị>_run1.json (k là vòng xen kẽ).
+# --spec: thư mục PSI chứa trang của nhiều spec cùng tên biến thể (v0, v1) thì phải dùng. Không có --spec, script gộp mọi trang.
+#   Ca lỗi 29/10/2026: trang post của spec khác lọt vào nhãn chung của spec 4 trang. Ngưỡng và --a, --b ghi trên dòng lệnh thắng spec.
 # Nhãn: tốt hơn | không đổi | xấu hơn | chưa đủ lượt. Dòng cuối luôn là "PSI_DECIDE label=<...>".
 # Ngưỡng mặc định (site agency mẫu 10/2026, hiệu chuẩn lại ở site khác): --min-gain 3 điểm, --lcp-ms 200, --cls 0.02.
 # Đặt ngưỡng TRƯỚC khi đo, không sửa sau khi thấy số. Lệch máy PSI (benchmarkIndex) lớn hơn 20% thì chỉ so trong nhóm máy chung.
@@ -24,22 +27,34 @@ ap.add_argument('--a-dir', help='thư mục nhánh A (thay cho psi_dir)')
 ap.add_argument('--b-dir', help='thư mục nhánh B (thay cho psi_dir)')
 ap.add_argument('--dev', default='mobile', choices=['mobile', 'desktop'])
 ap.add_argument('--page', help='chỉ xét một trang')
-ap.add_argument('--max-runs', type=int, default=L.DEFAULT_THR['max_runs'])
-ap.add_argument('--min-runs', type=int, default=L.DEFAULT_THR['min_runs'])
-ap.add_argument('--min-gain', type=float, default=L.DEFAULT_THR['min_gain'])
-ap.add_argument('--lcp-ms', type=float, default=L.DEFAULT_THR['lcp_ms'])
-ap.add_argument('--cls', type=float, default=L.DEFAULT_THR['cls'])
-ap.add_argument('--bench-gap', type=float, default=L.DEFAULT_THR['bench_gap'])
+ap.add_argument('--spec', help='spec.json của psi_ab (hoặc thư mục --dir): chỉ xét trang của spec, ngưỡng mặc định lấy từ spec')
+ap.add_argument('--max-runs', type=int)
+ap.add_argument('--min-runs', type=int)
+ap.add_argument('--min-gain', type=float)
+ap.add_argument('--lcp-ms', type=float)
+ap.add_argument('--cls', type=float)
+ap.add_argument('--bench-gap', type=float)
 ap.add_argument('--json', action='store_true', help='in kết quả dạng JSON')
 a = ap.parse_args()
-
-thr = {'min_gain': a.min_gain, 'lcp_ms': a.lcp_ms, 'cls': a.cls, 'max_runs': a.max_runs, 'min_runs': a.min_runs, 'bench_gap': a.bench_gap}
 
 
 def die(msg, code=1):
     print('Lỗi: ' + msg, file=sys.stderr)
     sys.exit(code)
 
+
+spec = {}
+if a.spec:
+    try:
+        spec = L.load_spec(a.spec)
+    except ValueError as e:
+        die(str(e), 2)
+    a.a = a.a or (spec.get('decision') or {}).get('a')
+    a.b = a.b or (spec.get('decision') or {}).get('b')
+# Thứ tự ưu tiên ngưỡng: dòng lệnh, rồi spec, rồi mặc định.
+thr = {k: L.DEFAULT_THR[k] for k in L.THR_KEYS}
+thr.update(L.spec_thr(spec))
+thr.update({k: getattr(a, k) for k in L.THR_KEYS if getattr(a, k) is not None})
 
 groups = {}  # page -> {'A': [runs], 'B': [runs]}
 try:
@@ -70,6 +85,13 @@ try:
 except ValueError as e:
     die(str(e))
 
+if spec.get('pages'):
+    out = sorted(k for k in groups if k not in spec['pages'])
+    groups = {k: v for k, v in groups.items() if k in spec['pages']}
+    if out:
+        print('Bỏ trang ngoài spec: ' + ', '.join(out), file=sys.stderr)
+elif not a.page and len(groups) > 1:
+    print('Cảnh báo: gộp %d trang của cả thư mục (%s). Thư mục chứa nhiều spec thì thêm --spec.' % (len(groups), ', '.join(sorted(groups))), file=sys.stderr)
 if a.page:
     groups = {k: v for k, v in groups.items() if k == a.page}
 if not groups:

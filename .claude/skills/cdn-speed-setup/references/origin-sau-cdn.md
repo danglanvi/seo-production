@@ -30,22 +30,31 @@ Nạp ở bước 5 của SKILL.md. Mục "chưa thử" là việc chưa chạy 
 - Nếu origin đổi ảnh theo header `Accept` (WebP Express): làm nóng 2 biến thể Accept, hoặc sửa để origin trả URL webp riêng.
 - Nếu origin đổi HTML theo `Accept` (LiteSpeed WebP replacement): Bunny không tách cache HTML theo WebP. Vary WebP chỉ áp cho jpg, jpeg, webp, png, gif. Lượt đầu tiên sau purge quyết định bản HTML lưu ở shield. Làm nóng ngay sau purge bằng Accept có `image/webp`, cả UA desktop và mobile. Edge rule không đặt được header Accept: Bunny báo tên header dành riêng. Sửa gốc ở origin (site VN, 27/10/2026).
   - `scripts/warm.py` từ v1.2 gửi HTML với Accept như Chrome, có `image/webp` (`--accept`). Bản trước dùng Accept mặc định của curl (`*/*`), nên lượt làm nóng đầu có thể lưu bản không WebP.
+- Làm nóng đúng biến thể cache. Bunny tách biến thể theo loại file (site agency mẫu, 27/10/2026):
+  - Ảnh: tách theo Accept có `image/webp`, không tách theo mobile/desktop.
+  - CSS và `*.xml`: tách theo mobile/desktop, không tách theo WebP.
+  - UA `Googlebot/2.1` (compatible, không có chữ Mobile) rơi vào bản desktop. Googlebot tải sitemap bằng UA này.
+  - Vì vậy: làm nóng sitemap bằng UA desktop. Lấy danh sách CSS từ HTML ở edge (bản bot nhận), làm nóng cả 2 bản. Ảnh Googlebot/2.1 đã tải thì làm nóng thêm bản WebP.
 - Làm nóng đúng trạm bot dùng. Đọc cột trạm (edge) trong log CDN của Googlebot. Site VN 26–27/10/2026: 85/85 lượt Googlebot web vào cùng một trạm ở Mỹ.
   - Tìm IP trạm: `dig +short @8.8.8.8 <zone>.b-cdn.net A +subnet=<dải ECS ở vùng của trạm>`. Gửi request bằng `curl --resolve <domain>:443:<IP trạm>`.
   - `warm.py --ecs <dải>` làm việc này. Sau purge theo URL, dùng `wp-ucss/scripts/bunny_purge.py --warm` với `cdn_warm_ecs` trong site.json.
   - Dải ECS là dải IP công khai ở vùng đó, không phải IP khách. Không ghi IP trạm vào báo cáo.
 
-## 3. Purge khi sửa bài (chưa thử)
+## 3. Purge khi sửa bài
 
 - Không có purge: khách ngoài vùng origin thấy bản cũ tới hết thời gian lưu edge.
-- Hướng làm: mu-plugin gọi API purge theo URL của nhà CDN khi lưu bài, đổi trạng thái hay xoá bài. Purge cả URL bài, trang chủ, chuyên mục và feed.
-- Thử trên staging trước khi đưa lên production.
+- Cách đã chạy trên site agency mẫu (27/10/2026): mu-plugin đưa URL vào hàng đợi khi lưu bài, đổi trạng thái hay xoá bài; cron đọc hàng đợi, gọi API purge rồi làm nóng.
+  - URL bài, trang chủ, trang blog, chuyên mục, thẻ, tác giả.
+  - Sitemap index, sitemap của loại bài, sitemap của taxonomy.
+  - Ảnh mới (hook `add_attachment` và filter `wp_generate_attachment_metadata`): file gốc, mọi cỡ, bản `.webp`. Một ảnh 7 cỡ cho 12 URL.
+- Thử trên staging trước khi đưa lên production. Uploads của staging chỉ đọc thì gọi hook trên ảnh có sẵn.
+- Sau purge, chờ 30 giây rồi mới làm nóng. Purge tới trạm Mỹ chậm 10–20 giây dù gọi `async=false`, nên lượt làm nóng sớm hơn bị purge muộn xoá (đo 2 lần, 27/10/2026).
 - Không purge toàn site, trừ khi Lead duyệt.
 - Bunny purge theo URL (đo 27/10/2026, zone bật vary mobile):
   - Gọi `POST /purge?url=<URL>&async=false`, không thêm `exactPath=true`. `exactPath=true` chỉ xoá bản desktop, bản mobile còn lại.
   - URL kết thúc bằng "/": Bunny thêm ký tự đại diện, nên trang con dưới path đó có thể cũng bị xoá. Purge "/" không xoá cả zone.
   - Sau purge, kiểm header `cdn-cachedat` bằng UA desktop và UA mobile. Header ghi giờ UTC, dạng `10/26/2026 17:15:55`. Giờ lưu phải sau giờ purge.
-  - Script purge rồi làm nóng ngay bằng Accept WebP, 2 UA, có kiểm `cdn-cachedat`: `wp-ucss/scripts/bunny_purge.py --warm` (đọc `cdn_host`, `cdn_warm_ecs` trong site.json). Một lần purge "/" ngày 26/10/2026 không xoá bản mobile ở một máy edge, nhưng chưa rõ nguyên nhân.
+  - Script purge rồi làm nóng ngay bằng Accept WebP, 2 UA, có kiểm `cdn-cachedat`: `wp-ucss/scripts/bunny_purge.py --warm` (đọc `cdn_host`, `cdn_warm_ecs` trong site.json). Script này làm nóng 1 giây sau purge, sớm hơn mức chờ 30 giây ở trên. Sau 30 giây, kiểm lại `cdn-cachedat` ở 2 UA; nếu MISS thì chạy lại `warm.py` cho các URL đó. Một lần purge "/" ngày 26/10/2026 không xoá bản mobile ở một máy edge, nhưng chưa rõ nguyên nhân.
 
 ## 4. Chứng chỉ
 
@@ -89,3 +98,9 @@ Dùng `scripts/cdn_monitor.py`, cấu hình theo `templates/cdn-monitor.example.
 - Đường qua CDN: chặn `xmlrpc.php`, `wp-login.php` ở edge.
 - WAF của nhà CDN (Bunny Shield): Lead quyết, có phí.
 - Origin vẫn giữ Wordfence hoặc tường lửa của server.
+
+## 8. Nén Brotli
+
+- Bunny tự nén gzip, Brotli hoặc Zstandard theo `Accept-Encoding` của client. Pull zone không có công tắc Brotli.
+- Không bật Brotli ở origin OpenLiteSpeed cho HTML động: OLS chỉ nén gzip loại này (`wp-host-optimize/references/danh-muc-viec.md`).
+- Kiểm: gọi 10 URL HTML qua trạm CDN với `Accept-Encoding: br` và với `gzip`. Header `content-encoding: br` phải có ở mọi URL. So byte hai bản.

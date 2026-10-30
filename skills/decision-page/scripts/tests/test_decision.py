@@ -576,6 +576,43 @@ def t_ca_that_khong_lo_du_lieu_nhay_cam():
     assert g.scan_sensitive(h) == []
 
 
+# ------------------------------------------------------------ schema 2 (v1.1)
+
+def _schema2(r):
+    r["schema"] = 2
+    for c in r["cards"]:
+        for q in c.get("questions") or []:
+            q["why"] = "Lý do thử."
+        if c.get("questions") and not c.get("images"):
+            c["no_visual_reason"] = "Thẻ mẫu."
+
+
+def t_schema2_mau_hop_le():
+    g.load_spec(mutated_spec(_schema2))
+
+
+def t_schema2_bat_minh_hoa_ly_do_ma_noi_bo():
+    expect_spec_error(lambda r: (_schema2(r), r["cards"][3].pop("no_visual_reason")), "thiếu minh hoạ")
+    expect_spec_error(lambda r: (_schema2(r), r["cards"][3]["questions"][0].pop("why")), "thiếu why")
+    expect_spec_error(lambda r: (_schema2(r), r["cards"][3].update(title="SA-43 menu con chỉ mở bằng hover")), "mã nội bộ")
+    g.load_spec(mutated_spec(lambda r: (_schema2(r), r["cards"][3].update(title="Menu con mở bằng bàn phím (SA-43)"))))
+    expect_spec_error(lambda r: r.pop("schema"), "thiếu why")  # không ghi schema thì là schema 2
+
+
+def t_khoi_code_truoc_sau():
+    def f(r):
+        _schema2(r)
+        c = r["cards"][3]
+        c.pop("no_visual_reason")
+        c["blocks"] = [{"type": "code", "title": "Nút mở menu", "before": '<span class="x">Mở</span>',
+                        "after": '<button type="button">Mở</button>', "caption": "Trước và sau"}]
+    spec = g.load_spec(mutated_spec(f))
+    h = g.build_html(spec, 1, tmpdir())
+    assert 'class="codecmp"' in h and "&lt;button type=&quot;button&quot;&gt;Mở&lt;/button&gt;" in h
+    assert h.count('class="ptag"') == 2 and 'class="why"' in h
+    expect_spec_error(lambda r: (_schema2(r), r["cards"][3].update(blocks=[{"type": "code"}])), "block code cần")
+
+
 TESTS = [v for k, v in sorted(globals().items()) if k.startswith("t_") and callable(v)]
 
 

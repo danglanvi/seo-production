@@ -32,6 +32,11 @@
       "src": "bài học repo UCSS"
     },
     {
+      "p": "^owl-(loading|loaded|refresh|grab|drag|rtl|hidden)$",
+      "reason": "Owl Carousel thêm owl-loading vài mili giây rồi kiểm phần tử có hiển thị; thiếu .owl-carousel.owl-loading thì carousel xếp lưới nhiều hàng. gen.mjs không thấy class tồn tại ngắn như vậy",
+      "src": "site agency mẫu 27/10/2026: 8/72 file gọn thiếu rule, carousel cao 1.400–2.703 px thay vì 350–503 px; sửa thì mỗi file +231 byte, 16/16 cặp lệch 0"
+    },
+    {
       "p": "^litespeed-|^lazyload(ed|ing)?$",
       "reason": "lazyload LiteSpeed",
       "src": "bài học repo UCSS"

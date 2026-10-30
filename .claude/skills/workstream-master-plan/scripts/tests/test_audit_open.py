@@ -56,6 +56,22 @@ class AuditTest(Base):
         code, _, _ = self.audit("--plan", str(plan), "--source", str(t))
         self.assertEqual(code, 0)
 
+    # --- ca hỏng thật 27/10/2026 22:25: tin 284 ký tự, ask dán gần cả tin bị từ chối (210 > 200).
+    # Cách đúng: nối các đoạn nguyên văn bằng '…', ask <= ASK_MAX và tin vẫn tính là đã vào sổ.
+    def test_tin_dai_noi_doan_nguyen_van_van_khop(self):
+        import plan as PLAN
+        msg = ("1. hai trang dịch vụ mà còn dưới 97, không sao. Để đó cũng dc. \n2. slide case study check và review lại rồi chỉnh nhé. \n"
+               "3. Nâng cấp skills speed và các skills liên quan giúp tôi khi có trải nghiệm và chạy thực tế rồi nhé. \n"
+               "4. còn lại bạn tự chay nha, các phần cần tôi thì để sau cũng dc.")
+        ask = ("hai trang dịch vụ mà còn dưới 97, không sao … slide case study check và review lại rồi chỉnh "
+               "… Nâng cấp skills speed … khi có trải nghiệm và chạy thực tế rồi nhé … còn lại bạn tự chay nha")
+        self.assertGreater(len(" ".join(msg.split())), PLAN.ASK_MAX)
+        self.assertLessEqual(len(ask), PLAN.ASK_MAX)
+        plan = self.plan_with_asks(ask)
+        t = self.transcript([user(msg)])
+        code, out, _ = self.audit("--plan", str(plan), "--source", str(t))
+        self.assertEqual(code, 0, out)
+
     # --- lọc nguồn transcript
     def test_loai_tin_he_thong_giu_tin_gui_giua_luot_va_peer(self):
         plan = self.plan_with_asks("không liên quan gì hết")

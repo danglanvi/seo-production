@@ -18,6 +18,9 @@ Làm đúng thứ tự. Không bỏ bước 1–2 để sửa thẳng.
    - Script in `benchmarkIndex`, CLS lab, CLS field, rồi từng dịch chuyển: selector, điểm, `boundingRect`, nguyên nhân PSI gán.
    - Script ghi `final-screenshot.png`, từng khung filmstrip và `filmstrip-all.png`. Xem ảnh bằng công cụ đọc ảnh.
    - So khung trước và sau dịch chuyển. Xác định phần tử dịch và thứ gây dịch: font, ảnh, khối JS chèn, class đổi trạng thái.
+   - Tính ngược khoảng dịch trước khi đoán nguyên nhân. Điểm một lần dịch xấp xỉ bằng tỉ lệ vùng ảnh hưởng nhân tỉ lệ khoảng dịch. Lấy `boundingRect` cuối và chiều cao viewport (mobile 823 px), giải ra khoảng dịch. So số đó với chiều cao các phần tử lân cận.
+     - Site agency mẫu 28/10: khối chữ hero có top 508 px và điểm 0,323. Khoảng dịch tính ra khoảng 330 px, gần bằng chiều cao ảnh banner phía trên (khoảng 324 px).
+   - So filmstrip với một lượt CLS 0 của cùng trang trước khi kết luận do font. Site agency mẫu 28/10: frame 750 ms có FOUT ở cả lượt CLS 0,323 lẫn lượt CLS 0 của ngày trước, nên font không phải nguyên nhân.
 3. Dựng lại môi trường PSI trên máy bằng Lighthouse local:
 
    ```bash
@@ -45,6 +48,11 @@ Chrome trên Linux của PSI làm tròn bề rộng ký tự theo pixel. Hệ qu
 - Số `size-adjust` tính bằng fontTools (`fallback_faces.py`) lệch 1–3% so với số tối ưu trên PSI. Site agency mẫu 22/10 đo được độ lệch này ở 2 họ font (Be Vietnam Pro, Roboto).
 - Nhiều giá trị gần nhau cho cùng một kết quả. Site agency mẫu 22/10, một bài blog desktop: `size-adjust` 103%, 104% và 105,07% đều để đoạn thứ 4 có 3 dòng khi chữ hiện bằng font dự phòng. Chỉ 100–102% làm đoạn này hết lệch, nhưng cùng giá trị đó làm mobile lệch thêm nhiều đoạn (4–10 đoạn thành 32–54 đoạn).
 - Một số `size-adjust` cho mọi bề rộng màn hình có thể không đủ. Site agency mẫu 22/10: tiêu đề hero mobile 34 px đổi từ 3 sang 4 dòng khi font về. Tách hai bộ số bằng `@media (min-width:768px)`.
+- Không có face dự phòng nào khớp cả Mac lẫn máy PSI. Tên `local('Arial')` khớp ở cả hai hệ (máy PSI dùng Liberation Sans), nên không khai được face riêng cho máy PSI. Chỉnh theo máy PSI thì Windows, Mac, iOS xuống dòng khác khi font về.
+  - Site agency mẫu 27/10/2026, đo trên máy PSI: web font thường hẹp hơn face dự phòng 4,1%, web font đậm rộng hơn 5,6%.
+  - Hiệu chỉnh trên Chrome Mac (đo khối chữ mẫu trong `main` bằng font thật, đổi face sang Arial qua CSSOM, quét `size-adjust`) cho cửa sổ đạt rất hẹp. Ví dụ ở site mẫu: Inter thường đạt ở 104,75–105,0%. Đây là số của một cặp font trên một site, không dùng làm luật.
+  - Bản hiệu chỉnh Mac đạt 57/57 khối cùng số dòng trên Mac. A/B PSI production 8 lượt mỗi nhánh vẫn cho CLS trang chủ 0 → 0,285 và bài pillar 0 → 0,118 khi nạp font sau FCP.
+- Vì vậy mọi thay đổi font (cách nạp, preload, face dự phòng, `size-adjust`) phải A/B trên PSI production bằng bản HTML tĩnh trước khi giữ. Lab Chrome Mac và `lh_local.mjs` không thấy CLS do làm tròn bề rộng chữ của Linux.
 
 Cách hiệu chuẩn:
 

@@ -59,3 +59,8 @@ cases:
   input: "Kiểm index chuyên mục và trang phân trang trên Rank Math"
   expected_behavior: "Không dùng nhánh B; chuyển technical-seo-audit"
   forbidden_behavior: "Dựng plan đổi cây chuyên mục cho câu hỏi index"
+- id: dead-urls-from-logs-static-rules
+  source_version: 1.2.1-2026-10-27
+  input: "Log origin 7 ngày và log CDN 2 ngày còn nhiều URL cũ trả 404 qua PHP, xử lý giúp và ghi rule tĩnh cho nhanh"
+  expected_behavior: "Nhánh C: log_urls_chet.py với --verified-ips → kiểm mã hiện tại từng URL một request mỗi giây, loại URL đang 200 và URL đã có rule tĩnh → Gemma 5 ứng viên → Jev → Claude đọc mọi dòng gắn cờ và dải từ 0,85 → rule tĩnh theo mục 4.7b: khối ghi theo wp-pagespeed ttfb-cache-trang mục 4b, 6 kiểm trước khi áp, nguồn là trang còn publish thì không ghi rule"
+  forbidden_behavior: "Chép khối .htaccess vào skill này; ghi rule tĩnh che trang còn publish; coi UA Google từ IP chưa xác minh là Googlebot; bỏ qua dòng Jev từ 0,85 không đọc; dùng UA Googlebot cho lượt kiểm nội bộ"

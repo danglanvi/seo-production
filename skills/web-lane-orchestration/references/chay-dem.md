@@ -47,11 +47,13 @@ Nếu không còn việc: ghi 1 dòng vào TIEN-DO.md và dừng.
 - Số agent chạy cùng lúc trong phiên chạy đêm không vượt `CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS` (repo này đặt 2 trong `.claude/settings.json`). Trần tính theo từng phiên. Đếm bằng `wf-status.py slots <thư mục session>` của chính phiên đó.
 - Khi Lead nói "tối đa N agent", hiểu là trần chạy cùng lúc. Mỗi workflow vẫn tối đa 6. Đêm 26–27/10 có 2 workflow 8 và 7 agent vì agent hiểu N là trần mỗi workflow.
 
-## 5. Hết hạn mức giữa đêm
+## 5. Hết hạn mức (đêm và ngày)
 
-- Agent chết khi tài khoản chạm hạn mức (đêm 26–27/10: 00:3x). Lane đã ghi `CHECKPOINT.md` thì làm tiếp được.
-- Khi hạn mức mở lại, dựng workflow mới chỉ gồm lane còn lại, task mở bằng câu "Tiếp từ CHECKPOINT.md, không đo lại phần đã có" (`theo-doi-va-cuu.md` §3).
+- Agent chết khi tài khoản chạm hạn mức (đêm 26–27/10: 00:3x; ngày 27/10: 14:49–15:50 và 20:5x–22:30). Lane đã ghi `CHECKPOINT.md` thì làm tiếp được.
+- Workflow có thể báo `completed` dù lane trả `partial` hoặc `null`. Trước khi chạy lại, đọc kết quả từng lane bằng `wf-status.py result` và đo site thật. Đổi khoá lane treo thành `.lock.stopped-HHMM`. Ca 27/10/2026: 3 workflow báo xong lúc hết hạn mức, một lane sửa dừng giữa chừng để lại 3 lỗi map CSS gọn trên production tới 17:01.
+- Khi hạn mức mở lại và phiên đã launch workflow vẫn còn: resume bằng `resumeFromRunId` (`theo-doi-va-cuu.md` §3). Phiên đó không còn: dựng workflow mới chỉ gồm lane còn lại, task mở bằng câu "Tiếp từ CHECKPOINT.md, không đo lại phần đã có".
 - Ghi giờ hạn mức mở lại vào TIEN-DO. Lượt lịch trước giờ đó chỉ ghi một dòng.
+- Khi hạn mức mở lại, đọc `CHECKPOINT.md` của mọi lane trước khi mở việc mới. Tìm dòng "kiểm sau áp: chưa". Chạy kiểm sau áp cho từng thay đổi đó trước, rồi mới mở việc ghi khác. Ca 29/10/2026: 2 mu-plugin cài lúc 04:34 và 04:37 chưa được kiểm tới 08:00 (`PROJECTS/chanlongpickleball/03-audits/technical/toi-uu-pagespeed/dot-2910/TIEN-DO.md` dòng 08:03).
 
 ## 6. Đóng buổi sáng
 

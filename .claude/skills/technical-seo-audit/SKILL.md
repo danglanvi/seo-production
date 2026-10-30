@@ -2,7 +2,7 @@
 name: technical-seo-audit
 description: "Audit technical SEO tầng SITE theo bộ audit nội bộ GTV/TAG (crawl, PageSpeed, DataForSEO): index, crawl, redirect, CWV, crawl budget. Use when: 'audit technical [domain]', 'kiểm tra technical SEO [site]', 'site không được index / crawl chậm', 'check Core Web Vitals'."
 metadata:
-  version: "1.10.1"
+  version: "1.11"
 ---
 
 # Technical SEO Audit
@@ -231,7 +231,7 @@ Bản tốt nhất phải có:
 | Redirect hops Googlebot theo được | ≤10; audit flag chain ≥2 hops, fix về 1 (A→C và B→C) | developers.google.com/crawling/docs/troubleshooting/http-status-codes; docx §17.1.6 |
 | Sitemap | ≤50.000 URL / ≤50MB mỗi file; 100% URL 200 + self-canonical + không bị block | developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap; xlsx sheet1 A19-A28; tier-3 SOP mục 8. ⚠️ Template ghi 10MB = số cũ, dùng 50MB |
 | GSC Avg response time | <200ms tốt / <350ms tối thiểu / >500ms cờ đỏ | tier-3-technical-advance.md mục 0+2.1 (ngưỡng GTV) |
-| GSC By response | 200+304 ≥ ~95%; 4xx <1%; 5xx ~0% (304 cao là TỐT) | tier-3-technical-advance.md mục 2.2 |
+| GSC By response | 200+304 ≥ ~95%; 4xx <1%; 5xx ~0% (304 cao ở HTML là tốt; CSS, JS, font của Googlebot web gần như không có 304, xem checklist 1.5) | tier-3-technical-advance.md mục 2.2 |
 | Time-to-index trang mới | 24–48h (authority site) | tier-3 mục 2.4; wiki [[Cost of Retrieval]] (Measurement Proxies) |
 | TTFB | <200ms ideal / <800ms min | wiki [[Cost of Retrieval]] |
 | DOM size | <1.500 nodes | xlsx sheet2 A30 (Google suggests); tier-3 mục 4.3 |
@@ -308,6 +308,7 @@ Bản tốt nhất phải có:
 - ❌ Dùng taxonomy GSC cũ (Valid/Warning/Error/Excluded) — report Index Coverage đã bị thay bằng Page indexing.
 - ❌ Lặp lại số legacy của template như chuẩn (≤35KB, >20s, GTMetrix 1,7s, PageSpeed >80, FID, AMP, rel=next/prev, mobile-friendly test).
 - ❌ Coi 304 cao hoặc Image-heavy file-type là lỗi mặc định (tier-3 mục 0 — false positive kinh điển; 304 = tiết kiệm budget).
+- ❌ Đề xuất header cache dài để giảm lượt Googlebot tải CSS, JS, font. WRS của Googlebot không gửi request có điều kiện cho các file này (checklist 1.5). Giảm số URL CSS, JS khác nhau thay vì đổi header.
 - ❌ Khuyên block duplicate bằng robots.txt khi mục tiêu là consolidation — SE không thấy duplicate để gộp signal; robots.txt = crawl control, noindex = index control (wiki [[Ranking Signal Consolidation]]; docx §3.6).
 - ❌ Tự chấm lại các check deterministic seo-audit-tool Layer 1 đã chạy.
 - ❌ Bịa thang điểm số — template dùng checklist-status, giữ nguyên mô hình.
@@ -356,6 +357,7 @@ Bản tốt nhất phải có:
 
 ## Changelog
 
+- **v1.11 (2026-10-27):** rút từ đợt tốc độ và crawl site agency mẫu 26–27/10 (đợt rà skill speed 27/10, đã qua phản biện). Checklist 1.5 và 1.6: 304 chỉ đúng với HTML; Googlebot web không gửi request có điều kiện cho CSS, JS, font (log 21 ngày: 0/79 font, 0/448 CSS, 0/54 JS nhận 304; server trả 304 đúng khi curl gửi `If-None-Match`). Sửa câu cũ "304 thấp → điều tra cache headers" ở 1.6, bảng ngưỡng và Anti-patterns. Mục mới 4.14 vệ sinh robots.txt khi tối ưu crawl: Disallow ảnh bị hotlink trả 404 rồi gỡ khi ảnh có lại; Disallow endpoint do JS gọi chỉ sau khi so DOM bản Googlebot bằng Chrome trên production (đã áp production 26/10, DOM 4/4 URL giống nhau). Chưa vào skill: số lượt endpoint giảm sau khi chặn (đo sau 02/11).
 - **v1.10.1 (2026-10-27):** hợp nhất bản root 27/10/2026: không có mục mới cần lấy về. Bản này giữ 3 hàng định tuyến `wp-pagespeed`, `wp-security-hardening`, `wp-content-review-apply`. Hàng định tuyến sang skill GEO kỹ thuật của bản root không vào bản này, vì repo không có skill đó.
 - **v1.10 (2026-10-27):** mục mới "Chọn skill theo triệu chứng": 11 triệu chứng → cách đo → skill bắt đầu (đề xuất T2 của đợt rà phiên tốc độ và crawl 26–27/10, người duyệt chốt 27/10). `evals/cases.yaml` 4 ca định tuyến.
 - **v1.9.1 (2026-10-26):** bảng Phân vai thêm `cdn-speed-setup`; khu vực 1 ghi giới hạn RTT của origin ở VN hoặc châu Á với Googlebot ở Mỹ (đợt CDN site VN 26/10/2026).

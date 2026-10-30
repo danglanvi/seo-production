@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "source_version": "v1.1.0",
-  "execution_status": "27/10/2026: 7 ca. Script của ca map-mat-path, combined-href và qa-sau-giao có test offline (scripts/tests/run.sh), gồm map thật của sự cố 05:49 trên site mẫu đã ẩn path. qa_sau_giao.py chạy thật chỉ đọc trên site mẫu 27/10 09:32: 6 path × 2 biến thể, 0 SAI. Chưa chạy lại cả quy trình với một agent.",
+  "source_version": "v1.2.0",
+  "execution_status": "27/10/2026: 7 ca. Script của ca map-mat-path, combined-href và qa-sau-giao có test offline (scripts/tests/run.sh), gồm map thật của sự cố 05:49 trên site mẫu đã ẩn path. qa_sau_giao.py chạy thật chỉ đọc trên site mẫu 27/10 09:32: 6 path × 2 biến thể, 0 SAI. v1.2.0: thêm ca owl-khoi-tao và khoa-all-nhom-bai; script của 2 ca có test offline (test_verify_init.mjs, test_make_map.py, test_mu.php). Chưa chạy lại cả quy trình với một agent.",
   "cases": [
     {
       "id": "happy-20261026-css-gop-lon",
@@ -58,6 +58,22 @@
       "forbidden_behavior": "Cài mu-plugin ucss-swap.php trên site không có CSS gộp của LiteSpeed.",
       "rubric": ["đúng skill"],
       "source_version": "v1.0.0"
+    },
+    {
+      "id": "owl-khoi-tao-20261027",
+      "input": "verify.mjs báo 0 lệch cho mọi cặp, nhưng sau khi giao, carousel trên vài trang xếp thành lưới nhiều hàng.",
+      "expected_behavior": "Nhận ra verify.mjs khởi tạo JS dưới CSS gộp nên không bắt lỗi khi JS đo phần tử lúc khởi tạo. Chạy verify_init.mjs cho path có carousel. Tìm rule thiếu (ví dụ .owl-carousel.owl-loading), thêm keep_class vào safelist, sinh và kiểm lại. Quét mọi file gọn trong map tìm cùng rule. Giao bằng cách sửa đúng dòng map live sau khi chép file.",
+      "forbidden_behavior": "Kết luận 'không do CSS gọn' từ một trang. Dựng lại cả map.php từ thư mục khác. Ghi map trước khi chép file gọn.",
+      "rubric": ["dùng verify_init.mjs", "quét cả map", "thứ tự chép rồi ghi map"],
+      "source_version": "v1.2.0"
+    },
+    {
+      "id": "khoa-all-nhom-bai-20261027",
+      "input": "Phủ CSS gọn cho toàn bộ bài viết, không chỉ path trong chon.tsv.",
+      "expected_behavior": "Dựng holdout ≥ 10 bài ngoài tập dựng theo loại khối, có ?nc= mới, file gọn trùng byte tập dựng. Chạy make_map.py để ghi khoá all khi holdout đạt. Cài mu-plugin bản có nhánh all. Giao, purge nhóm bài theo lô 12 path rồi làm nóng. Đo độ phủ kèm số hit/miss.",
+      "forbidden_behavior": "Ghi all khi chưa có holdout. Áp all cho page. Purge toàn site.",
+      "rubric": ["holdout đạt trước", "purge theo lô 12 path", "độ phủ kèm hit/miss"],
+      "source_version": "v1.2.0"
     }
   ]
 }

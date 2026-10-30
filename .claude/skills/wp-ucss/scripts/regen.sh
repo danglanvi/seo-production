@@ -90,8 +90,11 @@ fi
 UCSS_VER="$(date +%Y%m%d-%H%M)" python3 -I "$D/make_map.py" $O "$R/stage" | tee "$R/map.txt" || stop "make_map lỗi"
 php -l "$R/stage/map.php" >/dev/null || stop "map.php lỗi cú pháp"
 ssh -n -o BatchMode=yes "$SSH" "cat $DR/$UD/map.php 2>/dev/null" > "$R/map_site.php" 2>/dev/null
-# Cổng mất path (MAX_LOST, mặc định 3) và danh sách purge: map_diff.py.
-python3 -I "$D/map_diff.py" "$R/map_site.php" "$R/stage/map.php" "$R" || exit 1
+# Cổng mất path (MAX_LOST, mặc định 3) và danh sách purge: map_diff.py. Cặp path × biến thể mất CSS gọn chỉ in CẢNH BÁO ở job này
+# (MAX_LOST_PAIRS mặc định 100000): dừng nhầm lúc đêm thì map không cập nhật, trang về file gộp mà không ai biết. Giao map tay giữ mặc định 0 của map_diff.py.
+MAX_LOST_PAIRS="${MAX_LOST_PAIRS:-100000}" python3 -I "$D/map_diff.py" "$R/map_site.php" "$R/stage/map.php" "$R" --inv "$R/inv.jsonl" | tee "$R/map_diff.txt"
+[ "${PIPESTATUS[0]}" = 0 ] || exit 1
+grep -q 'CẢNH BÁO mất CSS gọn' "$R/map_diff.txt" && say "CẢNH BÁO: map mới mất CSS gọn ở một số cặp path × biến thể, xem $R/map_diff.txt"
 NP=$(grep -c . "$R/purge_paths.txt" || true)
 [ "$NP" -eq 0 ] && { say "map không đổi, xong"; exit 0; }
 [ "$DRY" = 1 ] && { say "DRY: dừng trước khi ghi server ($NP path sẽ purge, CDN: $CDN)"; exit 0; }

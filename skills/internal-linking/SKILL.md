@@ -2,7 +2,7 @@
 name: internal-linking
 description: "Executable hóa lý thuyết internal linking của wiki Semantic SEO thành link plan cụ thể — DECISION layer cho link NỘI BỘ trong site, nhận topical map làm input, executable hóa Bước 20 SOP 01 (signals flow to Core) + audit SOP 03. Use when: (1) 'lên internal link plan cho [site]'."
 metadata:
-  version: "1.4.1"
+  version: "1.4.2"
 ---
 
 # Internal Linking — Link Plan theo Semantic SEO
@@ -225,6 +225,8 @@ Links đề xuất: N · Fix: N · No-link: N · Flags chờ quyết định: �
 - SOP: `sop/01-topical-map.md` (Bước 13-14, 20 + Golden Rule #4) · `sop/03-internal-linking.md` (⚠️ status stub — chỉ dùng làm nguồn threshold pillar/cluster, luật chính theo wiki concept page).
 
 ## Changelog
+
+- **v1.4.2 (2026-10-29):** `link-js.md` §2: bước 1 đổi "bỏ link" thành "đổi sang D3 nếu có ích cho người đọc, chỉ bỏ link trùng và vô ích"; bước 2 thêm đổi anchor kém sang query GSC; D2 dùng `<button data-scroll-to>`, nút giữa câu dùng `<span role="button">`. Nguồn: ghi chú Excel duyệt link site agency mẫu 28/10/2026, Q2 trang quyết, lane /dao-tao-seo/ 29/10 (button giữa câu làm câu ngắt dòng khác).
 
 - **v1.4.1 (2026-10-27):** hợp nhất bản root 27/10/2026: khôi phục rubric Jev `link-purpose`, `link-external` ở bảng Phân vai, bảng Phân việc model và `link-js.md` §6 (2 rubric đã có trong `tools/ai-assist/tasks/`); chép `evals/cases.yaml` 13 ca, tên site thật đổi thành "site agency mẫu".
 - **v1.4 (2026-10-25):** đề xuất nd-10. Thêm 4 script stdlib có test offline (`the_link.py`, `link_code_audit.py`, `bridge_candidates.py`, `anchor_gsc.py`), `references/scripts.md`, Bước 4d, bảng Phân việc model, mục Tự phản biện, 4 anti-pattern; trỏ script ở Bước 4, 4b, 4c và trong `link-js.md`, `link-placement.md`, `anchor-rules.md`.

@@ -2,7 +2,7 @@
 name: seo-logfile-analysis
 description: "Phân tích server log để thấy Googlebot và AI crawler thật sự crawl gì: crawl budget theo section và theo cụm chủ đề, status code bot gặp, đối chiếu sitemap ↔ cấu trúc ↔ log, crawl waste, tần suất crawl URL quan trọng. Dùng ở công đoạn 27 (T7) hoặc audit crawl định kỳ."
 metadata:
-  version: "1.4"
+  version: "1.5.1"
 ---
 
 # SEO Logfile Analysis
@@ -126,11 +126,14 @@ UA-match KHÔNG đủ — fake Googlebot (scraper giả UA) phổ biến ở hos
    - Mẫu số bỏ robots.txt, sitemap, ads.txt, llm(s).txt, assetlinks. Tử số là mọi lượt GET vào URL trang, mọi mã. Script chia thêm theo loại file, mã HTML, smartphone/desktop và theo giờ.
    - Log origin sau CDN: thêm `--trust-xff` cho khung giờ trước khi origin tin IP CDN. Chỉ bật khi origin chặn request không qua CDN, vì client gửi thẳng tới origin có thể giả `X-Forwarded-For`.
    - Mẫu số dưới 30 thì script cảnh báo. Không kết luận theo giờ từ mẫu nhỏ. Site agency mẫu 27/10/2026: % KPI theo giờ dao động 46–100% với 3–13 lượt mỗi giờ.
+   - Script in số lượt HTML 3xx và % KPI nếu chỉ tính HTML 200. Báo cả hai số cạnh % KPI. Lượt 301 của URL cũ làm % KPI tăng mà không thêm trang 200 được crawl.
+   - KPI ước trước khi làm (từ mô hình hay giả định) ghi nhãn (ước), dạng dải, kèm điều kiện. Không báo "đạt KPI" từ số ước. Chỉ báo đạt theo số `kpi_html.py` đo trên log sau thay đổi.
+   - Trước khi sửa font hay CSS để tăng % HTML, đếm lượt tải nhóm đó theo từng bot Google (Googlebot, AdsBot, Google-InspectionTool) trên log mọi UA Google. KPI chỉ tính Googlebot web, nên phần lượt của AdsBot và InspectionTool không đổi KPI.
 2. **Status codes Googlebot gặp** — phân bố 200/304/3xx/4xx/5xx trên verified hits. Ngưỡng theo bảng dưới. Liệt kê: 3xx chains (URL bị crawl lặp qua nhiều hop), top 404 (pattern theo prefix = đổi URL structure không 301), mọi 5xx/503.
    - Chạy `python3 -B skills/seo-logfile-analysis/scripts/log_checks.py redirects --log <file> --site https://<domain> --verified-ips <W>/verify/verified_ips.txt [--remove-list bo.txt] [--hub-urls hub.txt] --out-dir <W>/checks`. `bo.txt` là danh sách bỏ đã duyệt, `hub.txt` là URL trang danh mục hoặc hub, mỗi dòng một URL. Script chỉ tính hit HTML của Googlebot đã xác minh và bỏ URL có query. Output không chứa IP.
    - Thêm `--probe` để đo status hiện tại, số bước, đích cuối và status đích. Probe gửi GET tới site thật: chỉ chạy khi được phép, giữ `--workers 4`. Hit của probe là hit công cụ nội bộ, không tính là bot.
    - Xử lý theo nhóm: `chuoi` → rút về 1 bước · `dich_khong_200` → sửa đích, không để 301 dẫn tới trang 410 · `ve_trang_chu`, `tam_thoi` → 301 về trang cùng ý định, hoặc 410 nếu URL có trong danh sách bỏ · `ve_hub` → rà từng URL: có bài thay thế thì 301 thẳng về bài đó · `thieu_gach_cuoi`, `mot_buoc_200` → giữ · `da_doi` → chỉ ghi nhận.
-   - 404 và 410: chỉ URL trong danh sách bỏ đã duyệt trả 410 (`content-inventory-audit`, `references/bo-bai.md`). URL gõ sai và link hỏng trả 404. Truyền danh sách bỏ bằng `--remove-list` để script gắn cờ 410 ngoài danh sách. Log có 410 nhiều hơn 404: kiểm URL ngẫu nhiên phải trả 404 bằng `wp-security-hardening` (`scripts/exposure_check.sh`, dòng `{RAND}`). Ví dụ gtvseo.com 06–19/10/2026: theme đổi mọi 404 thành 410, log có 3.387 hit 410 và 10 hit 404.
+   - 404 và 410: chỉ URL trong danh sách bỏ đã duyệt trả 410 (`content-inventory-audit`, `references/bo-bai.md`). URL gõ sai và link hỏng trả 404. Truyền danh sách bỏ bằng `--remove-list` để script gắn cờ 410 ngoài danh sách. Log có 410 nhiều hơn 404: kiểm URL ngẫu nhiên phải trả 404 bằng `wp-security-hardening` (`scripts/exposure_check.sh`, dòng `{RAND}`). Ví dụ site agency mẫu 06–19/10/2026: theme đổi mọi 404 thành 410, log có 3.387 hit 410 và 10 hit 404.
 3. **Đối chiếu 3 nguồn: sitemap ↔ cấu trúc ↔ log** — fetch sitemap URLs, so tập hợp với URL Googlebot đã crawl trong `$PERIOD` → 2 bảng deliverable: **"URL trong sitemap nhưng Googlebot chưa ghé"** (thiếu internal link? bị chặn? sitemap rác?) và **"URL Googlebot crawl nhưng không trong sitemap/cấu trúc"** (orphan, parameter, URL cũ chưa chết — cross-flag `internal-linking` / [[Index Pollution]]).
 4. **Crawl waste** — hits vào parameter URLs (`?`, session ID, UTM), faceted/filter URLs ([[Faceted Navigation]]), redirect chains, URL đã 404 vĩnh viễn mà bot vẫn quay lại (→ đề xuất 410 nếu URL vào danh sách bỏ đã duyệt, [[Status Codes]]). Tính % waste trên tổng verified hits.
    - Site WordPress: chạy thêm kiểm uploads trên mọi UA, vì băng thông là của cả server: `python3 -B skills/seo-logfile-analysis/scripts/log_checks.py uploads --log <file> --site https://<domain> [--from <ngày> --to <ngày>]`.
@@ -138,6 +141,7 @@ UA-match KHÔNG đủ — fake Googlebot (scraper giả UA) phổ biến ở hos
    - Ghi kết quả ở mục 5b của report. Không cộng số này vào % waste của Googlebot.
 5. **Tần suất crawl: URL SEO quan trọng vs URL rác** — crawl hits/ngày cho từng URL trong `$COMMITTED_URLS` (ngưỡng <1,5 lần/ngày = review) so với các URL waste được crawl nhiều nhất. Đây là bảng "đắt" nhất cho Account nói chuyện với khách.
 6. **Response time & bytes theo URL/section** (nếu log có trường `time`/`bytes`) — URL chậm >3s bị crawl nhiều = CoR cao; đối chiếu GSC Average response time.
+   - Tách lượt range request (mã 206) của file video trước khi tính tỉ trọng byte, và khi đọc "Total download size" của GSC. Vài file video có thể chiếm phần lớn byte dù ít lượt.
 7. **Crawl theo cụm chủ đề** — gom URL bot đã crawl theo cụm của `topical-focus`, so với cụm quan trọng của site.
    - Input: `pages.jsonl` và `clusters.json` của map `topical-focus` (cùng site, dựng gần ngày log), danh sách URL lõi `core.txt`, danh sách IP đã xác minh ở Bước 2.
    - Chạy `python3 -B skills/seo-logfile-analysis/scripts/log_clusters.py --log <file log> --site https://<domain> --map <map>/pages.jsonl --clusters <map>/clusters.json --core core.txt --verified-ips <W>/verify/verified_ips.txt --from <ngày> --to <ngày> --out-dir <W>/clusters`. File `.gz` đọc thẳng; lặp `--log` cho nhiều file.
@@ -153,6 +157,7 @@ UA-match KHÔNG đủ — fake Googlebot (scraper giả UA) phổ biến ở hos
 - Mở `Metadata.csv` trước. Dòng `Type` cho biết biểu đồ đã lọc theo loại nào. `Chart.csv` chỉ là số của cả host khi bản xuất không lọc. Site agency mẫu 26/10/2026: bản xuất ghi `Type,Other file type`, nên chuỗi "535–690 ms/ngày" chỉ là của nhóm Other. Số cả host chỉ có 1 điểm (765 ms). Plan bản đầu dùng nhầm chuỗi đó làm mốc.
 - Xin người dùng xuất 2 lượt: biểu đồ không lọc (cả host), rồi từng loại file (HTML, Image, Other) và từng Googlebot type. Crawl Stats không có API.
 - Danh sách response của Crawl Stats không có 410. Lượt 410 có thể nằm trong "Other client error (4XX)". Đếm 410 từ log.
+- Nhóm "Other file type" của Crawl Stats gồm cả redirect (Google ghi rõ trong trang trợ giúp Crawl Stats). Tách redirect khỏi font và robots bằng log trước khi kết luận nhóm này là font.
 - Số Crawl Stats trễ 2–3 ngày và gồm cả http lẫn https. Ghi múi giờ của ngày là CANNOT-VERIFY nếu chưa so với log theo giờ.
 
 ### Bước 4 — Findings + action list
@@ -173,12 +178,12 @@ Mỗi finding: evidence (số + URL mẫu + khoảng ngày log) → hành độn
 | URL quan trọng ít crawl | <1,5 lần/ngày → review | xlsx sheet3 dòng 10 (template audit nội bộ, qua technical-seo-audit) |
 | URL crawl chậm | Average Response Time >3s → review | xlsx sheet3 dòng 13 |
 | Log 404 hits | mục tiêu <50/tháng | wiki [[Status Codes]] (baseline case Koray >25.000) |
-| By response (GSC/log) | 200+304 ≥ ~95%; 4xx <1%; 5xx ~0% — 🔴 304 cao là TỐT, không phải lỗi | tier-3-technical-advance.md mục 2.2 |
+| By response (GSC/log) | 200+304 ≥ ~95%; 4xx <1%; 5xx ~0% — 🔴 304 cao là TỐT, không phải lỗi. Áp cho HTML và ảnh. Googlebot web không gửi request có điều kiện cho CSS, JS, font, nên 304 của nhóm này gần 0 là bình thường | tier-3-technical-advance.md mục 2.2; log site agency mẫu 06–26/10/2026 (Changelog v1.5) |
 | GSC Avg response time | <200ms tốt / <350ms tối thiểu / >500ms cờ đỏ | tier-3-technical-advance.md mục 0 + 2.1 |
 | Crawl budget gate | site < ~10k trang unique → crawl budget không phải ưu tiên, frame findings theo index hygiene | developers.google.com/crawling/docs/crawl-budget |
 | Status hygiene | 404 vĩnh viễn của URL trong danh sách bỏ đã duyệt → 410; URL gõ sai, link hỏng → 404; 302 tạm → 301 nếu permanent; không để 301 dẫn tới trang 410 | wiki [[Status Codes]] · `content-inventory-audit` `references/bo-bai.md` · `wp-security-hardening` (URL ngẫu nhiên chỉ nhận 404) |
 | Googlebot verify | IP trong googlebot.json, special-crawlers.json, user-triggered-fetchers.json; IP ngoài dải: reverse-DNS về `.googlebot.com`/`.google.com` + forward-confirm | developers.google.com/search/docs/crawling-indexing/verifying-googlebot |
-| File upload thiếu | response dưới 2 KB (404 tĩnh, không chạy WordPress). Ngưỡng nội bộ, không phải chuẩn Google | tiêu chí nghiệm thu audit log gtvseo.com 19/10/2026; đo sau sửa 21/10: 1.249 byte, trước sửa 132 KB |
+| File upload thiếu | response dưới 2 KB (404 tĩnh, không chạy WordPress). Ngưỡng nội bộ, không phải chuẩn Google | tiêu chí nghiệm thu audit log site agency mẫu 19/10/2026; đo sau sửa 21/10: 1.249 byte, trước sửa 132 KB |
 
 ### Tự phản biện trước khi trình
 Chấm bản nháp theo checklist "Bản tốt nhất phải có". Mục chưa đạt thì sửa, hoặc ghi lý do bỏ. Nếu có output của Codex hay agent khác cho cùng việc, so từng mục và lấy phần tốt hơn trước khi trình Lead.
@@ -189,9 +194,9 @@ Bản tốt nhất phải có:
 - [ ] Bảng cụm chỉ tính IP đã xác minh, hoặc ghi rõ "hit bot tự khai". Nguồn lỗi: bài học hosting VN ở bản 1.0, Googlebot giả UA phổ biến.
 - [ ] Bảng cụm so tỷ lệ hit với tỷ lệ trang, không so hit tuyệt đối. Nguồn lỗi: map 19/10 của site mẫu có cụm SEO chiếm 34% trang và cụm Facebook 8%; so hit tuyệt đối thì cụm nhỏ luôn có vẻ bị bỏ quên.
 - [ ] Log và IP không rời máy, không vào Jev hay dịch vụ ngoài. Nguồn lỗi: luật dữ liệu khách của lớp model 10/2026; `jev.py` đã phải chặn trường GSC.
-- [ ] Xác minh bot lọc dải IP chính chủ trước rDNS. Report ghi số IP `unchecked`, và không ghi "% thật" khi mã thoát là 2 hoặc 3. Nguồn lỗi: 19/10/2026 log gtvseo.com, rDNS tuần tự 429 IP chạy quá 600 giây; rDNS lệch dải IP ở 8/25 IP.
-- [ ] Site WordPress có mục 5b kiểm uploads: hit, byte, % băng thông, trung vị byte. Nguồn lỗi: 19/10/2026 log gtvseo.com, file upload thiếu trả 410 kèm trang lỗi đầy đủ, chiếm 45,2/120,0 GB băng thông trong 13 ngày.
-- [ ] Bảng redirect có nhóm và status đích. 410 chỉ có ở URL trong danh sách bỏ. Nguồn lỗi: 19/10/2026 theme gtvseo.com đổi mọi 404 thành 410; 9 URL 302 về trang chủ; 4 redirect có đích không trả 200.
+- [ ] Xác minh bot lọc dải IP chính chủ trước rDNS. Report ghi số IP `unchecked`, và không ghi "% thật" khi mã thoát là 2 hoặc 3. Nguồn lỗi: 19/10/2026 log site agency mẫu, rDNS tuần tự 429 IP chạy quá 600 giây; rDNS lệch dải IP ở 8/25 IP.
+- [ ] Site WordPress có mục 5b kiểm uploads: hit, byte, % băng thông, trung vị byte. Nguồn lỗi: 19/10/2026 log site agency mẫu, file upload thiếu trả 410 kèm trang lỗi đầy đủ, chiếm 45,2/120,0 GB băng thông trong 13 ngày.
+- [ ] Bảng redirect có nhóm và status đích. 410 chỉ có ở URL trong danh sách bỏ. Nguồn lỗi: 19/10/2026 theme site agency mẫu đổi mọi 404 thành 410; 9 URL 302 về trang chủ; 4 redirect có đích không trả 200.
 
 ## Output
 
@@ -249,12 +254,13 @@ Bản tốt nhất phải có:
 ## Anti-patterns
 
 - ❌ Kết luận "Googlebot crawl X" từ UA-match chưa reverse-DNS — fake Googlebot phổ biến ở hosting VN.
-- ❌ rDNS tuần tự mọi IP khi đã có file dải IP. Ngày 19/10/2026, rDNS 429 IP của log gtvseo.com chạy quá 600 giây. Dùng `verify_googlebot.py`: dải IP trước, rDNS song song cho phần còn lại.
-- ❌ Tính PTR `googleusercontent.com` hoặc IP trong `goog.json` là Googlebot. Hai nguồn này gồm máy thuê Google Cloud. Log gtvseo.com 19/10/2026 có 126 IP PTR `googleusercontent.com`, đều giả UA.
+- ❌ rDNS tuần tự mọi IP khi đã có file dải IP. Ngày 19/10/2026, rDNS 429 IP của log site agency mẫu chạy quá 600 giây. Dùng `verify_googlebot.py`: dải IP trước, rDNS song song cho phần còn lại.
+- ❌ Tính PTR `googleusercontent.com` hoặc IP trong `goog.json` là Googlebot. Hai nguồn này gồm máy thuê Google Cloud. Log site agency mẫu 19/10/2026 có 126 IP PTR `googleusercontent.com`, đều giả UA.
 - ❌ Coi 304 cao là lỗi — 304 = tiết kiệm crawl budget, dấu hiệu tốt (tier-3 mục 2.2).
+- ❌ Đặt header cache dài (1 năm, `immutable`) cho CSS, JS, font để giảm lượt Googlebot tải. Googlebot web không gửi request có điều kiện cho nhóm này, và Google không dùng các chỉ thị cache khác. Server trả 304 đúng khi curl gửi `If-None-Match` không chứng minh bot nhận 304.
 - ❌ Khuyến nghị crawl budget nặng cho site < ~10k trang — frame theo index hygiene thay vì budget.
 - ❌ Đọc thô log/parquet từng dòng thay vì script (pandas/DuckDB/awk).
-- ❌ Đếm mã trạng thái bằng awk gán cứng `$9` hay `$10` cho mọi file log. Ngày 23–24/10/2026, 4 lane trên gtvseo.com đếm sai 5xx vì log en và staging đặt mã ở `$9`. Dùng `log_health.py`, hoặc tách theo `"` rồi đọc trường 3.
+- ❌ Đếm mã trạng thái bằng awk gán cứng `$9` hay `$10` cho mọi file log. Ngày 23–24/10/2026, 4 lane trên site agency mẫu đếm sai 5xx vì log en và staging đặt mã ở `$9`. Dùng `log_health.py`, hoặc tách theo `"` rồi đọc trường 3.
 - ❌ Phát biểu số đếm từ log parse lỗi >5% hoặc log thiếu ngày như số cuối — luôn ghi "cận dưới".
 - ❌ Dùng GSC Crawl Stats (Tier C) để kết luận crawl frequency per URL — Crawl Stats là sample toàn site.
 - ❌ Tự lập link plan cho orphan phát hiện được — cross-flag `internal-linking`.
@@ -276,10 +282,12 @@ Bản tốt nhất phải có:
 
 ## Changelog
 
+- **v1.5.1 (2026-10-27):** gỡ tên miền site mẫu khỏi SKILL.md, `references/aapanel-ols.md`, chú thích script và test, ghi "site agency mẫu". Không đổi luật hay logic script.
+- **v1.5 (2026-10-27):** `kpi_html.py` in thêm số lượt HTML 3xx và % KPI nếu chỉ tính HTML 200; test thêm 1 ca (7 ca). Chạy lại trên log origin thật site agency mẫu đêm 26–27/10: 41 lượt, HTML 23, 301 16/23, % KPI 69,7, chỉ tính 200 là 9,1. Bước 3 khối 1: KPI ước ghi nhãn và dải, không báo đạt từ số ước; đếm font/CSS theo từng bot trước khi sửa. Nguồn: site agency mẫu ước 94,2% nhưng đo log Bunny đêm đầu 72,6% (62 lượt mẫu số, 20/45 lượt HTML là 301, chỉ tính 200 là 32,3%); font do AdsBot tải 64% và Google-InspectionTool 23%. Bảng ngưỡng và Anti-pattern: 304 chỉ đúng với HTML và ảnh; log 21 ngày có 0/79 font, 0/448 CSS, 0/54 JS của Googlebot web nhận 304, Googlebot-Image 35,6%. Khối 6: tách range request video (4 file mp4, 171 lượt, 81% byte log). Tier C: "Other file type" gồm redirect (24,9% trong 36,0%). Eval thêm 1 ca.
 - **v1.4 (2026-10-27):** `scripts/kpi_html.py`: KPI tỉ lệ HTML trong lượt Googlebot web, mẫu số bỏ infra, chia theo loại file, mã HTML, bot, giờ; `--trust-xff` cho log sau CDN; cảnh báo mẫu số dưới 30; không in IP. Chạy trên log origin thật site agency mẫu 26–27/10: 41 lượt, HTML 23, infra 8, % KPI 69,7, khớp số tính tay của lane đêm. Test `tests/test_kpi_html.py` 6 ca. Bước 3 Tier C: cách đọc CSV Crawl Stats (`Metadata.csv`, 410 không có trong danh sách response). Eval 5 ca.
 - **v1.3.1 (2026-10-26):** Bước 0b thêm mục 3b cho site có CDN: hit trúng cache ở edge không vào log origin, `%h` là IP trạm CDN trước khi origin tin IP CDN, `%D` không phải số GSC. Nguồn: đợt CDN site VN 26/10/2026 (`cdn-speed-setup` v1.0), đếm trên log OLS sau khi đổi apex.
-- **v1.3 (2026-10-25):** log-1: `verify_googlebot.py` lọc dải IP trước rDNS (song song, 4 trạng thái, mã thoát 0–3, bỏ đuôi `googleusercontent.com`); `log_checks.py` kiểm uploads và redirect, 404/410 theo nhóm; `references/aapanel-ols.md`. Chạy offline trên 28 file log gtvseo.com 06–19/10: uploads 284.139 hit, 45,1/119,3 GB, khớp báo cáo 19/10.
-- **v1.2 (2026-10-24):** thêm `scripts/log_health.py` (4xx/5xx theo khung giờ, mã thoát 2 khi không đọc được dòng nào) và test `tests/test_log_health.py`, có ca awk `$10` đọc nhầm số byte. Chạy thật trên 6 file log gtvseo.com 06–19/10: đọc 249.105/249.139 dòng, số 5xx khớp awk `$10` và awk tách theo `"` (175/175/175). Bước 0b và Anti-patterns: dò cột từ dòng mẫu. Nguồn: `Deliverables/GTV-Brand/GTV-Website/perf-20261020/toi-uu-khong-nang-vps-2310/dot1-2410/d1a/kiem-doc-lap.md`, `b0/kiem-doc-lap.md`.
-- **v1.1.1 (2026-10-19):** `log_clusters.py` đọc được log OpenLiteSpeed (dòng bọc nháy đơn, có trường proxy trước IP client). Nhận thêm bot GoogleOther, Applebot, Meta, Bytespider, Amazonbot, CCBot. Chạy thật trên log gtvseo.com 06–19/10: parse 48.803/48.803 dòng. Test `test_ols_line_and_more_bots`.
+- **v1.3 (2026-10-25):** log-1: `verify_googlebot.py` lọc dải IP trước rDNS (song song, 4 trạng thái, mã thoát 0–3, bỏ đuôi `googleusercontent.com`); `log_checks.py` kiểm uploads và redirect, 404/410 theo nhóm; `references/aapanel-ols.md`. Chạy offline trên 28 file log site agency mẫu 06–19/10: uploads 284.139 hit, 45,1/119,3 GB, khớp báo cáo 19/10.
+- **v1.2 (2026-10-24):** thêm `scripts/log_health.py` (4xx/5xx theo khung giờ, mã thoát 2 khi không đọc được dòng nào) và test `tests/test_log_health.py`, có ca awk `$10` đọc nhầm số byte. Chạy thật trên 6 file log site agency mẫu 06–19/10: đọc 249.105/249.139 dòng, số 5xx khớp awk `$10` và awk tách theo `"` (175/175/175). Bước 0b và Anti-patterns: dò cột từ dòng mẫu. Nguồn: `Deliverables/GTV-Brand/GTV-Website/perf-20261020/toi-uu-khong-nang-vps-2310/dot1-2410/d1a/kiem-doc-lap.md`, `b0/kiem-doc-lap.md`.
+- **v1.1.1 (2026-10-19):** `log_clusters.py` đọc được log OpenLiteSpeed (dòng bọc nháy đơn, có trường proxy trước IP client). Nhận thêm bot GoogleOther, Applebot, Meta, Bytespider, Amazonbot, CCBot. Chạy thật trên log site agency mẫu 06–19/10: parse 48.803/48.803 dòng. Test `test_ols_line_and_more_bots`.
 - **v1.1 (2026-10-19):** thêm khối 7 Crawl theo cụm chủ đề (`scripts/log_clusters.py`, stdlib): gom URL bot đã crawl theo cụm `topical-focus`, so với cụm chứa URL lõi. Thêm Bước 0, phân việc model, tự phản biện, mục 6b. Test fixture `tests/test_log_clusters.py`. Chưa chạy trên log thật.
 - **v1.0 (2026-07-19):** tạo mới — phục vụ công đoạn (27) T7 quy trình 10 tháng + audit duy trì hằng tuần; data ladder advertools → GoAccess → GSC Crawl Stats proxy; reverse-DNS verify bắt buộc; 6 khối phân tích chuẩn; ngưỡng kế thừa whitelist technical-seo-audit + tier-3 SOP.

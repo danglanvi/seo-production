@@ -2,7 +2,7 @@
 name: semantic-html-optimization
 description: "Semantic HTML cho SEO và AI: dựng template trang dịch vụ, landing; audit cấu trúc HTML theo mẫu template; sửa trên site WordPress đang chạy (main, article, aside, time, heading giả, b/i). Dùng khi tạo template, audit HTML hoặc sửa semantic HTML hàng loạt."
 metadata:
-  version: "1.2"
+  version: "1.3"
 ---
 
 # Semantic HTML Optimization
@@ -194,6 +194,7 @@ For detailed implementation guides, see:
 - `references/heading-hierarchy.md` - Hướng dẫn heading structure
 - `references/ai-optimization.md` - Tối ưu cho LLM citations
 - `references/ap-site-wordpress.md` - Audit theo mẫu template, sửa theme, heading giả trong bài, cache sau khi ghi, phối hợp lane
+- `references/ap-site-woocommerce.md` - Site WooCommerce hoặc theme riêng: phạm vi đủ template, số đo html-validate và `deep_audit.py`, 24 mẫu sửa (PDP, giá, lưới, so sánh, giỏ, thanh toán, phân trang, mô tả danh mục), bẫy CSS và object cache, báo cáo có ảnh vị trí
 
 ## Quy trình
 
@@ -204,9 +205,9 @@ Sau đó rà theo mục Checklist bên dưới.
 
 ### Nhánh site WordPress đang chạy
 
-Dùng khi sửa trên site có quyền server. Đọc `references/ap-site-wordpress.md` trước lệnh đầu tiên.
+Dùng khi sửa trên site có quyền server. Đọc `references/ap-site-wordpress.md` trước lệnh đầu tiên. Site WooCommerce hoặc theme riêng: đọc thêm `references/ap-site-woocommerce.md`.
 
-1. Audit chỉ đọc: `python3 -I skills/semantic-html-optimization/scripts/semantic_audit.py --base https://<domain> chon.tsv <thư mục html> audit_truoc.csv`.
+1. Audit chỉ đọc: `python3 -I skills/semantic-html-optimization/scripts/semantic_audit.py --base https://<domain> chon.tsv <thư mục html> audit_truoc.csv`. Audit sâu và số đo trước/sau: `scripts/deep_audit.py` và `scripts/html_validate.sh` (`ap-site-woocommerce.md` mục 2). Phạm vi gồm mọi template, kể cả PDP, bài, chuyên mục blog, giỏ, thanh toán, và khối nội dung trong template (mô tả danh mục, mô tả PDP, FAQ).
 2. Tìm gốc lỗi trong template, đưa câu cần quyết lên trang duyệt.
 3. Sửa theme qua staging (`wp-staging-deploy`), đo trước và sau ở 1366 px và 390 px.
 4. Heading giả: quét sau `wpautop` bằng `scripts/scan_heading_gia.php`, Jev `semantic-role`, ghi bằng `wp-content-review-apply`.
@@ -216,7 +217,7 @@ Dùng khi sửa trên site có quyền server. Đọc `references/ap-site-wordpr
 
 | Model | Việc | Quyết định |
 |---|---|---|
-| Code | `semantic_audit.py`, `scan_heading_gia.php`, đếm nhảy cấp, so trước và sau | Dùng. Mọi số đếm lấy từ script |
+| Code | `semantic_audit.py`, `deep_audit.py`, `html_validate.sh`, `scan_heading_gia.php`, đếm nhảy cấp, so trước và sau | Dùng. Mọi số đếm lấy từ script |
 | Jev | Task `semantic-role`: đoạn chữ đậm đứng riêng là heading, bước, câu dẫn hay nhãn bảng. Task `ui-visual` so ảnh trước và sau | Dùng. Gán nhãn tay 20 mẫu trước khi xem điểm. Ngưỡng 0,7 và 0,3 ở `references/ap-site-wordpress.md` mục 3 |
 | EmbeddingGemma 2 | Gom chữ đậm lặp giữa các bài | Không dùng. Đếm chữ trùng nguyên văn đủ để tách phần layout |
 | Claude | Đọc đoạn Jev cho 0,3–0,69, chọn cấp heading, quyết luật giữ, đọc ảnh Jev gắn cờ | Dùng |
@@ -231,6 +232,7 @@ Bản tốt nhất phải có:
 - [ ] Rubric Jev có 20 mẫu gán tay trước khi xem điểm, và đoạn 0,3–0,69 có Claude đọc. Nguồn lỗi: người duyệt nhắc dùng Jev cho audit, 27/10/2026 17:13.
 - [ ] Shim CSS đo trên staging trước khi phát hành, 0 phần tử lệch quá 1 px. Nguồn lỗi: shim bản đề xuất đổi chữ đậm 800 thành 700 và lệch chiều cao 15–35 px.
 - [ ] Danh sách path đổi DOM đã gửi cho bước regen CSS gọn và purge CDN. Nguồn lỗi: đợt 27/10/2026 phải phối hợp tay với lane tốc độ, chuỗi ghi dừng ở bước CDN.
+- [ ] Audit phủ mọi template và khối nội dung trong template (mô tả danh mục, mô tả PDP, FAQ). Mỗi việc trình kèm ảnh vị trí trên giao diện và code trước/sau. Nguồn lỗi: site bán lẻ mẫu 29/10/2026, lượt đầu sót PDP, bài và chuyên mục blog. Người duyệt nhắc lúc 23:00 và 23:20, và hỏi lúc 22:07 vì chưa hình dung được chỗ chèn thẻ.
 
 ## Checklist
 
@@ -361,6 +363,7 @@ Verified qua crawl HTML thô 9 URL (mobile UA) + đối chiếu ranking Ahrefs:
 
 ## Changelog
 
+- **v1.3 (2026-10-30):** nhánh WooCommerce và theme riêng: `references/ap-site-woocommerce.md` (phạm vi đủ template, số đo, 24 mẫu sửa, 12 bẫy, việc giao team, báo cáo có ảnh vị trí). Script mới: `scripts/deep_audit.py` (hơn 60 chỉ số landmark, heading, form, nút, bảng, ngày, breadcrumb; chạy bằng `-B` vì bs4 ở user site-packages) kèm `tests/test_deep_audit.py` 3 ca; `scripts/html_validate.sh` + `htmlvalidate-config.json` + `hv_strip.py` (ghi JSON ra file tạm vì Node cắt stdout qua pipe). Nhánh WordPress bước 1 thêm audit sâu và phạm vi. Tự phản biện thêm 1 mục. Nguồn: site bán lẻ mẫu 29–30/10/2026, 94 việc qua 8 lane, html-validate toàn site 13.761 → 5.912, 0 Fatal mới, 0 mã 5xx.
 - **v1.2 (2026-10-27):** nhánh site WordPress đang chạy. `references/ap-site-wordpress.md`; `scripts/semantic_audit.py` (audit theo mẫu template, test 3 ca), `scripts/scan_heading_gia.php` (quét heading giả sau `wpautop`); Phân việc model với Jev `semantic-role`; Tự phản biện 5 mục. Description viết lại tiếng Việt. Nguồn: đợt semantic HTML site agency mẫu 27/10/2026 (95 URL audit, 17 file theme, 436 op trên 109 bài, verify lệch 0). Phần đề xuất `section`/`article` cho trang core và đổi `b`/`i` ở template chưa xong lúc ghi bản này.
 - **v1.1 (2026-08-29):** gỡ claim không nguồn "90% ChatGPT citations từ well-structured pages" (5 chỗ: SKILL.md ×3, `references/heading-hierarchy.md`, `references/ai-optimization.md`); tách Schema.org/FAQ schema ra khỏi danh sách "LLM ưu tiên cite" thành block **"Rich results / entity — KHÔNG phải citation lever"** trỏ `schema-markup-generator` (causal DiD Ahrefs 1.885 trang 05/2026 ≈ 0; FAQ rich result chấm dứt 07/05/2026); Core Insight viết lại: semantic HTML = retrieval hygiene, citation = kiến trúc passage (AX1-AX6 / GE-16…GE-27); thêm rule heading tổ tiên có nghĩa (`includeAncestorHeadings`). Nguồn: FINDINGS 22/08/2026 §6b + `tier-1-geo.md` v2.0 guardrail 2. Vincent duyệt 29/08.
 - **v1.0 (07/2026):** bản gốc + các bổ sung 09-16/07/2026 (centerpiece hygiene, HTML budget, LAMPRET, tabs/accordion, heading patterns e-commerce VN, Koray live-site).

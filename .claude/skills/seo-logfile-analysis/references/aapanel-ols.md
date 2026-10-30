@@ -2,7 +2,7 @@
 
 Mục đích: tìm đúng file log, đọc đúng định dạng và kéo log về máy an toàn khi site chạy aaPanel với OpenLiteSpeed (OLS). Nạp ở Bước 0b khi log còn nằm trên server.
 
-Nguồn: file cấu hình vhost và log thật của gtvseo.com (site nội bộ GTV), 10/2026. Số có nhãn site là số của site đó, không phải chuẩn.
+Nguồn: file cấu hình vhost và log thật của site agency mẫu, 10/2026. Số có nhãn site là số của site đó, không phải chuẩn.
 
 ## 1. Đường file
 
@@ -17,7 +17,7 @@ Nguồn: file cấu hình vhost và log thật của gtvseo.com (site nội bộ
 
 - `<vhost>` thường là tên miền chính. Một server có thể chạy nhiều vhost: bản tiếng Anh, staging, site khác. Mỗi vhost có file log riêng và có thể có `logFormat` riêng.
 - Đọc khối `accesslog` trong file cấu hình vhost để biết định dạng. Chỉ đọc. Sửa file này là sửa cấu hình sống (§4).
-- Xác định kỳ log thật bằng tên file cũ nhất. Không tin số `keepDays`. Ví dụ gtvseo.com 19/10/2026: server chỉ còn log từ 06/10, tức 13 ngày.
+- Xác định kỳ log thật bằng tên file cũ nhất. Không tin số `keepDays`. Ví dụ site agency mẫu 19/10/2026: server chỉ còn log từ 06/10, tức 13 ngày.
 - Hồ sơ server của dự án nằm ở `00-client-context/wp-server.md` của instance. Không ghi host, IP hay slug đăng nhập vào report.
 
 ## 2. Kéo log về máy
@@ -50,7 +50,7 @@ Bẫy: không đưa output SSH thẳng vào vòng lặp có glob. Cảnh báo c�
 
 ## 3. Định dạng dòng
 
-`logFormat` của gtvseo.com sau ngày 21/10/2026:
+`logFormat` của site agency mẫu sau ngày 21/10/2026:
 
 ```text
 '%{X-Forwarded-For}i %h %l %u %t "%r" %>s %b "%{Referer}i" "%{User-Agent}i" %D "%{X-LiteSpeed-Cache}o"'
@@ -84,4 +84,4 @@ Kiểm sau khi sửa:
 - Chạy `log_checks.py uploads` trên log sau mốc sửa. Trung vị byte của file thiếu phải dưới `--max-bytes`.
 - Chạy `log_health.py` trên log mới. Script phải đọc được dòng sau khi `logFormat` đổi.
 
-Ví dụ gtvseo.com 21/10/2026: sau rule trên và graceful restart, file thiếu trong uploads trả 404 tĩnh 1.249 byte trong 16 ms. Trước đó response là 132 KB trong 1,1 giây.
+Ví dụ site agency mẫu 21/10/2026: sau rule trên và graceful restart, file thiếu trong uploads trả 404 tĩnh 1.249 byte trong 16 ms. Trước đó response là 132 KB trong 1,1 giây.

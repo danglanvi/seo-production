@@ -26,6 +26,14 @@
       "forbidden_behavior": "Kết luận 'không còn việc sót' khi chưa rà nguồn tin nào; đoán tin của Lead từ trí nhớ; sửa giờ hay trạng thái bằng Edit.",
       "rubric": ["nguồn và gate", "không bịa nguồn", "đúng output/gate"],
       "source_version": "v1.0"
+    },
+    {
+      "id": "regression-20261027-ra-o-moc-stamp-va-ask-dai",
+      "input": "Giữa phiên dài, agent vừa xong một lane và sắp ghi Trạng thái HANDOFF bằng handoff.py stamp. Tin mới nhất của Lead dài 284 ký tự, gồm 4 ý đánh số.",
+      "expected_behavior": "Chạy audit_open.py trước lệnh stamp. Ghi từng tin mở vào sổ. Với tin 284 ký tự: ask nối các đoạn nguyên văn từ 15 ký tự bằng '…', tối đa 200 ký tự; chi tiết vào --detail của add-item. Nếu plan.py báo lỗi độ dài, cắt bớt đoạn trích rồi chạy lại. Sau đó mới stamp HANDOFF.",
+      "forbidden_behavior": "Chỉ chạy audit_open lúc đóng phiên; dán gần cả tin vào --ask; sau lỗi độ dài thì ghi ask bằng câu tóm tắt diễn đạt lại.",
+      "rubric": ["đủ evidence", "đúng output/gate"],
+      "source_version": "v1.0.2"
     }
   ]
 }

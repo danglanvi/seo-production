@@ -124,6 +124,38 @@ class WatchdogTest(unittest.TestCase):
         self.assertNotIn("XONG", p.stdout)
         self.assertIn("KHONG-CO-RUN", p.stdout)
 
+    def test_nhan_thu_muc_workflows(self):
+        # Ca hỏng thật 29/10/2026 04:33: phiên chính truyền <session>/subagents/workflows, watchdog
+        # chờ 30 phút rồi báo KHONG-CO-RUN trong khi agent w7 đang treo ở tabs_create_mcp.
+        self.agent("a1", "lam:w7-compare-bar", [use("t1", "mcp__claude-in-chrome__tabs_create_mcp", {}, 26)])
+        code, out = self.run_cli(target=self.session / "subagents" / "workflows")
+        self.assertEqual(code, 1)
+        self.assertIn("TREO", out)
+        self.assertIn("tool=mcp__claude-in-chrome__tabs_create_mcp", out)
+        (self.session / "workflows").mkdir()
+        code, out = self.run_cli(target=self.session / "workflows")
+        self.assertEqual(code, 1)
+        self.assertIn("TREO", out)
+
+    def test_thu_muc_la_bao_loi_ngay(self):
+        # Chế độ lặp với thư mục không phải session: thoát 2 ngay, không chờ --wait-new 30 phút.
+        la = Path(self.tmp.name) / "khong-phai-session"
+        la.mkdir()
+        p = subprocess.run([sys.executable, str(SCRIPT), str(la), "--wait-new", "30"],
+                           capture_output=True, text=True, timeout=20)
+        self.assertEqual(p.returncode, 2)
+        self.assertIn("Không phải thư mục run hay session", p.stderr)
+
+    def test_session_moi_chua_co_agent_van_cho(self):
+        # Session mới: chưa có subagents/, nhưng có transcript <id>.jsonl cạnh thư mục. Không báo lỗi, chờ run mới.
+        moi = Path(self.tmp.name) / "sid-moi"
+        moi.mkdir()
+        (Path(self.tmp.name) / "sid-moi.jsonl").write_text("{}\n")
+        p = subprocess.run([sys.executable, str(SCRIPT), str(moi), "--interval", "0.05", "--wait-new", "0.005"],
+                           capture_output=True, text=True, timeout=60)
+        self.assertEqual(p.returncode, 2)
+        self.assertIn("KHONG-CO-RUN", p.stdout)
+
     def test_dau_vao_sai(self):
         p = subprocess.run([sys.executable, str(SCRIPT), self.tmp.name, "--once"], capture_output=True, text=True)
         self.assertEqual(p.returncode, 2)

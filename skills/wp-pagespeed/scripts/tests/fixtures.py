@@ -128,10 +128,11 @@ class PsiStub:
 
 
 class SiteStub:
-    """Server trang giả: / và /ok trả 200 với title, /404 trả 404. fixed: nếu cho thì mọi đường dẫn trả mã đó."""
+    """Server trang giả: / và /ok trả 200 với title, /404 trả 404. fixed: nếu cho thì mọi đường dẫn trả mã đó.
+    body: HTML thay cho thân trang mặc định (trang 200). paths: danh sách path (kèm query) server đã nhận."""
 
-    def __init__(self, status_map=None, title='Trang thử WPS'):
-        self.status_map, self.title = status_map or {}, title
+    def __init__(self, status_map=None, title='Trang thử WPS', body=None):
+        self.status_map, self.title, self.body, self.paths = status_map or {}, title, body, []
         stub = self
 
         class H(BaseHTTPRequestHandler):
@@ -139,11 +140,13 @@ class SiteStub:
                 pass
 
             def do_GET(self):
+                stub.paths.append(self.path)
                 code = stub.status_map.get(self.path.split('?')[0], 200)
                 self.send_response(code)
                 self.send_header('Content-Type', 'text/html; charset=utf-8')
                 self.end_headers()
-                self.wfile.write(('<!doctype html><html><head><meta charset=utf-8><title>%s</title></head><body><h1>Xin chào</h1></body></html>' % (stub.title if code < 400 else 'Không tìm thấy')).encode())
+                body = stub.body if (stub.body and code < 400) else '<h1>Xin chào</h1>'
+                self.wfile.write(('<!doctype html><html><head><meta charset=utf-8><title>%s</title></head><body>%s</body></html>' % (stub.title if code < 400 else 'Không tìm thấy', body)).encode())
 
         self.srv = ThreadingHTTPServer(('127.0.0.1', 0), H)
         self.port = self.srv.server_address[1]

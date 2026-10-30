@@ -2,7 +2,7 @@
 name: content-inventory-audit
 description: "Kiểm kê mọi bài của site: chất lượng (Jev), lỗi thời, bài trùng (Gemma + SERP), danh mục chính qua cổng tin cậy, đề xuất giữ, làm mới, gộp, 301, 410. Đổi cây chuyên mục an toàn, chọn đích 301 hoặc 410 cho URL chết. Dùng khi dọn blog, rà danh mục hoặc xử lý URL 404."
 metadata:
-  version: "1.2"
+  version: "1.2.1"
 ---
 
 # content-inventory-audit — kiểm kê bài, cây chuyên mục và vòng đời URL
@@ -13,7 +13,7 @@ Gốc đường dẫn là root repo. Script nằm ở `skills/content-inventory-
 
 - Kiểm kê: `inventory.py`, `export_posts.php`, `apply_cats.php`. Rubric Jev: `tasks/category-pick.json`.
 - Cây chuyên mục: `build_tax_plan.py`, `taxonomy_rollout.php`.
-- Vòng đời URL: `pick_target.py`, `wayback_cdx.py`, `chain_check.py`.
+- Vòng đời URL: `log_urls_chet.py`, `pick_target.py`, `wayback_cdx.py`, `chain_check.py`.
 - Xuất dữ liệu chỉ đọc: `export_urls.php`, `export_tax_redirects.php`.
 
 Reference: luật bỏ bài, cột bảng kiểm kê và quy trình chọn đích 301 hoặc 410 ở `references/bo-bai.md`. Đổi cây chuyên mục ở `references/cay-chuyen-muc.md`. Danh sách công cụ đã ngừng hoặc đổi tên ở `references/loi-thoi.tsv`.
@@ -42,7 +42,7 @@ Reference: luật bỏ bài, cột bảng kiểm kê và quy trình chọn đíc
 | Registry ngưỡng | `00-client-context/model-calibration.json`, rồi `tools/ai-assist/calibration-defaults.json` | dùng 0,9/0,6 và hiệu chuẩn trước khi ghi lô lớn |
 | Nhánh B, C: `urls.json`, `cats.json`, `rules.json`, `uris.json`, `terms.json`, `cpt.json` | `export_urls.php`, `export_tax_redirects.php` qua SSH + WP-CLI | dừng nhánh B và C. Giao plan cho dev, ghi giới hạn vào báo cáo |
 | Nhánh B: `spec.json` (cây mới), `map.tsv` (danh mục chính mới) | Claude viết, người duyệt chốt cây | hỏi |
-| Nhánh C: `urls.tsv` (URL chết, click, danh sách bỏ đã duyệt) | GSC, crawl, log, backlink; người duyệt chốt danh sách bỏ | hỏi |
+| Nhánh C: `urls.tsv` (URL chết, click, danh sách bỏ đã duyệt) | GSC, crawl, log origin, log CDN (`log_urls_chet.py`, `references/bo-bai.md` mục 4.2b), backlink; người duyệt chốt danh sách bỏ | hỏi |
 | Nhánh C: bản lưu Wayback | `wayback_cdx.py` | báo cáo ghi "chưa tra Wayback". Mọi dòng `410_de_xuat` chuyển sang người duyệt |
 
 ## Phân việc model
@@ -51,7 +51,7 @@ Reference: luật bỏ bài, cột bảng kiểm kê và quy trình chọn đíc
 |---|---|---|
 | Code (`inventory.py`) | Input Jev, cổng danh mục chính, quét năm cũ và tên công cụ đã ngừng, ghép cặp trùng với GSC, luật đề xuất | dùng: lượt thử 19/10 tái tạo file 17–18/10 (mục "Đọc số cho đúng") |
 | Code (`build_tax_plan.py`, `pick_target.py`, `chain_check.py`, `wayback_cdx.py`) | Chẩn đoán cây, dựng plan, tra DB → slug cũ → Wayback, kiểm chuỗi và đích redirect | dùng: tất định. `tests/test_url_lifecycle.py` tái tạo ca hỏng thật 17–18/10 |
-| Jev `redirect-pick` | Chọn đích 301 khi nhiều URL cần đích (nhánh C) | dùng qua ngưỡng ở `tools/ai-assist/README.md` §4. Chạy lại `pick_target.py --strict` để kiểm đích Jev chọn |
+| Jev `redirect-pick` | Chọn đích 301 khi nhiều URL cần đích (nhánh C) | dùng qua ngưỡng ở `tools/ai-assist/README.md` §4. Claude đọc mọi dòng gắn cờ và cả dải từ 0,85 (lượt 27/10: đổi 15/45 dòng, `references/bo-bai.md` mục 4.3). Chạy lại `pick_target.py --strict` để kiểm đích Jev chọn |
 | Jev `category-pick` 2026-10-18.1 | Danh mục chính | dùng qua cổng registry. Rubric viết cho blog agency SEO tiếng Việt. Site ngành khác: sửa câu đầu và 2 câu cuối của `instructions`, tăng version, hiệu chuẩn mù |
 | Jev `content-effort` | Effort, dữ liệu gốc (information gain), trải nghiệm tự làm (E-E-A-T), nguồn có tên | dùng qua `content-quality-lab`, đọc qua cổng registry |
 | Jev `claim-guard` | Câu bảo đảm, tự xếp hạng, số không nguồn | dùng qua `content-quality-lab` cho bài giữ hoặc làm mới |
@@ -135,11 +135,11 @@ Nhánh B và C dùng danh sách `'python3,ssh,wp-cli,gsc?,jev?,gemma?'`.
 
 Đặt `<U>` theo `references/bo-bai.md` mục 4.2.
 
-1. Xuất `urls.json`, `terms.json`, `rules.json`, `uris.json` như nhánh B bước 1. Viết `urls.tsv`.
+1. Xuất `urls.json`, `terms.json`, `rules.json`, `uris.json` như nhánh B bước 1. Viết `urls.tsv`. Lấy URL ứng viên từ log origin và log CDN bằng `log_urls_chet.py` theo mục 4.2b.
 2. Chạy `pick_target.py`, `wayback_cdx.py`, rồi `pick_target.py --wayback` theo mục 4.3.
 3. Xử lý từng mã theo mục 4.4. 410 chỉ cho URL có `bo` = 1. Trang ngừng bán theo mục 4.5.
 4. Kiểm trước khi ghi theo mục 4.6: `pick_target.py --strict` và `chain_check.py` thoát 0.
-5. Ghi qua `wp-content-review-apply`, rồi kiểm theo mục 4.7.
+5. Ghi qua `wp-content-review-apply`, rồi kiểm theo mục 4.7. Site có quyền server và URL còn nhận lượt crawl: rule tĩnh theo mục 4.7b, khối ghi theo `wp-pagespeed` `references/ttfb-cache-trang.md` mục 4b.
 
 ### Tự phản biện trước khi trình
 Chấm bản nháp theo checklist "Bản tốt nhất phải có". Mục chưa đạt thì sửa, hoặc ghi lý do bỏ. Nếu có output của Codex hay agent khác cho cùng việc, so từng mục và lấy phần tốt hơn trước khi trình Vincent.
@@ -154,7 +154,7 @@ Bản tốt nhất phải có:
 - [ ] Mỗi bài gắn cờ lỗi thời có câu sai cụ thể do Claude đọc xác nhận. Nguồn lỗi: quét tên cũ khớp 44 lượt trên 39 trang, Claude đọc ngữ cảnh và chỉ còn 12 trang nói sai.
 - [ ] Đề xuất làm mới dựa trên nhãn đã hiệu chuẩn (`content-effort`) và hit đã đọc, không dựa trên nhãn hành động của LLM. Nguồn lỗi: GLM gắn "refresh" cho 82% trang của site mẫu.
 - [ ] Mỗi bài bỏ có đủ 4 việc: về nháp, rule 410 hoặc 301, sửa link nội bộ, sửa rule cũ trỏ vào bài. Nguồn lỗi: site mẫu thứ hai còn rule cũ trỏ vào bài đã bỏ, và một cặp 301 cứng trong mu-plugin làm bài giữ lại mất khỏi sitemap.
-- [ ] Mọi rule 301, 302, 410 định ghi qua `chain_check.py` không còn phát hiện mức `loi`. URL chết đã tra DB, slug cũ và Wayback trước khi đề xuất 410. Nguồn lỗi: site agency mẫu (gtvseo) 17/10/2026, rule 301 cũ dẫn qua rule trung gian tới trang nháp; site khoá học mẫu (theaigrowth) 17/10/2026, 301 trỏ URI cũ của Permalink Manager.
+- [ ] Mọi rule 301, 302, 410 định ghi qua `chain_check.py` không còn phát hiện mức `loi`. URL chết đã tra DB, slug cũ và Wayback trước khi đề xuất 410. Nguồn lỗi: site agency mẫu 17/10/2026, rule 301 cũ dẫn qua rule trung gian tới trang nháp; site khoá học mẫu 17/10/2026, 301 trỏ URI cũ của Permalink Manager.
 
 ## Đọc số cho đúng
 
@@ -175,7 +175,8 @@ Lượt thử trên site mẫu ngành agency SEO (dữ liệu 17–18/10/2026, c
 - Ngưỡng 6/10 dùng cho quyết định gộp trang. `serp-clustering` dùng 4/10 để gom keyword. Hai việc khác nhau.
 - Cổng 0,6 của skill là sàn chung. Registry của site có thể đặt `reject_below` cao hơn, ví dụ 0,75.
 - `khop_jev_theo_dai` trong `summary.json` so Jev với quyết định cuối. Số này chỉ có nghĩa sau khi có `quyet.tsv`.
-- Nhánh B và C chưa chạy trên site thật bằng bản script này. Test offline tái tạo các ca hỏng 17–18/10. `taxonomy_rollout.php` mới chạy đường DRY trên stub: chạy `DRY=1` trên staging trước lần ghi đầu.
+- Nhánh B chưa chạy trên site thật bằng bản script này. Test offline tái tạo các ca hỏng 17–18/10. `taxonomy_rollout.php` mới chạy đường DRY trên stub: chạy `DRY=1` trên staging trước lần ghi đầu.
+- Nhánh C: phần chọn đích (Gemma, Jev, Claude đọc) và rule tĩnh đã chạy trên site thật ngày 27/10/2026, 221 URL → 48 dòng 301, 14 dòng 410, 147 giữ 404; kết quả đo ở `references/bo-bai.md` mục 4.7b. Lượt đó dùng script lọc và dựng khối riêng của workstream. `log_urls_chet.py` là bản gộp có test offline, chưa chạy trên log thật. `pick_target.py` và `chain_check.py` mới chạy ở test offline.
 
 ## Output
 
@@ -215,6 +216,7 @@ Lượt thử trên site mẫu ngành agency SEO (dữ liệu 17–18/10/2026, c
 
 ## Changelog
 
+- v1.2.1 (2026-10-27): nguồn: lượt xử lý URL cũ trên site agency mẫu, 27/10/2026 (log origin 7 ngày, log CDN 2 ngày; 221 URL → 48 dòng 301, 14 dòng 410, 147 giữ 404; TTFB origin của 301 từ 275 xuống 10 ms, 410 từ 679 xuống 10 ms; không có lỗi 5xx sau restart; có kiểm độc lập). Nhánh C nhận URL từ log origin và log CDN: script mới `log_urls_chet.py` và test `tests/test_log_urls_chet.py`, đạt tại máy, gồm ca IP Googlebot chưa xác minh và tương thích `pick_target.py`. `bo-bai.md` thêm mục 4.2b (lấy và lọc URL từ log), cách chạy Gemma và Jev trên 221 URL cùng 6 nguyên tắc Claude áp, mục 4.7b (rule tĩnh; khối `.htaccess` trỏ sang `wp-pagespeed` mục 4b, không chép) và 2 mục checklist. Sửa dòng "Nhánh B và C chưa chạy trên site thật" vì nhánh C đã chạy một phần. Chưa thử và không vào skill: chạy `log_urls_chet.py` hàng tuần bằng cron, đo lại 81 dòng giữ 404 sau 02/11 (`chua-thu.md`).
 - v1.2 (2026-10-26): người duyệt chốt chỉ 301 về bài cùng chủ đề, không có bài phù hợp thì 410. Bỏ đích chuyên mục khỏi `bo-bai.md` (luật 6, mục 3, mục 4.1, checklist 4.8). `pick_target.py` báo `loi` khi đích là chuyên mục, thẻ hoặc archive; `chain_check.py` và `inventory.py` đổi thông báo theo luật mới. Nguồn: 301 về trang chuyên mục bị Google coi là soft 404 (19/10/2026).
 - v1.1 (2026-10-25): nd-5 và tech-1 (phần chọn đích 301 hoặc 410). `bo-bai.md` mục 4.1 thêm câu "410 chỉ cho URL trong danh sách bỏ" kèm dòng Status hygiene của `seo-logfile-analysis` 1.3, và luật dump mọi post_type, post_status (chạy `export_urls.php` không kèm `--skip-plugins`, vì trường `path` cần plugin). Thêm nhánh B đổi cây chuyên mục (`build_tax_plan.py`, `taxonomy_rollout.php`, `references/cay-chuyen-muc.md`) và nhánh C vòng đời URL (`pick_target.py`, `wayback_cdx.py`, `chain_check.py`, `bo-bai.md` mục 4). Thêm `export_tax_redirects.php`. 410 chỉ cho danh sách bỏ đã duyệt.
 - v1.0 (2026-10-19): tạo mới. Gom audit danh mục 17–18/10 (`build_jev_in.py`, `decide.py`, `export_posts_cats.php`, `apply_cats.php`), quét tất định của A5 (`a5_scan.py`) và luật bỏ bài ngày 18/10 thành `inventory.py` 5 lệnh và 2 script WP-CLI. Rubric `category-pick` 2026-10-18.1 giữ nguyên. Thêm cổng theo registry và luật "bài có danh mục hẹp thì Claude đọc". Không chuyển `site_quality_llm.py`. Test offline `tests/test_inventory.py`. Vincent chốt 19/10/2026: giữ ngoại lệ danh mục hẹp ở cổng 0,9; ngưỡng dưới 2 tầng (0,6–0,75 Claude chọn, dưới 0,6 người quyết).

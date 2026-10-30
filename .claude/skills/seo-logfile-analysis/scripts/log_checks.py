@@ -3,7 +3,7 @@
 
 uploads    Hit của mọi UA vào /wp-content/uploads/ trả 404 hoặc 410: số hit, số file, tổng byte, % byte trên mọi
            response, trung vị byte, file và referer ngoài site nhiều hit nhất. Trung vị trên --max-bytes (mặc định
-           2048) nghĩa là WordPress dựng cả trang lỗi cho file thiếu. Ca thật gtvseo.com 06–19/10/2026: 284.240 hit,
+           2048) nghĩa là WordPress dựng cả trang lỗi cho file thiếu. Ca thật site agency mẫu 06–19/10/2026: 284.240 hit,
            45,2/120,0 GB băng thông, khoảng 95 KB mỗi response. Sau rule 404 tĩnh ngày 21/10: 1.249 byte.
 redirects  Hit HTML của Googlebot từ IP đã xác minh (verified_ips.txt của verify_googlebot.py). Bỏ file tĩnh, feed,
            /wp-*, .php và URL có query. Liệt kê URL trả 3xx, đếm 404 và 410. --remove-list: URL trong danh sách bỏ

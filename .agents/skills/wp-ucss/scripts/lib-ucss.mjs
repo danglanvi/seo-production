@@ -73,7 +73,8 @@ export async function launch() {
 }
 
 // override: Map url → {type, body} để thay tài nguyên (verify dùng để nạp CSS gọn từ máy).
-export async function openPage(browser, path, dev, { override = new Map(), log = [] } = {}) {
+// doc: HTML đã tải sẵn. Có doc thì trả HTML này cho tài liệu chính, không gọi site (verify_init.mjs nạp cùng HTML dưới hai bản CSS).
+export async function openPage(browser, path, dev, { override = new Map(), log = [], doc = null } = {}) {
   const S = site();
   const vary = new RegExp(S.stub_vary), ajax = new RegExp(S.stub_ajax);
   const ctx = await browser.createBrowserContext();
@@ -89,7 +90,9 @@ export async function openPage(browser, path, dev, { override = new Map(), log =
       let h = ''; try { h = new URL(u).hostname; } catch (e) {}
       if (rt === 'document' && q.frame() === p.mainFrame()) {
         if (docDone || h !== S.host) return q.abort();
-        docDone = true; await gate(); return q.continue({ headers: { ...q.headers(), Accept: S.accept[dev] } });
+        docDone = true;
+        if (doc !== null) return q.respond({ status: 200, contentType: 'text/html; charset=utf-8', body: doc });
+        await gate(); return q.continue({ headers: { ...q.headers(), Accept: S.accept[dev] } });
       }
       if (override.has(u.split('?')[0])) { const o = override.get(u.split('?')[0]); return q.respond({ status: 200, contentType: o.type, body: o.body }); }
       if (rt === 'image' || rt === 'media') return q.respond({ status: 200, contentType: 'image/gif', body: GIF });

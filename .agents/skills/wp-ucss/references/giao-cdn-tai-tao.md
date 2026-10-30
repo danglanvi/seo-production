@@ -1,6 +1,6 @@
 # Giao CSS gọn lên site, purge, CDN, job tái tạo, trả lại
 
-Đọc file này ở Bước 7–10 của SKILL.md. Số liệu và bẫy lấy từ lượt chạy thật trên một site WordPress (OpenLiteSpeed + LiteSpeed Cache 7.9.1 + Guest Mode, CDN Bunny chia vùng) ngày 26–27/10/2026.
+Đọc file này ở Bước 7–11 của SKILL.md. Số liệu và bẫy lấy từ lượt chạy thật trên một site WordPress (OpenLiteSpeed + LiteSpeed Cache 7.9.1 + Guest Mode, CDN Bunny chia vùng) ngày 26–27/10/2026.
 
 ## 1. Thành phần trên server
 
@@ -30,6 +30,26 @@ Mu-plugin đổi HTML trước khi LiteSpeed lưu cache. Vì vậy mọi thay đ
    - Mỗi file gọn trả 200, `content-type: text/css`, có header cache 1 năm.
 
 Site mẫu 26/10: deploy 23:50, purge 6 nhóm, làm nóng 66 path × 4 biến thể (264 lượt, 0 lỗi), 5xx = 0.
+
+### 2b. Sửa vài dòng map ngoài `regen.sh`
+
+1. Lấy khoá `css_src_lockdir`.
+2. Chép file gọn mới vào thư mục CSS gọn. Kiểm từng file có trên server và md5 khớp tên.
+3. Sửa đúng các dòng cần đổi trong map live. Ghi bằng file tạm rồi `mv`.
+4. Purge LiteSpeed các path đổi, làm nóng, purge và làm nóng CDN. Nhả khoá.
+
+- Không ghi map trước khi chép file. Mu-plugin thấy file không có thì giữ link file gộp. Site agency mẫu 27/10/2026: vòng chép chạy với `IFS=' '` nên không chép file nào, 4 trang dùng CSS gộp khoảng 2 phút.
+- Không dùng `deploy_ucss.sh` hay lệnh trả lại kiểu "chép đè map cũ" cho việc này. Hai cách đó thay cả `map.php`, nên xoá khoá `all` và bản sửa của lane khác. Lệnh trả lại của một lần sửa dòng chỉ trả đúng các dòng đó.
+
+### 2c. Giao khoá `all`
+
+1. Cài mu-plugin bản có nhánh `all` (`templates/ucss-swap.php`) trước hoặc cùng lượt với map có `all`. Bản mu-plugin cũ bỏ qua khoá này.
+2. Giao map như mục 2.
+3. Purge cả nhóm bài của md5 đó theo lô 12 path, làm nóng ngay sau mỗi lô, rồi purge và làm nóng CDN.
+
+- Mu-plugin chỉ đổi HTML khi LiteSpeed dựng lại cache. Bài còn bản cache dựng trước lúc giao vẫn tải file gộp. Bài có bản cache dựng trước khi khoá `all` có hiệu lực cũng vậy (site agency mẫu 27/10/2026: một bài ở bản desktop, hết sau khi purge và làm nóng).
+- Đo độ phủ kèm số hit và miss của cache. Site agency mẫu 27/10/2026: 86/231 bài tải CSS gọn lúc 18:13, 94/231 lúc 18:27, 230/231 lúc 18:52–18:59. Lúc đo lượt cuối, 216/231 bài trả `miss` vì một phiên khác vừa purge.
+- Lượt giao ở site mẫu purge 30 bài mẫu theo nhóm ≤ 12 path: 30/30 bài × 5 biến thể tải CSS gọn sau khi làm nóng.
 
 ## 3. CDN đứng trước origin
 
@@ -78,3 +98,10 @@ Ghi bảng trả lại vào `rollback.md` của đợt trước khi giao.
   - Thiếu quy tắc ẩn `.screen-reader-text`: link "skip to content" hiện ra rồi biến mất, CLS 0,026–0,028.
   - Desktop thiếu quy tắc của menu thả xuống: menu con hiện ra trong lần vẽ đầu. Script bỏ phần tử trong menu con đang ẩn khỏi kết quả, trừ khi đặt `IN_MENU=1`.
 - A/B critical CSS trên PSI bằng `psi_ab.py` của `wp-pagespeed`, ngưỡng ghi trước khi đo.
+- Kết quả site agency mẫu 27/10/2026 (6 trang × 2 thiết bị, 96 lượt PSI): critical dựng từ CSS gọn nặng 85–113 KB mỗi trang. Bản critical inline cộng CSS gọn không chặn làm 5/6 trang có nhãn "xấu hơn" ở ít nhất một thiết bị. TBT trung vị từ 0–14 ms lên 7–178 ms. Bản đang chạy (CSS gọn chặn hiển thị) đạt 95,5–99 điểm mobile (trung vị 4 lượt). Lane không giao critical.
+
+## 7. UCSS của QUIC.cloud chen vào
+
+- LiteSpeed Cache có thể tạo file UCSS của QUIC.cloud trong `wp-content/litespeed/ucss/` và link file đó thay CSS gọn. Kiểm trước lần giao đầu: đếm file trong thư mục đó, tìm chuỗi `litespeed/ucss/` trong HTML của bộ URL.
+- Chặn bằng mu-plugin riêng dùng filter `litespeed_ucss_exc`, kèm lệnh trả lại. Filter trả `/` thì áp cho mọi URL: lệnh trả lại phải purge mọi trang từng dùng file UCSS, không chỉ trang đã đo.
+- Site agency mẫu 27/10/2026: thư mục có 1 file UCSS cho 1 trang. Sau khi áp mu-plugin 05:19: 0/274 HTML còn link `litespeed/ucss/`, không có file UCSS mới.

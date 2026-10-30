@@ -5,7 +5,7 @@
 - Googlebot web = UA Googlebot smartphone hoặc desktop (không tính Image, Video, AdsBot, StoreBot, InspectionTool, GoogleOther)
   và IP nằm trong dải Googlebot (file JSON Google công bố). Log sau CDN: thêm --trust-xff để xét IP đầu của X-Forwarded-For.
 - HTML = GET vào URL trang, mọi mã (200, 301, 404, 410...). Infra = robots.txt, sitemap, ads.txt, llm(s).txt, assetlinks.
-- % KPI = HTML / (mọi lượt trừ infra). % gốc = HTML / mọi lượt.
+- % KPI = HTML / (mọi lượt trừ infra). % gốc = HTML / mọi lượt. Script in thêm số lượt HTML 3xx và % KPI nếu chỉ tính HTML 200.
 
 Ví dụ:
   python3 -I kpi_html.py --log access.log --log access.log.1.gz --ranges googlebot.json --since "2026-10-26 21:22" --by-hour --json kpi.json
@@ -111,10 +111,13 @@ def summ(rs):
     c = Counter(r['ft'] for r in rs)
     n, h, inf = len(rs), c['html'], c['infra']
     ms = sorted(r['ms'] for r in rs if r['ft'] == 'html' and r['ms'] is not None)
+    ma = Counter(r['st'] for r in rs if r['ft'] == 'html')
     return dict(tong=n, html=h, infra=inf, mau_so=n - inf, theo_loai=dict(c),
                 pct_goc=round(100 * h / n, 1) if n else None,
                 pct_kpi=round(100 * h / (n - inf), 1) if n - inf else None,
-                ma_html=dict(Counter(r['st'] for r in rs if r['ft'] == 'html')),
+                html_3xx=sum(v for k, v in ma.items() if 300 <= k < 400),
+                pct_kpi_200=round(100 * ma[200] / (n - inf), 1) if n - inf else None,
+                ma_html=dict(ma),
                 html_ms_trung_vi=round(ms[len(ms) // 2], 1) if ms else None)
 
 
@@ -143,6 +146,7 @@ def main(argv=None):
     print(f"Googlebot web: {s['tong']} lượt, HTML {s['html']}, infra {s['infra']}, mẫu số KPI {s['mau_so']}; "
           f"% gốc {s['pct_goc']}, % KPI {s['pct_kpi']}")
     print('Theo loại:', s['theo_loai'], '| mã HTML:', s['ma_html'], '| HTML ms trung vị:', s['html_ms_trung_vi'])
+    print(f"HTML 3xx: {s['html_3xx']}/{s['html']} lượt HTML; % KPI nếu chỉ tính HTML 200: {s['pct_kpi_200']}")
     for k in ('smartphone', 'desktop'):
         print(f"{k}: {out[k]['tong']} lượt, % KPI {out[k]['pct_kpi']}")
     for k, v in out.get('theo_gio', {}).items():

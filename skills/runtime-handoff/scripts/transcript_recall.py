@@ -28,6 +28,10 @@ MASKS = [
     (re.compile(r"\bxox[abprs]-[A-Za-z0-9-]{10,}"), "[KEY]"),
     (re.compile(r"\bAIza[\w-]{20,}"), "[KEY]"),
     (re.compile(r"\bAKIA[0-9A-Z]{12,}"), "[KEY]"),
+    # Key dán vào chat không có tên biến đứng trước (ca 26–27/10/2026): QUIC.cloud dạng <chữ>.<32 ký tự chữ-số lẫn hoa thường>,
+    # Bunny dạng hai UUID nối liền nhau. Một UUID đứng riêng (session id, run id) vẫn giữ.
+    (re.compile(r"\b[A-Za-z0-9]{4,16}\.(?=[A-Za-z0-9]*\d)(?=[A-Za-z0-9]*[A-Z])(?=[A-Za-z0-9]*[a-z])[A-Za-z0-9]{24,}\b"), "[KEY]"),
+    (re.compile(r"\b[0-9A-Fa-f]{8}(?:-[0-9A-Fa-f]{4}){3}-[0-9A-Fa-f]{12}-?[0-9A-Fa-f]{8}(?:-[0-9A-Fa-f]{4}){3}-[0-9A-Fa-f]{12}\b"), "[KEY]"),
     (re.compile(r"(?i)\b(authorization|bearer)(\s*[:=]?\s*(?:bearer\s+)?)[A-Za-z0-9._+/=-]{12,}"), r"\1\2[ẨN]"),
     (re.compile(r"(?i)\b([A-Za-z_]*(?:key|token|secret|password|passwd|pwd|credential|auth|_pass)[A-Za-z_]*)(\s*[=:]\s*)([\"']?)(?!\[ẨN\])[^\s\"',;]{4,}"), r"\1\2\3[ẨN]"),
     (re.compile(r"(\s-u\s+)\S+"), r"\1[ẨN]"),
@@ -60,9 +64,15 @@ def mask(text, needles=()):
     return text
 
 
+CLIPPED = [0]
+
+
 def clip(text, width):
     text = " ".join(text.split())
-    return text if len(text) <= width else text[:width].rstrip() + f" …(+{len(text) - width} ký tự)"
+    if not width or len(text) <= width:
+        return text
+    CLIPPED[0] += 1
+    return text[:width].rstrip() + f" …(+{len(text) - width} ký tự)"
 
 
 def parse_ts(value):
@@ -132,6 +142,19 @@ def user_texts(rec):
     return out
 
 
+def queued_texts(rec):
+    """Tin Lead gõ giữa lượt nằm ở dòng attachment, không ở dòng user. Cùng điều kiện với
+    skills/workstream-master-plan/scripts/audit_open.py (read_transcript, nhánh queued_command)."""
+    a = rec.get("attachment") or {}
+    if rec.get("type") != "attachment" or a.get("type") != "queued_command" or a.get("commandMode") not in (None, "prompt"):
+        return []
+    p = a.get("prompt")
+    if isinstance(p, list):
+        p = "\n".join(x.get("text", "") for x in p if isinstance(x, dict) and x.get("type") == "text")
+    t = REMINDER.sub("", p if isinstance(p, str) else "").strip()
+    return [t] if t else []
+
+
 def assistant_texts(rec):
     return [b.get("text", "").strip() for b in blocks(rec) if b.get("type") == "text" and b.get("text", "").strip()]
 
@@ -175,16 +198,25 @@ def cmd_text(a, role):
     path = resolve_session(a.session, a.projects_dir)
     lines = []
     for rec in records(path):
-        if rec.get("type") != role or rec.get("isSidechain") or not in_window(rec, since, until):
+        if rec.get("isSidechain") or not in_window(rec, since, until):
             continue
-        for text in (user_texts(rec) if role == "user" else assistant_texts(rec)):
+        if role == "user" and rec.get("type") == "attachment":
+            texts = queued_texts(rec)
+        elif rec.get("type") != role:
+            continue
+        else:
+            texts = user_texts(rec) if role == "user" else assistant_texts(rec)
+        for text in texts:
             if rx and (PRIVATE_MARK in text or not rx.search(text)):
                 continue
-            lines.append(emit(rec, "Lead" if role == "user" else "Claude", text, a, needles))
+            label = "Claude" if role == "assistant" else ("Lead (giữa lượt)" if rec.get("type") == "attachment" else "Lead")
+            lines.append(emit(rec, label, text, a, needles))
     for line in lines[-a.last:] if a.last else lines:
         print(line)
     if not lines:
         print("không có tin khớp", file=sys.stderr)
+    if CLIPPED[0]:
+        print(f"cảnh báo: đã cắt {CLIPPED[0]} tin ở {a.width} ký tự; bỏ --width để đọc toàn văn", file=sys.stderr)
     return 0
 
 
@@ -268,7 +300,8 @@ def main():
     common = argparse.ArgumentParser(add_help=False)
     common.add_argument("--projects-dir", default=None, help="thư mục .jsonl của project (mặc định: theo thư mục hiện tại trong ~/.claude/projects)")
     common.add_argument("--needle-file", action="append", default=[], help="file mỗi dòng một chuỗi cần che (host, slug); lặp được")
-    common.add_argument("--width", type=int, default=600, help="số ký tự tối đa mỗi tin")
+    common.add_argument("--width", type=int, default=None,
+                        help="số ký tự tối đa mỗi tin; 0 là không cắt. Mặc định: user và assistant không cắt, tools và sessions 600")
     filt = argparse.ArgumentParser(add_help=False)
     filt.add_argument("--since"); filt.add_argument("--until"); filt.add_argument("--last", type=int, default=0, help="chỉ in N mục cuối")
     sub = p.add_subparsers(dest="command", required=True)
@@ -283,6 +316,9 @@ def main():
     a = p.parse_args()
     if a.projects_dir is None:
         a.projects_dir = default_dir()
+    if a.width is None:
+        # Bản cũ mặc định 600 cho mọi lệnh: lượt rà skill 19/10 và 27/10/2026 đọc tin Lead bị cắt.
+        a.width = 0 if a.command in ("user", "assistant") else 600
     if a.command == "sessions":
         return cmd_sessions(a)
     if a.command == "tools":

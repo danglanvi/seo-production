@@ -9,11 +9,16 @@ export const MIN_LCP_MS = 100;
 // Trả danh sách lỗi (mảng rỗng là đạt).
 // status: HTTP status của document chính (null nếu không nhận được). expect: chuỗi phải có trong <title> (không phân biệt hoa thường).
 // lcp: ms (bỏ qua nếu undefined). requestedHost, finalHost: host của URL yêu cầu và host của trang sau redirect.
-export function verdict({requestedHost, finalHost, status, title, expect, lcp, minLcp = MIN_LCP_MS, allowRedirectHost = false}) {
+// requestedPath, finalPath: path yêu cầu và path thật (bỏ qua nếu thiếu một trong hai). expectPath: path phải đo (--expect-path).
+// So path bỏ query, bỏ "/" cuối. Ca lỗi: lab font 27/10/2026 đo 75 lượt mà cả 75 lượt là một trang (mảng URL của vòng lặp shell hỏng).
+export const normPath = p => { let s = String(p || '/').split(/[?#]/)[0] || '/'; try { s = decodeURI(s); } catch {} return s.length > 1 ? s.replace(/\/+$/, '') || '/' : s; };
+export function verdict({requestedHost, finalHost, status, title, expect, lcp, minLcp = MIN_LCP_MS, allowRedirectHost = false, requestedPath, finalPath, expectPath}) {
   const errs = [];
   if (status == null) errs.push('không nhận được HTTP status (tunnel tắt, DNS sai hoặc trang không tải)');
   else if (status >= 400) errs.push(`HTTP ${status}`);
   if (finalHost && requestedHost && finalHost !== requestedHost && !allowRedirectHost) errs.push(`host thật ${finalHost} khác host yêu cầu ${requestedHost} (redirect?)`);
+  if (finalPath != null && requestedPath != null && normPath(finalPath) !== normPath(requestedPath)) errs.push(`path thật ${finalPath} khác path yêu cầu ${requestedPath} (redirect sang trang khác?)`);
+  if (expectPath && normPath(finalPath ?? requestedPath) !== normPath(expectPath)) errs.push(`path đo ${finalPath ?? requestedPath} khác --expect-path ${expectPath}`);
   if (expect && !String(title || '').toLowerCase().includes(String(expect).toLowerCase())) errs.push(`title "${title || ''}" không chứa "${expect}"`);
   if (lcp !== undefined && lcp !== null && lcp < minLcp) errs.push(`LCP ${lcp} ms dưới ${minLcp} ms (dấu hiệu đo nhầm trang lỗi)`);
   return errs;

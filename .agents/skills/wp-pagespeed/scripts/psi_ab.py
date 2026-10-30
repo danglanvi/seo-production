@@ -1,18 +1,19 @@
 # A/B trên PSI bằng bản HTML tĩnh (do-dac.md mục 3): dựng biến thể, đưa lên uploads/psi-ab-<tag>/, tạo danh sách URL xen kẽ,
 # lập bảng kết quả, chuyển file thử vào quarantine. Không xoá file nào trên server.
-#   python3 -I "$WPS/scripts/psi_ab.py" build  --spec ab.json --dir <thư mục> --site https://example.com --tag <tag> [--a v0 --b v4 --min-gain 3 --lcp-ms 200 --cls 0.02] [--from-src]
+#   python3 -I "$WPS/scripts/psi_ab.py" build  --spec ab.json --dir <thư mục> --site https://example.com --tag <tag> [--a v0 --b v4 --min-gain 3 --lcp-ms 200 --cls 0.02 --min-runs 4 --max-runs 5 --bench-gap 0.2] [--from-src]
 #   python3 -I "$WPS/scripts/psi_ab.py" verify --dir <thư mục>                       (kiểm noindex và canonical của mọi bản tĩnh)
 #   python3 -I "$WPS/scripts/psi_ab.py" upload --dir <thư mục> --ssh <alias> --root <web root> --tag <tag> [--owner www:www] [--apply]
 #   python3 -I "$WPS/scripts/psi_ab.py" urls   --dir <thư mục> --site https://example.com --tag <tag> [--runs 4] > urls-ab.tsv
 #   python3 -I "$WPS/scripts/psi_run.py" --urls urls-ab.tsv --out <psi> --runs 1 --devices mobile
-#   python3 -I "$WPS/scripts/psi_ab.py" table  --psi <psi> [--split-bench] [--bench-cut 800]
+#   python3 -I "$WPS/scripts/psi_ab.py" table  --psi <psi> --dir <thư mục> [--split-bench] [--bench-cut 800]
 #   python3 -I "$WPS/scripts/psi_ab.py" quarantine --ssh <alias> --root <web root> --tag <tag> [--qdir /www/backup/quarantine] [--site https://example.com --dir <thư mục>] [--apply]
 # upload và quarantine ghi lên server: mặc định chỉ in lệnh sẽ chạy (dry-run). Thêm --apply để chạy thật.
 # build tự chèn <meta name="robots" content="noindex,nofollow"> và canonical trỏ chính bản tĩnh vào MỌI file out/*.html, kể cả v0.
 # Nguyên nhân: 22/10/2026 sáu bản tĩnh A/B nằm công khai khoảng 30 phút với robots index và canonical trỏ URL gốc. upload chạy verify trước, lỗi thì từ chối (mã 3).
 # Có --site và --tag thì canonical là URL tuyệt đối của bản tĩnh. Thiếu thì canonical là tên file (tương đối, vẫn trỏ chính nó).
-# Ngưỡng đặt trước: build ghi "decision" vào spec.json (a, b, min_gain, lcp_ms, cls, thời điểm). Chạy build lại với ngưỡng khác bị từ chối (mã 2).
-# table in nhãn tốt hơn, không đổi, xấu hơn hoặc chưa đủ lượt theo ngưỡng đã ghi (cùng luật với psi_decide.py).
+# Ngưỡng đặt trước: build ghi "decision" vào spec.json (a, b, min_gain, lcp_ms, cls, min_runs, max_runs, bench_gap, thời điểm). Chạy build lại với ngưỡng khác bị từ chối (mã 2).
+# table in nhãn tốt hơn, không đổi, xấu hơn hoặc chưa đủ lượt theo ngưỡng đã ghi (cùng luật với psi_decide.py --spec), chỉ cho trang của spec.
+# table đọc cả min_runs, max_runs, bench_gap ở gốc spec.json (cách ghi tay trong ab.json trước bản 1.17). Ca lỗi 29/10/2026: table dùng min_runs 3 trong khi spec ghi 4.
 # table --split-bench: thêm bảng tách theo benchmarkIndex (< 800 máy chậm, >= 800 máy nhanh), trung vị từng nhóm.
 # quarantine --site --dir: sau khi chuyển, gọi từng URL bản tĩnh và yêu cầu 404 hoặc 410. Còn 200 thì mã thoát 1.
 # build --from-src: đọc <dir>/src/<trang>.html có sẵn thay vì tải từ site (dùng khi test offline).
@@ -38,6 +39,9 @@ ap.add_argument('--qdir', default='/www/backup/quarantine')
 ap.add_argument('--min-gain', type=float)
 ap.add_argument('--lcp-ms', type=float)
 ap.add_argument('--cls', type=float)
+ap.add_argument('--min-runs', type=int)
+ap.add_argument('--max-runs', type=int)
+ap.add_argument('--bench-gap', type=float)
 ap.add_argument('--from-src', action='store_true', help='build: đọc <dir>/src/<trang>.html có sẵn, không tải từ site')
 ap.add_argument('--split-bench', action='store_true', help='table: tách kết quả theo benchmarkIndex')
 ap.add_argument('--bench-cut', type=float, default=L.DEFAULT_THR['bench_cut'])
@@ -108,7 +112,8 @@ if a.cmd == 'build':
     old = json.load(open(sp, encoding='utf-8')) if os.path.exists(sp) else {}
     pages = {**old.get('pages', {}), **spec['pages']}
     # Ngưỡng đặt trước: ghi một lần ở build đầu. Build sau không được đổi.
-    want = {k: v for k, v in (('a', a.a), ('b', a.b), ('min_gain', a.min_gain), ('lcp_ms', a.lcp_ms), ('cls', a.cls)) if v is not None}
+    want = {k: v for k, v in (('a', a.a), ('b', a.b), ('min_gain', a.min_gain), ('lcp_ms', a.lcp_ms), ('cls', a.cls),
+                              ('min_runs', a.min_runs), ('max_runs', a.max_runs), ('bench_gap', a.bench_gap)) if v is not None}
     dec = old.get('decision')
     if want:
         if dec:
@@ -198,8 +203,12 @@ elif a.cmd == 'table':
     R = defaultdict(list)
     RS = defaultdict(list)  # (dev, trang, biến thể) -> run dict cho psi_lib.decide
     for f in glob.glob(os.path.join(a.psi, '*_mobile_run*.json')) + glob.glob(os.path.join(a.psi, '*_desktop_run*.json')):
-        name, dev = os.path.basename(f).split('_')[:2]
-        p, v, rk = name.rsplit('-', 2)
+        # Tên trang có thể có dấu gạch dưới (product_cat): tách bằng regex của psi_lib, không split('_').
+        nm = L.parse_ab_name(os.path.basename(f))
+        if not nm:
+            print('Bỏ file không theo tên psi_ab: ' + os.path.basename(f), file=sys.stderr)
+            continue
+        dev, p, v, rk = nm['dev'], nm['page'], nm['var'], nm['k']
         lr = json.load(open(f))['lighthouseResult']
         m = lr['audits']['metrics']['details']['items'][0]
         lt = lr['audits'].get('long-tasks', {}).get('details', {}).get('items', [])
@@ -223,15 +232,15 @@ elif a.cmd == 'table':
                 if g:
                     print(f"{dev} | {p} | {v} | {name} | {len(g)} | {st.median(r['score'] for r in g):.1f} | "
                           f"{st.median(r['lcp'] for r in g) / 1000:.1f} | {st.median(r['bench'] for r in g if r['bench'] is not None) if name != 'không rõ' else '–'}")
-    sd = {}
-    spp = os.path.join(a.dir, 'spec.json') if a.dir else None
-    if spp and os.path.exists(spp):
-        sd = json.load(open(spp, encoding='utf-8')).get('decision') or {}
+    sp_all = spec_meta() if a.dir else {}
+    sd = sp_all.get('decision') or {}
     if sd.get('a') and sd.get('b'):
-        thr = {k: sd[k] for k in ('min_gain', 'lcp_ms', 'cls') if k in sd}
-        print(f"\nNgưỡng đặt trước ({sd.get('decided_at', '?')}): A={sd['a']} B={sd['b']} điểm {thr.get('min_gain')}, LCP {thr.get('lcp_ms')} ms, CLS {thr.get('cls')}")
+        thr = {k: L.DEFAULT_THR[k] for k in L.THR_KEYS}
+        thr.update(L.spec_thr(sp_all))
+        print(f"\nNgưỡng đặt trước ({sd.get('decided_at', '?')}): A={sd['a']} B={sd['b']} điểm {thr['min_gain']}, LCP {thr['lcp_ms']} ms, CLS {thr['cls']}, "
+              f"{thr['min_runs']}-{thr['max_runs']} lượt mỗi nhánh, lệch máy {thr['bench_gap']}")
         for (dev, p, v), runs in sorted(RS.items()):
-            if v != sd['a']:
+            if v != sd['a'] or (sp_all.get('pages') and p not in sp_all['pages']):
                 continue
             b = RS.get((dev, p, sd['b']), [])
             r = L.decide(runs, b, thr)

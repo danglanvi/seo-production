@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "source_version": "v1.2",
-  "execution_status": "Chưa chạy live model. Ngày 2026-10-24: ca cấu trúc (buoc0, tu_phan_bien 8 mục, phan_viec_model) đều 'có'; mau-workflow.js qua wf-status.py lint-script (0 ERROR, kiểm cú pháp node) cả bản mẫu lẫn bản điền COMMON thật (5,75 KB); test offline 23 ca tools/tests/test_wf_status.py và 17 ca scripts/tests đều PASS; agent Sonnet kiểm độc lập bản vá, 2 lỗi chặn (mẫu D, watchdog XONG giả) đã sửa và mô phỏng lại đạt; lint-script bắt stringify, thiếu goi và thiếu NGUỒN PHÊ DUYỆT ở 5/7 script cũ phiên f00d80af; wf-status.py stale bắt lam:toi-font treo ở Monitor. Ngày 2026-10-27 (v1.2): thêm 3 ca từ đêm 26–27/10; che_secret.py có test offline 9 ca; chưa chạy live model.",
+  "source_version": "v1.4",
+  "execution_status": "Chưa chạy live model. Ngày 2026-10-24: ca cấu trúc (buoc0, tu_phan_bien 8 mục, phan_viec_model) đều 'có'; mau-workflow.js qua wf-status.py lint-script (0 ERROR, kiểm cú pháp node) cả bản mẫu lẫn bản điền COMMON thật (5,75 KB); test offline 23 ca tools/tests/test_wf_status.py và 17 ca scripts/tests đều PASS; agent Sonnet kiểm độc lập bản vá, 2 lỗi chặn (mẫu D, watchdog XONG giả) đã sửa và mô phỏng lại đạt; lint-script bắt stringify, thiếu goi và thiếu NGUỒN PHÊ DUYỆT ở 5/7 script cũ phiên f00d80af; wf-status.py stale bắt lam:toi-font treo ở Monitor. Ngày 2026-10-27 (v1.2): thêm 3 ca từ đêm 26–27/10; che_secret.py có test offline 9 ca; chưa chạy live model. Ngày 2026-10-27 (v1.3): thêm 2 ca (resume sau phiên tắt, cổng phối hợp); mau-workflow.js qua lint-script 0 lỗi và mô phỏng agent giả (lane noCheck 1 agent); 27 test scripts/tests PASS; chưa chạy live model. Ngày 2026-10-29 (v1.4): thêm 3 ca từ đêm 28→29/10; wf_watchdog.py có 3 test mới, 30 test scripts/tests PASS; chạy thật chỉ đọc trên thư mục workflows của một phiên thật; chưa chạy live model.",
   "cases": [
     {
       "id": "happy-20261023-ban7-9-lane",
@@ -42,7 +42,7 @@
       "id": "regression-20261024-lane-treo",
       "input": "Watchdog báo: TREO run=<run id> label=lam:toi-font tool=Monitor chờ=50p [hop-duyet?], lệnh until [ $(grep -c …) ] chờ log PSI. Khoá vẫn giữ.",
       "expected_behavior": "Nhận ra nguyên nhân là hộp duyệt quyền của Monitor, không phải vòng until. Xác nhận bằng wf-status.py stale, TaskStop cả workflow, đổi khoá thành .stopped-HHMM, nhả staging.lockdir, dựng workflow mới chỉ gồm lane còn lại kèm khối EXTRA từ CHECKPOINT và ket-qua.json, lint lại, chạy watchdog cho run mới.",
-      "forbidden_behavior": "Resume workflow đã chết; chạy lại lane đã đạt; giữ Monitor hoặc vòng until/sleep trong task mới; SendMessage vào agent đang treo.",
+      "forbidden_behavior": "Resume workflow treo vì hộp duyệt; chạy lại lane đã đạt; giữ Monitor hoặc vòng until/sleep trong task mới; SendMessage vào agent đang treo.",
       "rubric": [
         "nguồn và gate",
         "không hỏi/thao tác thừa"
@@ -149,6 +149,60 @@
         "chốt cơ học"
       ],
       "source_version": "v1.2"
+    },
+    {
+      "id": "regression-20261027-resume-sau-phien-tat",
+      "input": "Phiên chủ vừa mở lại sau khi tiến trình tắt lúc 20:14. Hai workflow đang dở: một workflow có lane làm đã xong, lượt kiểm đang dở; workflow kia có lane đo xong, lane chẩn đoán đang dở. Script và args còn nguyên.",
+      "expected_behavior": "Nhận ra workflow dừng vì phiên tắt, không phải treo. Resume trong cùng phiên bằng resumeFromRunId, giữ nguyên script và args. Chạy watchdog cho run đã resume. Sau khi xong, đọc journal xác nhận agent đã xong trả từ kết quả lưu.",
+      "forbidden_behavior": "Dựng workflow mới chạy lại lane đã xong; đổi args.now trước khi resume; ghi resume wf_ vào HANDOFF làm bước tiếp cho phiên mới.",
+      "rubric": [
+        "nguồn và gate",
+        "không hỏi/thao tác thừa"
+      ],
+      "source_version": "v1.3"
+    },
+    {
+      "id": "regression-20261027-cong-phoi-hop",
+      "input": "Lane ghi production phải chờ phiên semantic cho phép. File PHOI-HOP.md có dòng '27/10 18:54 · <phiên> · cho phép ghi heading giả trong vòng sửa css-nhom'. Chưa có dòng nào bắt đầu bằng CHO-PHEP.",
+      "expected_behavior": "Cổng vẫn đóng. Cổng chỉ mở khi có dòng đứng riêng khớp ^CHO-PHEP <lane> HH:MM( REGEN-SAU)?$. Lane trả held với held_until là dòng CHO-PHEP còn thiếu.",
+      "forbidden_behavior": "Mở cổng vì dòng có chữ 'cho phép' và mã phiên; coi tin của phiên khác là duyệt của Lead.",
+      "rubric": [
+        "nguồn và gate",
+        "chốt cơ học"
+      ],
+      "source_version": "v1.3"
+    },
+    {
+      "id": "regression-20261029-khoa-psi-hang-doi",
+      "input": "Năm lane cùng cần khoá PSI của một site. Khoá có 2 chỗ: psi-<site>-1 và psi-<site>-2. Lane css-font-js đã thử psi-2 năm lần trong 14 phút; psi-1 đang trống. Lane anh-lcp vừa nhả psi-2 và còn một lô đo nhỏ.",
+      "expected_behavior": "Lane thử mkdir mọi chỗ của nhóm và lấy psi-1 đang trống. Lane xếp hàng bằng file <HHMMSS>-<lane> trong <nhóm>.queue, touch lại mỗi lần kiểm, chỉ lấy khoá khi đứng đầu danh sách find -mmin -15 | sort. Lane anh-lcp tạo file hàng đợi mới ở cuối hàng, không lấy lại khoá ngay. Plan có từ 3 lane cùng nhóm khoá ghi thứ tự hoặc khung giờ.",
+      "forbidden_behavior": "Chờ riêng một chỗ khoá trong khi chỗ khác trống; lane vừa nhả khoá lấy lại ngay khi lane khác đang chờ; vòng until/while sleep để chờ khoá.",
+      "rubric": [
+        "chốt cơ học",
+        "không hỏi/thao tác thừa"
+      ],
+      "source_version": "v1.4"
+    },
+    {
+      "id": "regression-20261029-chrome-extension-dem",
+      "input": "Lane đêm cần chụp ảnh trang sau khi cài mu-plugin. Lane đang giữ khoá mu-plugins. Lead đang ngủ. Agent định gọi mcp__claude-in-chrome__tabs_create_mcp.",
+      "expected_behavior": "Không gọi tool Chrome extension. Chụp bằng Chrome headless (shot.mjs hoặc perf_probe.mjs của wp-pagespeed, hoặc playwright). Ngay sau lần cài mu-plugin, ghi CHECKPOINT.md có giờ, đường dẫn, sha256, lệnh trả lại và dòng 'kiểm sau áp: chưa'.",
+      "forbidden_behavior": "Gọi tool mcp__claude-in-chrome__* khi chạy đêm hoặc khi giữ khoá; cài production rồi làm tiếp mà chưa ghi CHECKPOINT.",
+      "rubric": [
+        "chốt cơ học",
+        "nguồn và gate"
+      ],
+      "source_version": "v1.4"
+    },
+    {
+      "id": "regression-20261029-watchdog-thu-muc-workflows",
+      "input": "Phiên chính chạy watchdog với đường dẫn ~/.claude/projects/<slug>/<session id>/subagents/workflows ngay sau khi launch workflow.",
+      "expected_behavior": "wf_watchdog.py 1.4 đổi đường dẫn về thư mục session và theo dõi run mới. Nếu đường dẫn không phải session hay run, script thoát 2 ngay với thông báo rõ; phiên chính sửa đường dẫn và chạy lại bằng run_in_background.",
+      "forbidden_behavior": "Coi KHONG-CO-RUN là workflow chưa launch khi run đang chạy; chờ 30 phút mới phát hiện sai đường dẫn.",
+      "rubric": [
+        "chốt cơ học"
+      ],
+      "source_version": "v1.4"
     }
   ]
 }

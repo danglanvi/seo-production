@@ -1,5 +1,5 @@
 ---
-master_version: v2026.10.44
+master_version: v2026.10.54
 ---
 
 # MIGRATION — Cập nhật instance lên version master mới
@@ -15,6 +15,94 @@ master_version: v2026.10.44
 ---
 
 ## 1. Có gì mới
+
+### v2026.10.54 (2026-10-30) — Skill mới `wp-gtm-tracking`; nâng `semantic-html-optimization` 1.3, `wp-staging-deploy` 1.4, `wp-pagespeed` 1.20, `decision-page` 1.1.0
+
+- **Vì sao:** người duyệt yêu cầu 30/10/2026 13:00 rà toàn bộ việc tốc độ và semantic HTML trên site bán lẻ mẫu (28–30/10/2026), cùng nhật ký tối ưu site TMĐT mẫu của SEO Lead dự án, rồi nâng skill. Trang quyết bị chê khó hiểu (30/10/2026 12:01, 12:10).
+- **wp-gtm-tracking 1.0.0 (mới):** lớp thi công đo lường trên site WordPress có quyền server. Kiểm hit thật có chặn (bộ chặn gồm `g/collect`, `rmkt/collect`, selftest 10 hit), dựng container bằng GTM API trong workspace, tiền tố `ga4_` cho sự kiện thương mại khi plugin Ads gọi `gtag('event', …)` cùng tên, lọc conversion plugin Ads theo trạng thái đơn, hoãn GTM có trần và chọn N bằng A/B, thứ tự áp (mu-plugin trước, publish sau), theo dõi 7 ngày. Mẫu `templates/gtm-delay-loader-option.php` cho site chèn snippet bằng option plugin, harness PHP 11 kịch bản (`tests/run.sh`), `scripts/gtm_api.py` (inventory, preview-url, version, publish). Đăng ký trong `skills/manifest.yaml` của workspace.
+- **semantic-html-optimization 1.3:** reference `ap-site-woocommerce.md` (24 mẫu sửa, 12 bẫy, việc giao team, báo cáo có ảnh vị trí và code trước/sau). Script `deep_audit.py`, `html_validate.sh` + config, test 3 ca.
+- **wp-staging-deploy 1.4:** nhánh site không có staging: theme xem trước trên production bằng mu-plugin có mã (`references/khong-co-staging.md`, `templates/theme-preview.php.tpl`, `scripts/theme_preview_fill.py`, test 2 ca).
+- **wp-pagespeed 1.20:** lớp 7 trỏ sang `wp-gtm-tracking`. Mẫu `menu-image-lazy.php`, `a11y-ten-phan-tu.js`. `ttfb-cache-trang.md` mục 4c: average response time GSC dưới 300 ms cần cache HTML ở edge.
+- **decision-page 1.1.0 (bản sinh từ root):** schema 2 mặc định: thẻ hỏi phải có minh hoạ (ảnh hoặc khối `code`, `table`, `bars`, `stats`), câu hỏi phải có `why`, tiêu đề không có mã nội bộ. Khối mới `code` hiện code trước và sau. Spec cũ thêm `"schema": 1` để dựng lại như trước.
+- **Gộp thêm vào bản này:** `web-lane-orchestration` 1.4 (bản sinh từ root ngày 29/10: hàng đợi khoá theo thư mục, cấm tool Chrome extension khi chạy đêm, `wf_watchdog.py` nhận 2 dạng thư mục workflow) và `internal-linking` 1.4.2 (29/10). Hai bản này đã sửa ở master nhưng chưa có mục MIGRATION riêng.
+- **Kiểm:** `skill_struct_check.py` đạt 4 skill. Test: `wp-gtm-tracking/tests/run.sh` mã 0 (49 ca), `test_deep_audit.py` 3/3, `test_theme_preview.py` 2/2 cùng 3 bộ test cũ của `wp-staging-deploy`, `decision-page` 51/51.
+- **Port sang instance:** GHI ĐÈ `skills/wp-gtm-tracking` (mới), `skills/semantic-html-optimization`, `skills/wp-staging-deploy`, `skills/wp-pagespeed`, `skills/decision-page`, `skills/web-lane-orchestration`, `skills/internal-linking` và mirror, bằng `python3 tools/port_skill.py`, rồi `bash tools/sync-skills.sh`. Không đè `MIGRATION.md` của instance khi instance đang ở version khác. Cập nhật `master_version` thành `v2026.10.54`.
+
+### v2026.10.53 (2026-10-30) — `wp-pagespeed` 1.19: sửa theo lô rồi mới đo PSI
+
+- **Vì sao:** người duyệt chốt 30/10/2026 13:07: "fix một bulk rồi mới chạy PSI test lại, hạn chế cái nào cũng a/b testing". Ca thật trên site bán lẻ mẫu 29–30/10/2026: ban ngày A/B từng việc chỉ đưa mobile trung bình 16 URL từ 56,4 lên 57,2; một lô sửa ở theme theo template đêm đó đưa lên 90,4.
+- **wp-pagespeed 1.19:** reference mới `luot-lon.md` là nguồn duy nhất của luật sửa theo lô: khi nào dùng, sửa theo template thay vì URL mẫu, xin quyền sửa theme ngay trong plan, chọn việc theo byte trước LCP, UI gọn kèm mockup, dựng lô bằng git, bộ kiểm không cần PSI (K-HTML, K-CHUC, K-TRACK, K-HINH), deploy theo tầng, xử lý lô đo xấu hơn, 7 bẫy. A/B PSI riêng chỉ còn 4 trường hợp. Bước 3 thêm mục 14, Bước 4 đổi thành "sửa theo lô", Gate thêm chặn `g/collect` và `rmkt/collect` khi kiểm tracking, Anti-patterns thêm 2 dòng. Bản gộp phần phiên training soạn lúc 13:09. Không đổi script.
+- **Kiểm:** `skill_struct_check.py` đạt.
+- **Port sang instance:** GHI ĐÈ `skills/wp-pagespeed` và mirror, bằng `python3 tools/port_skill.py --skills wp-pagespeed`, rồi `bash tools/sync-skills.sh`. Cập nhật `master_version` thành `v2026.10.53`.
+
+### v2026.10.52 (2026-10-30) — `wp-pagespeed` 1.18 (site chồng nhiều plugin tối ưu) và `cdn-speed-setup` 1.3.1 (thứ tự Cache Rules)
+
+- **Vì sao:** SEO Lead một dự án TMĐT (theme đa năng + WooCommerce) gửi nhật ký tối ưu 27–30/10/2026: PSI mobile trang chủ 61 → 96, LCP 10,1 s → 1,5 s, INP lab nhóm danh mục 448 → 104–128 ms. Nhiều bài học chưa có trong skill.
+- **wp-pagespeed 1.18:** reference mới `plugin-chong-cheo.md` (mỗi việc một plugin, used CSS theo loại trang, Defer cần Include Inline Scripts, consent và INP, ảnh mega menu, đo cả có và không cache, Validate Fix, bẫy sửa qua wp-admin, hỗ trợ tiếp cận). Anti-patterns thêm 3 dòng. Không đổi script. Bản này gồm cả thay đổi của 1.17 (29/10, `psi_decide.py --spec`).
+- **cdn-speed-setup 1.3.1:** nhánh A thêm cách tách rule cache HTML và rule Bypass (rule sau ghi đè rule trước, cookie thử thách), ca APO chạy cùng LiteSpeed khi tắt Guest Mode, kiểm `cf-cache-status` trang giỏ hàng.
+- **Kiểm:** `skill_struct_check.py` đạt 2 skill. Không đổi script nên không chạy lại test.
+- **Port sang instance:** GHI ĐÈ `skills/wp-pagespeed`, `skills/cdn-speed-setup` và mirror, bằng `python3 tools/port_skill.py --skills wp-pagespeed,cdn-speed-setup`, rồi `bash tools/sync-skills.sh`. Cập nhật `master_version` thành `v2026.10.52`.
+
+### v2026.10.51 (2026-10-28) — `wp-staging-deploy` 1.3: purge đủ toàn site khi đổi phần dùng chung
+
+- **Vì sao:** người duyệt (28/10) đổi nút liên hệ nổi trên site agency mẫu. Đợt đầu chỉ purge 33 trang chính, nên bài blog còn bản cũ, và edge CDN còn 60/370 bản cũ. Người duyệt yêu cầu lần sau làm mới cache toàn site, gồm cả CDN.
+- **wp-staging-deploy 1.3:** mục mới "Đổi phần dùng chung toàn site" (danh sách path, purge theo lô ≤12, làm nóng, purge CDN, kiểm ngẫu nhiên ≥12 path ở 2 UA). Script mới `site_paths.sh` dựng danh sách path từ sitemap, trang phân trang và file `--extra`. Gate và tự phản biện thêm mục tương ứng.
+- **Kiểm:** `bash -n` đạt. Chạy `site_paths.sh` trên site thật: 346 path sitemap, 17 trang phân trang. Lỗi sitemap trả mã 1.
+- **Port sang instance:** GHI ĐÈ `skills/wp-staging-deploy` và mirror, bằng `python3 tools/port_skill.py --skills wp-staging-deploy`, rồi `bash tools/sync-skills.sh`. Cập nhật `master_version` thành `v2026.10.51`.
+
+### v2026.10.50 (2026-10-28) — Skill mới `web-reverse-engineer` và tool `rea`
+
+- **Vì sao:** người duyệt (28/10) cần một cách gọi khi cần để soi plugin, theme, web app trên WordPress và Shopify. REA không được đăng ký MCP cho mọi phiên.
+- **Thêm:** skill `web-reverse-engineer` 1.0 (4 nhánh: trình duyệt, WordPress, Shopify, capture và so version; luật dùng code của bên khác; script `rea_cdp.sh` mở và đóng Chrome CDP). `tools/capabilities.md` thêm id `rea`.
+- **Kiểm:** `skill_struct_check.py` đạt. Bước 0 đạt với REA 6.8.0, Node 24.22.1. Chạy thật trên trang chủ site WordPress mẫu: `inspect-web-page`, `inspect-web-event-listeners`, `export-web-scripts`, `analyze-javascript-application`, `analyze-web-bundle`.
+- **Port sang instance:** GHI ĐÈ `tools/capabilities.md`, thêm `skills/web-reverse-engineer` và mirror, bằng `python3 tools/port_skill.py --skills web-reverse-engineer --new`, rồi `bash tools/sync-skills.sh`. Máy chạy skill cần `npm install --global rea-agents` và Node ≥ 24.22.1. Cập nhật `master_version` thành `v2026.10.50`.
+
+### v2026.10.49 (2026-10-28) — `wp-pagespeed` 1.16.1 (`lh_local.mjs`, truy CLS chỉ PSI thấy) và `wp-ucss` 1.2.1 (CSS chèn ở `wp_head`)
+
+- **Vì sao:** truy CLS 0,323 ở 3/6 lượt PSI của một trang dịch vụ site agency mẫu 28/10. `lh_local.mjs` thoát lỗi `ERR_MODULE_NOT_FOUND` vì cache npx đã có puppeteer-core 25.
+- **wp-pagespeed 1.16.1:** `lh_local.mjs` tìm puppeteer-core ở cả `lib/esm/` và `lib/puppeteer/`. `cls-chi-psi-thay.md` bước 2 thêm 2 cách truy: tính ngược khoảng dịch từ điểm và rect, so filmstrip với lượt CLS 0 trước khi kết luận do font.
+- **wp-ucss 1.2.1:** Anti-patterns thêm bẫy `<style>` chèn ở `wp_head` không có `data-no-optimize="1"`: bộ gộp CSS gom vào file gộp, md5 đổi, map và khoá `all` mất hiệu lực. Đã xảy ra trên production site agency mẫu 28/10 và đã sửa bằng regen. Không đổi script.
+- **Kiểm:** `skill_struct_check.py` đạt 2 skill, test Python wp-pagespeed và `run.sh` wp-ucss đạt, `leak_scan.sh` sạch. `lh_local.mjs --dry-run` đạt, đo thật 8 lượt đạt.
+- **Port sang instance:** GHI ĐÈ `skills/wp-pagespeed`, `skills/wp-ucss` và mirror, bằng `python3 tools/port_skill.py --skills wp-pagespeed,wp-ucss`, rồi `bash tools/sync-skills.sh`. Cập nhật `master_version` thành `v2026.10.49`.
+
+### v2026.10.48 (2026-10-28) — `wp-pagespeed` 1.16: link neo dừng sai đích khi Delay JS
+
+- **Vì sao:** người duyệt (27/10 22:24) cho nâng skill tốc độ khi đã chạy thật. Lane slider-fix sửa trên production site agency mẫu 28/10 04:31, kiểm độc lập đạt.
+- **wp-pagespeed 1.16:** lớp 6 thêm bẫy link neo trong trang dừng sai đích khi Delay JS làm slider khác của theme co trang, cách đo 5 mốc bấm, hàm cuộn lại đích và chỗ đặt hàm. Bảng "Đã A/B và không áp" thêm hàng hoãn khởi tạo slider.
+- **Kiểm:** `skill_struct_check.py` đạt, `leak_scan.sh` sạch. Không đổi script.
+- **Port sang instance:** GHI ĐÈ `skills/wp-pagespeed` và mirror, bằng `python3 tools/port_skill.py --skills wp-pagespeed`, rồi `bash tools/sync-skills.sh`. Cập nhật `master_version` thành `v2026.10.48`.
+
+### v2026.10.47 (2026-10-27) — `wp-ucss` 1.2.0: safelist carousel, khoá nhóm bài, cổng cặp path × biến thể; 2 skill điều phối 1.0.2
+
+- **Vì sao:** người duyệt (27/10, 22:24 và 22:54) cho nâng skill tốc độ từ lượt chạy thật. Bản này là phần `wp-ucss` mà v2026.10.46 giữ lại vì cổng `map_diff.py --inv` chưa có ca dừng thật.
+- **Quyết định cổng:** giao map tay giữ cổng cứng (`MAX_LOST_PAIRS` mặc định 0 trong `map_diff.py`). Job tái tạo `regen.sh` đặt `MAX_LOST_PAIRS` mặc định 100000: cặp mất chỉ in CẢNH BÁO và ghi `runs/<lượt>/map_diff.txt`. Lý do: dừng nhầm lúc đêm làm map không cập nhật, trang về file gộp mà không ai biết. Cổng `MAX_LOST` theo path vẫn dừng job như cũ.
+- **wp-ucss 1.2.0:** safelist `^owl-…` cho carousel. `verify_init.mjs` kiểm khởi tạo carousel/slider, test fixture Owl trên Chrome. Khoá `all` theo nhóm bài trong `make_map.py` và mu-plugin mẫu, bỏ qua bài có iframe YouTube tải ngay. Thứ tự giao: chép file gọn trước khi ghi map. Khoá `css_src_lockdir` (lấy trước khi đổi nguồn CSS gộp hoặc ghi map tay) thay tên khoá riêng của workstream. Số đo thật ở Changelog của skill, ghi "site agency mẫu 27/10/2026".
+- **decision-page 1.0.2, workstream-master-plan 1.0.2:** bản sinh từ root bằng `tools/port-dieu-phoi.py`, không sửa tay. Trang quyết lọc thêm 2 loại thẻ: việc tự quyết theo tiêu chí đã ủy quyền, và chữ lệch ở bài kiến thức vẫn đúng chuyên môn. Master plan chạy `audit_open.py` ở mỗi mốc `stamp` HANDOFF và nối tin dài bằng đoạn nguyên văn.
+- **wp-pagespeed 1.15.1, seo-logfile-analysis 1.5.1:** gỡ tên miền site mẫu khỏi Changelog, reference, chú thích script và test. Không đổi luật hay logic script. Test của `seo-logfile-analysis` đạt.
+- **Kiểm:** `wp-ucss/scripts/tests/run.sh` đạt mọi phần ở master và ở một instance mẫu. `skill_struct_check.py` đạt. `leak_scan.sh` sạch. Test của `decision-page` và `workstream-master-plan` đạt ở master.
+- **Port sang instance:** GHI ĐÈ `skills/wp-ucss`, `skills/decision-page`, `skills/workstream-master-plan`, `skills/wp-pagespeed`, `skills/seo-logfile-analysis` và mirror, bằng `python3 tools/port_skill.py`, rồi `bash tools/sync-skills.sh`. Không bị chặn lineage. Instance đang chạy job tái tạo: chép `map_diff.py`, `regen.sh`, `make_map.py`, `lib-ucss.mjs`, `verify_init.mjs` vào thư mục làm việc của đợt sau khi không còn lane nào giữ map, rồi chạy `DRY=1 regen.sh` một lần. Mu-plugin có khoá `all`: chỉ thay sau ma trận staging. Cập nhật `master_version` thành `v2026.10.47`.
+
+### v2026.10.46 (2026-10-27) — Đợt 3 nâng skill tốc độ, log, điều phối từ lượt chạy thật 26–27/10 (không gồm `wp-ucss`)
+
+- **Vì sao:** người duyệt (27/10, 20:17 và 22:24) cho nâng skill tốc độ và skill liên quan khi đã có trải nghiệm thật. Mỗi bài học có file bằng chứng. Bài chưa chạy thật nằm ở danh sách chưa thử của đợt, không vào skill. Số đo riêng site chỉ nằm ở Changelog, ghi "site agency mẫu 27/10/2026".
+- **wp-pagespeed 1.15:** `scripts/trace_fn.mjs` (trace theo hàm cho TBT, test 6 ca); `_guard.mjs` và `lh_local.mjs` kiểm path trang và nhận `--expect-path`. Checklist lớp 1–6 thêm việc đã A/B: cache private, làm nóng `/page/N/`, đo cỡ ảnh ở khung PSI, công thức byte ảnh, trace JS. Bảng "Đã A/B và không áp" thêm 8 hàng. `do-dac.md` sửa dòng `?nc=` (bản không cache là HTML khác) và thêm luật 8 lượt khi quyết.
+- **technical-seo-audit 1.11:** sửa dòng "304 cao là tốt" (chỉ đúng với HTML). Thêm mục 4.14 vệ sinh `robots.txt` và Anti-pattern về header cache dài cho CSS, JS, font.
+- **cdn-speed-setup 1.3:** `nhanh-b-chia-vung.md` §2b (lưu mã lỗi ở edge, điều kiện mã cho mọi rule cache); `origin-sau-cdn.md` biến thể cache theo loại file, hàng đợi purge, CDN tự nén br; `do-va-kiem.md` cách đo độ trễ Googlebot. Thêm 2 ca eval.
+- **seo-logfile-analysis 1.5:** `kpi_html.py` báo thêm HTML 3xx và % KPI chỉ tính HTML 200 (test mới). KPI ước ghi nhãn "(ước)". Tách range request video khi tính byte.
+- **web-lane-orchestration 1.3, runtime-handoff 1.3.2, `tools/shell-traps-macos.md`:** bản sinh từ root bằng `tools/port-dieu-phoi.py`, không sửa tay. Có công thức đếm agent tệ nhất, cổng file phối hợp, bảng resume, 3 bẫy shell mới, che 2 dạng key trong `transcript_recall.py`.
+- **Chưa port ở bản này:** `wp-ucss` 1.2.0, port ở v2026.10.47.
+- **Kiểm:** `skill_struct_check.py` đạt cho 6 skill. Test của từng skill chạy lại đạt ở master; test chạy lại ở một instance mẫu đạt, hai instance còn lại kiểm bằng `diff -rq` với master (`technical-seo-audit` 31, `seo-logfile-analysis` 7+12+4+3+15, `cdn-speed-setup` 23+31, `runtime-handoff` 2 nhóm, `web-lane-orchestration` 27, `wp-pagespeed` phần mới 6+16). `leak_scan.sh` sạch cho 5 skill. Với `runtime-handoff`, quét báo 1 chỗ: đó là mẫu che `wp-login.php?` trong `transcript_recall.py`, có từ trước, không phải secret.
+- **Port sang instance:** GHI ĐÈ 6 thư mục skill (`wp-pagespeed`, `technical-seo-audit`, `cdn-speed-setup`, `seo-logfile-analysis`, `web-lane-orchestration`, `runtime-handoff`) và `tools/shell-traps-macos.md`, bằng `python3 tools/port_skill.py --extra tools/shell-traps-macos.md`, rồi `bash tools/sync-skills.sh`. Không skill nào bị chặn lineage. Instance dùng `trace_fn.mjs`: cần Chrome và Node. Cập nhật `master_version` thành `v2026.10.46`.
+
+### v2026.10.45 (2026-10-27) — Đợt 2 nâng skill từ lượt chạy thật 26–27/10: staging, đổi lastmod, nén ảnh, URL chết từ log
+
+- **Vì sao:** người duyệt (27/10, 22:24 và 22:54) cho nâng skill từ lượt chạy thật trên site agency mẫu. Mỗi bài học có file bằng chứng. Bài chưa chạy thật nằm ở danh sách chưa thử của đợt, không vào skill.
+- **wp-staging-deploy 1.2:** `scripts/wpx.sh` chạy `wp eval-file` trên production hoặc staging, đọc `ssh`, `docroot`, `php_bin`, `wp_bin`, `wp_user`, `stg_docroot_glob` từ `site.json`. Có khe `flock`, che đúng host và thư mục staging, cờ `--dry`. `tests/test_wpx.py` 6 ca. Bước 4 thêm luật thời điểm deploy: staging đạt ngưỡng đã ghi trước thì deploy ngay trong ngày.
+- **wp-content-review-apply 1.7.2:** `scripts/set_post_modified.php` đổi `post_modified` theo TSV, UPDATE có điều kiện cả 2 cột giá trị cũ, `MODE` bắt buộc. `references/ghi-an-toan.md` mục 3b: đổi lastmod sitemap, xoá cache sitemap, kiểm ở origin và edge. `tests/test_post_modified.py` 5 ca.
+- **image-seo-optimize 1.3:** Bước 4d nén lại ảnh theo SSIM luma (0,98 ảnh có chữ hoặc logo, 0,97 ảnh thật; chỉ ghi khi nhỏ hơn ít nhất 8%). Ảnh có alpha đo trên nền thật của trang. Kiểm alt ở khách desktop, khách mobile và Googlebot smartphone. Script mới `ssim_luma.py`, `webp_recompress.py`, `alt_variants.py` có test offline. Cần `numpy`.
+- **content-inventory-audit 1.2.1:** nhánh C nhận URL từ log origin và log CDN qua `scripts/log_urls_chet.py`. `bo-bai.md` thêm mục 4.2b, cách chạy Gemma và Jev trên tập URL, mục 4.7b rule tĩnh 301/410 trong `.htaccess`. Gỡ tên miền khỏi ví dụ trong `cay-chuyen-muc.md`.
+- **Kiểm:** `skill_struct_check.py --loai build` đạt cho 4 skill. Test của từng skill chạy lại đạt ở master và ở 3 instance mẫu.
+- **Port sang instance:** GHI ĐÈ 4 thư mục skill (`wp-staging-deploy`, `wp-content-review-apply`, `image-seo-optimize`, `content-inventory-audit`) và mirror, bằng `python3 tools/port_skill.py`. Instance dùng `wpx.sh`: kiểm `site.json` có đủ 6 khoá ở trên, chạy `--dry` trước. Instance chạy `webp_recompress.py`: cài `numpy`. Cập nhật `master_version` thành `v2026.10.45`.
 
 ### v2026.10.44 (2026-10-27) — Công cụ port skill, nhận khách có server, render-diff gỡ plugin, `FLUSH=0`
 

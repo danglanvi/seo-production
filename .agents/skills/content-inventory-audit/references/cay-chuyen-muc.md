@@ -10,8 +10,8 @@ Mục đích: chẩn đoán cây chuyên mục WordPress, dựng plan và đổi
 
 Nguồn lỗi:
 
-- Site agency mẫu (gtvseo) 18/10/2026: người duyệt viết "gốc rễ chưa đúng" sau khi agent đã sửa danh mục từng bài. Ba vòng sửa cây mất khoảng 35, 20 và 19 phút.
-- Site khoá học mẫu (theaigrowth) 17/10/2026: script chuyên mục tạo 301 sai vì Permalink Manager còn giữ URI cũ. Script phải chạy lại 3 lần, mất 5–8 phút làm lại.
+- Site agency mẫu 18/10/2026: người duyệt viết "gốc rễ chưa đúng" sau khi agent đã sửa danh mục từng bài. Ba vòng sửa cây mất khoảng 35, 20 và 19 phút.
+- Site khoá học mẫu 17/10/2026: script chuyên mục tạo 301 sai vì Permalink Manager còn giữ URI cũ. Script phải chạy lại 3 lần, mất 5–8 phút làm lại.
 - Hai đợt trên có khoảng 5 phút trang 404 trên production.
 
 ## 2. Xuất dữ liệu (chỉ đọc)
@@ -123,9 +123,9 @@ python3 $C/chain_check.py --rules <T>/rules.json --new <T>/plan.json --host <dom
 
 ## 8. Checklist nhánh B
 
-- [ ] `diagnose` chạy trước khi gán bài hàng loạt. Cây sai thì người duyệt chốt cây mới trước. Nguồn lỗi: site agency mẫu (gtvseo) 18/10/2026.
-- [ ] Mọi chuyên mục trong plan có `uri`. Log rollout không có `dich_lech_uri`. Nguồn lỗi: site khoá học mẫu (theaigrowth) 17/10/2026, chạy lại 3 lần.
-- [ ] Rule đang chiếm URL chuyên mục mới nằm trong `deactivate_redirects`. Nguồn lỗi: site agency mẫu (gtvseo) 18/10/2026.
+- [ ] `diagnose` chạy trước khi gán bài hàng loạt. Cây sai thì người duyệt chốt cây mới trước. Nguồn lỗi: site agency mẫu 18/10/2026.
+- [ ] Mọi chuyên mục trong plan có `uri`. Log rollout không có `dich_lech_uri`. Nguồn lỗi: site khoá học mẫu 17/10/2026, chạy lại 3 lần.
+- [ ] Rule đang chiếm URL chuyên mục mới nằm trong `deactivate_redirects`. Nguồn lỗi: site agency mẫu 18/10/2026.
 - [ ] Mỗi lượt staging và production có log `DRY=1` đọc xong trước `DRY=0`. Nguồn lỗi: khoảng 5 phút trang 404 trên production ở đợt đổi cây 17–18/10/2026.
 - [ ] Sau khi ghi, `chain_check.py` thoát 0 và URL cũ chỉ qua một bước 301.
 - [ ] Tên và mô tả chuyên mục mới có trong `texts.json` đã duyệt.

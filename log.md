@@ -504,3 +504,37 @@ Luật ghi:
 ## [2026-10-27] refactor | v2026.10.44 — Công cụ port skill, nhận khách có server, render-diff gỡ plugin, FLUSH=0 — @claude
 - tools/port_skill.py + test; _REFERENCE/nhan-khach-server.md, SETUP.md bước 3; wp-paid-plugin-exit 1.3; wp-content-review-apply 1.7.1; _TEMPLATES/wp-server.md dòng "Cache phụ thuộc nội dung".
 - Files touched: tools/port_skill.py, tools/tests/test_port_skill.py, _REFERENCE/nhan-khach-server.md, SETUP.md, _TEMPLATES/wp-server.md, skills/{wp-paid-plugin-exit,wp-content-review-apply}/, .claude/skills/, .agents/skills/, MIGRATION.md, log.md
+
+## [2026-10-27] refactor | v2026.10.45 — Đợt 2 nâng skill: wpx.sh, đổi lastmod, nén ảnh theo SSIM, URL chết từ log — @claude
+- wp-staging-deploy 1.2 (wpx.sh + test), wp-content-review-apply 1.7.2 (set_post_modified.php + test), image-seo-optimize 1.3 (ssim_luma, webp_recompress, alt_variants), content-inventory-audit 1.2.1 (log_urls_chet.py); gỡ tên miền khỏi cay-chuyen-muc.md và Changelog wp-content-review-apply.
+- Files touched: skills/{wp-staging-deploy,wp-content-review-apply,image-seo-optimize,content-inventory-audit}/, .claude/skills/, .agents/skills/, MIGRATION.md, log.md
+
+## [2026-10-27] refactor | v2026.10.46 — Đợt 3 nâng skill tốc độ, log, điều phối (không gồm wp-ucss) — @claude
+- wp-pagespeed 1.15 (trace_fn.mjs, kiểm path trong _guard.mjs), technical-seo-audit 1.11, cdn-speed-setup 1.3, seo-logfile-analysis 1.5 (kpi_html.py), web-lane-orchestration 1.3 + runtime-handoff 1.3.2 + shell-traps-macos.md (sinh bằng tools/port-dieu-phoi.py). wp-ucss 1.2.0 giữ lại, chưa port: chờ quyết cổng map_diff.py --inv.
+- Files touched: skills/{wp-pagespeed,technical-seo-audit,cdn-speed-setup,seo-logfile-analysis,web-lane-orchestration,runtime-handoff}/, tools/shell-traps-macos.md, .claude/skills/, .agents/skills/, MIGRATION.md, log.md
+
+## [2026-10-27] refactor | v2026.10.47 — wp-ucss 1.2.0, decision-page 1.0.2, workstream-master-plan 1.0.2 — @claude
+- wp-ucss 1.2.0: safelist carousel, verify_init.mjs, khoá all theo nhóm bài, thứ tự giao, css_src_lockdir; cổng map_diff.py --inv cứng khi giao tay, regen.sh chỉ cảnh báo (MAX_LOST_PAIRS 100000, ghi map_diff.txt). decision-page và workstream-master-plan 1.0.2 sinh bằng tools/port-dieu-phoi.py.
+- Port sang PROJECTS/gtvseo, theaigrowth (kèm MIGRATION.md), chanlongpickleball (chỉ skill; MIGRATION.md instance còn ở v2026.10.39).
+- Gỡ tên miền site mẫu: wp-pagespeed 1.15.1, seo-logfile-analysis 1.5.1 (không đổi luật hay script).
+- Files touched: skills/{wp-ucss,decision-page,workstream-master-plan,wp-pagespeed,seo-logfile-analysis}/, .claude/skills/, .agents/skills/, MIGRATION.md, log.md
+
+## [2026-10-28] refactor | v2026.10.48 — wp-pagespeed 1.16 — @claude
+- Lớp 6: bẫy link neo dừng sai đích khi Delay JS, hàng A/B hoãn khởi tạo slider. Port bằng tools/port_skill.py rồi tools/sync-skills.sh.
+- Port sang PROJECTS/gtvseo, theaigrowth (kèm MIGRATION.md), chanlongpickleball (chỉ skill).
+- Files touched: skills/wp-pagespeed/, .claude/skills/, .agents/skills/, MIGRATION.md, log.md
+
+## [2026-10-28] refactor | v2026.10.49 — wp-pagespeed 1.16.1, wp-ucss 1.2.1 — @claude
+- lh_local.mjs tìm puppeteer-core ở lib/esm/ và lib/puppeteer/ (bản 25). cls-chi-psi-thay.md: tính ngược khoảng dịch, so filmstrip với lượt CLS 0.
+- wp-ucss: anti-pattern CSS chèn ở wp_head bị gộp vào file gộp, map và khoá all mất hiệu lực.
+- Port sang PROJECTS/gtvseo, theaigrowth (kèm MIGRATION.md), chanlongpickleball (chỉ skill).
+- Files touched: skills/wp-pagespeed/, skills/wp-ucss/, .claude/skills/, .agents/skills/, MIGRATION.md, log.md
+
+## [2026-10-28] refactor | v2026.10.50 — skill mới web-reverse-engineer, tool rea — @claude
+- Skill soi plugin, theme, web app bằng CLI rea (không đăng ký MCP); script rea_cdp.sh; capabilities.md thêm id rea.
+- Files touched: skills/web-reverse-engineer/, tools/capabilities.md, .claude/skills/, .agents/skills/, MIGRATION.md, log.md
+
+## [2026-10-30] refactor | v2026.10.54 — skill mới wp-gtm-tracking; wp-pagespeed 1.20, semantic-html-optimization 1.3, wp-staging-deploy 1.4, decision-page 1.1.0 — @claude
+- Gồm cả v2026.10.51–.53 chưa có dòng log (wp-staging-deploy 1.3, wp-pagespeed 1.18–1.19, cdn-speed-setup 1.3.1) và web-lane-orchestration 1.4, internal-linking 1.4.2 (29/10).
+- Port sang PROJECTS/gtvseo, theaigrowth (kèm MIGRATION.md), chanlongpickleball (chỉ skill). Commit một lần, tag v2026.10.54.
+- Files touched: skills/wp-gtm-tracking/, skills/wp-pagespeed/, skills/semantic-html-optimization/, skills/wp-staging-deploy/, skills/decision-page/, skills/web-lane-orchestration/, .claude/skills/, .agents/skills/, MIGRATION.md, log.md

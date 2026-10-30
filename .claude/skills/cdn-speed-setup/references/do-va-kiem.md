@@ -37,6 +37,12 @@ Nạp ở bước 1, 3, 6 của SKILL.md. Mỗi số ghi (đo) hoặc (ước). 
    - Chạy `scripts/rt_model.py --mix mix.json`. Script in h, RT (ước), ngưỡng h cho 250 và 200 ms, và 3 nhóm kéo RT nhiều nhất.
 5. **5xx:** chạy `log_health.py` của `seo-logfile-analysis` trên log origin từ giờ đổi. Mã thoát 0 là đạt.
 6. **Log origin sau CDN:** lượt Googlebot trúng cache ở edge không vào log origin. KPI crawl đọc từ log origin sẽ thiếu. Kéo log CDN về cùng chỗ (`seo-logfile-analysis`).
+7. **Độ trễ Googlebot theo lớp:**
+   - Đo từ Mỹ, ở trạm Googlebot dùng (cột trạm trong log CDN). Không đo từ máy ở VN: đường VN–Mỹ cộng vào cả lượt HIT.
+   - Gửi `Accept` và `Accept-Encoding` như Googlebot. Cần đúng UA Googlebot thì dùng `curl --resolve` tới IP trạm (§5).
+   - Báo trung vị theo bảng: lớp (HTML 200, ảnh, CSS, 301, 404, 410, URL bypass) × trạng thái cache (HIT, MISS, BYPASS). Ghi số probe của mỗi ô.
+   - Không dùng thời gian tải trang trung bình.
+   - Số ước GSC tính từ bảng này ghi (ước), kèm ngày kiểm GSC (§4).
 
 ## 4. Hẹn kiểm sau 5–7 ngày
 

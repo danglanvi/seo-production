@@ -1,7 +1,7 @@
 #!/bin/bash
 # run.sh (wp-ucss): chạy toàn bộ test offline. bash scripts/tests/run.sh → mã 0 khi mọi phần đạt.
 # Module Node: UCSS_NODE_MODULES (mặc định ~/.cache/wp-ucss/node_modules, cần postcss + css-tree 3.x + puppeteer-core). Không gọi mạng.
-# Chỉ test_combined_href.mjs mở Chrome headless (CHROME_BIN), mọi request trả tại chỗ. Máy không có Chrome thì phần đó BỎ.
+# Chỉ test_combined_href.mjs và test_verify_init.mjs mở Chrome headless (CHROME_BIN), mọi request trả tại chỗ. Máy không có Chrome thì phần đó BỎ.
 set -u
 T="$(cd "$(dirname "$0")" && pwd)"; S="$T/.."; K="$S/.."
 export UCSS_NODE_MODULES="${UCSS_NODE_MODULES:-$HOME/.cache/wp-ucss/node_modules}"
@@ -42,16 +42,19 @@ genfb() {
   local bad=0 f
   grep -q "link\[rel=\"stylesheet\"\]\[onerror\]" "$S/lib-ucss.mjs" && grep -q "match(/href='(\[^'\]+)'/)" "$S/lib-ucss.mjs" || { echo "SAI lib-ucss.mjs thiếu combinedHref đọc onerror"; bad=1; }
   for f in gen.mjs verify.mjs; do grep -q "await combinedHref(p, CPATH)" "$S/$f" || { echo "SAI $f không dùng combinedHref"; bad=1; }; done
-  grep -q 'map_diff.py" "$R/map_site.php" "$R/stage/map.php" "$R" || exit 1' "$S/regen.sh" || { echo "SAI regen.sh không gọi map_diff.py (cổng MAX_LOST)"; bad=1; }
-  [ $bad = 0 ] && echo "OK  gen.mjs, verify.mjs đọc URL gốc trong onerror; regen.sh có cổng mất path"
+  grep -q 'map_diff.py" "$R/map_site.php" "$R/stage/map.php" "$R" --inv "$R/inv.jsonl" | tee "$R/map_diff.txt"' "$S/regen.sh" \
+    && grep -q '\[ "${PIPESTATUS\[0\]}" = 0 \] || exit 1' "$S/regen.sh" || { echo "SAI regen.sh không gọi map_diff.py có --inv hoặc không dừng theo mã của map_diff.py (cổng MAX_LOST)"; bad=1; }
+  [ $bad = 0 ] && echo "OK  gen.mjs, verify.mjs đọc URL gốc trong onerror; regen.sh có cổng mất path, cặp mất chỉ cảnh báo"
   return $bad
 }
 part "gen.mjs, verify.mjs, cổng map" genfb
 CH="${CHROME_BIN:-/Applications/Google Chrome.app/Contents/MacOS/Google Chrome}"
 if [ -x "$CH" ]; then part "combinedHref trên Chrome (3 ca)" node "$T/test_combined_href.mjs"; else echo "== combinedHref: BỎ, máy không có Chrome"; fi
-if command -v php >/dev/null; then part "mu-plugin (8 ca)" php "$T/test_mu.php"; else echo "== mu-plugin: BỎ, máy không có php"; fi
+# verify_init.mjs: khởi tạo dưới CSS gộp và CSS gọn từ đầu, fixture Owl thiếu .owl-carousel.owl-loading (site agency mẫu 27/10/2026).
+if [ -x "$CH" ]; then part "verify_init.mjs trên Chrome (Owl, 7 ca)" node "$T/test_verify_init.mjs"; else echo "== verify_init: BỎ, máy không có Chrome"; fi
+if command -v php >/dev/null; then part "mu-plugin (14 ca)" php "$T/test_mu.php"; else echo "== mu-plugin: BỎ, máy không có php"; fi
 part "make_map.py" python3 -I "$T/test_make_map.py"
-part "map_diff.py: cổng mất path (ca 27/10)" python3 -I "$T/test_map_diff.py"
+part "map_diff.py: cổng mất path (ca 27/10) và mất cặp (giả lập)" python3 -I "$T/test_map_diff.py"
 part "qa_sau_giao.py" python3 -I "$T/test_qa_sau_giao.py"
 part "chon_url.py" python3 -I "$T/test_chon_url.py"
 # Không còn tên site, tên người, id CDN của site gốc trong skill (mẫu ghép chuỗi để file này không tự khớp).

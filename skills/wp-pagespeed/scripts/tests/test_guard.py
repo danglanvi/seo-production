@@ -47,6 +47,18 @@ class GuardUnit(unittest.TestCase):
         self.assertTrue(any('host thật' in x for x in e))
         self.assertEqual(verdict(requestedHost='stg.a.test', finalHost='a.test', status=200, title='x', lcp=900, allowRedirectHost=True), [])
 
+    def test_redirect_to_other_path(self):
+        e = verdict(requestedHost='a.test', finalHost='a.test', status=200, title='x', requestedPath='/bai-cu/', finalPath='/bai-moi/')
+        self.assertTrue(any('path thật' in x for x in e))
+        self.assertEqual(verdict(requestedHost='a.test', finalHost='a.test', status=200, title='x', requestedPath='/dich-vu', finalPath='/dich-vu/?r=1'), [])
+
+    def test_expect_path(self):
+        # Ca 27/10/2026: vòng lặp shell hỏng, 75 lượt lab đều đo trang case. --expect-path theo từng trang bắt được lượt đo nhầm.
+        e = verdict(requestedHost='a.test', finalHost='a.test', status=200, title='x', requestedPath='/case/', finalPath='/case/', expectPath='/dich-vu/')
+        self.assertTrue(any('--expect-path' in x for x in e))
+        self.assertEqual(verdict(requestedHost='a.test', finalHost='a.test', status=200, title='x', requestedPath='/dich-vu/', finalPath='/dich-vu/', expectPath='/dich-vu'), [])
+        self.assertEqual(verdict(requestedHost='a.test', finalHost='a.test', status=200, title='x', requestedPath='/', finalPath='/', expectPath='/'), [])
+
 
 class TunnelGuard(unittest.TestCase):
     def test_probe_exits_4_when_tunnel_closed(self):

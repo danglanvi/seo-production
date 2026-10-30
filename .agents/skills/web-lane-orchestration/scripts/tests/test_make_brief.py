@@ -85,6 +85,21 @@ class BriefTest(unittest.TestCase):
         self.assertNotIn("m25", text)
         self.assertNotIn("m240", text)
 
+    def test_dien_giai(self):
+        # Ca thật 27/10/2026 09:06: "khỏi làm file .md" làm một lane bỏ bao-cao.md.
+        def m(p):
+            p["approval"][0]["quote"] = "ok, chạy đi nha. khỏi làm file .md nha"
+            p["approval"][0]["dien_giai"] = "bỏ bản Markdown cho AI, vẫn ghi bao-cao.md"
+        code, _, err = self.run_cli(self.plan(m), "l8-css")
+        self.assertEqual(code, 0, err)
+        text = self.brief().read_text(encoding="utf-8")
+        q = text.index("khỏi làm file .md nha")
+        d = text.index("  Diễn giải của phiên chính: bỏ bản Markdown cho AI, vẫn ghi bao-cao.md")
+        self.assertLess(q, d)
+        self.assertIn("/l8-css/bao-cao.md", text)
+        code, _, _ = self.run_cli(self.plan(), "l8-css")
+        self.assertNotIn("Diễn giải", self.brief().read_text(encoding="utf-8"))
+
     def test_lane_ghi_khong_nguon_duyet(self):
         def m(p):
             p["approval"] = []

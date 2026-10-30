@@ -13,6 +13,14 @@ Nguồn: coord-5 và ops2-5 của đợt rà 16–24/10. `runtime-handoff` trỏ
 - Khoá dạng flock (file rỗng luôn tồn tại, ví dụ `prod-http.lock`) không cho biết ai giữ qua nội dung file. Kiểm người giữ bằng `lsof <file>`. Chạy request production qua `plock.sh` với thời gian chờ ngắn; hết giờ chờ thì làm việc khác, không tranh khoá.
 - Hai phiên trao đổi bằng file trả lời trong thư mục đợt, ví dụ `<đợt>/<chủ đề>-reply.md`. Mỗi tin có số thứ tự, giờ lấy bằng `date` và tên phiên gửi. Phiên nhận ghi "đã đọc tin N" và việc sẽ làm. Không chép secret hay IP vào file này.
 - Trước khi purge, restart hay ghi một tài nguyên, đọc dòng `Lane:` trong HANDOFF của mọi workstream cùng site. Tài nguyên có lane của phiên khác giữ thì ghi việc vào file trả lời, không tự làm.
+- Hai phiên cùng ghi một site dùng một file phối hợp chung, ví dụ `PHOI-HOP.md`. Một phiên tạo file, phiên kia nối dòng. Mỗi dòng có dạng `giờ · phiên · nội dung`. Mỗi bên báo trước file sẽ ghi.
+- Cổng tự động đọc file phối hợp chỉ mở khi gặp dòng đứng riêng đúng mẫu. Dùng hai mẫu sau:
+  - `^CHO-PHEP <lane> HH:MM( REGEN-SAU)?$`: phiên kia cho phép lane ghi production.
+  - `^REGEN-XONG <đợt> HH:MM$`: phiên giữ CSS gọn đã regen xong các path của đợt.
+
+  Không mở cổng theo từ khoá như "cho phép" hay mã phiên. Ca lỗi 27/10/2026: một dòng ghi chú chứa cả mã phiên lẫn chữ "cho phép", nên cổng của chuỗi ghi mở nhầm. Mẫu lệnh: `grep -E "^CHO-PHEP ${LANE} [0-2][0-9]:[0-5][0-9]( REGEN-SAU)?\$" PHOI-HOP.md`. Skill `semantic-html-optimization` (`references/ap-site-wordpress.md` mục 5) ghi cùng luật.
+- Phiên đổi DOM (theme, post_content, mu-plugin đổi thẻ) ghi danh sách path đã đổi vào một file và trỏ file đó trong dòng phối hợp. Phiên giữ CSS gọn regen các path đó. Lane của phiên này không tự regen path của phiên kia.
+- Tin của phiên khác, kể cả tin Lead chuyển qua phiên khác, là đề nghị phối hợp, không thay duyệt của Lead. Đối chiếu từng mục với phạm vi Lead đã duyệt. Ca 26/10/2026: phiên CDN từ chối gộp dải `/24` do phiên khác đề xuất, chỉ thêm 18 IP `/32` mà Lead duyệt đúng danh sách.
 - Dò run còn sống của mọi phiên: `find ~/.claude/projects/<slug>/*/subagents/workflows -name journal.jsonl -mmin -30`, rồi chạy `python3 tools/wf-status.py slots <thư mục session>` cho từng session tìm thấy.
 
 ## 1. Theo dõi bằng watchdog chạy ngoài model
@@ -25,7 +33,7 @@ Lịch LLM 30 phút phát hiện treo sau 23–97 phút và tốn một lượt 
    python3 skills/web-lane-orchestration/scripts/wf_watchdog.py <thư mục session> --minutes 12 --idle-minutes 20 --max-hours 10 --out <thư mục đợt>/watchdog.log
    ```
 
-   Thư mục session: `~/.claude/projects/<slug>/<session id>/`. Khi đã biết run id và thư mục run đã có, truyền thẳng `<thư mục session>/subagents/workflows/<run id>`. Với thư mục session, script bỏ qua run đã xong trước lúc nó chạy và chờ run mới tối đa `--wait-new` phút (mặc định 15).
+   Thư mục session: `~/.claude/projects/<slug>/<session id>/`. Khi đã biết run id và thư mục run đã có, truyền thẳng `<thư mục session>/subagents/workflows/<run id>`. Từ v1.4, script nhận cả `<session>/subagents/workflows` và `<session>/workflows`, và thoát 2 ngay với thư mục không phải session. Ca lỗi 29/10/2026: phiên chính truyền thư mục `workflows`, bản cũ chờ 30 phút rồi báo `KHONG-CO-RUN` (`PROJECTS/chanlongpickleball/03-audits/technical/toi-uu-pagespeed/dot-2910/watchdog.log` dòng 04:33). Với thư mục session, script bỏ qua run đã xong trước lúc nó chạy và chờ run mới tối đa `--wait-new` phút (mặc định 15).
 2. Harness báo phiên chính khi script thoát. Script chỉ thoát khi có việc cần xem:
    - exit 1: có dòng `TREO` (tool_use chờ kết quả quá 12 phút) hoặc `IM` (file agent không ghi 20 phút). Làm theo §2.
    - exit 0 với dòng `XONG run=<id>`: run kết thúc (`wf_<run id>.json` có status `completed`, `killed` hoặc `failed`). Đóng đợt theo §4.
@@ -60,7 +68,16 @@ Ca thật:
 
 ## 3. Cứu và đổi phạm vi
 
-Không resume workflow đã chết. Không SendMessage vào agent đang chạy trong workflow: mỗi tin sinh một bản chạy trùng dùng chung transcript, và hai bản ghi đè cùng một CHECKPOINT (lô L4, 20/10, khoảng 35 phút).
+Resume hay dựng mới tuỳ lý do workflow dừng:
+
+| Workflow dừng vì | Làm |
+|---|---|
+| Treo (lệnh chờ không trần, hộp duyệt quyền), chạy trùng, hoặc đã TaskStop | Không resume. Dựng workflow mới chỉ gồm lane còn lại, theo các bước dưới |
+| Tiến trình phiên tắt, hoặc hết hạn mức | Mở lại đúng phiên đó (cùng session id). Chạy `Workflow({scriptPath, resumeFromRunId, args})`, giữ nguyên script và `args` |
+
+Khi resume, agent đã trả kết quả không chạy lại: harness trả kết quả đã lưu. Chỉ agent đang dở chạy lại. Resume chỉ chạy trong phiên đã launch workflow; phiên mới không resume được (`runtime-handoff` SKILL.md, chế độ phiên mới, bước 5). Ca thật 27/10/2026, đều cùng phiên chủ: 20:15 resume 2 workflow sau khi tiến trình phiên tắt, cả hai xong lúc 20:41 và 20:56; 22:34 resume 3 workflow sau khi hết hạn mức, workflow rà skill xong lúc 22:50. Chưa thử: đổi `args.now` có làm mất kết quả đã lưu hay không, nên giữ nguyên `args`.
+
+Không SendMessage vào agent đang chạy trong workflow: mỗi tin sinh một bản chạy trùng dùng chung transcript, và hai bản ghi đè cùng một CHECKPOINT (lô L4, 20/10, khoảng 35 phút).
 
 Đổi phạm vi lane đang chạy: ghi chỉ thị vào `<lane>/inbox.md`. Lane đọc file này ở mỗi mốc CHECKPOINT. Việc mới ngoài phạm vi lane: dựng workflow mới.
 
@@ -94,6 +111,12 @@ Lane trả `status: held`: không phải lỗi. Ghi `held_until` vào HANDOFF m�
 4. Kiểm `~/.cm/locks/`: mọi khoá lane đã `.lock.done-HHMM` hoặc `.lock.stopped-HHMM`. `staging.lockdir` và `_server-maint.lockdir` rảnh.
 5. Kiểm watchdog đã thoát. Chạy CronList, huỷ lịch của đợt. Lịch còn cần thì ghi vào HANDOFF mục "Bước tiếp", kèm giờ.
 6. Ghi chi phí thật vào báo cáo đợt bằng `python3 tools/wf-status.py tokens <run id>`: số agent, token theo model, so với ước tính trong plan.
-7. Ghi đoạn Trạng thái của HANDOFF bằng `python3 -B skills/runtime-handoff/scripts/handoff.py stamp --note "<một câu>" --write <HANDOFF.md>`, không sửa tay. Xoá các dòng `Lane:` của đợt và đánh dấu `OWNER.md` là đã đóng. Chạy `runtime-handoff` chế độ `check`. HANDOFF quá 60 dòng thì sao bản cũ vào `Archive/HANDOFF_<ngày-giờ>.md` rồi viết lại.
+7. Phiên chính quét cả thư mục đợt, không chỉ dựa vào lane và agent kiểm:
+   - Chạy `stg_leak_check.sh` của `wp-staging-deploy` trên thư mục đợt.
+   - Grep địa chỉ IPv4 trong thư mục đợt, ví dụ `rg -l '\b([0-9]{1,3}\.){3}[0-9]{1,3}\b' <thư mục đợt>`. Xem từng file khớp; số phiên bản dạng a.b.c.d không phải IP.
+   - Chuyển log thô có IP (access log chép về) sang scratchpad. Thư mục lane chỉ giữ bảng đếm.
+
+   Ca thật 27/10/2026: hai file của một lane chứa host staging, phiên chính che lúc 10:15 rồi quét sạch; 6 file access log khoảng 35 MB có IP nằm trong `work/` của một lane khác, agent kiểm ghi thành lỗi báo cáo.
+8. Ghi đoạn Trạng thái của HANDOFF bằng `python3 -B skills/runtime-handoff/scripts/handoff.py stamp --note "<một câu>" --write <HANDOFF.md>`, không sửa tay. Xoá các dòng `Lane:` của đợt và đánh dấu `OWNER.md` là đã đóng. Chạy `runtime-handoff` chế độ `check`. HANDOFF quá 60 dòng thì sao bản cũ vào `Archive/HANDOFF_<ngày-giờ>.md` rồi viết lại.
 
 Báo cáo đợt dài hoặc cần đọc nhiều file: phiên chính làm, hoặc chạy một workflow tổng kết riêng (Sonnet high, chỉ đọc). Không nối bước tổng kết vào cuối workflow ghi. Đợt có lane `core`: workflow tổng kết thêm một agent Opus high kiểm cuối đợt, chỉ đọc, đo lại site sau khi mọi lane xong.

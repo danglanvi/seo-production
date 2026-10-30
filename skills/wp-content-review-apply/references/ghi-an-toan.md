@@ -60,6 +60,21 @@ scp <alias>:/tmp/<phiên>/log-dry.json .
 - Nội dung bài: so `md5` của `post_content` lúc tính và lúc ghi.
 - Mỗi thay đổi chữ trong đoạn văn phải khớp đúng một vị trí. Khớp 0 hoặc nhiều vị trí thì dừng mục đó.
 
+## 3b. Đổi `lastmod` sitemap
+
+Dùng mục này khi trang đã đổi chữ thật mà sitemap còn ngày cũ. Rank Math lấy `lastmod` từ `post_modified`. Cách ghi ở mục 3 không đổi ngày này. Quy trình lấy từ lượt chạy thật 27/10/2026 trên site agency mẫu: 4/4 trang `rows=1`, kiểm độc lập đạt.
+
+1. Chọn ngày mới theo giờ ghi chữ thật của trang, ví dụ giờ trong log ghi của đợt. Ghi căn cứ vào cột 7 của TSV. Nếu trang không có lần sửa chữ thật, ghi "bằng chứng yếu" và hỏi người duyệt.
+2. Dựng TSV có dòng tiêu đề và 7 cột: id, url, `post_modified` cũ, `post_modified_gmt` cũ, 2 giá trị mới, căn cứ. `post_modified` theo giờ của site, `post_modified_gmt` theo UTC. Lấy giá trị cũ bằng `MODE=read`. Lưu TSV vào thư mục backup của đợt: file này là bản backup.
+3. Chép TSV lên thư mục server mà user web đọc được. Chạy `scripts/set_post_modified.php` với `MODE=dry` và `TSV=<đường dẫn trên server>`. Mọi dòng phải là `would_update`. Lệnh mẫu: `bash skills/wp-staging-deploy/scripts/wpx.sh --site <site.json> prod skills/wp-content-review-apply/scripts/set_post_modified.php MODE=dry TSV=<tsv>`.
+4. Chạy `MODE=write`. Script chỉ ghi khi cả 2 cột live còn bằng giá trị cũ, rồi gọi `clean_post_cache`. Mọi dòng phải là `updated`. Script không xoá object cache.
+5. Lệnh SQL không chạy `save_post`. Xoá cache sitemap của plugin SEO cho đúng loại bài và cho sitemap index. Rank Math: `\RankMath\Sitemap\Cache::invalidate_storage( '<loại bài>' )` rồi `invalidate_storage( '1' )`. Không xoá cache sitemap của loại khác.
+6. Purge cache trang theo URL: các trang đã đổi, sitemap index, sitemap con chứa các trang đó. Đi hết tầng CDN và làm nóng theo mục 1 bước 4b.
+7. Kiểm `lastmod` trong sitemap ở origin và ở edge CDN, cả lượt MISS lẫn lượt HIT. Kiểm thêm `dateModified` của schema và `og:updated_time` trên trang: hai tín hiệu này cũng đọc `post_modified`.
+8. Trả lại: chạy `MODE=rbdry`, rồi `MODE=rollback` với cùng TSV. Script chỉ ghi khi live còn bằng giá trị mới. Sau đó làm lại bước 5 và 6.
+
+Thay đổi này chỉ chạm 2 cột ngày và trả lại được bằng một lệnh có điều kiện. Nếu người duyệt đồng ý, lượt DRY trên production thay cho bước thử trên staging.
+
 ## 4. Bẫy đã gặp
 
 - WPML: trang EN có thể là bản nhân đôi (`_icl_lang_duplicate_of`). Ghi vào bản nhân đôi bị WPML ghi đè lại. Tách bản nhân đôi trước khi ghi. Lấy URL EN bằng filter `wpml_permalink`.

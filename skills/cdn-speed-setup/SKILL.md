@@ -2,7 +2,7 @@
 name: cdn-speed-setup
 description: "Chọn, dựng và kiểm CDN cho site WordPress để giảm thời gian phản hồi Googlebot (GSC Crawl Stats) và TTFB khách: nhánh Global (proxy Cloudflare) hoặc nhánh VN (chia vùng, khách VN đi thẳng origin). Dùng khi site chậm với Googlebot hoặc cần CDN."
 metadata:
-  version: "1.2"
+  version: "1.3.1"
 ---
 
 # cdn-speed-setup — CDN theo vị trí origin và khách
@@ -32,7 +32,7 @@ Mặc định dưới đây do người duyệt chốt 26/10/2026 cho 2 site n�
 | Việc | Cách làm |
 |---|---|
 | Đọc DNS và cấu hình; tạo hoặc xoá bản ghi tên thử; purge cache theo URL | Tự làm |
-| Bật proxy cho apex hoặc www | Lead duyệt một lần mỗi zone, sau checklist: SSL Full (strict), IP thật ở origin, Bot Fight Mode tắt, Browser Cache TTL theo origin, giới hạn của gói (Free: 100 MB mỗi request, 100 giây) |
+| Bật proxy cho apex hoặc www, kể cả bật thử vài phút | Lead duyệt một lần mỗi zone, sau checklist: rà Worker, route, token theo `wp-security-hardening/references/ra-tai-khoan-cdn.md` và so trang qua edge với UA trình duyệt và UA Googlebot; SSL Full (strict), IP thật ở origin, Bot Fight Mode tắt, Browser Cache TTL theo origin, giới hạn của gói (Free: 100 MB mỗi request, 100 giây) |
 | Tắt proxy để cứu khi 5xx tăng, lỗi SSL, Googlebot bị chặn | Tự làm ngay, báo sau |
 | Chỉnh cache, bot, HTTP/3 sau khi đã bật proxy | Tự làm, ghi lệnh trả lại, báo sau |
 | Sửa bản ghi đang chạy khác (MX, TXT), firewall | Hỏi Lead từng lần |
@@ -92,6 +92,7 @@ Bản tốt nhất phải có:
 - [ ] Khách VN: ≥ 95% lượt DNS nhận origin trên ≥ 4 nhà mạng × 3 loại resolver × ≥ 2 vòng (nhánh B). Tỉ lệ còn lại ghi rõ.
 - [ ] Googlebot vùng Mỹ: 100% lượt DNS nhận CDN, TTFB lượt đầu sau khi làm nóng ≤ 260 ms.
 - [ ] 0 lỗi 5xx mới ở origin (`log_health.py` của `seo-logfile-analysis`, mã thoát 0).
+- [ ] CDN lưu mã lỗi (Bunny `CacheErrorResponses` bật): mọi edge rule thời gian cache có điều kiện mã; rule chặn dùng danh sách mã được lưu. Kiểm theo `references/nhanh-b-chia-vung.md` §2b.
 - [ ] `rollback.md` có lệnh trả lại đã chạy DRY. Không file nào chứa IP origin, token, key.
 - [ ] Phần chưa thử thật ghi "chưa thử".
 
@@ -102,6 +103,8 @@ Bản tốt nhất phải có:
 - Tin GeoIP của IP resolver Cloudflare để định vị khách → lệch vùng. Kết hợp mã trạm DNS nhận câu hỏi.
 - Gộp IP CDN thành /24 khi khai IP tin cậy ở origin → máy khác cùng dải được giả IP. Khai đúng IP.
 - Đo PageSpeed rồi kết luận CDN cải thiện LCP cho site VN → PSI chạy từ châu Á, đi thẳng origin.
+- Đo TTFB của Googlebot từ máy ở VN tới trạm CDN ở Mỹ → đường VN–Mỹ cộng vào cả lượt HIT. Đo từ Mỹ theo `references/do-va-kiem.md` §3 mục 7.
+- Viết "CDN cho Googlebot" trong tài liệu hướng ra ngoài → người duyệt bác cách nói này (26/10/2026). Nói lợi ích tốc độ cho khách ở xa origin.
 
 ## Kiểm thử
 
@@ -112,6 +115,8 @@ Bản tốt nhất phải có:
 
 ## Changelog
 
+- v1.3.1 (2026-10-30): `nhanh-a-cloudflare-proxy.md` bước 2 thêm cách tách rule cache HTML và rule Bypass (thứ tự rule, cookie thử thách `cf_clearance`, `__cf_bm`, header `s-maxage` + `stale-while-revalidate`); bước 7 ghi ca APO chạy cùng LiteSpeed Cache khi tắt Guest Mode; mục 3 thêm kiểm `cf-cache-status` giỏ hàng. Nguồn: nhật ký tối ưu site TMĐT mẫu của SEO Lead dự án, 30/10/2026.
+- v1.3 (2026-10-27): `nhanh-b-chia-vung.md` §2b mới: edge rule theo mã khi Bunny lưu mã lỗi, sitemap 1 ngày, edge rule không đặt được `Accept-Encoding`; §2 bước 4 sửa rule ảnh và sitemap cho khớp. `origin-sau-cdn.md` §2 biến thể cache theo loại file, §3 bỏ nhãn "chưa thử" và thêm chờ 30 giây sau purge, §8 mới về Brotli ở Bunny. `do-va-kiem.md` §3 mục 7 đo Googlebot từ Mỹ theo bảng lớp × cache (từ VN, lượt HIT vẫn 738–802 ms). Quyền bật proxy dẫn sang `ra-tai-khoan-cdn.md`. Gate thêm 1 mục, Anti-pattern thêm 2 mục, eval thêm 2 ca. Đã chạy thật trên production site agency mẫu 27/10/2026, 2 lane đạt kiểm độc lập: 301 từ Mỹ 678–713 → 4–14 ms, 410 663–708 → 3–6 ms, sitemap HIT 2–9 ms; rule ảnh 30 ngày giữ 167 URL ảnh 404 trong 63 phút trước khi thêm điều kiện mã; Brotli 10/10 URL HTML, nhỏ hơn gzip 8,9%. Phần ước GSC và tác động lên Googlebot thật chờ lượt kiểm 31/10/2026.
 - v1.2 (2026-10-27): `warm.py` gửi HTML với Accept có `image/webp` (`--accept`), test `test_warm_html_accept_webp`; bản trước dùng `*/*` của curl, trái với `origin-sau-cdn.md` §2. §2 thêm cách làm nóng đúng trạm bot dùng bằng ECS (site VN: 85/85 lượt Googlebot vào một trạm). Mục mới "Quyền hành động trên Cloudflare" chép từ luật người duyệt chốt 26/10 (trước chỉ nằm trong memory của một runtime). Checklist mục 1 thêm phương án tự build. `evals/cases.yaml` 5 ca. Phần ngưỡng theo số GSC sau đổi apex: phiên CDN cập nhật sau lượt kiểm 31/10.
 - v1.1.1 (2026-10-26): `nhanh-b-chia-vung.md` bước 5 sửa cache trình duyệt. Thiết lập zone 600 giây làm CSS/JS md5 mất max-age 1 năm (phiên tối ưu crawl phát hiện). Thêm edge rule 16 giá trị -1 (theo origin) cho file tĩnh. Điều kiện Request URL không xét query string. `origin-sau-cdn.md` §2–§3: HTML đổi theo Accept mà Bunny không tách được, cách purge Bunny xoá cả bản mobile.
 - v1.1 (2026-10-26): thêm giám sát `scripts/cdn_monitor.py` (launchd, báo Telegram qua `hermes send`, chỉ báo), mẫu cấu hình `templates/cdn-monitor.example.json`, 31 test. Chạy thật trên site VN từ 26/10/2026. Trước khi cài: 3 agent rà soát đối kháng: 35 phát hiện, 11 mức cao, gộp trùng còn 6 lỗi (ví dụ kiểm hỏng làm mất cả vòng, gửi tin lỗi bị tính là đã báo, máy ngủ thì giám sát chết im lặng). 1 phát hiện sai (trường API tài khoản Bunny), đã đối chiếu bằng lượt gọi thật. Đã sửa rồi rà lại. `origin-sau-cdn.md` §5 viết lại.

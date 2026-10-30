@@ -3,6 +3,9 @@
 
 Cách dùng: wf_watchdog.py <run-dir hoặc session-dir> [--minutes 12] [--idle-minutes 20]
            [--once] [--interval 120] [--max-hours 10] [--out <file>]
+Nhận cả <session>/subagents/workflows và <session>/workflows: script đổi về thư mục session.
+Thư mục không phải run, không phải session: thoát 2 ngay, không chờ --wait-new.
+Ca lỗi 29/10/2026 04:33: truyền thư mục workflows, script chờ 30 phút rồi báo KHONG-CO-RUN dù run đang chạy.
 
 Chạy bằng Bash run_in_background: tiến trình chỉ thoát khi có việc cần người xem.
 Exit 0: không có báo (--once) hoặc run đã xong (in dòng XONG).
@@ -128,6 +131,18 @@ def wf_status(run_dir):
         return None
 
 
+def session_of(target):
+    """Thư mục <session>/subagents/workflows hoặc <session>/workflows: trả thư mục session."""
+    if target.name == "workflows":
+        return target.parent.parent if target.parent.name == "subagents" else target.parent
+    return target
+
+
+def looks_like_session(target):
+    """Session có thư mục subagents/, hoặc file transcript <session id>.jsonl nằm cạnh (session mới, chưa có agent)."""
+    return (target / "subagents").is_dir() or (target.parent / (target.name + ".jsonl")).exists()
+
+
 def find_runs(target):
     """Run dir có journal.jsonl; session dir thì lấy mọi run trong subagents/workflows."""
     if (target / "journal.jsonl").exists():
@@ -211,10 +226,14 @@ def main(argv=None):
     ap.add_argument("--wait-new", type=float, default=15,
                     help="chế độ lặp: số phút chờ run mới xuất hiện trước khi thoát 2")
     a = ap.parse_args(argv)
-    target = Path(a.target).expanduser()
+    target = session_of(Path(a.target).expanduser())
     runs, multi = find_runs(target)
     if not target.is_dir() or (a.once and not runs):
         print("Không tìm thấy run nào (cần journal.jsonl) trong: %s" % target, file=sys.stderr)
+        return 2
+    if not runs and not looks_like_session(target):
+        print("Không phải thư mục run hay session: %s. Truyền ~/.claude/projects/<slug>/<session id>/ "
+              "hoặc <session>/subagents/workflows/<run id>." % target, file=sys.stderr)
         return 2
     # Chạy ngay sau khi launch: run mới có thể chưa có journal. Run đã xong từ trước
     # trong session bị bỏ qua, để không báo XONG giả cho run cũ.

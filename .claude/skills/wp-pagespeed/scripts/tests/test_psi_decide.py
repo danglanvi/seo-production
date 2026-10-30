@@ -129,6 +129,33 @@ class DecideCli(unittest.TestCase):
         self.assertEqual(r.returncode, 0, r.stderr)
         self.assertIn('label=better', r.stdout)
 
+    def test_spec_keeps_only_spec_pages_and_its_thresholds(self):
+        # Ca hỏng thật 29/10/2026 (lane anh-lcp): thư mục PSI chứa 4 trang của spec #239 và trang post của spec khác,
+        # cùng tên biến thể v0, v1. Bản cũ gộp post vào nhãn chung. Spec ghi min_runs 4 ở gốc (cách ghi trong ab.json).
+        fill(self.d, 'v0', S([80, 81, 79]), page='product_cat')
+        fill(self.d, 'v1', S([86, 87, 85]), page='product_cat')
+        fill(self.d, 'v0', S([80, 81, 79, 80]), page='post')
+        fill(self.d, 'v1', S([70, 71, 69, 70]), page='post')
+        spec = os.path.join(self.d, 'spec.json')
+        json.dump({'pages': {'product_cat': 'https://site-a.example/c/'}, 'min_runs': 4,
+                   'decision': {'a': 'v0', 'b': 'v1', 'min_gain': 3.0}}, open(spec, 'w'))
+        old = run('psi_decide.py', self.d, '--a', 'v0', '--b', 'v1')
+        self.assertIn('label=worse', old.stdout, 'điều kiện của ca: không có --spec thì post kéo nhãn chung')
+        self.assertIn('Cảnh báo: gộp 2 trang', old.stderr)
+        r = run('psi_decide.py', self.d, '--spec', spec)
+        self.assertNotIn('post |', r.stdout)
+        self.assertIn('Bỏ trang ngoài spec: post', r.stderr)
+        self.assertIn('4-5 lượt', r.stdout)
+        self.assertEqual(r.returncode, 3, r.stdout)  # 3 lượt < min_runs 4 của spec
+        self.assertIn('label=more', r.stdout)
+        r = run('psi_decide.py', self.d, '--spec', self.d, '--min-runs', '3')
+        self.assertIn('label=better', r.stdout)  # dòng lệnh thắng spec; --spec nhận cả thư mục
+
+    def test_spec_missing_is_arg_error(self):
+        fill(self.d, 'v0', S([80, 81, 82]))
+        fill(self.d, 'v4', S([80, 81, 82]))
+        self.assertEqual(self.dec('--spec', os.path.join(self.d, 'khong-co')).returncode, 2)
+
     def test_help(self):
         r = run('psi_decide.py', '--help')
         self.assertEqual(r.returncode, 0)

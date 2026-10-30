@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "source_version": "v1.14",
-  "execution_status": "17/10/2026: ca staging-20261017-basic-auth chạy thật, chỉ đọc, trên một site production và staging của nó. Bước 0–3 đạt. Chưa chạy Bước 4–5 (vòng sửa) và ccss_gen.mjs bản tổng quát với skill này. 25/10/2026 (v1.12): 4 ca mới chỉ kiểm bằng test offline của script (scripts/tests, 160 ca) và lệnh kiểm cấu trúc của skill-creator. psi_con_tru.py chạy thật chỉ đọc trên JSON PSI đợt 18/10 của site mẫu 2 (11 template, mốc trước): báo 57 dòng còn trừ điểm và 11/22 cặp template x thiết bị chưa đủ 5 hạng mục (cả 11 cặp desktop, vì đợt đó chỉ đo hạng mục ngoài tốc độ trên mobile). Bảng --mt khớp số của báo cáo đợt đó (landing khoá học: styleLayout 527 ms, font 172 KB, 14 file). Chưa chạy lại cả quy trình với một agent. 27/10/2026 (v1.14): thêm 4 ca. Ca happy-20261026-guest-reload dựa trên lần chạy production site agency mẫu 26/10 (CS-26) và test Chrome test_guest_tap.py 5 ca; 3 ca còn lại dựa trên lỗi thật của đợt 26–27/10, chưa chạy lại với một agent.",
+  "source_version": "v1.17",
+  "execution_status": "17/10/2026: ca staging-20261017-basic-auth chạy thật, chỉ đọc, trên một site production và staging của nó. Bước 0–3 đạt. Chưa chạy Bước 4–5 (vòng sửa) và ccss_gen.mjs bản tổng quát với skill này. 25/10/2026 (v1.12): 4 ca mới chỉ kiểm bằng test offline của script (scripts/tests, 160 ca) và lệnh kiểm cấu trúc của skill-creator. psi_con_tru.py chạy thật chỉ đọc trên JSON PSI đợt 18/10 của site mẫu 2 (11 template, mốc trước): báo 57 dòng còn trừ điểm và 11/22 cặp template x thiết bị chưa đủ 5 hạng mục (cả 11 cặp desktop, vì đợt đó chỉ đo hạng mục ngoài tốc độ trên mobile). Bảng --mt khớp số của báo cáo đợt đó (landing khoá học: styleLayout 527 ms, font 172 KB, 14 file). Chưa chạy lại cả quy trình với một agent. 27/10/2026 (v1.14): thêm 4 ca. Ca happy-20261026-guest-reload dựa trên lần chạy production site agency mẫu 26/10 (CS-26) và test Chrome test_guest_tap.py 5 ca; 3 ca còn lại dựa trên lỗi thật của đợt 26–27/10, chưa chạy lại với một agent. 29/10/2026 (v1.17): thêm 1 ca từ đợt site bán lẻ 28→29/10. psi_decide.py --spec và psi_ab.py table chạy thật chỉ đọc trên thư mục PSI của lane anh-lcp và font-chu: nhãn khớp nhãn lane quyết tay. 4 test mới; bản cũ trượt cả 3 test hồi quy.",
   "cases": [
     {
       "id": "happy-20261017-template",
@@ -143,6 +143,17 @@
         "gate duyệt"
       ],
       "source_version": "v1.14"
+    },
+    {
+      "id": "regression-20261029-psi-decide-nhieu-spec",
+      "input": "Thư mục PSI A/B mobile chứa 4 trang của spec #239 (product, product_cat, category, about) và trang post của một spec khác. Cả hai spec dùng biến thể v0 và v1. spec.json ghi min_runs 4, max_runs 5, bench_gap 0,2 ở gốc file.",
+      "expected_behavior": "Chạy psi_decide.py <psi> --spec <thư mục psi_ab của #239>: chỉ xét 4 trang của spec, lấy ngưỡng và số lượt từ spec, script in dòng 'Bỏ trang ngoài spec: post'. psi_ab.py table --dir đọc đủ min_runs, max_runs, bench_gap và chạy được với tên trang product_cat.",
+      "forbidden_behavior": "Lấy nhãn chung khi trang của spec khác lọt vào; lấy nhãn từ table khi table dùng min_runs 3 khác spec; truyền ngưỡng tay khác với spec.",
+      "rubric": [
+        "đúng nguyên nhân",
+        "ngưỡng đặt trước"
+      ],
+      "source_version": "v1.17"
     }
   ]
 }

@@ -20,7 +20,7 @@ Mỗi IP có một trạng thái:
   rdns       ngoài dải, nhưng rDNS về đúng đuôi tên miền của hãng và forward-confirm ra đúng IP. Tính là thật.
              Số IP nhóm này nhiều nghĩa là file dải IP cũ. Tải lại file.
              Googlebot chỉ nhận đuôi .googlebot.com và .google.com. PTR googleusercontent.com là máy thuê Google Cloud:
-             log gtvseo.com 19/10/2026 có 126 IP như vậy, đều giả UA. Fetcher do người dùng kích hoạt: dùng dải
+             log site agency mẫu 19/10/2026 có 126 IP như vậy, đều giả UA. Fetcher do người dùng kích hoạt: dùng dải
              user-triggered-fetchers.json.
   fake       ngoài dải và rDNS sai hoặc forward-confirm lệch. Tách riêng, không đưa vào phân tích.
   unchecked  ngoài dải, nhưng chưa rDNS (vượt --max-rdns, quá --deadline, hoặc --no-rdns). Không tính là thật.

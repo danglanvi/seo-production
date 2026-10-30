@@ -1,5 +1,5 @@
 <?php
-// test_mu.php (wp-ucss): 8 ca cho mu-plugin templates/ucss-swap.php, giả lập hàm WordPress. php test_mu.php → in OK/SAI, mã 1 nếu có ca sai.
+// test_mu.php (wp-ucss): 14 ca cho mu-plugin templates/ucss-swap.php, giả lập hàm WordPress. php test_mu.php → in OK/SAI, mã 1 nếu có ca sai.
 $tmp = sys_get_temp_dir() . '/wp-ucss-mu-' . getmypid();
 define( 'ABSPATH', $tmp . '/' );
 define( 'WP_CONTENT_DIR', $tmp . '/wp-content' );
@@ -9,6 +9,9 @@ function is_user_logged_in() { return ! empty( $GLOBALS['LOGGED'] ); }
 function is_admin() { return false; }
 function is_feed() { return false; }
 function esc_attr( $s ) { return htmlspecialchars( $s, ENT_QUOTES ); }
+function is_singular() { return ! empty( $GLOBALS['SINGLE'] ); }
+function is_page() { return ! empty( $GLOBALS['PAGE'] ); }
+function is_attachment() { return false; }
 
 $H   = str_repeat( 'd4', 16 );
 $dir = WP_CONTENT_DIR . '/ucss';
@@ -41,5 +44,21 @@ unlink( "$dir/OFF" );
 rename( "$dir/$H.0123abcd.css", "$tmp/x.css" );
 $ok( 'thiếu file gọn không đổi', $sync === $run( '/dich-vu/', $sync ) );
 
-unlink( "$tmp/x.css" ); unlink( "$dir/map.php" ); rmdir( $dir ); rmdir( WP_CONTENT_DIR ); rmdir( $tmp );
+rename( "$tmp/x.css", "$dir/$H.0123abcd.css" );
+
+// Khoá 'all' (site agency mẫu 27/10/2026): bài viết ngoài map dùng bản gọn khi md5 có 'all'; page và bài có iframe YouTube tải ngay giữ file gộp.
+$H2 = str_repeat( 'e5', 16 );
+file_put_contents( "$dir/map.php", "<?php\nreturn array( 'v' => 'test', 'files' => array( '$H' => array( 'f' => '$H.0123abcd.css', 'p' => array( '/dich-vu/' => 1 ) ) ), 'all' => array( '$H' => 1, '$H2' => 1 ) );\n" );
+$GLOBALS['SINGLE'] = 1;
+$ok( 'all: bài viết ngoài map đổi', 1 === $sw( $run( '/bai-moi/', $sync ) ) );
+$yt = str_replace( '</body>', '<iframe width="560" src="https://www.youtube.com/embed/abc"></iframe></body>', $sync );
+$ok( 'all: bài có iframe YouTube tải ngay giữ file gộp', 0 === $sw( $run( '/bai-moi/', $yt ) ) );
+$ok( 'all: iframe YouTube loading=lazy vẫn đổi', 1 === $sw( $run( '/bai-moi/', str_replace( '<iframe ', '<iframe loading="lazy" ', $yt ) ) ) );
+$ok( 'all: md5 có all nhưng không có trong files thì không đổi', 0 === $sw( $run( '/bai-moi/', str_replace( $H, $H2, $sync ) ) ) );
+$GLOBALS['PAGE'] = 1;
+$ok( 'all: page ngoài map không đổi', 0 === $sw( $run( '/trang/', $sync ) ) );
+$GLOBALS['PAGE'] = 0; $GLOBALS['SINGLE'] = 0;
+$ok( 'all: trang lưu trữ ngoài map không đổi', 0 === $sw( $run( '/chuyen-muc/', $sync ) ) );
+
+unlink( "$dir/$H.0123abcd.css" ); unlink( "$dir/map.php" ); rmdir( $dir ); rmdir( WP_CONTENT_DIR ); rmdir( $tmp );
 exit( $bad ? 1 : 0 );

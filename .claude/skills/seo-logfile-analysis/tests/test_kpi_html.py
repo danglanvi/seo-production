@@ -79,6 +79,13 @@ class T(unittest.TestCase):
         self.assertIn('CẢNH BÁO: mẫu số', out)
         self.assertNotIn('203.0.113', out)
 
+    def test_html_3xx_va_kpi_chi_200(self):
+        # Ca thật site agency mẫu 26–27/10/2026: 20/45 lượt HTML là 301; % KPI 72,6 mọi mã, 32,3 nếu chỉ tính 200.
+        _, o, out = run()
+        s = o['tong_hop']
+        self.assertEqual((s['html_3xx'], s['pct_kpi_200']), (1, 25.0))
+        self.assertIn('HTML 3xx: 1/3', out)
+
     def test_html_ms(self):
         _, o, _ = run()
         self.assertEqual(o['tong_hop']['html_ms_trung_vi'], 40.0)

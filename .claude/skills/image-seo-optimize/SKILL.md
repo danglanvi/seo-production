@@ -1,8 +1,8 @@
 ---
 name: image-seo-optimize
-description: "Tối ưu SEO hình ảnh theo semantic (bulk) — đặt tên file, alt text, caption, metadata keywords cho ảnh ĐÃ CÓ + performance layer per-image (file-size tier theo vị trí, format ladder AVIF→WebP→JPEG, lazy-load/LCP, CLS, Discover ≥1200px) + đổi tên ảnh ĐÃ ĐĂNG trên site kèm 301 và cách ly file cũ. Use when: (1) 'tối ưu ảnh cho bài [X]', (2) 'đổi tên ảnh trên site cho chuẩn'."
+description: "Tối ưu SEO ảnh ĐÃ CÓ: tên file, alt, caption, metadata, performance từng ảnh (size tier, AVIF/WebP, lazy/LCP, CLS), đổi tên ảnh đã đăng kèm 301, nén lại theo SSIM, kiểm alt mọi biến thể. Use when: 'tối ưu ảnh cho bài [X]', 'đổi tên ảnh trên site', 'nén lại ảnh', 'sửa alt ảnh'."
 metadata:
-  version: "1.2.2"
+  version: "1.3"
 ---
 
 # Image SEO Optimize — Semantic (bulk)
@@ -35,7 +35,7 @@ Tối ưu hàng loạt ảnh **đã có** cho 1 bài viết: filename + alt + ca
 ## Quy trình 6 bước
 
 ### Bước 0 — kiểm tool
-Chạy "python3 tools/capabilities.py check --need 'python3,cwebp,pillow?,ssh?,wp-cli?,jev?,gemma?'" từ root repo. Nếu thiếu tool bắt buộc, dừng và báo tên tool. Nếu thiếu tool tuỳ chọn, dùng fallback ghi trong "tools/capabilities.md".
+Chạy "python3 tools/capabilities.py check --need 'python3,cwebp,pillow?,numpy?,ssh?,wp-cli?,jev?,gemma?'" từ root repo. Nếu thiếu tool bắt buộc, dừng và báo tên tool. Nếu thiếu tool tuỳ chọn, dùng fallback ghi trong "tools/capabilities.md".
 
 ### Bước 0 — Context
 1. Đọc bài viết (file trong folder / `$ARTICLE_PATH` / Docs URL): lấy **Central Entity, target keyword, heading tree, số liệu đắt**.
@@ -90,10 +90,17 @@ Format ladder: **AVIF → WebP → JPEG fallback** (nhúng bằng `<picture>` + 
 
 **4. Image-SERP / Discover:** ảnh đại diện (feature) xuất bản **≥1200px** chiều rộng — điều kiện Discover large preview, đi cùng `max-image-preview:large` (mặc định nếu robots meta không hạn chế); khi CMS hỗ trợ, giữ thêm variant tỷ lệ 16:9 / 4:3 / 1:1 cho `ImageObject` schema. Ngoại lệ ≥1200px CHỈ cho feature/hero — ảnh inline giữ max 1200px như Bước 4.
 
+### Bước 4d — Nén lại ảnh đã đăng và kiểm alt ở mọi biến thể (bổ sung 27/10/2026)
+Đọc `references/nen-lai-ssim-va-alt-bien-the.md` khi `$APPLY=apply` nén ảnh đã có trên site, hoặc khi sửa alt của ảnh trên trang đang chạy.
+- Nén lại: giữ SSIM luma của bản mới so với file đang phục vụ từ 0,98 cho ảnh có chữ hoặc logo, từ 0,97 cho ảnh chụp thật. Dùng `scripts/webp_recompress.py`. Chỉ ghi khi file nhỏ hơn ít nhất 8%. Báo lợi ích là byte, không hứa điểm PSI.
+- Ảnh có alpha: đo SSIM trên nền thật của trang bằng `scripts/ssim_luma.py --bg`. Nền đen hoặc trắng cho số thấp hơn.
+- Bản ảnh theo cỡ hiển thị: không tạo bản rộng hơn nguồn. Cách đo cỡ và viết `srcset`, `sizes` nằm ở `wp-pagespeed` `references/checklist-theo-lop.md` lớp 3.
+- Alt: tìm mọi nơi in alt (attachment và chuỗi cứng trong template), sửa hết, rồi chạy `scripts/alt_variants.py` cho khách desktop, khách mobile và Googlebot smartphone.
+
 ### Bước 5 — Apply hoặc Plan
 
 - **`plan-only` (default):** xuất bảng mapping đầy đủ (tên cũ → tên mới | alt | caption | keywords | placement | technical note) dạng markdown + CSV để dán vào sheet/CMS. KHÔNG đụng file.
-- **`apply` (cần Vincent confirm bảng trước):** rename file theo plan (`mv`), ghi metadata nếu có `exiftool` (máy hiện chưa cài — đề xuất `brew install exiftool`; không có thì chỉ rename + giao bảng metadata để CMS nhập). Ghi log old→new để revert được.
+- **`apply` (cần Vincent confirm bảng trước):** rename file theo plan (`mv`), ghi metadata nếu có `exiftool` (máy hiện chưa cài — đề xuất `brew install exiftool`; không có thì chỉ rename + giao bảng metadata để CMS nhập). Ghi log old→new để revert được. Ảnh đã đăng trên site: sửa alt hoặc nén file xong thì chạy Bước 4d trước khi báo xong.
 - **Mode D:** bảng old→new là bảng 301 JSON. Áp theo `references/doi-ten-anh-da-dang.md`: staging trước, 301 bằng `templates/mu-plugin-301-anh.php`, cách ly file cũ bằng `scripts/anh_cach_ly.sh`, kiểm URL cũ 301 → 200.
 
 **Output report:**
@@ -121,7 +128,9 @@ Format ladder: **AVIF → WebP → JPEG fallback** (nhúng bằng `<picture>` + 
 - Rename mà quên xuất bảng old→new (vỡ reference nếu bài đã nhúng ảnh).
 - Stock photo generic cho nội dung core (W8/T2-P5: original media = E-E-A-T signal).
 - Lazy-load ảnh hero/LCP, hoặc gắn `fetchpriority="high"` cho nhiều ảnh cùng trang (mất tác dụng ưu tiên, delay LCP).
-- Nén ảnh đạt size tier nhưng vỡ chữ/số liệu trong ảnh — performance không được phá machine-gaze (Bước 4b OCR risk).
+- Nén ảnh đạt size tier nhưng vỡ chữ/số liệu trong ảnh — performance không được phá machine-gaze (Bước 4b OCR risk). Đo SSIM theo loại ảnh (Bước 4d).
+- Đo SSIM ảnh có alpha trên nền đen hoặc trắng khi trang dùng nền màu: cổng 0,97 cho kết quả khác nhau theo nền (Bước 4d).
+- Sửa alt của attachment rồi báo xong: chuỗi cứng trong template vẫn in alt cũ ở một biến thể (Bước 4d).
 - Đổi tên ảnh đã đăng mà không 301 URL cũ, hoặc xoá file tên cũ thay vì cách ly.
 - Chỉ sửa tên ảnh trong DB khi trang dựng từ nguồn build: lần build sau đưa tên cũ trở lại.
 
@@ -133,6 +142,7 @@ Format ladder: **AVIF → WebP → JPEG fallback** (nhúng bằng `<picture>` + 
 
 ## Changelog
 
+- **v1.3 (2026-10-27):** nguồn: hai lượt production trên một site WordPress agency mẫu (nén 35 banner case study; sửa ảnh hero và alt 3 trang dịch vụ), đều có kiểm độc lập. Thêm Bước 4d và `references/nen-lai-ssim-va-alt-bien-the.md`: ngưỡng SSIM luma theo loại ảnh (0,98 ảnh có chữ hoặc logo, 0,97 ảnh thật; 32/35 banner, -20,4% byte); ảnh có alpha đo trên nền thật (0,9737 so với 0,9616); không tạo bản rộng hơn nguồn; alt kiểm ở khách desktop, khách mobile và Googlebot smartphone vì alt đến từ attachment và chuỗi cứng trong template (9/9). Script mới `ssim_luma.py`, `webp_recompress.py`, `alt_variants.py`; test `scripts/tests/test_image_tools.py` chạy tại máy: đạt, gồm ca nền alpha và ca UA mobile in alt cũ. Bước 0 thêm `numpy?`. Rút `description` từ 373 xuống dưới 280 ký tự để qua ca cấu trúc. Chưa thử và chưa vào skill: đổi `sizes` của banner theo cỡ hiển thị (`chua-thu.md`).
 - **v1.2.2 (2026-10-19):** bảng phân vai trỏ sang `semantic-media` (chọn media theo mục) và `visual-serp-lab` (đo alt khớp ảnh, ảnh khớp mục).
 - **v1.2.1 (2026-10-19):** alt tả đúng nội dung ảnh, bỏ ngưỡng 8-15 từ; tên file ảnh feature tả chủ đề bài, không đặt keyword mà ảnh không thể hiện (khớp P19, P20 mới của `seo-onpage`).
 - **v1.2 (2026-10-18):** thêm Mode D đổi tên ảnh đã đăng trên site, từ đợt đổi tên 271 ảnh trên một site WordPress (284 URL cũ 301, không link vỡ). Reference `doi-ten-anh-da-dang.md`, mẫu `templates/mu-plugin-301-anh.php`, script `scripts/anh_cach_ly.sh` (đã chạy thử cách ly và trả lại trên server). Luật tên: tên riêng viết đủ, tính là một cụm.

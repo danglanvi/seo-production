@@ -28,8 +28,10 @@ Nạp ở bước 3–4 khi Lead chọn O7b. Đã chạy thật trên một site
    - Bypass khi có cookie WordPress (`wordpress_logged_in_`, `wordpress_sec_`, `wp-postpass_`, `comment_author_`, `woocommerce_`).
    - Bypass URL có query, **trừ file tĩnh**. Cách làm: TriggerMatchingType 1 (all), thêm 2 trigger URL MatchNone cho css/js/woff/ttf/svg và png/jpg/jpeg/webp/gif. Nếu thiếu 2 trigger này, CSS/JS `?ver=` BYPASS (site VN: 80,8% lượt).
    - HTML không có Cache-Control: lưu edge 1 ngày (OverrideCacheTime 86400).
-   - robots.txt, `*.xml`, `/feed/`: 1 giờ.
-   - Ảnh uploads: 30 ngày.
+   - robots.txt, `/feed/`: 1 giờ.
+   - Sitemap `*.xml`: 1 ngày, chỉ mã 200. Purge sitemap khi đăng hoặc sửa bài (`origin-sau-cdn.md` §3).
+   - Ảnh uploads: 30 ngày, chỉ mã 200, 206, 304 (§2b).
+   - Edge rule không đặt được header `Accept` hay `Accept-Encoding` gửi lên origin. Bunny trả 400 "Header name is reserved".
    - Chặn `xmlrpc.php`, `wp-login.php` (BlockRequest). Ghi chú: admin ở nước ngoài phải dùng VPN VN để đăng nhập.
    - `X-Robots-Tag: noindex` cho hostname `*.b-cdn.net`, để tên thử không bị index.
 5. Cache trình duyệt:
@@ -40,6 +42,26 @@ Nạp ở bước 3–4 khi Lead chọn O7b. Đã chạy thật trên một site
    - Kiểm: so Cache-Control ở origin và qua edge cho HTML, CSS/JS md5, ảnh uploads, JS theme. Site VN: file tĩnh nhận 600 giây trong khoảng 21:21–23:38 ngày 26/10/2026, trước khi có rule này.
    - Bản v1.0 ghi edge rule 16 không đổi được cache trình duyệt của HTML. Ghi chú đó sai: lượt thử 26/10/2026 23:36 cho thấy rule 16 đổi được cả HTML.
 6. Kiểm trên `*.b-cdn.net` theo `do-va-kiem.md` §2: SEO trùng, cookie bypass, TTFB lượt đầu và lượt lặp.
+
+## 2b. Edge rule theo mã: 301, 404, 410, 5xx
+
+Đã chạy trên production của site agency mẫu ngày 27/10/2026, kiểm độc lập đạt.
+
+- Bunny chỉ lưu 301 và 410 khi pull zone bật `CacheErrorResponses`. Khi tắt, edge rule đặt thời gian cache cho 301 và 410 không có tác dụng. 404 vẫn theo edge rule.
+- Khi bật `CacheErrorResponses`:
+  - 301 và 410 nằm ở edge khoảng 5 giây. Sau đó Bunny trả bản cũ (`STALE`) và lấy bản mới ở nền. Edge rule không đổi được mức 5 giây.
+  - 404 nhận thời gian của edge rule.
+  - Header trình duyệt của 404 và 410 thành `public, max-age=5`.
+  - Mã lỗi không có rule chặn được lưu ngay, kể cả 5xx (đã thử mã 507).
+- Đặt điều kiện mã (trigger StatusCode) cho mọi rule thời gian cache. Rule chỉ theo URL giữ cả 404 và 5xx. Ví dụ: rule ảnh 30 ngày chỉ áp cho 200, 206, 304.
+- Thêm một rule chặn: mọi mã ngoài danh sách được lưu (200, 203, 204, 206, 301, 304, 404, 410) nhận thời gian cache 0. Dùng danh sách mã được lưu, không dùng danh sách mã cấm.
+- Rule giữ 301, 404, 410 ở edge 1 ngày: trừ URL có query, `*.php`, `/wp-admin`, `/wp-json`, `/wp-content/` và cookie đăng nhập. 404 trong `/wp-content/uploads/` (không query) dùng rule riêng.
+- Không bật `FollowRedirects`. Thiết lập này trả nội dung trang đích tại URL cũ, nên tạo trang trùng.
+- Bài mới hoặc ảnh mới ở URL đang 404 phải được purge. Mu-plugin đưa URL vào hàng đợi purge (`origin-sau-cdn.md` §3).
+- Kiểm:
+  - Lượt 2 của URL mẫu 301, 410, 404 qua trạm Mỹ trả `cdn-cache: HIT`. Mã và Location đúng.
+  - Origin thử trả 5xx: mọi lượt qua edge là MISS.
+  - Sau khi sửa rule, lập danh sách URL đã lưu sai bằng log CDN. Purge URL nào có thể quay lại 200.
 
 ## 3. Dựng DNS chia vùng (chưa chạm apex)
 

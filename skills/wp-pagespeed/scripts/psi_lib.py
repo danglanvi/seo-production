@@ -2,6 +2,7 @@
 # Chỉ dùng thư viện chuẩn. Tương thích Python 3.9.
 # Script gọi bằng "python3 -I" phải thêm thư mục của chính nó vào sys.path trước khi import psi_lib.
 import json
+import os
 import re
 import statistics as st
 
@@ -47,6 +48,26 @@ def parse_ab_name(fname):
     """File do psi_ab + psi_run ghi: <trang>-<biến thể>-r<k>_<thiết bị>_run<m>.json. Trả None nếu tên khác."""
     m = AB_NAME.match(fname)
     return m.groupdict() if m else None
+
+
+THR_KEYS = ('min_gain', 'lcp_ms', 'cls', 'min_runs', 'max_runs', 'bench_gap')
+
+
+def load_spec(path):
+    """Đọc spec.json của psi_ab. Nhận đường dẫn file hoặc thư mục --dir chứa spec.json. Ném ValueError khi không đọc được."""
+    p = path if path.endswith('.json') else os.path.join(path, 'spec.json')
+    try:
+        with open(p, encoding='utf-8') as f:
+            return json.load(f)
+    except (OSError, ValueError) as e:
+        raise ValueError('%s: không đọc được spec (%s)' % (p, e))
+
+
+def spec_thr(spec):
+    """Ngưỡng đặt trước trong spec.json: mục decision trước, rồi khoá cùng tên ở gốc spec (ab.json ghi min_runs ở gốc)."""
+    dec = spec.get('decision') or {}
+    out = {k: dec.get(k, spec.get(k)) for k in THR_KEYS}
+    return {k: v for k, v in out.items() if v is not None}
 
 
 def _med(runs, k):

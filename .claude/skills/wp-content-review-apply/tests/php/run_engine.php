@@ -76,6 +76,26 @@ class WPS_Stub_DB {
 		return null;
 	}
 	public function insert( $t, $d ) {}
+	// set_post_modified.php: đọc và ghi 2 cột ngày của posts. Tham số lấy từ chuỗi prepare() giả.
+	private function wps_args( $q ) {
+		return json_decode( substr( $q, strrpos( $q, '|' ) + 1 ), true );
+	}
+	public function get_row( $q, $mode = null ) {
+		$a = $this->wps_args( $q );
+		$p = $GLOBALS['WPS_STORE']['posts'][ $a[0] ] ?? null;
+		return $p ? array( 'm' => $p['post_modified'], 'g' => $p['post_modified_gmt'] ) : null;
+	}
+	public function query( $q ) {
+		[ $m, $g, $id, $om, $og ] = $this->wps_args( $q );
+		$p = $GLOBALS['WPS_STORE']['posts'][ $id ] ?? null;
+		$GLOBALS['WPS_STORE']['calls'][] = "wpdb_query:$id";
+		if ( ! $p || $p['post_modified'] !== $om || $p['post_modified_gmt'] !== $og ) {
+			return 0;
+		}
+		$GLOBALS['WPS_STORE']['posts'][ $id ]['post_modified']     = $m;
+		$GLOBALS['WPS_STORE']['posts'][ $id ]['post_modified_gmt'] = $g;
+		return 1;
+	}
 	// locate.php: chọn bộ kết quả theo bảng có trong câu SQL.
 	public function get_results( $q, $mode = null ) {
 		$T = $GLOBALS['WPS_STORE']['tables'] ?? array();

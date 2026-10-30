@@ -3,6 +3,8 @@
  * Plugin Name: wp-ucss swap
  * Description: Đổi link CSS gộp của LiteSpeed sang bản gọn đã kiểm trong wp-content/ucss/. Chỉ đổi khi map.php có đúng md5 file gộp và đúng path trang. Không có thì giữ link gốc.
  * Tắt nhanh: tạo file wp-content/ucss/OFF rồi purge các trang. Gỡ hẳn: chuyển file này ra khỏi mu-plugins (vào thư mục quarantine) rồi purge.
+ * Khoá 'all': map['all'][md5] = 1 thì mọi trang bài viết (is_singular, không phải page, không phải attachment) trỏ tới file gộp đó dùng bản gọn,
+ * không cần path trong map. make_map.py chỉ ghi khoá này khi holdout ngoài tập dựng đạt kiểm. Map không có 'all' chạy như cũ.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -25,12 +27,16 @@ add_filter( 'litespeed_buffer_after', function ( $html ) {
 		return $html;
 	}
 	$path = isset( $_SERVER['REQUEST_URI'] ) ? (string) strtok( $_SERVER['REQUEST_URI'], '?#' ) : '';
+	// Bài có iframe YouTube tải ngay (không loading=lazy) giữ file gộp: CSS gọn làm parser tới iframe sớm hơn, script YouTube chen trước FCP
+	// (site agency mẫu 27/10/2026: một bài FCP 2,1 → 6,6 s ở 3/3 lượt PSI).
+	$all = ( ! empty( $map['all'] ) && is_array( $map['all'] ) && is_singular() && ! is_page() && ! is_attachment()
+		&& ! preg_match( '#<iframe\b(?![^>]*\bloading=["\']?lazy)[^>]*\ssrc=["\'](?:https?:)?//(?:www\.)?youtube(?:-nocookie)?\.com/embed/#i', $html ) ) ? $map['all'] : array();
 
 	return preg_replace_callback(
 		'#<link\b[^>]*?\bhref=(["\'])((?:https?:)?//[^"\']*?)?/wp-content/litespeed/css/([0-9a-f]{32})\.css(\?[^"\']*)?\1[^>]*>#',
-		function ( $m ) use ( $map, $path, $dir, $sub ) {
+		function ( $m ) use ( $map, $path, $dir, $sub, $all ) {
 			$h = $m[3];
-			if ( empty( $map['files'][ $h ]['p'][ $path ] ) ) {
+			if ( empty( $map['files'][ $h ]['f'] ) || ( empty( $map['files'][ $h ]['p'][ $path ] ) && empty( $all[ $h ] ) ) ) {
 				return $m[0];
 			}
 			$f = $map['files'][ $h ]['f'];

@@ -681,8 +681,9 @@ def lint_paths(f, t, base):
         else:
             ok = path_exists(full) or any(path_exists(full + ext) for ext in word_extensions(rest))
         # Khoá, log, pid tạo lúc chạy: thư mục cha có là đủ.
-        if not ok and re.search(r"\.(lock|lockdir|log|pid)$", full):
-            ok = path_exists(os.path.dirname(os.path.expanduser(full)))
+        clean = re.sub(r"[/.,;:)\]]+$", "", full)
+        if not ok and re.search(r"\.(lock|lockdir|log|pid|queue|queue-done)$", clean):
+            ok = path_exists(os.path.dirname(os.path.expanduser(clean)))
         if not ok:
             f.add("ERROR", "paths", ln, "Đường dẫn không tồn tại: %s. Sửa đường dẫn hoặc tạo file" % full)
     if pending_base_warn:

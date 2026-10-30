@@ -1,6 +1,6 @@
 # Nhánh TTFB và cache phía trang
 
-Đọc file này khi CrUX TTFB p75 trên 0,8 s, hoặc khi lượt đầu của khách thật thường miss cache. Nhánh này chỉ đọc: mọi bước đo không đổi option, plugin hay file trên site. Sửa thì theo `checklist-theo-lop.md` lớp 1 và cần duyệt.
+Đọc file này khi CrUX TTFB p75 trên 0,8 s, khi average response time trong GSC Crawl stats trên 300 ms, hoặc khi lượt đầu của khách thật thường miss cache. Nhánh này chỉ đọc: mọi bước đo không đổi option, plugin hay file trên site. Sửa thì theo `checklist-theo-lop.md` lớp 1 và cần duyệt.
 
 Site agency mẫu 21/10/2026 làm nhánh này trong khoảng 6 giờ. Thứ tự dưới đây làm trong khoảng 60 phút.
 
@@ -62,8 +62,29 @@ WordPress dựng trang 404 đầy đủ bằng theme, nên mỗi lượt 404 l�
 
 Site agency mẫu 27/10/2026: 161 đường dẫn, 1.742 lượt mỗi 7 ngày, khoảng 1.369 giây PHP. Sau khối: 1,1–2,8 s còn 13–21 ms. Hồi quy 62/65 URL trả 200, 3 URL giữ mã cũ.
 
+Bot hợp lệ cũng gọi một số file mà site không có. Thêm các path đó vào cùng khối khi log cho thấy mọi lượt đều 404:
+
+- `/ads.txt`, `/.well-known/assetlinks.json` khi site không chạy quảng cáo hay ứng dụng.
+- `/page/N/` ở gốc site khi trang chủ không phân trang. Giữ phân trang của chuyên mục và của bản ngôn ngữ khác (kiểm bằng URL có tham số ngôn ngữ).
+
+Site agency mẫu 27/10/2026: các URL này từ 404 sau 1,0–1,2 s còn 404 sau 15–16 ms. Hồi quy 156/156 URL đúng kỳ vọng.
+
 - WordPress 6.8 in `speculationrules` có mẫu `/*`, `/wp-content/*`. Googlebot đọc chuỗi đó như URL và gọi thật, mỗi lượt 404 mất khoảng 1,3 s. Khối trên trả 404 nhanh cho URL chứa `*`, nên không cần tắt prefetch của khách.
 - Luồng kiểm nội bộ dùng UA riêng, không dùng UA Googlebot. Log KPI crawl lọc theo IP Google. Site mẫu có 14.177 dòng UA Googlebot đến từ lượt thử nội bộ.
+
+## 4c. Mục tiêu average response time dưới 300 ms
+
+Average response time trong GSC Crawl stats đo lúc Googlebot crawl, chủ yếu từ Mỹ. Page cache ở origin VN chưa đủ để xuống dưới 300 ms, vì mỗi vòng VN–Mỹ mất khoảng 200 ms (`cdn-speed-setup`). Cần cache HTML ở edge.
+
+| Ca | Hạ tầng | Average response time |
+|---|---|---|
+| Site TMĐT mẫu, 8/2026 → 28/10/2026 | Theme đa năng + WooCommerce, LiteSpeed Cache, Cloudflare Cache Rule "cache full HTML" + rule Bypass đặt dưới | 1.000–1.500 ms → khoảng 250–500 ms (ước lượng từ biểu đồ GSC). Request Googlebot mỗi ngày 1.000–2.500 → 1.500–4.500 |
+| Site bán lẻ mẫu, 30/10/2026 | Shared hosting LiteSpeed ở VN, chưa có CDN | 1.360 ms. CrUX TTFB p75 1,46 s |
+
+1. Làm mục 2 và 4b trước. Lượt MISS ở edge vẫn đi về origin, nên origin cần tỉ lệ hit cao và 404 nhanh.
+2. Chọn nhánh CDN bằng `cdn-speed-setup`: khách toàn cầu dùng nhánh A (Cloudflare cache HTML, rule Bypass cho admin, đăng nhập, giỏ, thanh toán, cookie thử thách). Khách chủ yếu ở VN dùng nhánh B.
+3. Shared hosting: tải máy (`loadavg`) gồm cả site khác trên cùng máy. Đo TTFB miss ở 3 khung giờ khác nhau rồi lấy trung vị. Dừng purge và làm nóng khi tải vượt ngưỡng của site (`luot-lon.md` mục 8). Không chỉnh được OPcache hay MySQL, nên cache ở edge là việc chính.
+4. Nghiệm thu bằng GSC Crawl stats 28 ngày sau khi bật. Xuất file (Export) để có số theo ngày. Số đọc từ biểu đồ ghi "ước lượng".
 
 ## 5. Ngoài phạm vi skill này
 

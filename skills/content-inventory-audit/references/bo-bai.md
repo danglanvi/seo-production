@@ -71,7 +71,7 @@ Dùng khi URL trả 404 nhưng có dấu hiệu từng là trang thật: click G
 - Dump DB phải truy vấn mọi `post_type` và mọi `post_status`. Lần dump đầu ở site agency mẫu bỏ sót custom post type (42/55 trang). `export_urls.php` làm đúng việc này: chạy bằng `wp eval-file` theo `references/cay-chuyen-muc.md` §2.
 - Chạy `export_urls.php` không kèm `--skip-plugins`. Trường `path` lấy từ `get_permalink()`, nên cần plugin đăng ký custom post type và filter permalink. Nếu plugin làm WP-CLI lỗi, thêm `--skip-plugins` và dùng `pm_uri` thay `path`.
 - Tra theo thứ tự: DB (mọi post_type, mọi post_status), slug cũ `_wp_old_slug`, Wayback. Chỉ đề xuất 410 sau 3 bước này.
-- Nếu bài còn trong DB ở trạng thái nháp, chờ duyệt, riêng tư, hẹn giờ hoặc thùng rác, hỏi khôi phục trước khi 301. Nguồn: site agency mẫu (gtvseo) 17/10/2026, rule 301 cũ dẫn qua rule trung gian tới trang đang ở nháp.
+- Nếu bài còn trong DB ở trạng thái nháp, chờ duyệt, riêng tư, hẹn giờ hoặc thùng rác, hỏi khôi phục trước khi 301. Nguồn: site agency mẫu 17/10/2026, rule 301 cũ dẫn qua rule trung gian tới trang đang ở nháp.
 - Attachment trùng slug không là đích. Attachment cũng không chứng minh bài còn tồn tại.
 - Không 301 về trang chủ, trang chuyên mục, thẻ hoặc archive. Chỉ 301 về bài cùng chủ đề. Không có bài phù hợp thì đưa URL vào danh sách bỏ và trả 410. Lý do: ngày 19/10/2026, Google coi 301 về một trang chuyên mục của site agency mẫu là soft 404 (người duyệt chốt 26/10/2026).
 - Đích phải là bài publish, trả 200 sau đúng một bước.
@@ -80,11 +80,36 @@ Dùng khi URL trả 404 nhưng có dấu hiệu từng là trang thật: click G
 
 | File | Nguồn |
 |---|---|
-| `urls.tsv`: cột `url`, `clicks`, `dich_goi_y`, `tam_dong`, `bo` | URL 404 từ GSC, crawl, log (`seo-logfile-analysis`), backlink tới trang 404. `clicks` = click GSC 90 ngày theo page. `bo` = 1 khi URL nằm trong danh sách bỏ đã duyệt |
+| `urls.tsv`: cột `url`, `clicks`, `dich_goi_y`, `tam_dong`, `bo` | URL 404 từ GSC, crawl, log origin và log CDN (`scripts/log_urls_chet.py`, mục 4.2b), backlink tới trang 404. `clicks` = click GSC 90 ngày theo page. `bo` = 1 khi URL nằm trong danh sách bỏ đã duyệt |
 | `urls.json`, `terms.json`, `rules.json`, `uris.json` | `export_urls.php` và `export_tax_redirects.php`, lệnh ở `references/cay-chuyen-muc.md` §2 |
 | `wb.json` | `wayback_cdx.py` ở bước 4.3 |
 
 Đặt `<U>` = `03-audits/technical/<CLIENT>_url-dich_<YYYY-MM-DD>/` khi chạy riêng, hoặc `<W>/url/` khi chạy trong kiểm kê.
+
+### 4.2b Lấy URL ứng viên từ log origin và log CDN
+
+Dùng khi URL cũ vẫn nhận lượt crawl và lượt khách, mà GSC chưa báo hết. Log origin chỉ thấy lượt lọt qua CDN. Log CDN thấy cả lượt edge trả lời. Lấy cả hai.
+
+```bash
+python3 $C/log_urls_chet.py --site-host <domain> --log <access.log> [--log <access.log.1.gz>] \
+  [--cdn-log <cdn-ngay.log> --cdn-format bunny] --verified-ips <verified_ips.txt> --since <YYYY-MM-DD> --out <U>/urls_ung_vien.tsv
+```
+
+- Script giữ đường dẫn trả 301, 302, 307, 308, 404 hoặc 410 có lượt Googlebot đã xác minh hoặc lượt người dùng có referer. Lượt của curl, Lighthouse và agent kiểm không tính.
+- `verified_ips.txt` do `seo-logfile-analysis/scripts/verify_googlebot.py` sinh. Thiếu file thì cột `googlebot` chỉ dựa trên UA và dải IP đầu: ghi "chưa xác minh" vào báo cáo.
+- Script bỏ đường dẫn wp-*, feed, file tĩnh, đường dò quét và đuôi phụ của bài. Script giữ path ghép `%20` và đuôi `:XXX`, vì đó là link hỏng nội bộ: người đọc, rồi giao lane nội dung sửa link.
+- Cột `ma_khac` có mã 200 nghĩa là URL đã sống lại. Kiểm lại nguồn báo.
+- Kiểm mã hiện tại của từng URL ứng viên bằng một request mỗi giây, không theo redirect. Phân nhóm theo header:
+  - Có `X-Redirect-By` hoặc header WordPress (`x-litespeed-cache`, `link: <…/wp-json/>`): URL đi qua PHP, cần quyết.
+  - Không có các header đó: rule tĩnh đã xử lý, loại khỏi danh sách.
+  - Đang trả 200: loại.
+
+  ```bash
+  curl -s -o /dev/null -D - --max-time 20 -w 'T=%{time_starttransfer}\n' https://<domain><đường dẫn>
+  ```
+
+- Ca thật (site agency mẫu, 27/10/2026): log origin 7 ngày cho 8.826 đường dẫn, log CDN 2 ngày cho 2.143. Bộ lọc còn 516. Kiểm mã hiện tại: 12 đang 200, 273 đã có rule tĩnh, 8 trả 403. Còn 225 URL cần quyết: 54 là 301 qua PHP, 158 là 404 qua WordPress, 13 là 410 qua WordPress.
+- Lượt kiểm của agent dùng UA riêng, không dùng UA Googlebot. Log KPI crawl lọc theo IP đã xác minh, nhưng đếm UA thì lượt kiểm nội bộ làm sai số.
 
 ### 4.3 Chạy
 
@@ -114,6 +139,22 @@ python3 $C/pick_target.py --urls <U>/urls.tsv --dump <U>/urls.json --terms <U>/t
 
 Khi nhiều URL cần đích, lấy ứng viên bằng `tools/ai-assist/emb.py nn --k 5`, rồi chạy Jev `redirect-pick`. Ngưỡng ở `tools/ai-assist/README.md` §4. Danh sách ứng viên phải có trang tĩnh ngoài WordPress. Không lấy top-1 của Gemma làm đích: lượt 17/10/2026 top-1 chỉ đúng 4/11 URL. Ghi đích vào `dich_goi_y`, rồi chạy lại `pick_target.py --strict`. Lệnh thoát 1 khi còn dòng `loi`.
 
+Cách chạy ba bước trên 221 URL (site agency mẫu, 27/10/2026):
+
+- Tập đích: URL trong sitemap và tiêu đề của chúng, không noindex. Truy vấn Gemma: slug tách từ cộng tiêu đề cũ (lấy từ DB nếu bài đã chuyển nháp). Lấy 5 đích gần nhất. Nếu URL đã có đích Rank Math hoặc WPML đang chạy mà Gemma không xếp vào top 5, thêm đích đó vào ứng viên.
+- Jev chọn một trong p1 đến p5, `gone` hoặc `unknown`. Hiệu chuẩn trên 12 dòng Claude gán trước khi nhìn nhãn Jev: khớp 11/12. Dòng lệch là Jev chọn trang rộng hơn ý định (0,70). Chi phí 0,012 USD cho 221 dòng.
+- Claude đọc mọi dòng gắn cờ: Jev `gone`, Jev chọn trang dưới 0,85, mọi dòng 410. Lượt thật: 78/78 dòng. Claude đọc thêm 45 dòng từ 0,85 và đổi 15 dòng. Ví dụ: Jev chọn trang tiếng Việt ở 0,89 cho URL tiếng Anh. Không bỏ qua dải từ 0,85: đọc ít nhất tiêu đề đích và ngôn ngữ của từng dòng.
+- 98 dòng Jev `unknown` là đường dò quét hoặc path ghép lỗi. Claude đọc hết và giữ 404.
+
+Nguyên tắc Claude áp khi quyết, đã dùng ở lượt thật:
+
+1. Đích Rank Math hoặc WPML đang chạy, trả 200 và tự canonical: giữ đúng đích đó, chỉ đổi sang rule tĩnh. Hành vi không đổi.
+2. 410 chỉ cho URL đang 410 qua PHP, hoặc bài đã chuyển nháp mà không có trang cùng thực thể. Bản nháp không có nghĩa bài sẽ đăng lại, khi site gỡ bài theo cách nháp cộng 410 hoặc 301.
+3. Đường dò quét và link hỏng giữ 404, kể cả khi Jev chọn `gone`.
+4. Slug bị cắt cụt chỉ 301 khi đúng một trang bắt đầu bằng slug đó.
+5. Đích khác ngôn ngữ của URL nguồn: giữ nguyên redirect đang chạy, xem lại sau.
+6. Dòng không đủ căn cứ giữ 404 và vào danh sách xem lại có ngày. Lượt thật: 81 dòng xem lại sau 6 ngày.
+
 ### 4.5 Trang ngừng bán và đóng tạm
 
 - Trang sản phẩm hoặc khoá học ngừng bán vẫn sống thì `pick_target.py` trả `giu`. Người duyệt chọn một trong 3 cách: giữ trang, 301 về trang thay thế cùng ý định, hoặc 302 đóng tạm.
@@ -136,16 +177,39 @@ python3 $C/chain_check.py --rules <U>/rules.json --new <U>/moi.json --dump <U>/u
 
 - Ghi rule qua `wp-content-review-apply`, theo `references/ghi-an-toan.md` §3 dòng Redirect, sau khi người duyệt bấm duyệt.
 - Xuất lại `rules.json`, rồi chạy lại `chain_check.py` như mục 4.6 nhưng bỏ `--new`. Lệnh phải thoát 0.
+- Site có quyền server và URL còn nhận lượt crawl: cân nhắc rule tĩnh theo mục 4.7b thay cho rule Rank Math.
 - Kiểm từng URL: 301 và 302 qua đúng một bước tới trang 200, URL 410 trả 410. URL có slug emoji: kiểm cả dạng ký tự thật lẫn dạng `%f0%9f…`.
 
   ```bash
   curl -s -o /dev/null -w '%{http_code} %{redirect_url}\n' https://<domain><đường dẫn>
   ```
 
+### 4.7b Rule tĩnh trong `.htaccess` thay cho rule Rank Math
+
+Dùng khi có quyền server và URL cũ còn nhận lượt crawl. Rule đi qua PHP tốn thời gian của PHP cho mỗi lượt. Đo trên origin, site agency mẫu, 59 rule (27/10/2026): 301 từ 275 ms xuống 10 ms (p50), 410 từ 679 ms xuống 10 ms. Tác động lên "thời gian phản hồi trung bình" của GSC nhỏ, vì phần lớn lượt là của người dùng. Googlebot chiếm 81 trên 600 lượt trong 7 ngày.
+
+Cách ghi khối, vị trí trước `# BEGIN WordPress`, backup, restart graceful và probe hồi quy: đọc `wp-pagespeed` `references/ttfb-cache-trang.md` mục 4b. Không chép lại ở đây. Với 301 và 410, kiểm thêm trước khi áp:
+
+1. Mẫu nguồn thoát ký tự đặc biệt và kết thúc bằng `/?$`. Một rule phủ cả bản có và không có dấu `/`.
+2. Chỉ ghi nguồn có ký tự `[a-z0-9-/._]`. URL có ký tự khác (emoji, `%20`, `:`) để WordPress xử lý.
+3. Chạy mẫu trên danh sách URL công khai: 0 URL khớp (mục 4b bước 5).
+4. Nguồn là trang còn publish thì không ghi rule tĩnh, vì rule che trang. Ca thật: `*-old` còn publish và có 301 Rank Math, giữ nguyên rule Rank Math.
+5. Không trùng rule có sẵn. Đích không là nguồn của rule khác. Không rule có sẵn trỏ vào nguồn mới: sửa rule đó trước.
+6. Đích Rank Math hoặc WPML đang chạy và trả 200 tự canonical: giữ đích, chỉ đổi sang rule tĩnh.
+
+Sau khi áp:
+
+- Probe mọi rule, cả bản có và không có dấu `/`: đúng mã, `Location` đúng một bước. Ca thật: 118/118 lượt.
+- Đếm 5xx trong log từ lúc restart. Ca thật: 0 trên 12 log có dữ liệu.
+- Purge cache trang và CDN đúng URL đã đổi. Kiểm CDN trả 200 cho đích.
+- Ghi bẫy vào hồ sơ site: rule tĩnh chạy trước WordPress. Khôi phục bài hoặc sửa đích Rank Math của URL trong khối thì xoá dòng URL đó khỏi khối, rồi restart graceful.
+
 ### 4.8 Checklist mục 4
 
 - [ ] Không URL nào thành 410 khi chưa có `bo` = 1. Nguồn lỗi: người duyệt chốt 19/10/2026 sau khi theme của site agency mẫu ép mọi 404 thành 410.
-- [ ] Mỗi dòng `khoi_phuc` có quyết định khôi phục của người duyệt trước khi 301. Nguồn lỗi: site agency mẫu (gtvseo) 17/10/2026.
+- [ ] Mỗi dòng `khoi_phuc` có quyết định khôi phục của người duyệt trước khi 301. Nguồn lỗi: site agency mẫu 17/10/2026.
 - [ ] Mỗi dòng `doc_wayback` có chủ đề Claude đọc từ bản lưu trước khi chọn đích.
-- [ ] `pick_target.py --strict` thoát 0 và `chain_check.py` thoát 0 trước và sau khi ghi. Nguồn lỗi: site khoá học mẫu (theaigrowth) 17/10/2026, 301 trỏ URI cũ của Permalink Manager.
+- [ ] `pick_target.py --strict` thoát 0 và `chain_check.py` thoát 0 trước và sau khi ghi. Nguồn lỗi: site khoá học mẫu 17/10/2026, 301 trỏ URI cũ của Permalink Manager.
+- [ ] Mọi dòng gắn cờ do Jev đã có Claude đọc, gồm dải từ 0,85 (lượt thật đổi 15/45 dòng). Nguồn lỗi: site agency mẫu 27/10/2026.
+- [ ] Mỗi rule tĩnh qua đủ 6 kiểm của mục 4.7b. Nguồn lỗi: site agency mẫu 27/10/2026, rule tĩnh sẽ che trang `*-old` còn publish.
 - [ ] Không đích 301 nào là chuyên mục, thẻ hoặc archive. Nguồn lỗi: site agency mẫu 19/10/2026, 301 về trang chuyên mục thành soft 404.

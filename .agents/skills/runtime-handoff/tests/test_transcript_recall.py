@@ -21,6 +21,11 @@ FAKE_JWT = "ey" + "J" + "a" * 12 + "." + "b" * 12 + "." + "c" * 12
 FAKE_HOST = "stg-" + "demo-host.example.net"
 FAKE_IP = "203." + "0.113.7"
 FAKE_HEX = "9f" * 20
+# Hai dạng key dán vào chat ngày 26–27/10/2026, ghép giả từ mảnh: QUIC.cloud <chữ>.<32 ký tự>, Bunny hai UUID nối liền.
+FAKE_QUIC = "AbCdEfG" + "." + "Xy7Kq2Lm" * 4
+FAKE_UUID = "1a2b3c4d-" + "5e6f-7a8b-9c0d-" + "1e2f3a4b5c6d"
+FAKE_BUNNY = FAKE_UUID + FAKE_UUID.replace("1", "7")
+LONG_TEXT = "Lead dặn rất dài " + "chi tiết " * 120 + "CUỐI-TIN"
 
 
 def rec(kind, content, ts, side=False):
@@ -43,6 +48,12 @@ def build(d):
         rec("user", "Xem lại BRAIN/journal hôm qua giúp tôi", "2026-10-19T11:12:00.000Z"),
         rec("user", "tin của agent phụ", "2026-10-19T11:13:00.000Z", side=True),
         rec("user", "Tiếp tục lô 2, không hỏi lại.", "2026-10-19T12:00:00.000Z"),
+        rec("user", f"đây là API key của tôi: {FAKE_QUIC} và API bunny: {FAKE_BUNNY}; run {FAKE_UUID}", "2026-10-19T12:05:00.000Z"),
+        {"type": "attachment", "isSidechain": False, "timestamp": "2026-10-19T12:06:00.000Z",
+         "attachment": {"type": "queued_command", "commandMode": "prompt", "prompt": "nhớ đọc, review từng câu chữ chat cụ thể nhé"}},
+        {"type": "attachment", "isSidechain": False, "timestamp": "2026-10-19T12:06:00.000Z",
+         "attachment": {"type": "queued_command", "commandMode": "task-notification", "prompt": "<task-notification>xong</task-notification>"}},
+        rec("user", LONG_TEXT, "2026-10-19T12:07:00.000Z"),
     ]
     f = d / "84cabbc3-aaaa.jsonl"
     f.write_text("\n".join(json.dumps(x, ensure_ascii=False) for x in lines) + "\nhỏng không phải json\n", encoding="utf-8")
@@ -78,10 +89,23 @@ def main():
     # Lọc grep, since, last.
     r = run(RECALL, "user", "84cabbc3-aaaa", "--grep", "lô 2", *base)
     assert r.stdout.count("Lead:") == 1 and "Tiếp tục lô 2" in r.stdout
-    r = run(RECALL, "user", "84cabbc3-aaaa", "--since", "2026-10-19 19:00", *base)
+    r = run(RECALL, "user", "84cabbc3-aaaa", "--since", "2026-10-19 19:00", "--until", "2026-10-19 19:00", *base)
     assert r.stdout.count("Lead:") == 1 and "[19/10 19:00]" in r.stdout, r.stdout
     r = run(RECALL, "user", "84cabbc3-aaaa", "--last", "1", *base)
     assert r.stdout.count("Lead:") == 1
+
+    # Key QUIC.cloud và Bunny bị che; UUID đơn (run id) giữ nguyên.
+    r = run(RECALL, "user", "84cabbc3-aaaa", "--grep", "API key", *base)
+    assert FAKE_QUIC not in r.stdout and FAKE_BUNNY not in r.stdout and FAKE_QUIC.split(".")[1] not in r.stdout, r.stdout
+    assert r.stdout.count("[KEY]") == 2 and FAKE_UUID in r.stdout, r.stdout
+    # Tin gõ giữa lượt (queued_command) có trong lệnh user; task-notification bị bỏ.
+    r = run(RECALL, "user", "84cabbc3-aaaa", "--since", "2026-10-19 19:06", "--until", "2026-10-19 19:06", *base)
+    assert "[19/10 19:06] Lead (giữa lượt): nhớ đọc, review từng câu chữ" in r.stdout and "xong" not in r.stdout, r.stdout
+    # Mặc định lệnh user không cắt tin; --width cắt và cảnh báo trên stderr.
+    r = run(RECALL, "user", "84cabbc3-aaaa", "--grep", "CUỐI-TIN", *base)
+    assert "CUỐI-TIN" in r.stdout and "cảnh báo" not in r.stderr, (r.stdout[-200:], r.stderr)
+    r = run(RECALL, "user", "84cabbc3-aaaa", "--grep", "CUỐI-TIN", "--width", "600", *base)
+    assert "CUỐI-TIN" not in r.stdout and "đã cắt 1 tin ở 600 ký tự" in r.stderr, r.stderr
 
     # Claude: che host, IP, JWT, hex; không in phần thinking.
     r = run(RECALL, "assistant", "84cabbc3-aaaa", *base, env={"STG_HOST": FAKE_HOST})

@@ -2,7 +2,7 @@
 name: wp-content-review-apply
 description: "Đưa thay đổi SEO title, meta, H1, slug, link, đoạn văn, trường ACF/Elementor của site WordPress qua trang duyệt có nút Duyệt/E, rồi ghi an toàn bằng WP-CLI: dựng dữ liệu, QA, plan, chạy thử, ghi, kiểm. Dùng trước mọi lần sửa nội dung trên site có quyền server."
 metadata:
-  version: "1.7.1"
+  version: "1.7.2"
 ---
 
 # wp-content-review-apply — duyệt trước, ghi sau
@@ -29,7 +29,7 @@ Skill chỉ chạy trong Claude Code, vì trang duyệt là artifact claude.ai c
 
 - `00-client-context/wp-server.md`: lệnh WP-CLI, plugin SEO (Rank Math, Yoast), plugin đa ngôn ngữ, plugin cache, link trang duyệt của site. Chưa có thì tạo từ `_TEMPLATES/wp-server.md`.
 - `references/hop-dong-du-lieu.md`: collection, dạng tài liệu, trạng thái duyệt, bảng `target`. Đọc ở Bước 3.
-- `references/ghi-an-toan.md`: luật ghi, lệnh chạy, rollback, bẫy WordPress. Đọc ở Bước 5.
+- `references/ghi-an-toan.md`: luật ghi, lệnh chạy, đổi `lastmod` sitemap (mục 3b), rollback, bẫy WordPress. Đọc ở Bước 5.
 - `references/thao-tac-ghi.md`: dạng op của `apply.php` (`text`, `fix`, `el_rm`, `el_restore`), `locate.php`, log. Đọc ở Bước 5 khi dựng op tay.
 - `references/don-html-hang-loat.md`: chế độ dọn HTML thừa.
 - Skill `artifact-capabilities` trước khi sửa code trang duyệt.
@@ -149,6 +149,7 @@ Chữ người duyệt tự sửa:
 6. Ghi: `DRY=0` với `OUT` mới. Script xoá object cache rồi mới purge toàn bộ cache trang một lần ở cuối. Nếu hồ sơ server cấm purge toàn site, chạy thêm `PURGE=0`, rồi purge theo URL của các trang đã ghi và làm nóng lại theo `references/ghi-an-toan.md` mục 1.
 7. Thay đổi giao diện hoặc template thì ghi staging trước, gửi ảnh trước/sau, rồi mới ghi production. Chỉ đổi meta thì ghi thẳng production.
 8. Cổng ghi hàng loạt không qua thẻ (dọn HTML, thay chuỗi trên nhiều bài): chạy thử so md5, so `the_content` render trên server trước và sau, chụp so 5–6 URL mẫu. Chỉ ghi production khi bố cục không đổi. Dọn HTML theo `references/don-html-hang-loat.md`.
+9. Trang đã đổi chữ thật mà sitemap còn `lastmod` cũ: đổi `post_modified` bằng `scripts/set_post_modified.php` với TSV có giá trị cũ. Làm theo `references/ghi-an-toan.md` mục 3b, gồm xoá cache sitemap, purge và kiểm ở edge.
 
 ## Bước 6 — kiểm và đóng đợt
 
@@ -220,16 +221,18 @@ Bản tốt nhất phải có:
 - Lấy `version` để gắn `applied` bằng cách get từng thẻ hoặc query `__name__ in`. Dùng một query theo `status` rồi `mark_batch.py`.
 - Sửa trang duyệt riêng của một site mà đọc reviews bằng một truy vấn `limit(1000)`, hoặc viết cứng danh sách phần. Trang hơn 1.000 thẻ mất số đếm, phần thêm sau không bấm được.
 - Quét postmeta bằng `LIKE` trên production. `locate.php` trên production luôn chạy với `SKIP_META=1`.
+- Đổi `post_modified` bằng `UPDATE` không có điều kiện giá trị cũ, hoặc không lưu giá trị cũ trước khi ghi. Dùng `set_post_modified.php` với TSV.
 
 ## Changelog
 
+- v1.7.2 (2026-10-27): thêm `scripts/set_post_modified.php` (đổi `post_modified` theo TSV, điều kiện cả 2 cột giá trị cũ, `MODE` bắt buộc, `clean_post_cache`, không flush) và `tests/test_post_modified.py` 5/5; stub `$wpdb` thêm `get_row`, `query`. `ghi-an-toan.md` mục 3b, Bước 5 mục 9, 1 anti-pattern. Nguồn: lane đổi `lastmod` 4 trang site agency mẫu 27/10 trên production (DRY 4/4, ghi 4/4 `rows=1`, `lastmod` mới ở origin và edge, kiểm độc lập đạt). Bản port thêm `MODE` bắt buộc: bản gốc coi thiếu `MODE` là ghi thật.
 - v1.7.1 (2026-10-27): `apply.php` thêm `FLUSH=0` (mặc định vẫn xoá object cache), test 2 ca. `ghi-an-toan.md` mục 1 bước 4 ghi điều kiện dùng. Hồ sơ server thêm dòng "Cache phụ thuộc nội dung". Lý do: đề xuất bỏ hẳn `wp_cache_flush()` sai trên site có cache mảnh bám `save_post`.
 - v1.7 (2026-10-27): Bước 6 mục 1 "Tầng cache": purge CDN theo URL bằng lệnh trong hồ sơ server, kiểm giờ lưu ở edge, regen CSS gọn cho path đổi thẻ hoặc class. `ghi-an-toan.md` mục 1 bước 4b. Mục tầng cache mới trong mẫu `_TEMPLATES/wp-server.md`. Gate và anti-pattern thêm 1 mục. Nguồn: site agency mẫu chuyển apex sang CDN chia vùng 26/10; đợt semantic HTML 27/10 chuỗi ghi dừng ở bước CDN vì đường dẫn tương đối và phải phối hợp regen CSS gọn bằng tay.
 - v1.6 (2026-10-25): nd-1 engine `apply.php` (vá `$has` trước khi lấy tham chiếu, op `text`, `fix`, `el_rm`, `el_restore`, field `usermeta`/`option`, log ra `OUT`, `FAIL_ON_SKIP`), `locate.php`, `references/thao-tac-ghi.md`. nd-2 `doi_chieu.py` và luật "duyệt tới đâu áp tới đó" ở Bước 4, `so_duyet.py` + `plan.py --so`. nd-3 `the_qa.py` và khối `qa` của trường, ma trận chữ người duyệt tự sửa, humanizer `references/chu-ngan-web.md`. wpr-1 trang duyệt lấy phần từ `summary.sections`, chia 3 truy vấn reviews, status `applied`; `check_cards.py`, `kiem_trang_duyet.mjs`, `so_duyet.py the`; tra quyết định cũ trước khi ghi; cổng ghi hàng loạt; WPForms, `proc_open`, marker JSON vào `ghi-an-toan.md`. wp-review-1 `fid` (`key#n`) trong trang. ops2-9 `mark_batch.py`, thẻ ảnh `img`. hs-10 `seed_batches.py --only-missing`, `status: applied` trong `hop-dong-du-lieu.md`. perf-10 `references/don-html-hang-loat.md` và 6 script dọn HTML có bất biến wpautop, rollback so md5. sec-5 biến sau `sudo`, `ssh -n`, base64, đếm backup vào `ghi-an-toan.md` mục 2. nd-5 bẫy Permalink Manager Pro và Rank Math vào `ghi-an-toan.md` mục 4. Thêm Phân việc model, Tự phản biện, 5 mục Gate. Test offline: `tests/run_all.py`.
 
-- v1.5 (2026-10-24): Bước 4 kiểm điều kiện ngày trong nguồn duyệt trước khi ghi. Bước 6 chỉ gắn `appliedAt` sau khi kiểm live, đóng thẻ bị thẻ duyệt sau thay thế. `ghi-an-toan.md` mục 4b: luật rebase 4 trường hợp khi `raw_before` lệch live. Gate thêm 2 mục. Nguồn: lane `ap-the-cu-2310` gtvseo.com 23/10 (`Deliverables/GTV-Brand/GTV-Website/content-review-2026-10/ap-the-cu-2310/kiem-doc-lap.md` mục 1 và dòng `v2-qp-titles`).
-- v1.4 (2026-10-21): rút từ đợt gtvseo.com 20–21/10. `apply.php`: xoá object cache trước khi purge trang; Elementor sinh lại CSS của từng tài liệu vừa ghi thay cho `files_manager->clear_cache()` (lệnh cũ xoá CSS Elementor toàn site). Bước 6 thêm `wp-pagespeed/scripts/cache_variants.py` (robots, canonical ở 5 biến thể cache). `ghi-an-toan.md`: thứ tự 7 bước có làm nóng, WP-CLI đúng bản PHP có `redis.so`, chạy theo lô tránh OOM, luật SQL thô khi bật object cache, bẫy CRLF và Python `open()`, LiteSpeed minify xoá `\r\n`, staging clone cũ, không verify bằng `utm_*`, mục 4b nhiều phiên cùng ghi, rollback so md5. Gate thêm 2 mục.
+- v1.5 (2026-10-24): Bước 4 kiểm điều kiện ngày trong nguồn duyệt trước khi ghi. Bước 6 chỉ gắn `appliedAt` sau khi kiểm live, đóng thẻ bị thẻ duyệt sau thay thế. `ghi-an-toan.md` mục 4b: luật rebase 4 trường hợp khi `raw_before` lệch live. Gate thêm 2 mục. Nguồn: lane `ap-the-cu-2310` site agency mẫu 23/10 (`Deliverables/GTV-Brand/GTV-Website/content-review-2026-10/ap-the-cu-2310/kiem-doc-lap.md` mục 1 và dòng `v2-qp-titles`).
+- v1.4 (2026-10-21): rút từ đợt site agency mẫu 20–21/10. `apply.php`: xoá object cache trước khi purge trang; Elementor sinh lại CSS của từng tài liệu vừa ghi thay cho `files_manager->clear_cache()` (lệnh cũ xoá CSS Elementor toàn site). Bước 6 thêm `wp-pagespeed/scripts/cache_variants.py` (robots, canonical ở 5 biến thể cache). `ghi-an-toan.md`: thứ tự 7 bước có làm nóng, WP-CLI đúng bản PHP có `redis.so`, chạy theo lô tránh OOM, luật SQL thô khi bật object cache, bẫy CRLF và Python `open()`, LiteSpeed minify xoá `\r\n`, staging clone cũ, không verify bằng `utm_*`, mục 4b nhiều phiên cùng ghi, rollback so md5. Gate thêm 2 mục.
 - v1.3 (2026-10-19): thêm chế độ sửa trực tiếp: `scripts/sua_truc_tiep.py` (dựng file HTML có nút E từ HTML bất kỳ, xuất `edits` chuẩn NFC, đánh `k#n` cho chữ lặp), `assets/edit-layer.*`. Kiểm đầu cuối trên trang thật trong Chrome headless: 176 khối, 0 khối báo sửa nhầm, 1 bản sửa xuất đúng. Anti-patterns: bẫy của mạng nội dung (`key#n`, NFC, thẻ đã duyệt, 2 phiên cùng ghi), giao diện đi qua `wp-staging-deploy`.
-- v1.2 (2026-10-19): `apply.php` thêm `PURGE=0` để purge theo URL thay cho purge toàn site. Anti-patterns: bẫy `purge-post_all=1`, đường dẫn tuyệt đối khi nạp ArtifactData. Bước 4: duyệt trên trang cộng lời "xử lý" là đủ quyền ghi. Rút từ đợt ghi gtvseo.com 19/10.
+- v1.2 (2026-10-19): `apply.php` thêm `PURGE=0` để purge theo URL thay cho purge toàn site. Anti-patterns: bẫy `purge-post_all=1`, đường dẫn tuyệt đối khi nạp ArtifactData. Bước 4: duyệt trên trang cộng lời "xử lý" là đủ quyền ghi. Rút từ đợt ghi site agency mẫu 19/10.
 - v1.1 (2026-10-17): chuyển bản gốc vào SEO Production, viết lại cho mọi site WordPress có quyền server. Thêm `templates/trang-duyet.html`, hồ sơ server, rubric `seo-text-qa`. `apply.php`: chặn đổi slug khi site không có bảng redirect Rank Math, purge theo plugin cache đang có.
 - v1.0 (2026-10-17): tạo mới từ 2 lượt ghi thật 17/10. Chạy thử trên 221 review thật: `plan.py` khớp 189/196 thao tác của plan gốc, thêm luật giữ lại giá trị duyệt để trống; `apply.php` DRY=1 bắt đúng 1 mục site đã đổi sau lúc soạn; `verify.py` kiểm 139 URL, 3 lệch là lỗi thật.

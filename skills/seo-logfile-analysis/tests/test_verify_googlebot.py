@@ -198,7 +198,7 @@ class VerifyGooglebot(unittest.TestCase):
         self.assertEqual((code, json.loads(out)["ips_by_status"]["rdns"]), (0, 1))
 
     def test_ptr_googleusercontent_la_fake(self):
-        # Ca thật 19/10/2026 (log gtvseo.com): 126 IP PTR googleusercontent.com (máy thuê Google Cloud) đều giả UA.
+        # Ca thật 19/10/2026 (log site agency mẫu): 126 IP PTR googleusercontent.com (máy thuê Google Cloud) đều giả UA.
         # Forward-confirm vẫn khớp, nên đuôi này không được tính là Googlebot.
         ip = "203.0.113.50"
         p = self.t / "gcp.log"

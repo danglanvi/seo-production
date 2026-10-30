@@ -6,6 +6,7 @@ Mục đích: tra trường của `cau-hoi.json` khi viết thẻ, và đọc m�
 
 | Trường | Bắt buộc | Ý nghĩa |
 |---|---|---|
+| `schema` | không | `2` (mặc định) hoặc `1`. Schema 2 bắt thẻ hỏi có minh hoạ, câu hỏi có `why`, tiêu đề không có mã nội bộ. `1` chỉ dùng để dựng lại spec cũ trước 30/10/2026. |
 | `project` | có | Slug `a-z0-9-`. Script đặt tên file theo slug này. Ví dụ `gtv-website`, `web-skill-review`. |
 | `title` | có | Tiêu đề H1 của trang. |
 | `intro` | không | Một đoạn mở: trang này hỏi gì, bao nhiêu câu. |
@@ -36,6 +37,7 @@ Script tự thêm `version` và `built` vào bản sao `.cau-hoi.json` cạnh tr
 | `touches_live` | có với `question` | `true` hoặc `false`. `true` khi việc chạm site, server hoặc config đang chạy. |
 | `blocks` | không | Khối nội dung phụ, xem mục 3. |
 | `images` | không | `[{src, caption, alt}]`. Xem mục 4. |
+| `no_visual_reason` | không | Một câu lý do thẻ hỏi không có minh hoạ. Chỉ dùng khi việc không có giao diện, code hay số để chụp. Schema 2 từ chối thẻ hỏi không có ảnh, không có khối `code`, `table`, `bars`, `stats` và không có trường này. |
 | `questions` | có với `question` | Xem mục 5. Thẻ `info` và `done` không được có câu hỏi. |
 | `note` | không | Ô ghi chú. Thẻ `question` mặc định có ô. Thẻ `info` và `done` mặc định không có. `true` để bật, `false` để tắt, `{placeholder}` để đổi chữ gợi ý. |
 | `in_toc` | không | `true` để đưa thẻ `info` hoặc `done` lên mục lục. |
@@ -53,6 +55,7 @@ Dùng thẻ `done` để liệt kê việc agent đã tự quyết theo đề xu
 | `stats` | `items[{n, label}]` | Hàng số lớn. |
 | `table` | `head[]`, `rows[[...]]`, `num_cols[]` | Bảng. Cột có số thứ tự trong `num_cols` căn phải. |
 | `bars` | `title`, `max`, `rows[{label, value, tone, display}]`, `caption` | Biểu đồ thanh ngang. `tone` nhận `ok` hoặc `bad`. |
+| `code` | `title`, `before`, `after`, `code`, `caption` | Code trước và sau, hai ô cạnh nhau, xếp dọc trên điện thoại, tự xuống dòng. Cần ít nhất một trong `before`, `after`, `code`. `code` là một ô không nhãn. Chữ hiện nguyên văn, script escape HTML. |
 
 Script từ chối `type` khác danh sách trên.
 
@@ -66,15 +69,17 @@ Script từ chối `type` khác danh sách trên.
 
 ```json
 {"key": "rule", "short": "Rule chặn PHP", "text": "Áp rule chặn PHP cho 3 thư mục?",
+ "why": "Trang không đổi gì với khách, rule gỡ được trong 1 phút bằng bản sao.",
  "options": [
    {"label": "Áp rule, giữ bản sao file cũ 7 ngày.", "value": "Áp rule", "recommended": true,
     "consequence": "Ba thư mục ngừng chạy PHP. Gỡ lại trong 1 phút."},
    {"label": "Chưa áp.", "value": "Chưa áp", "consequence": "Ba thư mục vẫn chạy được PHP."}]}
 ```
 
-Ví dụ minh hoạ theo một mục ngày 19/10/2026 của site site agency mẫu. Bản đầy đủ của thẻ nằm ở `references/viet-muc-cho-quyet.md` mục 3.
+Ví dụ minh hoạ theo một mục ngày 19/10/2026 của site site agency mẫu. Bản đầy đủ của thẻ nằm ở `references/viet-muc-cho-quyet.md` mục 4.
 
-- `text` bắt buộc. `short` là tên câu trong câu trả lời. Thiếu `short` thì script lấy `text`.
+- `text` bắt buộc. `short` là tên câu trong câu trả lời.
+- `why` bắt buộc ở schema 2: một câu lý do chọn phương án đề xuất, có số hoặc hệ quả cụ thể. Trang hiện dòng "Vì sao đề xuất" ngay dưới câu hỏi. Thiếu `short` thì script lấy `text`.
 - `key` bắt buộc khi thẻ có từ 2 câu hỏi. Tên câu trong db là `<id>.<key>`. Thẻ một câu dùng tên `<id>`.
 - Mỗi câu có ít nhất 2 phương án và đúng 1 phương án `recommended: true`.
 - `label` bắt buộc. `value` mặc định bằng `label`, và phải duy nhất trong câu.

@@ -7,7 +7,8 @@ Cách dùng: make_brief.py --plan <plan.json> --lane <key> [--decisions <file.md
 Định dạng plan.json:
 {"dot": "ban8", "base": "/abs/workstream",
  "approval": [{"quote": "nguyên văn tin Lead", "time": "2026-10-24 21:05",
-               "lanes": ["l8-css"], "file": "quyet-dinh.md#m24"}],
+               "lanes": ["l8-css"], "file": "quyet-dinh.md#m24",
+               "dien_giai": "tuỳ chọn: nghĩa phiên chính chọn khi câu duyệt có hai nghĩa"}],
  "rules": ["luật cứng chung"],
  "lanes": [{"key": "l8-css", "goal": "...", "folder": "/abs/workstream/ban8/l8-css",
             "resources": ["..."], "scripts": ["..."],
@@ -59,6 +60,8 @@ def approval_section(plan, lane, decision_files):
     for ap in plan.get("approval") or []:
         if key in (ap.get("lanes") or []):
             out.append('- "%s" (%s, %s)' % (ap.get("quote", ""), ap.get("time", ""), ap.get("file", "")))
+            if ap.get("dien_giai"):
+                out.append("  Diễn giải của phiên chính: %s" % ap["dien_giai"])
     pats = [re.compile(r"(?<![A-Za-z0-9])%s(?![A-Za-z0-9])" % re.escape(i)) for i in ids]
     for f in decision_files:
         try:

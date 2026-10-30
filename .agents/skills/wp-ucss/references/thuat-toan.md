@@ -65,6 +65,9 @@ Dùng danh sách trắng: pseudo nằm ngoài nhóm "Giữ" thì bỏ.
 - Debug một phần tử: `dbg_el.mjs` in quy tắc khớp của phần tử ở bản gốc và bản gọn (CDP `CSS.getMatchedStylesForNode`).
 - Không thêm class vào DOM khi đo. Dùng thứ tự phần tử.
 - Mỗi cặp (path, biến thể) một file `verify/<v>_<slug>.json`. Số file phải bằng số cặp đã sinh.
+- Giới hạn: `verify.mjs` khởi tạo JS của trang dưới CSS gộp rồi mới đổi sheet. Lỗi xảy ra khi JS đo phần tử lúc khởi tạo không hiện ra ở bước so.
+- `verify_init.mjs` phủ giới hạn này. Script tải HTML một lần, nạp trang hai lượt bằng đúng HTML đó: lượt đầu trả CSS gộp, lượt sau trả CSS gọn (qua request interception, không ghi server). Mỗi lượt có chuột, Shift, chạm (mobile), cuộn hết trang. Script so chiều cao trang và chiều cao từng widget trong `init_widgets`. Lệch quá `INIT_TOL` px (mặc định 2) là LỆCH.
+- Site agency mẫu 27/10/2026: 17/95 path trong map có carousel (Owl, slick, Swiper, Elementor). Chạy `verify_init.mjs` cho mọi path có widget, không chỉ path đang nghi.
 
 ## 6. Jev cho lệch còn lại
 
@@ -78,9 +81,37 @@ Dùng danh sách trắng: pseudo nằm ngoài nhóm "Giữ" thì bỏ.
 2. Đo một lượt: 3/132 cặp báo lệch giả. Lượt xác nhận loại cả 3.
 3. Bản gọn dựng cho bản WebP không áp cho bản `Accept: */*` (bản Googlebot) khi bản này dùng file gộp khác. CDN không tách HTML theo Accept có thể đưa bản không có CSS gọn cho mọi khách (`giao-cdn-tai-tao.md` §3).
 4. Pseudo cấu trúc đổi kết quả khi JS chèn phần tử (slider nhân bản slide). Cộng dồn trạng thái và đường khớp thứ hai giảm rủi ro.
-5. Nội dung bài sửa sau khi build có thể có class mới. Job tái tạo chỉ bắt được khi md5 file gộp đổi. Bài sửa nội dung lớn thì chạy tái tạo tay cho path đó.
+5. Job tái tạo chỉ sinh lại khi md5 file gộp đổi. Sửa nội dung bài (class mới) hoặc đổi thẻ HTML (theme hay mu-plugin đổi `div` thành `section`, `b` thành `strong`) không đổi md5, nên job không chạy lại.
+   - Selector theo thẻ mới (`section.x`) bắt đầu khớp ở CSS gộp nhưng có thể thiếu ở CSS gọn. Site agency mẫu 27/10/2026: sau khi đổi container sang `section`, file gọn của 9 path thiếu 17–27 selector có `section`, `header` hoặc `figure`.
+   - Sau mỗi đợt đổi DOM: quét selector chứa thẻ mới trong file gộp, đối chiếu file gọn, rồi chạy `FORCE=1 DRY=1 regen.sh` và đọc kết quả kiểm. Site mẫu: lượt `FORCE=1` DRY kiểm 388/388 cặp đạt sau khi safelist giữ thẻ `strong`, `em`, `main`, `article`, `aside`, `time`.
 6. Purge CSS/JS của LiteSpeed xoá cả `wp-content/litespeed/css/` và đổi `?ver=`. Đọc file gộp ngay khi thấy md5 mới. Không dùng `?ver=` làm khoá.
 7. Job đăng nhập hoặc mang cookie nhận file gộp khác trang khách. Job đi đường khách: không đăng nhập, xoá cookie giữa các URL.
 8. `document.fonts.ready` resolve cả khi bản gọn mất `@font-face`. So danh sách font, không chỉ chờ.
 9. Chrome coverage có lỗi. Không dùng coverage làm nguồn xoá rule.
 10. CSS nesting và `@scope`: không repo nào xử lý tốt. Build in số `nestRules`, `scope` cho mỗi file gộp. Có `@scope` thì kiểm tay trước khi giao.
+11. Class do JS thêm rồi gỡ trong vài mili giây không có trong DOM ở trạng thái nào mà `gen.mjs` chụp. Owl Carousel thêm `owl-loading`, kiểm phần tử có hiển thị, rồi đổi sang `owl-loaded`. CSS gọn thiếu `.owl-carousel.owl-loading` thì carousel còn `display:none` lúc đo, Owl bỏ bước tính bề rộng và item xếp lưới. Giữ bằng `keep_class` trong safelist (mẫu có sẵn). Site agency mẫu 27/10/2026: 8/72 file gọn thiếu rule, carousel cao 1.400–2.703 px thay vì 350–503 px. Sau khi sửa: 16/16 cặp `verify_init.mjs` khớp, 8/8 trang trên production trùng bản gộp.
+12. Một nhóm bài có thể tách thành nhiều md5 file gộp vì thẻ `<style>` có điều kiện. Ví dụ: shortcode in vài rule trong `<style>` chỉ khi bài có bài liên quan, nên bài không có bài liên quan nhận md5 khác. md5 lẻ đó không có trong map và không có khoá `all`, nên bài tải file gộp. Cách tìm: đếm bài theo md5 trong inventory, so file gộp của md5 lẻ với md5 chính (site agency mẫu 27/10/2026: khác đúng 4 rule). Cách phủ: thêm một bài của md5 lẻ vào `chon.tsv` (site mẫu: kiểm 8/8 cặp đạt), hoặc dựng holdout riêng cho md5 đó (§8).
+13. Inventory đọc bản cache đang có. Path vừa thêm vào bộ chọn có thể còn HTML dựng trước lần đổi CSS gộp gần nhất, nên map khoá theo md5 cũ. Purge của lượt giao làm trang dựng lại với md5 mới, map không khớp, trang dùng file gộp. Purge và làm nóng path mới trước khi chạy inventory. Site agency mẫu 27/10/2026: 11/12 URL vẫn tải file gộp sau lượt giao đầu.
+14. Bài có iframe YouTube `src` trực tiếp (không `loading=lazy`): CSS gọn làm parser tới iframe sớm hơn, script YouTube chen trước FCP. Site agency mẫu 27/10/2026: một bài điểm mobile 93 → 56, FCP 2,13 → 6,62 s ở 3/3 lượt PSI. Mu-plugin mẫu bỏ qua nhánh `all` cho bài có iframe như vậy; bài đó giữ file gộp. Lazy iframe rồi đưa bài vào nhóm: chưa thử.
+
+## 8. Khoá `all`: phủ cả nhóm bài theo md5 file gộp
+
+- Bài viết cùng template thường dùng chung một md5 file gộp. Khoá `all` cho phép mọi bài viết dùng file gọn của md5 đó mà không cần path trong map.
+- Mu-plugin (`templates/ucss-swap.php`) chỉ áp `all` cho trang `is_singular()`, không phải page, không phải attachment, không có iframe YouTube tải ngay. Map không có `all` thì mu-plugin chạy như cũ.
+- `make_map.py` chỉ ghi `all` cho md5 H khi đủ 4 điều kiện:
+  1. Mọi path đã chọn của H đạt kiểm.
+  2. Thư mục holdout (`HOLDOUT`, mặc định `<outDir>-ho`) có ít nhất `HOLDOUT_MIN` bài (mặc định 10), mọi lượt đạt kiểm.
+  3. Bài holdout nằm ngoài tập dựng.
+  4. `reduced/<H>.css` của holdout trùng từng byte với file gọn của tập dựng.
+- Dựng holdout:
+  1. Chọn bài theo loại khối (mục lục, bảng, video, iframe, code, cột, trích dẫn, mỗi loại bài tuỳ chỉnh), thêm `?nc=<số mới>` để có bản dựng mới với md5 hiện hành.
+  2. Chạy `gen.mjs` cho holdout vào `<outDir>-ho`. Chép `<outDir>/reduced/<H>.css` vào `<outDir>-ho/reduced/`.
+  3. Chạy `verify.mjs` cho holdout. Chạy lại `make_map.py`.
+- Regen giữ `all` khi md5 và file gọn không đổi. File gọn đổi thì `make_map.py` bỏ `all`, `map_diff.py` in CẢNH BÁO; chạy lại holdout cho file mới.
+- Site agency mẫu 27/10/2026: holdout 12 bài × 4 biến thể = 48/48 cặp lệch 0. Sau khi giao: 30 bài mẫu × 5 biến thể tải CSS gọn, 230/231 bài nhóm tải CSS gọn khi cache đã dựng lại, 5xx 0 trên 15.066 request.
+
+## 9. Đã thử, không mở rộng
+
+- Nhúng CSS gọn vào HTML cho bản Googlebot (Accept không có WebP). Cơ chế: danh sách path và file cờ bật; CDN không tách HTML theo Accept nên phải làm nóng bằng header Googlebot.
+- Kết quả site agency mẫu 27/10/2026 (10 path): HTML bản Googlebot tăng trung bình 52 KB gzip (+74%). Log origin 05:30–09:41: Googlebot tải 402 HTML nhưng chỉ 3 file CSS, vì Google giữ CSS trong bộ nhớ đệm. PSI gửi Accept có WebP nên luôn nhận bản link, không đo được lợi ích bằng PSI.
+- Trước khi bật cho site khác: đọc log Googlebot, đếm lượt tải CSS so với lượt tải HTML. Lượt tải CSS ít thì không bật.
