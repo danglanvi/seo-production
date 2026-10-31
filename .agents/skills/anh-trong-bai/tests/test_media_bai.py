@@ -142,6 +142,53 @@ def test_lan_vong_lap_so_lieu():
             assert rc != 0, bad
 
 
+CH3 = {"kieu": "lan", "lan": ["Chấm bài", "Theo dõi và học"],
+       "buoc": [{"tieu_de": "Nộp bài", "cot": 0}, {"tieu_de": "Máy kiểm", "cot": 1}, {"tieu_de": "AI gắn cờ", "cot": 2},
+                {"tieu_de": "Người quyết", "cot": 3}, {"tieu_de": "Đạt", "cot": 4},
+                {"tieu_de": "Script", "lan": 1, "cot": 3}, {"tieu_de": "Bài học", "lan": 1, "cot": 2}],
+       "noi": [{"tu": 0, "den": 1}, {"tu": 1, "den": 2}, {"tu": 2, "den": 3}, {"tu": 3, "den": 4},
+               {"tu": 3, "den": 5, "nhan": "Comment"}, {"tu": 5, "den": 6}],
+       "vong": [{"tu": 1, "den": 0, "nhan": "Còn lỗi", "loai": "sua"}, {"tu": 3, "den": 0, "nhan": "Có Chặn", "loai": "sua"},
+                {"tu": 6, "den": 2, "nhan": "Tuần sau", "loai": "hoc"}]}
+OAI = {"kieu": "lan", "lan": ["Bạn", "AI", "Sheet"],
+       "buoc": [{"tieu_de": "Giao việc", "lan": 0}, {"tieu_de": "Lập outline", "lan": 1}, {"tieu_de": "Ghi lên Sheet", "lan": 2},
+                {"tieu_de": "Review", "lan": 0}, {"tieu_de": "AI chỉnh", "lan": 1, "cot": 3},
+                {"tieu_de": "Sheet cập nhật", "lan": 2, "cot": 3}, {"tieu_de": "Chốt", "lan": 0, "cot": 4}],
+       "noi": [{"tu": 0, "den": 1}, {"tu": 1, "den": 2}, {"tu": 2, "den": 3}, {"tu": 3, "den": 4, "nhan": "Còn Chặn"},
+               {"tu": 4, "den": 5}, {"tu": 3, "den": 6, "nhan": "Hết Chặn"}],
+       "vong": [{"tu": 5, "den": 3, "nhan": "Vòng sửa", "loai": "sua"}]}
+
+
+def test_mui_ten_lan_31_10_toi():
+    """Ca lỗi tối 31/10/2026: vòng cùng cột xuyên hộp giữa, tên làn bị mũi tên đè, nhãn mũi tên ngắn trôi xa,
+    vòng cắt nhau ở bản điện thoại, đầu mũi tên phóng theo độ dày nét."""
+    sys.path.insert(0, str(SCRIPTS))
+    import svg_dung as m
+    pal, font = m.palette(json.loads(PROFILE.read_text(encoding="utf-8")))
+    for sp in (CH3, OAI, LAN):
+        s = m.Svg(760, pal, font, "t", "d", "x")
+        m.KIND["lan"](s, sp, False)
+        n = len(sp["buoc"])
+        assert all(m._ranh(pts, s.rects[:n], e["tu"], e["den"]) for e, pts, _ in s.tuyen), "đường cắt hộp"
+        # tên làn không nằm trên nét nào
+        for tx, ty, tw, th in s.ten_lan:
+            for _, pts, _ in s.tuyen:
+                assert not any(m._cat(g, (tx, ty, tw, th), 2) for g in zip(pts, pts[1:])), (tx, pts)
+        # mũi tên ngang có nhãn giữa 2 cột liền nhau: đoạn ngang đủ dài để nhãn nằm trên nét
+        for e, pts, _ in s.tuyen:
+            ngang = [abs(a[0] - b[0]) for a, b in zip(pts, pts[1:]) if abs(a[1] - b[1]) < 1]
+            if e.get("nhan") and e["loai"] == "tien" and len(pts) == 2 and ngang:
+                assert ngang[0] >= m.text_w(e["nhan"], 13, True) + 12, (e, ngang)
+        mb = m.Svg(320, pal, font, "t", "d", "y")
+        m.KIND["lan"](mb, sp, True)
+        for side, ks in mb.ranh_doc.items():
+            for i, p in enumerate(ks):
+                for q in ks[i + 1:]:
+                    assert not (p[0] < q[0] < p[1] < q[1] or q[0] < p[0] < q[1] < p[1]), (side, p, q)
+    out = s.render()
+    assert 'markerUnits="userSpaceOnUse"' in out and " Q" in out, "đầu mũi tên cỡ cố định, góc bo"
+
+
 def test_kiem_luat():
     items = [
         {"id": "IMG-01", "loai": "so-do", "alt": "Ảnh sơ đồ tưới", "caption": "x", "ten_file": "a"},
@@ -186,6 +233,7 @@ if __name__ == "__main__":
     test_tu_md()
     test_svg_7_kieu_va_chu_so_do()
     test_lan_vong_lap_so_lieu()
+    test_mui_ten_lan_31_10_toi()
     test_kiem_luat()
     test_chen_media()
-    print("OK 5 test")
+    print("OK 6 test")

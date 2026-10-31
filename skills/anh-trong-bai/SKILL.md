@@ -2,7 +2,7 @@
 name: anh-trong-bai
 description: "Dựng media trong thân bài trước khi đăng: media plan từ khung [IMG-NN], sơ đồ SVG 2 bản desktop và điện thoại theo màu site, ảnh chụp trang nguồn có tô câu, ảnh AI có watermark, khối tương tác; kiểm chữ, alt, caption, dung lượng rồi chèn vào HTML. Dùng khi bài mới cần hình."
 metadata:
-  version: "1.2.0"
+  version: "1.2.1"
 ---
 
 # anh-trong-bai — media trong thân bài
@@ -162,6 +162,7 @@ Bản tốt nhất phải có:
 
 ## Changelog
 
+- v1.2.1 (2026-10-31 tối): mũi tên của `lan`, `vong-lap` theo feedback Vincent: đầu mũi tên cỡ cố định, góc bo, đường cạnh bên cho vòng cùng cột, tên làn tự dời, khe cột giãn cho nhãn, nhãn né hộp, bản điện thoại chọn rãnh để vòng không cắt nhau; script in `CANH BAO` khi còn đường cắt hộp. Bảng lỗi ở `references/so-do-spec.md`. Test `test_mui_ten_lan_31_10_toi`.
 - v1.2.0 (2026-10-31): `svg_dung.py` thêm 3 kiểu `lan` (làn nhiều vai, hình thoi quyết định), `vong-lap` (chuỗi có vòng sửa và vòng học), `so-lieu` (ô số trước → sau, bắt buộc nguồn); bộ định tuyến mũi tên theo trục tránh hộp và tên làn; nhãn mũi tên có viền nền ở mọi kiểu. `svg_kiem.mjs --png`. Thử trên 3 sơ đồ của bài tài liệu nội bộ về chuẩn outline (lưu đồ 3 làn, chấm 3 lớp, dải số): `svg_kiem.mjs` 0 lỗi ở 760 và 320 px.
 - v1.1.0 (2026-10-31): luật media 9 (logo hoặc linh vật của brand trong media quan trọng) và 10 (ảnh chụp, khung video: cắt sát, khoanh hoặc ghim, trước và sau cạnh nhau); 2 dòng tự phản biện. Người duyệt yêu cầu sau vòng góp ý 2 bài tài liệu nội bộ về Claude Code.
 - v1.0.1 (2026-10-27): `evals/cases.yaml` 7 ca từ pilot (alt tả brief cũ, nhãn `nguoc` bắt nhầm, chụp trang devsite và hexdocs, ảnh AI có người, thiếu Kie). Kiểu `danh-sach` căn giữa tiêu đề khi thẻ không có mô tả.

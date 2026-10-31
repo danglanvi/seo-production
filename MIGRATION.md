@@ -1,5 +1,5 @@
 ---
-master_version: v2026.10.58
+master_version: v2026.10.59
 ---
 
 # MIGRATION — Cập nhật instance lên version master mới
@@ -15,6 +15,14 @@ master_version: v2026.10.58
 ---
 
 ## 1. Có gì mới
+
+### v2026.10.59 (2026-10-31) — `anh-trong-bai` 1.2.1: mũi tên sơ đồ làn rõ và gọn hơn
+
+- **Vì sao:** người duyệt nhận xét 31/10/2026 "mũi tên chưa có rõ ràng và đẹp" trên 3 sơ đồ của bài tài liệu nội bộ. Rà ảnh thấy thêm 3 lỗi định tuyến.
+- **svg_dung.py:** đầu mũi tên cỡ cố định 10 px (không phóng theo độ dày nét), góc bo 8 px, nét 2 px, nét đứt 6/4. Vòng giữa 2 hộp cùng cột có hộp khác ở giữa đi cạnh bên thay vì xuyên hộp. Tên làn tự dời khỏi nét. Khe cột giãn cho nhãn mũi tên ngang. Nhãn chọn bên không đè hộp, viền theo màu nền tại chỗ. Bản điện thoại chọn rãnh trái/phải để các vòng lồng nhau. In `CANH BAO` khi còn đường cắt hộp.
+- **so-do-spec.md:** bảng lỗi tối 31/10 và luật soạn spec: sơ đồ `lan` tối đa 5 cột ở khung 760; thứ tự `buoc` là thứ tự đọc bản điện thoại.
+- **Kiểm:** `tests/test_media_bai.py` 6/6 (ca mới `test_mui_ten_lan_31_10_toi`, thử đột biến: tắt đường cạnh bên hoặc tắt dời tên làn đều FAIL); 2 sơ đồ thật `svg_kiem.mjs` 0 lỗi ở 760 và 320 px; `skill_struct_check.py` đạt.
+- **Port sang instance:** GHI ĐÈ `anh-trong-bai` bằng `python3 tools/port_skill.py --skills anh-trong-bai`, rồi `bash tools/sync-skills.sh`. Sơ đồ đã dựng giữ nguyên; muốn mũi tên mới thì chạy lại `svg_dung.py` cho bài đó. Cập nhật `master_version` thành `v2026.10.59`.
 
 ### v2026.10.58 (2026-10-31) — `anh-trong-bai` 1.2.0, `blog-interactive-tools` 1.1, `semantic-media` 1.2, `wp-dang-bai` 1.2.4, `wp-xuat-ban-bai` 1.0.4: sơ đồ làn và vòng lặp, khối phóng ảnh và khung xem trước, brief video
 

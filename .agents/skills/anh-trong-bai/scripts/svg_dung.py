@@ -33,6 +33,21 @@ NARROW = set('iljtfr.,;:!|\'"()[] ')
 WIDE = set('mwMW@%')
 
 
+def _bo_goc(pts, r=8):
+    """Đường gấp khúc → path có góc bo bán kính r (nhỏ hơn nửa đoạn ngắn), điểm cuối giữ nguyên cho đầu mũi tên."""
+    d = f'M{pts[0][0]:.1f} {pts[0][1]:.1f}'
+    for (x0, y0), (x1, y1), (x2, y2) in zip(pts, pts[1:], pts[2:]):
+        l1, l2 = ((x1 - x0) ** 2 + (y1 - y0) ** 2) ** 0.5, ((x2 - x1) ** 2 + (y2 - y1) ** 2) ** 0.5
+        rr = min(r, l1 / 2, l2 / 2)
+        if rr < 1:
+            d += f' L{x1:.1f} {y1:.1f}'
+            continue
+        ax, ay = x1 - (x1 - x0) / l1 * rr, y1 - (y1 - y0) / l1 * rr
+        bx, by = x1 + (x2 - x1) / l2 * rr, y1 + (y2 - y1) / l2 * rr
+        d += f' L{ax:.1f} {ay:.1f} Q{x1:.1f} {y1:.1f} {bx:.1f} {by:.1f}'
+    return d + f' L{pts[-1][0]:.1f} {pts[-1][1]:.1f}'
+
+
 def text_w(s, fs, bold=False):
     w = 0.0
     for ch in s:
@@ -113,8 +128,8 @@ class Svg:
             d = f'M{x1:.0f} {y1:.0f} Q{mx:.0f} {my:.0f} {x2:.0f} {y2:.0f}'
         else:
             d = f'M{x1:.0f} {y1:.0f} L{x2:.0f} {y2:.0f}'
-        da = ' stroke-dasharray="7 6"' if dash else ''
-        self.parts.append(f'<path d="{d}" stroke="{c}" stroke-width="2.2" fill="none" marker-end="url(#a)"{da}/>')
+        da = ' stroke-dasharray="6 4"' if dash else ''
+        self.parts.append(f'<path d="{d}" stroke="{c}" stroke-width="2" fill="none" marker-end="url(#a)"{da}/>')
         if label:
             lx, ly = (x1 + x2) / 2, ((y1 + y2) / 2 - curve / 2 - 8) if curve else (min(y1, y2) - 8)
             self.label(lx, ly, label)
@@ -122,14 +137,15 @@ class Svg:
     def label(self, x, y, s, color=None, fs=13, bold=False, anchor='middle'):
         """Nhãn mũi tên có viền màu nền, để đọc được khi nằm đè lên nét."""
         fw = ' font-weight="700"' if bold else ''
+        # viền chữ cùng màu nền tại chỗ: trong dải làn là nen_nhat, ngoài là nen
+        halo = self.p['nen_nhat'] if any(y1 <= y - fs / 2 <= y2 for y1, y2 in getattr(self, 'dai_nen', [])) else self.p['nen']
         self.parts.append(f'<text x="{x:.0f}" y="{y:.0f}" font-size="{fs}" fill="{color or self.p["chu_phu"]}"{fw} text-anchor="{anchor}" '
-                          f'paint-order="stroke" stroke="{self.p["nen"]}" stroke-width="4" stroke-linejoin="round">{E(s)}</text>')
+                          f'paint-order="stroke" stroke="{halo}" stroke-width="5" stroke-linejoin="round">{E(s)}</text>')
 
     def path(self, pts, color='phu', dash=False):
         mk = {'phu': 'a', 'canh_bao': 'ar', 'chinh': 'ac'}[color]
-        d = 'M' + ' L'.join(f'{x:.0f} {y:.0f}' for x, y in pts)
-        da = ' stroke-dasharray="7 6"' if dash else ''
-        self.parts.append(f'<path d="{d}" stroke="{self.p[color]}" stroke-width="2.2" fill="none" stroke-linejoin="round" marker-end="url(#{mk})"{da}/>')
+        da = ' stroke-dasharray="6 4"' if dash else ''
+        self.parts.append(f'<path d="{_bo_goc(pts)}" stroke="{self.p[color]}" stroke-width="2" fill="none" stroke-linejoin="round" marker-end="url(#{mk})"{da}/>')
 
     def diamond(self, x, y, w, h, title):
         cx, cy = x + w / 2, y + h / 2
@@ -143,8 +159,10 @@ class Svg:
     def render(self):
         p = self.p
         g, a = self.pid + '-g', self.pid + '-a'
-        mk = ''.join(f'<marker id="{self.pid}-{k}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">'
-                     f'<path d="M0 0L10 5L0 10z" fill="{p[c]}"/></marker>' for k, c in (('a', 'phu'), ('ar', 'canh_bao'), ('ac', 'chinh')))
+        # đầu mũi tên cỡ cố định (userSpaceOnUse), không phóng theo độ dày nét; khía sau để đầu nhọn, gọn
+        mk = ''.join(f'<marker id="{self.pid}-{k}" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" '
+                     f'orient="auto-start-reverse"><path d="M0.5 1L9.5 5L0.5 9L2.8 5z" fill="{p[c]}" stroke="{p[c]}" stroke-width="0.8" stroke-linejoin="round"/></marker>'
+                     for k, c in (('a', 'phu'), ('ar', 'canh_bao'), ('ac', 'chinh')))
         defs = (f'<defs><linearGradient id="{g}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="{p.get("grad1", p["chinh"])}"/>'
                 f'<stop offset="1" stop-color="{p.get("grad2", p["phu"])}"/></linearGradient>{mk}</defs>')
         H = int(self.H + 8)
@@ -432,7 +450,13 @@ def _duong(rects, a, b, loai, gap, tren, duoi, oa=0, ob=0):
         thang = [('thang', [(a_ra, acy + oa), (b_vao, bcy + oa)])] if loai == 'tien' else []
         return thang + kenh
     if abs(acx - bcx) < 1:
-        return [('thang', [(acx + oa, a_dung), (bcx + oa, b_dung)])] + kenh
+        # cùng cột: thẳng, hoặc ra cạnh bên, đi dọc trong khe cạnh cột (khi có hộp khác ở giữa), rồi vào cạnh bên
+        # ra và vào ở nửa hộp hướng về nhau: đường dọc ngắn hơn, không cắt mũi tên khác vào giữa cạnh hộp
+        hg = 1 if bcy > acy else -1
+        ya, yb = acy + hg * abs(oa), bcy - hg * abs(ob)
+        ben = [(t, [(x0, ya), (gx, ya), (gx, yb), (x0, yb)])
+               for t, x0, gx in (('trai', ax, ax - gap / 2), ('phai', ax + aw, ax + aw + gap / 2)) if gx > 0]
+        return [('thang', [(acx + oa, a_dung), (bcx + oa, b_dung)])] + ben + kenh
     c = []
     if (acx + oa < bx) if phai else (acx + oa > bx + bw):
         c.append(('l1', [(acx + oa, a_dung), (acx + oa, bcy + ob), (b_vao, bcy + ob)]))
@@ -468,7 +492,13 @@ def _nhan_duong(s, pts, text, color, tren_hop):
         return
     (x1, y1), (x2, y2) = max(segs, key=lambda g: abs(g[0][1] - g[1][1]))
     if abs(y1 - y2) >= 24:
-        s.label(x1 + 7, (y1 + y2) / 2 + 5, text, color, bold=True, anchor='start')
+        ym, tw = (y1 + y2) / 2 + 5, text_w(text, 13, True)
+        hop = getattr(s, 'hop_ve', [])
+        trung = lambda bx: any(bx < x + w and bx + tw > x and ym - 13 < y + h and ym + 3 > y for x, y, w, h in hop)
+        if trung(x1 + 7) and not trung(x1 - 7 - tw):
+            s.label(x1 - 7, ym, text, color, bold=True, anchor='end')
+        else:
+            s.label(x1 + 7, ym, text, color, bold=True, anchor='start')
     else:
         (x1, _), (x2, _) = segs[0]
         s.label((x1 + x2) / 2, tren_hop - 7, text, color, bold=True)
@@ -491,8 +521,17 @@ def k_lan(s, sp, mobile):
     if mobile:
         return _lan_doc(s, st, lanes, edges, named)
     nc = max(b.get('cot', i) for i, b in enumerate(st)) + 1
+    cot = lambda i: st[i].get('cot', i)
     gap = 30
-    w = (s.W - 16 - gap * (nc - 1)) / nc
+    # khe giữa 2 cột liền nhau giãn đủ chỗ cho nhãn của mũi tên ngang cùng làn ("Có", "Không")
+    khe = [gap] * max(nc - 1, 0)
+    for e in edges:
+        a, b = e['tu'], e['den']
+        if e.get('nhan') and e['loai'] == 'tien' and st[a].get('lan', 0) == st[b].get('lan', 0) and abs(cot(a) - cot(b)) == 1:
+            k = min(cot(a), cot(b))
+            khe[k] = max(khe[k], text_w(e['nhan'], 13, True) + 20)
+    w = (s.W - 16 - sum(khe)) / nc
+    xc = [8 + c * w + sum(khe[:c]) for c in range(nc)]
     f1, f2, pad = (15, 13, 10) if w >= 150 else (13.5, 12, 8)
 
     def cao(b):
@@ -508,13 +547,12 @@ def k_lan(s, sp, mobile):
         ly[L] = y
         y += head + lh.get(L, 40) + (12 if named else 0) + 6
     bottom = y - 6
-    rects = [(8 + b.get('cot', i) * (w + gap), ly[b.get('lan', 0)] + head, w, lh[b.get('lan', 0)]) for i, b in enumerate(st)]
+    rects = [(xc[cot(i)], ly[b.get('lan', 0)] + head, w, lh[b.get('lan', 0)]) for i, b in enumerate(st)]
     # tên làn cũng là vật cản: mũi tên không đi qua chữ
     can = rects + ([(8, ly[L] + 4, text_w(n.upper(), 12, True) + 8, 18) for L, n in enumerate(lanes)] if named else [])
     s.tuyen, s.rects = [], can
     nt = nd = 0
     dem = {}
-    cot = lambda i: st[i].get('cot', i)
     # cạnh tiến trước; vòng ngắn trước vòng dài để vòng ngắn nằm kênh gần hộp
     for e in sorted(edges, key=lambda e: (e['loai'] != 'tien', abs(cot(e['tu']) - cot(e['den'])))):
         a, b = e['tu'], e['den']
@@ -529,17 +567,31 @@ def k_lan(s, sp, mobile):
         ten, pts = next((c for c in cands if _ranh(c[1], can, a, b)), next(c for c in cands if c[0] == 'tren'))
         nt += ten == 'tren'
         nd += ten == 'duoi'
-        s.tuyen.append((e, pts, _ranh(pts, can, a, b)))
+        sach = _ranh(pts, can, a, b)
+        if not _ranh(pts, rects, a, b):  # chỉ cắt tên làn thì không cảnh báo: tên làn tự dời chỗ khi vẽ
+            print(f'CANH BAO "{s.title[:40]}": cạnh {a}→{b} không tìm được đường không cắt hộp; đổi "cot" hoặc tách sơ đồ', file=sys.stderr)
+        s.tuyen.append((e, pts, sach))
     dy = 40 + 24 * (nt - 1) if nt else 8
     for L, name in enumerate(lanes):
         if named:
             s.parts.append(f'<rect x="0" y="{ly[L] + dy:.0f}" width="{s.W}" height="{head + lh.get(L, 40) + 12:.0f}" rx="12" fill="{s.p["nen_nhat"]}"/>')
-            s.parts.append(f'<text x="12" y="{ly[L] + dy + 18:.0f}" font-size="12" font-weight="700" fill="{s.p["chinh"]}">{E(name.upper())}</text>')
+            # đường vào hộp đầu làn buộc phải qua dải tên làn: dời tên sang khoảng trống đầu tiên không có nét nào
+            tw, tx = text_w(name.upper(), 12, True), 12
+            chan = sorted((min(p[0], q[0]) - 14, max(p[0], q[0]) + 14) for _, pts, _ in s.tuyen for p, q in zip(pts, pts[1:])
+                          if min(p[1], q[1]) <= ly[L] + 24 and max(p[1], q[1]) >= ly[L] + 2)
+            for x1, x2 in chan:
+                if x1 < tx + tw and x2 > tx:
+                    tx = x2
+            tx = tx if tx + tw <= s.W - 8 else 12
+            s.ten_lan = getattr(s, 'ten_lan', []) + [(tx, ly[L] + 4, tw, 18)]
+            s.parts.append(f'<text x="{tx:.0f}" y="{ly[L] + dy + 18:.0f}" font-size="12" font-weight="700" fill="{s.p["chinh"]}">{E(name.upper())}</text>')
     for (x, yy, ww, hh), b in zip(rects, st):
         if b.get('hoi'):
             s.diamond(x, yy + dy, ww, hh, b['tieu_de'])
         else:
             s.card(x, yy + dy, ww, b['tieu_de'], b.get('mo_ta', ''), b.get('to', False), pad=pad, fs1=f1, fs2=f2, min_h=hh)
+    s.dai_nen = [(ly[L] + dy, ly[L] + dy + head + lh.get(L, 40) + 12) for L in range(len(lanes))] if named else []
+    s.hop_ve = [(x, yy + dy, ww, hh) for x, yy, ww, hh in rects]
     for e, pts, _ in s.tuyen:
         color, dash = MAU[e['loai']]
         pts = _rut([(x, yy + dy) for x, yy in pts])
@@ -575,10 +627,23 @@ def _lan_doc(s, st, lanes, edges, named):
             s.text_block(x + 12, y + 10, w - 24, spec, owner=bid)
         rects.append((x, y, w, h))
         y += h + 32 + 16 * max(0, nl[i] - 1)
+    # rãnh: cạnh tiến mặc định bên phải, vòng lùi bên trái; cạnh cắt chéo một cạnh cùng rãnh (hai khoảng chồng một phần)
+    # thì sang rãnh kia, để các vòng lồng nhau thay vì cắt nhau
+    cheo = lambda p, q: p[0] < q[0] < p[1] < q[1] or q[0] < p[0] < q[1] < p[1]
+    phai, dat = {}, {True: [], False: []}
+    for i in sorted((i for i, e in enumerate(edges) if e['den'] != e['tu'] + 1), key=lambda i: abs(edges[i]['den'] - edges[i]['tu'])):
+        e = edges[i]
+        k, side = (min(e['tu'], e['den']), max(e['tu'], e['den'])), e['den'] > e['tu']
+        if any(cheo(k, q) for q in dat[side]) and not any(cheo(k, q) for q in dat[not side]):
+            side = not side
+        phai[i] = side
+        dat[side].append(k)
+    s.ranh_doc = dat
     kl = kr = 0
     xep, ra_, vao_ = {}, {}, {}
     # cạnh liền nhau trước; cạnh đi rãnh xếp từ ngắn tới dài: cạnh ngắn ở rãnh trong, cạnh dài ở rãnh ngoài
-    for e in sorted(edges, key=lambda e: (e['den'] != e['tu'] + 1, abs(e['den'] - e['tu']))):
+    for i in sorted(range(len(edges)), key=lambda i: (edges[i]['den'] != edges[i]['tu'] + 1, abs(edges[i]['den'] - edges[i]['tu']))):
+        e = edges[i]
         a, b = e['tu'], e['den']
         (xa, ya, wa, ha), (xb, yb, wb, hb) = rects[a], rects[b]
         color, dash = MAU[e['loai']]
@@ -587,14 +652,17 @@ def _lan_doc(s, st, lanes, edges, named):
             cx = x + w / 2
             s.path(_rut([(cx, ya + ha), (cx, yb)]), color, dash)
             if e.get('nhan'):
-                s.label(cx + 8, (ya + ha + yb) / 2 + 5, e['nhan'], lc, bold=True, anchor='start')
+                # cùng nguồn đã có nhãn rãnh phải (dưới thẻ, nửa phải): nhãn mũi tên giữa đặt sang trái
+                trai = any(phai.get(j) and f['tu'] == a and f.get('nhan') for j, f in enumerate(edges))
+                s.label(cx - 8 if trai else cx + 8, (ya + ha + yb) / 2 + 5, e['nhan'], lc, bold=True, anchor='end' if trai else 'start')
             continue
-        if b > a:
+        side = phai[i]
+        if side:
             gx, x1, x2, kr = x + w + 8 + 7 * kr, xa + wa, xb + wb, kr + 1
         else:
             gx, x1, x2, kl = x - 8 - 7 * kl, xa, xb, kl + 1
         # cạnh ngoài ra thấp hơn, vào cao hơn (vòng lùi) để không cắt cạnh trong; 14 px để hai đầu mũi tên không chạm nhau
-        sg, side = (1 if b < a else -1), (b > a)
+        sg = 1 if b < a else -1
         y1 = ya + ha / 2 + sg * 14 * ra_.get((a, side), 0)
         y2 = yb + hb / 2 - sg * 14 * vao_.get((b, side), 0)
         ra_[(a, side)], vao_[(b, side)] = ra_.get((a, side), 0) + 1, vao_.get((b, side), 0) + 1
@@ -602,7 +670,7 @@ def _lan_doc(s, st, lanes, edges, named):
         for ln in (wrap(e['nhan'], nw, 13, True) if e.get('nhan') else []):
             ny = ya + ha + 19 + 16 * xep.get(a, 0)
             xep[a] = xep.get(a, 0) + 1
-            if b > a:
+            if side:
                 s.label(x + w - 4, ny, ln, lc, bold=True, anchor='end')
             else:
                 s.label(x + 4, ny, ln, lc, bold=True, anchor='start')

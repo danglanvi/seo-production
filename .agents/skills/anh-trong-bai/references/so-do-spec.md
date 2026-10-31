@@ -111,3 +111,20 @@ Câu hỏi rẽ hai nhánh, kiểu `quyet-dinh`:
 | Nhãn "Không" trên mũi tên ngắn đè chữ của hộp | Mũi tên ngắn: nhãn đặt ở dải trên mép hộp nguồn |
 | Hai vòng vào cùng một hộp: đầu mũi tên chồng nhau, vòng dài cắt vòng ngắn | Điểm ra, điểm vào lệch 18 px theo hướng vòng; vòng ngắn đi kênh gần |
 | Nhãn nằm trên nét mũi tên khó đọc | Mọi nhãn mũi tên có viền màu nền (`paint-order="stroke"`) |
+
+## Lỗi Vincent chỉ ra tối 31/10/2026 ("mũi tên chưa rõ ràng và đẹp")
+
+| Lỗi | Sửa trong script |
+|---|---|
+| Đầu mũi tên phóng theo độ dày nét, to khoảng 15 px, trông thô | Đầu mũi tên cỡ cố định 10 px (`markerUnits="userSpaceOnUse"`), dạng nhọn có khía |
+| Góc gấp vuông cứng | Góc bo 8 px, nét 2 px, nét đứt 6/4 |
+| Vòng giữa 2 hộp cùng cột có hộp khác ở giữa đi xuyên 2 hộp | Đường ra cạnh bên, đi dọc trong khe cạnh cột, vào cạnh bên; ra và vào ở nửa hộp hướng về nhau |
+| Vòng vào hộp đầu làn đè tên làn | Tên làn dời sang khoảng trống đầu tiên không có nét, cách nét 14 px |
+| Nhãn "Không" của mũi tên ngắn giữa 2 cột trôi lên đỉnh làn | Khe giữa 2 cột liền nhau giãn đủ chỗ cho nhãn của mũi tên ngang cùng làn |
+| Nhãn có viền trắng lộ trên nền làn | Viền chữ lấy màu nền tại chỗ (`nen_nhat` trong dải làn) |
+| Nhãn cạnh nét dọc đè chữ trong hộp | Nhãn chọn bên trái hoặc phải của nét, bên không đè hộp |
+| Bản điện thoại: 2 vòng cùng rãnh trái cắt nhau | Mỗi cạnh nhảy cóc chọn rãnh trái hoặc phải để các vòng lồng nhau, không cắt chéo |
+| Bản điện thoại: nhãn mũi tên giữa đè nhãn rãnh phải cùng nguồn | Nhãn mũi tên giữa sang trái khi cùng nguồn có nhãn rãnh phải |
+
+Luật soạn spec rút ra: sơ đồ `lan` 6 cột ở khung 760 làm hộp hẹp, chữ xuống 4–5 dòng. Giữ tối đa 5 cột: thay hình thoi bằng 2 cạnh có nhãn đi ra từ bước review ("Còn Chặn", "Hết Chặn"). Thứ tự bước trong `buoc` là thứ tự đọc của bản điện thoại: đặt bước kết thúc ("Đạt") ngay sau bước dẫn tới nó, nhánh phụ đặt sau.
+

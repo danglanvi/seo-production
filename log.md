@@ -549,3 +549,8 @@ Luật ghi:
 - anh-trong-bai 1.2.0, blog-interactive-tools 1.1, semantic-media 1.2, wp-dang-bai 1.2.4, wp-xuat-ban-bai 1.0.4. Chi tiết và kết quả kiểm ở MIGRATION.md.
 - Chưa port sang instance và fork Content: làm cùng đợt port fork kế tiếp.
 - Files touched: skills/{anh-trong-bai,blog-interactive-tools,semantic-media,wp-dang-bai,wp-xuat-ban-bai}/, .claude/skills/, .agents/skills/, MIGRATION.md, log.md
+
+## [2026-10-31] refactor | anh-trong-bai 1.2.1: mũi tên sơ đồ làn — @claude
+- Đầu mũi tên cỡ cố định, góc bo, đường cạnh bên cho vòng cùng cột, tên làn tự dời, khe cột giãn cho nhãn, nhãn né hộp, bản điện thoại chọn rãnh. Test 6/6.
+- Files touched: skills/anh-trong-bai/{SKILL.md,scripts/svg_dung.py,references/so-do-spec.md,tests/test_media_bai.py}, mirror, MIGRATION.md
+
