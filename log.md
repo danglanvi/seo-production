@@ -538,3 +538,8 @@ Luật ghi:
 - Gồm cả v2026.10.51–.53 chưa có dòng log (wp-staging-deploy 1.3, wp-pagespeed 1.18–1.19, cdn-speed-setup 1.3.1) và web-lane-orchestration 1.4, internal-linking 1.4.2 (29/10).
 - Port sang PROJECTS/gtvseo, theaigrowth (kèm MIGRATION.md), chanlongpickleball (chỉ skill). Commit một lần, tag v2026.10.54.
 - Files touched: skills/wp-gtm-tracking/, skills/wp-pagespeed/, skills/semantic-html-optimization/, skills/wp-staging-deploy/, skills/decision-page/, skills/web-lane-orchestration/, .claude/skills/, .agents/skills/, MIGRATION.md, log.md
+
+## [2026-10-31] refactor | v2026.10.57 — anh-trong-bai 1.1.0: logo brand trong media quan trọng, ảnh chụp cắt sát có khoanh — @claude
+- Người duyệt góp ý 31/10 trên 2 bài tài liệu nội bộ Claude Code: ảnh có brand là thực thể chính phải có logo hoặc linh vật; khung video mờ, không chỉ chỗ cần nhìn.
+- Luật media 9, 10 và 2 dòng tự phản biện. Không đổi script.
+- Files touched: skills/anh-trong-bai/SKILL.md, MIGRATION.md, log.md

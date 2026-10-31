@@ -2,7 +2,7 @@
 name: anh-trong-bai
 description: "Dựng media trong thân bài trước khi đăng: media plan từ khung [IMG-NN], sơ đồ SVG 2 bản desktop và điện thoại theo màu site, ảnh chụp trang nguồn có tô câu, ảnh AI có watermark, khối tương tác; kiểm chữ, alt, caption, dung lượng rồi chèn vào HTML. Dùng khi bài mới cần hình."
 metadata:
-  version: "1.0.1"
+  version: "1.1.0"
 ---
 
 # anh-trong-bai — media trong thân bài
@@ -66,6 +66,12 @@ Repo content không có `tools/ai-assist/`. Ở đó Claude xem PNG thay cho Jev
 6. Alt tả nội dung ảnh, không mở bằng "ảnh", "hình". Caption nói điều người đọc rút ra, không lặp alt.
 7. Mỗi khung một media. Một ảnh dùng ở 2 chỗ phải có `allow_reuse` kèm lý do.
 8. Đồ hoạ dưới `media.kb_do_hoa` KB, ảnh chụp và ảnh AI dưới `media.kb_anh_chup` KB.
+9. Media quan trọng có thực thể là brand, sản phẩm hoặc công cụ phải có logo thật hoặc linh vật chính thức của brand đó. Media quan trọng gồm ảnh mở bài, sơ đồ tổng quan, infographic. Ví dụ: nút "Claude" trong sơ đồ mang logo Claude. Lấy logo theo `featured-image-seo` luật 11b, không vẽ lại.
+10. Ảnh chụp màn hình và khung cắt từ video:
+    - Cắt sát vùng cần nhìn. Chữ trong ảnh phải cao từ 11 px khi ảnh hiện ở cột bài 680 px.
+    - Khoanh hoặc ghim số đúng chỗ người đọc cần nhìn bằng `anh_chu_thich.py`. Caption gọi đúng số ghim.
+    - Có ảnh chụp lại được ở độ phân giải cao hơn thì chụp lại, không dùng khung video mờ.
+    - Kết quả trước và sau đặt cạnh nhau, cùng khung, cùng điều kiện đo, ghi ngày của mỗi bên.
 
 ## Quy trình
 
@@ -130,6 +136,8 @@ Bản tốt nhất phải có:
 - [ ] Màu sơ đồ đủ tương phản với chữ trắng. Nguồn lỗi: pilot 27/10, gradient cyan của brand guideline quá sáng, đổi sang màu chính của site.
 - [ ] Không có ảnh AI tả người, văn phòng, khách hàng; ảnh AI có logo. Nguồn: luật media của workspace, `media_plan.py kiem` chặn.
 - [ ] Alt tả media đã dựng, caption nói điều người đọc rút ra, ảnh chụp ghi nguồn và ngày chụp. Nguồn lỗi: pilot 27/10, alt IMG-04 còn tả "thang bốn tầng" của brief cũ, alt IMG-05 tả "clip" cho sơ đồ tĩnh; bản nháp đã lên site với alt sai.
+- [ ] Media quan trọng có brand là thực thể chính mang logo hoặc linh vật thật của brand đó (luật 9). Nguồn lỗi: 31/10/2026, ảnh đại diện và sơ đồ 2 bài Claude Code không có logo Claude; người duyệt yêu cầu bổ sung.
+- [ ] Ảnh chụp và khung video cắt sát, chữ đọc được ở cột 680 px, có khoanh hoặc ghim chỗ cần nhìn; ảnh trước và sau đặt cạnh nhau (luật 10). Nguồn lỗi: 31/10/2026, 8 khung video cả màn hình VS Code trong 2 bài tài liệu nội bộ, chữ mờ, người đọc không biết nhìn vào đâu.
 - [ ] `media_plan.py kiem --html` thoát 0: bài không còn khung chờ. Nguồn: pilot 27/10, `kiem_bai.py` coi khung chờ còn sót là chuỗi giữ chỗ và chặn đăng.
 
 ## Output
@@ -154,5 +162,6 @@ Bản tốt nhất phải có:
 
 ## Changelog
 
+- v1.1.0 (2026-10-31): luật media 9 (logo hoặc linh vật của brand trong media quan trọng) và 10 (ảnh chụp, khung video: cắt sát, khoanh hoặc ghim, trước và sau cạnh nhau); 2 dòng tự phản biện. Người duyệt yêu cầu sau vòng góp ý 2 bài tài liệu nội bộ về Claude Code.
 - v1.0.1 (2026-10-27): `evals/cases.yaml` 7 ca từ pilot (alt tả brief cũ, nhãn `nguoc` bắt nhầm, chụp trang devsite và hexdocs, ảnh AI có người, thiếu Kie). Kiểu `danh-sach` căn giữa tiêu đề khi thẻ không có mô tả.
 - v1.0 (2026-10-27): tạo mới. Pilot bài content-effort trên site mẫu GTV: 4 sơ đồ SVG (khoi, luong 2 kiểu, quyet-dinh) đạt `svg_kiem.mjs` ở 760 và 320 px, 2 ảnh chụp nguồn (Google devsite, hexdocs) có tô câu, 1 khối tự chấm `.calc`, chèn đủ 7 khung.

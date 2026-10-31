@@ -1,5 +1,5 @@
 ---
-master_version: v2026.10.56
+master_version: v2026.10.57
 ---
 
 # MIGRATION — Cập nhật instance lên version master mới
@@ -15,6 +15,13 @@ master_version: v2026.10.56
 ---
 
 ## 1. Có gì mới
+
+### v2026.10.57 (2026-10-31) — `anh-trong-bai` 1.1.0: logo brand trong media quan trọng, ảnh chụp cắt sát có khoanh
+
+- **Vì sao:** người duyệt góp ý 31/10/2026 trên 2 bài tài liệu nội bộ: ảnh có brand là thực thể chính phải có logo hoặc linh vật của brand; ảnh chụp và khung video mờ, không chỉ chỗ cần nhìn.
+- **anh-trong-bai 1.1.0:** luật media 9 (logo hoặc linh vật thật trong ảnh mở bài, sơ đồ tổng quan, infographic; lấy theo `featured-image-seo` luật 11b của workspace), luật media 10 (cắt sát, chữ từ 11 px ở cột 680 px, khoanh hoặc ghim bằng `anh_chu_thich.py`, trước và sau đặt cạnh nhau, ghi ngày); thêm 2 dòng tự phản biện.
+- **Kiểm:** chỉ sửa `SKILL.md`, không đổi script.
+- **Port sang instance:** GHI ĐÈ `skills/anh-trong-bai` và mirror bằng `python3 tools/port_skill.py`, rồi `bash tools/sync-skills.sh`.
 
 ### v2026.10.56 (2026-10-31) — `wp-pagespeed` 1.22, `wp-gtm-tracking` 1.1.0, `wp-ucss` 1.2.2: bài học đợt trang chủ site bán lẻ mẫu
 
