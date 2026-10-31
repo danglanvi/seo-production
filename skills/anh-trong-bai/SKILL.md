@@ -2,7 +2,7 @@
 name: anh-trong-bai
 description: "Dựng media trong thân bài trước khi đăng: media plan từ khung [IMG-NN], sơ đồ SVG 2 bản desktop và điện thoại theo màu site, ảnh chụp trang nguồn có tô câu, ảnh AI có watermark, khối tương tác; kiểm chữ, alt, caption, dung lượng rồi chèn vào HTML. Dùng khi bài mới cần hình."
 metadata:
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # anh-trong-bai — media trong thân bài
@@ -16,8 +16,8 @@ Gốc đường dẫn là root repo. Script ở `skills/anh-trong-bai/scripts/`:
 | `media_plan.py tu-md` | Lập `media_plan.json` từ bảng `## Image placeholders` của bài và hộp media brief |
 | `media_plan.py kiem` | Kiểm plan: loại, alt, caption, tên file, file có thật, trần KB, ảnh AI không tả người, ảnh không lặp. `--html` đối chiếu khung chờ trong bài |
 | `media_plan.py chu-so-do` | Gom chữ của sơ đồ để so với thân bài bằng `diagram_body_check.py` của `semantic-media` |
-| `svg_dung.py` | Dựng sơ đồ SVG từ khối `so_do`: 7 kiểu, mỗi sơ đồ 2 bản (khung 760 và 320) |
-| `svg_kiem.mjs` | Đo sơ đồ bằng Chrome với font thật: chữ tràn khung, chữ đè chữ, chữ dưới 12 px. Chụp PNG 2x để xem |
+| `svg_dung.py` | Dựng sơ đồ SVG từ khối `so_do`: 10 kiểu (có làn nhiều vai, vòng phản hồi, ô số liệu), mỗi sơ đồ 2 bản (khung 760 và 320). Mũi tên đi theo trục, tránh hộp và tên làn; nhãn mũi tên có viền nền |
+| `svg_kiem.mjs` | Đo sơ đồ bằng Chrome với font thật: chữ tràn khung, chữ đè chữ, chữ dưới 12 px. Chụp PNG 2x để xem. `--png`, `--webp`: xuất ảnh cạnh SVG cho WordPress hoặc mạng xã hội |
 | `chup_trang.mjs` | Chụp một vùng trang nguồn: tìm khối chứa đoạn chữ, mở khối thu gọn, tô vàng câu cần nhấn |
 | `anh_chu_thich.py` | Ghép, cắt, che, khoanh, ghim số; logo cho ảnh AI; WebP dưới trần KB, metadata nguồn ảnh |
 | `chen_media.py` | Thay khung chờ bằng media: SVG 2 bản, `<img>` có kích thước, khối tương tác, YouTube facade |
@@ -96,6 +96,7 @@ Nếu repo không có `tools/capabilities.py` (repo content), kiểm tay: `pytho
    ```
 
    - `svg_kiem.mjs` thoát 1 thì sửa spec (rút chữ, đổi kiểu, `mot_hang`) rồi dựng lại.
+   - Cần ảnh tĩnh cho WordPress, mạng xã hội hoặc slide: thêm `--png` (PNG 2x) hoặc `--webp` vào lệnh `svg_kiem.mjs`.
    - Mở mọi PNG trong `media/_kiem/`, cả bản `-m`.
    - So chữ với thân bài. Repo SEO chạy `media_plan.py chu-so-do <plan> --out specs-chu.json`, rồi `python3 skills/semantic-media/scripts/diagram_body_check.py --specs specs-chu.json --body <bai.html>`. Đọc mọi dòng `nguoc` và `can_doc`.
 4. Chụp trang nguồn:
@@ -130,10 +131,9 @@ Nếu repo không có `tools/capabilities.py` (repo content), kiểm tay: `pytho
 ### Tự phản biện trước khi trình
 
 Bản tốt nhất phải có:
-- [ ] `svg_kiem.mjs` thoát 0 ở cả bản desktop và bản điện thoại, và đã xem mọi PNG. Nguồn lỗi: pilot 27/10, mũi tên chéo khi đổi hàng, nhãn nhánh đè mũi tên, bản điện thoại thiếu nhãn nhóm.
+- [ ] `svg_kiem.mjs` thoát 0 ở cả bản desktop và bản điện thoại, đã xem mọi PNG: mũi tên theo trục, không cắt hộp hay tên làn; nhãn mũi tên có viền; màu đủ tương phản với chữ trắng. Nguồn lỗi: pilot 27/10 (mũi tên chéo khi đổi hàng, nhãn nhánh đè mũi tên, bản điện thoại thiếu nhãn nhóm, gradient cyan quá sáng); 31/10/2026 (sơ đồ làn vẽ tay có mũi tên chéo, mũi tên đè tên làn, hai đầu mũi tên vòng sửa chồng nhau).
 - [ ] Chữ trên sơ đồ khớp thân bài; mọi dòng `nguoc`, `can_doc` đã đọc. Nguồn lỗi: pilot 27/10, hai nhãn bị xếp `nguoc` vì câu trích tiếng Anh có "no matter how"; đọc câu bằng chứng thì nhãn đúng.
 - [ ] Ảnh chụp nguồn đúng khối, có câu được tô, đọc được trên điện thoại. Nguồn lỗi: pilot 27/10, trang devsite tự chuyển bản dịch và giấu đoạn trong khối thu gọn; trang hexdocs ở chế độ tối chụp ra sai cột; ảnh chụp 1000 px không đọc được trên điện thoại.
-- [ ] Màu sơ đồ đủ tương phản với chữ trắng. Nguồn lỗi: pilot 27/10, gradient cyan của brand guideline quá sáng, đổi sang màu chính của site.
 - [ ] Không có ảnh AI tả người, văn phòng, khách hàng; ảnh AI có logo. Nguồn: luật media của workspace, `media_plan.py kiem` chặn.
 - [ ] Alt tả media đã dựng, caption nói điều người đọc rút ra, ảnh chụp ghi nguồn và ngày chụp. Nguồn lỗi: pilot 27/10, alt IMG-04 còn tả "thang bốn tầng" của brief cũ, alt IMG-05 tả "clip" cho sơ đồ tĩnh; bản nháp đã lên site với alt sai.
 - [ ] Media quan trọng có brand là thực thể chính mang logo hoặc linh vật thật của brand đó (luật 9). Nguồn lỗi: 31/10/2026, ảnh đại diện và sơ đồ 2 bài Claude Code không có logo Claude; người duyệt yêu cầu bổ sung.
@@ -162,6 +162,7 @@ Bản tốt nhất phải có:
 
 ## Changelog
 
+- v1.2.0 (2026-10-31): `svg_dung.py` thêm 3 kiểu `lan` (làn nhiều vai, hình thoi quyết định), `vong-lap` (chuỗi có vòng sửa và vòng học), `so-lieu` (ô số trước → sau, bắt buộc nguồn); bộ định tuyến mũi tên theo trục tránh hộp và tên làn; nhãn mũi tên có viền nền ở mọi kiểu. `svg_kiem.mjs --png`. Thử trên 3 sơ đồ của bài tài liệu nội bộ về chuẩn outline (lưu đồ 3 làn, chấm 3 lớp, dải số): `svg_kiem.mjs` 0 lỗi ở 760 và 320 px.
 - v1.1.0 (2026-10-31): luật media 9 (logo hoặc linh vật của brand trong media quan trọng) và 10 (ảnh chụp, khung video: cắt sát, khoanh hoặc ghim, trước và sau cạnh nhau); 2 dòng tự phản biện. Người duyệt yêu cầu sau vòng góp ý 2 bài tài liệu nội bộ về Claude Code.
 - v1.0.1 (2026-10-27): `evals/cases.yaml` 7 ca từ pilot (alt tả brief cũ, nhãn `nguoc` bắt nhầm, chụp trang devsite và hexdocs, ảnh AI có người, thiếu Kie). Kiểu `danh-sach` căn giữa tiêu đề khi thẻ không có mô tả.
 - v1.0 (2026-10-27): tạo mới. Pilot bài content-effort trên site mẫu GTV: 4 sơ đồ SVG (khoi, luong 2 kiểu, quyet-dinh) đạt `svg_kiem.mjs` ở 760 và 320 px, 2 ảnh chụp nguồn (Google devsite, hexdocs) có tô câu, 1 khối tự chấm `.calc`, chèn đủ 7 khung.

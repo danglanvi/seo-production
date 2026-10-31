@@ -5,13 +5,14 @@
 //
 // Bản desktop đặt trong khung 760 px, bản điện thoại trong khung 320 px. Ảnh soát: <thư mục svg>/_kiem/<tên>.png, <tên>-m.png.
 // --webp: xuất thêm <tên>.webp 1520 px (2x) cho Google Images hoặc ảnh chia sẻ; cần python3 + Pillow.
+// --png: chép ảnh PNG 2x của bản desktop ra cạnh SVG (<tên>.png) để tải lên WordPress hoặc mạng xã hội.
 // Mã thoát: 0 đạt, 1 có lỗi.
-import {readFileSync, writeFileSync, mkdirSync, existsSync} from 'fs';
+import {readFileSync, writeFileSync, mkdirSync, existsSync, copyFileSync} from 'fs';
 import {dirname, resolve, join, basename} from 'path';
 import {execFileSync} from 'child_process';
 import {args, openTab} from './_cdp.mjs';
 
-const o = args(process.argv.slice(2), ['webp']);
+const o = args(process.argv.slice(2), ['webp', 'png']);
 const planPath = resolve(o._[0] || ''), plan = JSON.parse(readFileSync(planPath, 'utf8'));
 const prof = o.profile ? JSON.parse(readFileSync(o.profile, 'utf8')) : {};
 const fontCss = (prof.media || {}).font_css || 'https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Be+Vietnam+Pro:wght@400;700&display=block';
@@ -79,6 +80,11 @@ try {
       const wp = join(base, it.svg.replace(/\.svg$/, '.webp'));
       execFileSync('python3', ['-c', `from PIL import Image;Image.open(${JSON.stringify(res.d.anh)}).convert('RGB').save(${JSON.stringify(wp)},'WEBP',quality=86,method=6)`]);
       console.log(`  webp: ${wp}`);
+    }
+    if (o.png && res.d) {
+      const pp = join(base, it.svg.replace(/\.svg$/, '.png'));
+      copyFileSync(res.d.anh, pp);
+      console.log(`  png: ${pp}`);
     }
     report[it.id] = res;
   }

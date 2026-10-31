@@ -11,6 +11,11 @@ Mỗi mục loai "so-do" có khối "so_do" với "kieu":
   moc         mốc thời gian: moc[{thoi_gian, tieu_de, mo_ta}]
   cot         biểu đồ thanh ngang: du_lieu[{nhan, gia_tri}], don_vi, nguon (bắt buộc)
   danh-sach   N mục đánh số: muc[{tieu_de, mo_ta}]
+  lan         nhiều vai theo làn: lan[tên], buoc[{tieu_de, mo_ta, lan, cot?, hoi?, to?}],
+              noi[{tu, den, nhan, loai: "tien"|"sua"|"hoc"}] (thiếu thì nối bước liền nhau), vong[{tu, den, nhan, loai}]
+  vong-lap    chuỗi một hàng có vòng phản hồi: buoc[{tieu_de, mo_ta, to}], vong[{tu, den, nhan, loai: "sua"|"hoc"}]
+  so-lieu     ô số liệu: so[{gia_tri, nhan, truoc?, don_vi?, to?}], cot?, nguon (bắt buộc)
+Mũi tên của lan và vong-lap đi theo trục, tránh hộp; vòng "sua" màu canh_bao, "hoc" màu chinh, nét đứt. Nhãn mũi tên có viền nền.
 Mỗi sơ đồ ra 2 file: <ten_file>.svg (khung 760, desktop) và <ten_file>-m.svg (khung 320, điện thoại).
 Ghi lại media_plan.json: svg, svg_m. Chữ dài tự xuống dòng theo bề rộng ước lượng; svg_kiem.mjs đo lại bằng Chrome.
 Chỉ dùng Python stdlib.
@@ -112,21 +117,44 @@ class Svg:
         self.parts.append(f'<path d="{d}" stroke="{c}" stroke-width="2.2" fill="none" marker-end="url(#a)"{da}/>')
         if label:
             lx, ly = (x1 + x2) / 2, ((y1 + y2) / 2 - curve / 2 - 8) if curve else (min(y1, y2) - 8)
-            self.parts.append(f'<text x="{lx:.0f}" y="{ly:.0f}" font-size="13" fill="{self.p["chu_phu"]}" text-anchor="middle">{E(label)}</text>')
+            self.label(lx, ly, label)
+
+    def label(self, x, y, s, color=None, fs=13, bold=False, anchor='middle'):
+        """Nhãn mũi tên có viền màu nền, để đọc được khi nằm đè lên nét."""
+        fw = ' font-weight="700"' if bold else ''
+        self.parts.append(f'<text x="{x:.0f}" y="{y:.0f}" font-size="{fs}" fill="{color or self.p["chu_phu"]}"{fw} text-anchor="{anchor}" '
+                          f'paint-order="stroke" stroke="{self.p["nen"]}" stroke-width="4" stroke-linejoin="round">{E(s)}</text>')
+
+    def path(self, pts, color='phu', dash=False):
+        mk = {'phu': 'a', 'canh_bao': 'ar', 'chinh': 'ac'}[color]
+        d = 'M' + ' L'.join(f'{x:.0f} {y:.0f}' for x, y in pts)
+        da = ' stroke-dasharray="7 6"' if dash else ''
+        self.parts.append(f'<path d="{d}" stroke="{self.p[color]}" stroke-width="2.2" fill="none" stroke-linejoin="round" marker-end="url(#{mk})"{da}/>')
+
+    def diamond(self, x, y, w, h, title):
+        cx, cy = x + w / 2, y + h / 2
+        bid = self.uid()
+        self.parts.append(f'<polygon id="{bid}" points="{cx:.0f},{y:.0f} {x + w:.0f},{cy:.0f} {cx:.0f},{y + h:.0f} {x:.0f},{cy:.0f}" '
+                          f'fill="{self.p["nen"]}" stroke="{self.p["canh_bao"]}" stroke-width="1.8"/>')
+        tw = w * 0.56
+        th = self.measure(tw, [(title, 14, True, '')])
+        self.text_block(cx - tw / 2, cy - th / 2 - 2, tw, [(title, 14, True, self.p['chu'])], owner=bid)
 
     def render(self):
         p = self.p
         g, a = self.pid + '-g', self.pid + '-a'
+        mk = ''.join(f'<marker id="{self.pid}-{k}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">'
+                     f'<path d="M0 0L10 5L0 10z" fill="{p[c]}"/></marker>' for k, c in (('a', 'phu'), ('ar', 'canh_bao'), ('ac', 'chinh')))
         defs = (f'<defs><linearGradient id="{g}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="{p.get("grad1", p["chinh"])}"/>'
-                f'<stop offset="1" stop-color="{p.get("grad2", p["phu"])}"/></linearGradient>'
-                f'<marker id="{a}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">'
-                f'<path d="M0 0L10 5L0 10z" fill="{p["phu"]}"/></marker></defs>')
+                f'<stop offset="1" stop-color="{p.get("grad2", p["phu"])}"/></linearGradient>{mk}</defs>')
         H = int(self.H + 8)
         tid, did = self.uid('t'), self.uid('d')
+        body = ''.join(self.parts).replace('url(#g)', f'url(#{g})')
+        for k in ('a', 'ar', 'ac'):
+            body = body.replace(f'url(#{k})', f'url(#{self.pid}-{k})')
         return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {self.W} {H}" role="img" aria-labelledby="{tid} {did}" '
                 f'font-family="{E(self.font)}" style="max-width:100%;height:auto">'
-                f'<title id="{tid}">{E(self.title)}</title><desc id="{did}">{E(self.desc)}</desc>{defs}'
-                + ''.join(self.parts).replace('url(#g)', f'url(#{g})').replace('url(#a)', f'url(#{a})') + '</svg>')
+                f'<title id="{tid}">{E(self.title)}</title><desc id="{did}">{E(self.desc)}</desc>{defs}' + body + '</svg>')
 
 
 def grid_rows(n, per):
@@ -203,7 +231,7 @@ def k_quyet_dinh(s, sp, mobile):
         for k, (key, x) in enumerate((('co', 8), ('khong', 8 + half + 14))):
             b = sp[key]
             s.arrow(x + half / 2, y + 2, x + half / 2, ys - 4)
-            s.parts.append(f'<text x="{x + half / 2 + 8:.0f}" y="{(y + ys) / 2 + 5:.0f}" font-size="13" font-weight="700" fill="{s.p["chu_phu"]}">{E(b["nhan"])}</text>')
+            s.label(x + half / 2 + 8, (y + ys) / 2 + 5, b['nhan'], bold=True, anchor='start')
             hh = s.card(x, ys, half, b['ket_qua'], b.get('tiep', ''), fs1=15, fs2=13)
             hmax = max(hmax, hh)
         s.H = ys + hmax + 8
@@ -224,7 +252,7 @@ def k_quyet_dinh(s, sp, mobile):
     xm = xq + wq + 18
     for b, yt in ((sp['co'], y + hc / 2), (sp['khong'], yk + hk / 2)):
         s.parts.append(f'<path d="M{xq + wq + 2:.0f} {cy:.0f}H{xm:.0f}V{yt:.0f}H{xr - 4:.0f}" stroke="{s.p["phu"]}" stroke-width="2.2" fill="none" marker-end="url(#a)"/>')
-        s.parts.append(f'<text x="{(xm + xr) / 2:.0f}" y="{yt - 8:.0f}" font-size="13" font-weight="700" fill="{s.p["chu_phu"]}" text-anchor="middle">{E(b["nhan"])}</text>')
+        s.label((xm + xr) / 2, yt - 8, b['nhan'], bold=True)
     s.H = max(yk + hk, cy + h1 / 2, cy + hq / 2) + 8
 
 
@@ -243,9 +271,9 @@ def k_khoi(s, sp, mobile):
             dash = ' stroke-dasharray="6 5"' if r.get('net') == 'dut' else ''
             s.parts.append(f'<path d="M{8 + w + 2} {ya:.0f}H{xa:.0f}V{yb:.0f}H{8 + w + 4}" stroke="{s.p["phu"]}" stroke-width="2" fill="none"{dash} marker-end="url(#a)"/>')
             if b - a == 1:
-                s.parts.append(f'<text x="{W / 2 - 25:.0f}" y="{(pos[a][0] + pos[a][1] + pos[b][0]) / 2 + 5:.0f}" font-size="13" fill="{s.p["chu_phu"]}" text-anchor="middle">{E(r.get("nhan", ""))}</text>')
+                s.label(W / 2 - 25, (pos[a][0] + pos[a][1] + pos[b][0]) / 2 + 5, r.get('nhan', ''))
             else:
-                s.parts.append(f'<text x="{W / 2 - 25:.0f}" y="{pos[b][0] - 12:.0f}" font-size="13" fill="{s.p["chu_phu"]}" text-anchor="middle">{E(r.get("nhan", ""))}</text>')
+                s.label(W / 2 - 25, pos[b][0] - 12, r.get('nhan', ''))
         s.H = y - gap + 8
         return
     n = len(bl)
@@ -263,7 +291,7 @@ def k_khoi(s, sp, mobile):
         if abs(a - b) == 1:
             lo, hi_ = sorted((a, b))
             s.arrow(xs[lo] + w + 3, top + h / 2, xs[hi_] - 4, top + h / 2, dash=dash)
-            s.parts.append(f'<text x="{xs[lo] + w + gap / 2:.0f}" y="{top + h + 18:.0f}" font-size="13" fill="{s.p["chu_phu"]}" text-anchor="middle">{E(r.get("nhan", ""))}</text>')
+            s.label(xs[lo] + w + gap / 2, top + h + 18, r.get('nhan', ''))
         else:
             s.arrow(xs[a] + w / 2, top - 4, xs[b] + w / 2, top - 4, dash=dash, curve=58, label=r.get('nhan'))
     s.H = top + h + 26
@@ -369,7 +397,254 @@ def k_danh_sach(s, sp, mobile):
     s.H = y - gap + 8
 
 
-KIND = {'luong': k_luong, 'quyet-dinh': k_quyet_dinh, 'khoi': k_khoi, 'so-sanh': k_so_sanh, 'moc': k_moc, 'cot': k_cot, 'danh-sach': k_danh_sach}
+MAU = {'tien': ('phu', False), 'sua': ('canh_bao', True), 'hoc': ('chinh', True)}
+
+
+def _cat(seg, r, m=3):
+    """Đoạn theo trục seg có cắt hình chữ nhật r = (x, y, w, h) nới m px (m âm: chỉ phần lõi) không."""
+    (x1, y1), (x2, y2) = seg
+    rx, ry, rw, rh = r
+    return min(x1, x2) < rx + rw + m and max(x1, x2) > rx - m and min(y1, y2) < ry + rh + m and max(y1, y2) > ry - m
+
+
+def _ranh(pts, rects, a, b):
+    """Đường gấp khúc không cắt hộp nào khác, và không đi xuyên lõi hộp đầu, hộp cuối."""
+    for seg in zip(pts, pts[1:]):
+        for k, r in enumerate(rects):
+            if _cat(seg, r, -3 if k in (a, b) else 3):
+                return False
+    return True
+
+
+def _duong(rects, a, b, loai, gap, tren, duoi, oa=0, ob=0):
+    """Các phương án đường theo trục từ hộp a tới hộp b, xếp theo ưu tiên: [(tên, điểm)]. oa, ob: lệch điểm ra, điểm vào."""
+    ax, ay, aw, ah = rects[a]
+    bx, by, bw, bh = rects[b]
+    acx, acy, bcx, bcy = ax + aw / 2, ay + ah / 2, bx + bw / 2, by + bh / 2
+    phai, xuong = bcx > acx + 1, bcy > acy + 1
+    a_ra, b_vao = (ax + aw, bx) if phai else (ax, bx + bw)
+    a_dung, b_dung = (ay + ah, by) if xuong else (ay, by + bh)
+    kenh = [('tren', [(acx + oa, ay), (acx + oa, tren), (bcx + ob, tren), (bcx + ob, by)]),
+            ('duoi', [(acx + oa, ay + ah), (acx + oa, duoi), (bcx + ob, duoi), (bcx + ob, by + bh)])]
+    if loai == 'tien':
+        kenh.reverse()
+    if abs(acy - bcy) < 1:
+        thang = [('thang', [(a_ra, acy + oa), (b_vao, bcy + oa)])] if loai == 'tien' else []
+        return thang + kenh
+    if abs(acx - bcx) < 1:
+        return [('thang', [(acx + oa, a_dung), (bcx + oa, b_dung)])] + kenh
+    c = []
+    if (acx + oa < bx) if phai else (acx + oa > bx + bw):
+        c.append(('l1', [(acx + oa, a_dung), (acx + oa, bcy + ob), (b_vao, bcy + ob)]))
+    if (acy + oa < by) if xuong else (acy + oa > by + bh):
+        c.append(('l2', [(a_ra, acy + oa), (bcx + ob, acy + oa), (bcx + ob, b_dung)]))
+    if loai != 'tien':
+        c.reverse()
+    for gx in ((ax + aw + gap / 2) if phai else (ax - gap / 2), (bx - gap / 2) if phai else (bx + bw + gap / 2)):
+        if (ax + aw <= gx <= bx) if phai else (bx + bw <= gx <= ax):
+            c.append(('z', [(a_ra, acy + oa), (gx, acy + oa), (gx, bcy + ob), (b_vao, bcy + ob)]))
+    return c + kenh
+
+
+def _rut(pts):
+    """Lùi điểm cuối 4 px cho đầu mũi tên, đẩy điểm đầu 2 px ra khỏi viền hộp."""
+    def dich(p, q, d):
+        dx, dy = q[0] - p[0], q[1] - p[1]
+        n = (dx * dx + dy * dy) ** 0.5 or 1
+        return (p[0] + dx / n * d, p[1] + dy / n * d)
+    pts = list(pts)
+    pts[0] = dich(pts[0], pts[1], 2)
+    pts[-1] = dich(pts[-1], pts[-2], 4)
+    return pts
+
+
+def _nhan_duong(s, pts, text, color, tren_hop):
+    """Đặt nhãn trên đoạn ngang dài nhất đủ chỗ, rồi cạnh đoạn dọc dài nhất; mũi tên ngắn thì đặt ở dải trên mép hộp nguồn."""
+    segs = list(zip(pts, pts[1:]))
+    ngang = [g for g in segs if abs(g[0][1] - g[1][1]) < 1 and abs(g[0][0] - g[1][0]) >= text_w(text, 13, True) + 12]
+    if ngang:
+        (x1, y1), (x2, _) = max(ngang, key=lambda g: abs(g[0][0] - g[1][0]))
+        s.label((x1 + x2) / 2, y1 - 7, text, color, bold=True)
+        return
+    (x1, y1), (x2, y2) = max(segs, key=lambda g: abs(g[0][1] - g[1][1]))
+    if abs(y1 - y2) >= 24:
+        s.label(x1 + 7, (y1 + y2) / 2 + 5, text, color, bold=True, anchor='start')
+    else:
+        (x1, _), (x2, _) = segs[0]
+        s.label((x1 + x2) / 2, tren_hop - 7, text, color, bold=True)
+
+
+def _canh(sp, n):
+    noi = sp.get('noi') or [{'tu': i, 'den': i + 1} for i in range(n - 1)]
+    edges = [dict(e, loai=e.get('loai', 'tien')) for e in noi] + [dict(v, loai=v.get('loai', 'sua')) for v in sp.get('vong', [])]
+    for e in edges:
+        if e['loai'] not in MAU or not (0 <= e['tu'] < n and 0 <= e['den'] < n) or e['tu'] == e['den']:
+            sys.exit(f'Cạnh {e} sai: loai là tien|sua|hoc, tu và den là chỉ số bước khác nhau trong 0..{n - 1}')
+    return edges
+
+
+def k_lan(s, sp, mobile):
+    st, lanes = sp['buoc'], sp.get('lan') or ['']
+    if any(not 0 <= b.get('lan', 0) < len(lanes) for b in st):
+        sys.exit(f'"{s.title}": mỗi bước cần "lan" trong 0..{len(lanes) - 1}')
+    edges, named = _canh(sp, len(st)), any(lanes)
+    if mobile:
+        return _lan_doc(s, st, lanes, edges, named)
+    nc = max(b.get('cot', i) for i, b in enumerate(st)) + 1
+    gap = 30
+    w = (s.W - 16 - gap * (nc - 1)) / nc
+    f1, f2, pad = (15, 13, 10) if w >= 150 else (13.5, 12, 8)
+
+    def cao(b):
+        if b.get('hoi'):
+            return max(66, s.measure(w * 0.56, [(b['tieu_de'], 14, True, '')]) + 36)
+        return s.measure(w - 2 * pad, [(b['tieu_de'], f1, True, ''), (b.get('mo_ta', ''), f2, False, '')]) + 2 * pad + 4
+    lh = {}
+    for b in st:
+        lh[b.get('lan', 0)] = max(lh.get(b.get('lan', 0), 0), cao(b))
+    head = 26 if named else (22 if any(e.get('nhan') and e['loai'] == 'tien' for e in edges) else 0)
+    ly, y = {}, 0
+    for L in range(len(lanes)):
+        ly[L] = y
+        y += head + lh.get(L, 40) + (12 if named else 0) + 6
+    bottom = y - 6
+    rects = [(8 + b.get('cot', i) * (w + gap), ly[b.get('lan', 0)] + head, w, lh[b.get('lan', 0)]) for i, b in enumerate(st)]
+    # tên làn cũng là vật cản: mũi tên không đi qua chữ
+    can = rects + ([(8, ly[L] + 4, text_w(n.upper(), 12, True) + 8, 18) for L, n in enumerate(lanes)] if named else [])
+    s.tuyen, s.rects = [], can
+    nt = nd = 0
+    dem = {}
+    cot = lambda i: st[i].get('cot', i)
+    # cạnh tiến trước; vòng ngắn trước vòng dài để vòng ngắn nằm kênh gần hộp
+    for e in sorted(edges, key=lambda e: (e['loai'] != 'tien', abs(cot(e['tu']) - cot(e['den'])))):
+        a, b = e['tu'], e['den']
+        oa = ob = 0
+        if e['loai'] != 'tien':
+            # vòng đi sang trái: ra lệch phải, vào lệch trái; vòng dài lệch xa hơn để không cắt vòng ngắn
+            sg = 1 if cot(b) <= cot(a) else -1
+            oa = sg * min(18 * (1 + dem.get(a, 0)), w / 2 - 8)
+            ob = -sg * min(18 * (1 + dem.get(b, 0)), w / 2 - 8)
+            dem[a], dem[b] = dem.get(a, 0) + 1, dem.get(b, 0) + 1
+        cands = _duong(rects, a, b, e['loai'], gap, -16 - 24 * nt, bottom + 16 + 24 * nd, oa, ob)
+        ten, pts = next((c for c in cands if _ranh(c[1], can, a, b)), next(c for c in cands if c[0] == 'tren'))
+        nt += ten == 'tren'
+        nd += ten == 'duoi'
+        s.tuyen.append((e, pts, _ranh(pts, can, a, b)))
+    dy = 40 + 24 * (nt - 1) if nt else 8
+    for L, name in enumerate(lanes):
+        if named:
+            s.parts.append(f'<rect x="0" y="{ly[L] + dy:.0f}" width="{s.W}" height="{head + lh.get(L, 40) + 12:.0f}" rx="12" fill="{s.p["nen_nhat"]}"/>')
+            s.parts.append(f'<text x="12" y="{ly[L] + dy + 18:.0f}" font-size="12" font-weight="700" fill="{s.p["chinh"]}">{E(name.upper())}</text>')
+    for (x, yy, ww, hh), b in zip(rects, st):
+        if b.get('hoi'):
+            s.diamond(x, yy + dy, ww, hh, b['tieu_de'])
+        else:
+            s.card(x, yy + dy, ww, b['tieu_de'], b.get('mo_ta', ''), b.get('to', False), pad=pad, fs1=f1, fs2=f2, min_h=hh)
+    for e, pts, _ in s.tuyen:
+        color, dash = MAU[e['loai']]
+        pts = _rut([(x, yy + dy) for x, yy in pts])
+        s.path(pts, color, dash)
+        if e.get('nhan'):
+            _nhan_duong(s, pts, e['nhan'], s.p[color] if e['loai'] != 'tien' else None, rects[e['tu']][1] + dy)
+    s.H = dy + bottom + (16 + 24 * nd if nd else 4)
+
+
+def _lan_doc(s, st, lanes, edges, named):
+    """Bản điện thoại: các bước xếp dọc theo thứ tự, thẻ ghi tên làn; cạnh nhảy cóc đi rãnh phải, vòng lùi đi rãnh trái."""
+    gl, gr = 30, 22
+    x, w = 8 + gl, s.W - 16 - gl - gr
+    # nhãn của cạnh đi rãnh đặt dưới thẻ nguồn, trong nửa thẻ phía rãnh: khoảng cách sau thẻ giãn theo số dòng nhãn
+    nw = w / 2 - 16
+    nl = [sum(len(wrap(e['nhan'], nw, 13, True)) for e in edges if e['tu'] == i and e['den'] != i + 1 and e.get('nhan'))
+          for i in range(len(st))]
+    y, rects = 8, []
+    for i, b in enumerate(st):
+        if b.get('hoi'):
+            h = max(70, s.measure(w * 0.45, [(b['tieu_de'], 14, True, '')]) + 40)
+            s.diamond(x + w * 0.1, y, w * 0.8, h, b['tieu_de'])
+            rects.append((x + w * 0.1, y, w * 0.8, h))
+            y += h + 32 + 16 * max(0, nl[i] - 1)
+            continue
+        else:
+            hi = b.get('to', False)
+            ink, sub, chip = ('#FFFFFF',) * 3 if hi else (s.p['chu'], s.p['chu_phu'], s.p['chinh'])
+            spec = ([(lanes[b.get('lan', 0)].upper(), 12, True, chip)] if named else []) + [(b['tieu_de'], 15, True, ink)]
+            spec += [(b['mo_ta'], 13, False, sub)] if b.get('mo_ta') else []
+            h = s.measure(w - 24, spec) + 28
+            bid = s.box(x, y, w, h, hi)
+            s.text_block(x + 12, y + 10, w - 24, spec, owner=bid)
+        rects.append((x, y, w, h))
+        y += h + 32 + 16 * max(0, nl[i] - 1)
+    kl = kr = 0
+    xep, ra_, vao_ = {}, {}, {}
+    # cạnh liền nhau trước; cạnh đi rãnh xếp từ ngắn tới dài: cạnh ngắn ở rãnh trong, cạnh dài ở rãnh ngoài
+    for e in sorted(edges, key=lambda e: (e['den'] != e['tu'] + 1, abs(e['den'] - e['tu']))):
+        a, b = e['tu'], e['den']
+        (xa, ya, wa, ha), (xb, yb, wb, hb) = rects[a], rects[b]
+        color, dash = MAU[e['loai']]
+        lc = s.p[color] if e['loai'] != 'tien' else None
+        if b == a + 1:
+            cx = x + w / 2
+            s.path(_rut([(cx, ya + ha), (cx, yb)]), color, dash)
+            if e.get('nhan'):
+                s.label(cx + 8, (ya + ha + yb) / 2 + 5, e['nhan'], lc, bold=True, anchor='start')
+            continue
+        if b > a:
+            gx, x1, x2, kr = x + w + 8 + 7 * kr, xa + wa, xb + wb, kr + 1
+        else:
+            gx, x1, x2, kl = x - 8 - 7 * kl, xa, xb, kl + 1
+        # cạnh ngoài ra thấp hơn, vào cao hơn (vòng lùi) để không cắt cạnh trong; 14 px để hai đầu mũi tên không chạm nhau
+        sg, side = (1 if b < a else -1), (b > a)
+        y1 = ya + ha / 2 + sg * 14 * ra_.get((a, side), 0)
+        y2 = yb + hb / 2 - sg * 14 * vao_.get((b, side), 0)
+        ra_[(a, side)], vao_[(b, side)] = ra_.get((a, side), 0) + 1, vao_.get((b, side), 0) + 1
+        s.path(_rut([(x1, y1), (gx, y1), (gx, y2), (x2, y2)]), color, dash)
+        for ln in (wrap(e['nhan'], nw, 13, True) if e.get('nhan') else []):
+            ny = ya + ha + 19 + 16 * xep.get(a, 0)
+            xep[a] = xep.get(a, 0) + 1
+            if b > a:
+                s.label(x + w - 4, ny, ln, lc, bold=True, anchor='end')
+            else:
+                s.label(x + 4, ny, ln, lc, bold=True, anchor='start')
+    s.H = y - 32 - 16 * max(0, nl[-1] - 1) + 8 + 16 * nl[-1]
+
+
+def k_vong_lap(s, sp, mobile):
+    st = [dict(b, lan=0, cot=i) for i, b in enumerate(sp['buoc'])]
+    k_lan(s, {'buoc': st, 'lan': [''], 'vong': [dict(v, loai=v.get('loai', 'sua')) for v in sp.get('vong', [])]}, mobile)
+
+
+def k_so_lieu(s, sp, mobile):
+    if not sp.get('nguon'):
+        sys.exit(f'Ô số liệu "{s.title}" thiếu "nguon". Số liệu phải có nguồn.')
+    items, W, gap = sp['so'], s.W, 12
+    vals = [(f'{d["truoc"]} → ' if d.get('truoc') not in (None, '') else '') + f'{d["gia_tri"]}{d.get("don_vi", "")}' for d in items]
+    if mobile:
+        per = 2 if all(text_w(v, 22, True) <= (W - 16 - gap) / 2 - 24 for v in vals) else 1
+    else:
+        per = sp.get('cot') or (len(items) if len(items) <= 4 else 3)
+    y = 8
+    for row in grid_rows(len(items), per):
+        w = (W - 16 - gap * (per - 1)) / per
+        fs = {}
+        for i in row:
+            f = 22 if mobile else 30
+            while f > 16 and text_w(vals[i], f, True) > w - 24:
+                f -= 1
+            fs[i] = f
+        h = max(s.measure(w - 24, [(vals[i], fs[i], True, ''), (items[i]['nhan'], 13.5, False, '')]) + 28 for i in row)
+        for j, i in enumerate(row):
+            x = 8 + j * (w + gap)
+            hi = items[i].get('to', False)
+            bid = s.box(x, y, w, h, hi)
+            s.text_block(x + 12, y + 10, w - 24, [(vals[i], fs[i], True, '#FFFFFF' if hi else s.p['chinh']),
+                                                  (items[i]['nhan'], 13.5, False, '#FFFFFF' if hi else s.p['chu_phu'])], anchor='start', owner=bid)
+        y += h + gap
+    s.H = s.text_block(8, y - 6, W - 16, [('Nguồn: ' + sp['nguon'], 12, False, s.p['chu_phu'])], anchor='start') + 4
+
+
+KIND = {'luong': k_luong, 'quyet-dinh': k_quyet_dinh, 'khoi': k_khoi, 'so-sanh': k_so_sanh, 'moc': k_moc, 'cot': k_cot, 'danh-sach': k_danh_sach,
+        'lan': k_lan, 'vong-lap': k_vong_lap, 'so-lieu': k_so_lieu}
 
 
 def palette(profile):

@@ -13,6 +13,9 @@ Bài trên WordPress không chạy `<script>` riêng. Tài khoản đăng bài k
 | Tự chấm, tính nhanh theo vài biến | `.calc` | Thanh trượt và công thức an toàn |
 | So sánh nhiều phương án theo tiêu chí | bảng `.tbl` | Đọc ngang được, không cần bấm |
 | Ảnh giao diện cần chỉ từng vùng | `.shot` | Ghim số trên ảnh, rê chuột sáng mục |
+| Ảnh chụp nhiều chữ, cần xem cỡ lớn | `figure.zoom` | Bấm ảnh để phóng, bấm lại hoặc Esc để đóng |
+| Template, bảng tính, tài liệu người đọc cần mở | `.tpl` + nút `data-embed` | Nút mở link thật, khung xem trước nạp khi bấm |
+| Quy trình nhiều bước khó hình dung bằng chữ | `figure.vid` > `video` | Video 40–60 giây có lời và phụ đề, đặt đầu mục |
 
 Mỗi bài có ít nhất một khối bấm. Không thêm khối chỉ để có khối: khối phải giúp người đọc làm hoặc kiểm điều H2 nói.
 
@@ -69,8 +72,36 @@ Công cụ tính:
 - `doc-kit.css` chưa có style cho `.calc`. Viết CSS riêng trong `<style>` ở `<head>` của bài. `wp_publish.py` gắn tiền tố `.doc-kit` rồi lưu vào meta `_doc_kit_css`.
 - Ghi rõ trên khối: đây là khung tự kiểm của brand hay số của nguồn nào. Không đặt ngưỡng đạt khi chưa có dữ liệu hiệu chỉnh.
 
+Phóng ảnh:
+
+```html
+<figure class="wide zoom"><img src="…" alt="…" width="1200" height="760"><ol class="sn"><li>Giải thích ghim 1</li></ol><figcaption>Nguồn, ngày chụp. Bấm vào ảnh để xem cỡ lớn.</figcaption></figure>
+```
+
+Khung template, xem trước khi bấm:
+
+```html
+<div class="tpl wide"><h3>Tên template</h3><p>Dùng để làm gì.</p>
+<p><a href="https://docs.google.com/spreadsheets/d/<id>/copy">Tạo bản sao</a> · <a href="https://docs.google.com/spreadsheets/d/<id>/edit">Mở template</a></p>
+<button type="button" data-embed="tpl-1" data-src="https://docs.google.com/spreadsheets/d/<id>/preview" data-title="Tên template">Xem ngay trong bài</button>
+<div id="tpl-1" hidden data-h="520"><p>Khung trống hoặc báo cần quyền: đăng nhập tài khoản được share, hoặc bấm "Mở template".</p></div></div>
+```
+
+- `data-src` chỉ nhận link https của Google Docs, Sheets, Drive, Looker Studio. Link khác không nạp. `kiem_bai.py` báo LOI.
+- Link tạo bản sao và mở template là thẻ `<a>` thật trong HTML, để crawler và người không bật JS vẫn mở được.
+- CSS của `.tpl` viết trong `<style>` ở `<head>` của bài, như `.calc`.
+
+Video:
+
+```html
+<figure class="wide vid"><video controls preload="metadata" playsinline poster="<ảnh poster>.jpg" src="<video>.mp4" width="1280" height="720"></video><figcaption>Xem nhanh trong N giây. Video có phụ đề; bật tiếng để nghe giọng đọc.</figcaption></figure>
+```
+
+Video do repo video dựng (brief từ `media-brief` hoặc `semantic-media`). Nén bản web bằng H.264 CRF 22, `+faststart`.
+
 ## Kiểm
 
 - `kiem_bai.py` kiểm cấu trúc: quiz có `data-ok`, checklist có `data-key`, tab đủ pane, công thức an toàn.
-- `kiem_render.mjs` bấm thử trên theme thật: đổi tab, chọn đáp án quiz, đánh dấu checklist, kéo thanh trượt `.calc`.
+- `kiem_bai.py` kiểm thêm: nút `data-embed` có phần tử đích và link nằm trong danh sách cho phép.
+- `kiem_render.mjs` bấm thử trên theme thật: đổi tab, chọn đáp án quiz, đánh dấu checklist, kéo thanh trượt `.calc`, phóng ảnh `figure.zoom`, mở khung `data-embed`.
 - Ca thật 27/10/2026: khối tự chấm của bài pilot viết bằng `<script>` riêng không chạy trên site. Viết lại bằng `.calc` thì chạy ở cả 2 cỡ màn hình.

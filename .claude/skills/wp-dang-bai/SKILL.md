@@ -2,7 +2,7 @@
 name: wp-dang-bai
 description: "Đăng hoặc cập nhật bài lên WordPress qua REST bằng app password: file HTML format blog doc-kit giữ giao diện (bảng, tab, quiz, checklist, SVG, video), tự tải ảnh lên Media, điền SEO title, meta, keyword, chuyên mục, ảnh đại diện. Dùng khi đẩy bài từ repo lên site có web-profile."
 metadata:
-  version: "1.2.3"
+  version: "1.2.4"
 ---
 
 # wp-dang-bai — đăng bài lên WordPress qua API
@@ -75,7 +75,7 @@ Script tự làm:
 
 ## Giới hạn
 
-- `<script>` riêng của bài không lên site. Tài khoản đăng bài không có quyền chèn JS. Khối tương tác chung (`.btabs`, `.bquiz`, `.bchk`, `.bcmd`, `.tabs`, `.cmd`, `[data-quiz]`, `.calc`, `.shot`, `.chk`) chạy bằng `doc-kit.js`. Markup: `wp-xuat-ban-bai/references/khoi-doc-kit.md`.
+- `<script>` riêng của bài không lên site. Tài khoản đăng bài không có quyền chèn JS. Khối tương tác chung (`.btabs`, `.bquiz`, `.bchk`, `.bcmd`, `.tabs`, `.cmd`, `[data-quiz]`, `.calc`, `.shot`, `.chk`, `figure.zoom`, `[data-embed]`) chạy bằng `doc-kit.js`. Markup: `wp-xuat-ban-bai/references/khoi-doc-kit.md`.
 - `.calc` chỉ tính công thức gồm tên thanh trượt, số, `+ - * / ( )` và `round()`.
 - Font theo theme. Màu nhấn giữ theo format blog.
 - Không tạo page, không sửa bài đứng tên người khác (role Người đăng bài).
@@ -104,6 +104,7 @@ Script tự làm:
 
 ## Changelog
 
+- v1.2.4 (2026-10-31): `doc-kit.js` thêm phóng ảnh `figure.zoom` và khung xem trước `[data-embed]` (chỉ link Google Docs, Sheets, Drive, Looker Studio, nạp khi bấm). Style inline, không đổi `doc-kit.css`. Thử bằng Chrome headless: mở, đóng bằng Esc, link ngoài danh sách không nạp. Nguồn: 2 khối chạy trên bài tài liệu nội bộ về chuẩn outline 31/10.
 - v1.2.3 (2026-10-27): sửa bài đã publish trên site có `cache.cdn_html: lead-purge` thì script nhắc gửi URL cho SEO Leader purge CDN. Lý do: site mẫu GTV từ 26/10 có CDN giữ HTML 1 ngày cho khách ngoài châu Á, gồm Googlebot ở Mỹ, và chưa có mu-plugin tự purge.
 - v1.2.2 (2026-10-27): mục xoá hẳn bài cũ và media (bản sao WPML); `evals/cases.yaml` 5 ca. Lý do: dọn bản nháp và media cũ trên site mẫu GTV.
 - v1.2.1 (2026-10-27): publish xong tự mở URL bài, không trả 200 thì thoát 1; ảnh đại diện trùng slug của bài được đổi tên `<slug>-anh-dai-dien`. Lý do: bài content-effort publish trên site mẫu GTV trả 404 vì plugin permalink chưa ghi URI và ảnh mang cùng slug.

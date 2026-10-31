@@ -2,7 +2,7 @@
 name: semantic-media
 description: "Đặt media đúng mục của trang: kiểm kê video và ảnh thật, tìm slot theo heading, ghép video bằng EmbeddingGemma, dựng sơ đồ bằng code và so chữ với thân bài, nhúng YouTube facade kèm VideoObject. Dùng khi trang thiếu video, ảnh thật hoặc sơ đồ ở mục cần minh hoạ."
 metadata:
-  version: "1.1"
+  version: "1.2"
 ---
 
 # semantic-media — media đúng ngữ cảnh cho từng mục của trang
@@ -67,6 +67,7 @@ Test, chạy từ `skills/semantic-media/`: `python3 -B tests/test_media.py` và
 7. Mỗi slot có alt tả nội dung ảnh hoặc video, và caption nói điều người đọc rút ra.
 8. Video lời chứng thực chỉ nhúng khi người nói thuộc đúng entity của trang. Kiểm bằng lời nói trong video, không dựa vào tên file hay tiêu đề. Người nói là học viên hoặc khách của brand khác thì không dùng video đó.
 9. Ảnh trong slot nội dung không lặp ảnh đã dùng ở trang khác trong phạm vi. Ảnh được phép lặp, ví dụ chân dung tác giả trong hộp tác giả, ghi `allow_reuse: true` kèm lý do.
+10. Mục cần video mà site chưa có video sở hữu phù hợp: lập brief video giao repo video theo `references/brief-video.md`. Chỉ cho mục có quy trình nhiều bước, nhiều vai, hoặc cơ chế khó hình dung; tối đa 2 video một trang.
 
 ## Quy trình
 
@@ -141,6 +142,7 @@ Nếu thiếu `gemma`, bỏ bước xếp video tự động: Claude đọc danh
    ```
 
 4. Video: dùng mẫu `assets/media-facade.php`. Ghi `videos.json` cạnh mu-plugin: tiêu đề, mô tả, ngày đăng, thời lượng, trạng thái, `@id` tác giả.
+5. Video cần dựng mới (luật 10): viết `brief-video-<slug>.md` theo `references/brief-video.md`. Slot giữ trạng thái `needs_video` tới khi repo video trả MP4, poster và transcript. Video tự host nhúng bằng `figure.vid` (`wp-xuat-ban-bai/references/khoi-doc-kit.md`), video đưa lên YouTube nhúng bằng facade.
 
 ### Bước 4 — duyệt, ghi, kiểm
 
@@ -159,12 +161,14 @@ Bản tốt nhất phải có:
 - [ ] Mọi video lời chứng thực có `speaker_entity` trùng entity của trang và `speaker_evidence` có mốc giây. Nguồn lỗi: site gtvseo 19/10, transcript cho thấy người nói trong video trang chủ là học viên của brand khác.
 - [ ] Video nhúng bằng facade, có VideoObject cho video sở hữu public hoặc unlisted.
 - [ ] Slot chờ việc bên ngoài ghi rõ ai làm và cần gì.
+- [ ] Brief video có ý chính một câu, lời đọc nháp lấy từ chữ của mục, mỗi số có nguồn, brand đúng entity của trang. Nguồn lỗi: 31/10/2026, 2 video có lời cho bài tài liệu nội bộ phải viết brief tay từ thân bài trước khi repo video dựng được.
 
 ## Output
 
 - `media_plan.json`, `slot_video_nn.jsonl`, `images.jsonl`, bảng slot cho người duyệt.
 - Sơ đồ WebP và `.check.json`, `body_check.json`, `claims.jsonl`, ảnh AI đã watermark, clip MP4.
 - mu-plugin media và `videos.json`.
+- `brief-video-<slug>.md` cho slot cần video dựng mới.
 
 ## Gate
 
@@ -188,5 +192,6 @@ Bản tốt nhất phải có:
 
 ## Changelog
 
+- v1.2 (2026-10-31): luật 10 và Bước 3 mục 5: slot cần video dựng mới thì lập brief theo `references/brief-video.md` giao repo Video Production (`video-explainer`, `--brand client` cho khách). Mẫu gom từ 2 video có lời của bài tài liệu nội bộ về chuẩn outline (31/10).
 - v1.1 (2026-10-25): media-7 và media-3 (mục ảnh trùng giữa trang). Sửa lỗi `minFont` null ở `diagram_render.mjs` (thêm `diagram_checks.mjs`). Thêm `diagram_body_check.py` so chữ sơ đồ với thân bài (chuỗi nguyên văn vẫn so chiều phủ định). Luật 8 kiểm entity người nói của video lời chứng thực, luật 9 và `check --used` chặn ảnh trùng giữa trang. Thêm `tests/test_diagram.py`, `evals/cases.yaml`.
 - v1.0 (2026-10-19): bản đầu, gom từ kế hoạch media của một site nội bộ (18/10). Lượt thử 19/10: `media_match.py nn` tái tạo bảng top 8 cũ 83/83 slot (cosine lệch 0); `check` xác nhận không video nào quá 2 trang và bắt 1 slot thiếu caption; `diagram_render.mjs` render lại 3 sơ đồ cho cùng kết quả kiểm và cùng dung lượng.

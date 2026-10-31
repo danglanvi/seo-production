@@ -2,7 +2,7 @@
 name: wp-xuat-ban-bai
 description: "Xuất bản bài blog đã humanize lên WordPress: Markdown thành HTML doc-kit, media trong bài, ảnh đại diện, khối bấm thử, kiểm luật site và link nội bộ, render thử trên theme thật, đăng nháp, kiểm sau đăng. Dùng khi đưa bài mới lên site có web-profile."
 metadata:
-  version: "1.0.3"
+  version: "1.0.4"
 ---
 
 # wp-xuat-ban-bai — xuất bản bài blog lên WordPress
@@ -147,6 +147,7 @@ Bản tốt nhất phải có:
 
 ## Changelog
 
+- v1.0.4 (2026-10-31): `khoi-doc-kit.md` thêm `figure.zoom`, khung template `.tpl` + `data-embed`, `figure.vid`. `kiem_bai.py` báo LOI khi nút `data-embed` thiếu khung đích hoặc link ngoài Google; `kiem_render.mjs` bấm thử phóng ảnh và mở khung. Test 4/4.
 - v1.0.3 (2026-10-27): profile thêm khối `cache` (`cdn_html`: `khong`, `tu-purge`, `lead-purge`). `kiem-sau-dang.md` mục 2: sửa bài trên site có CDN giữ HTML thì nhờ SEO Leader purge. Lý do: site mẫu GTV từ 26/10 có CDN giữ HTML 1 ngày cho khách ngoài châu Á.
 - v1.0.2 (2026-10-27): `evals/cases.yaml` 9 ca từ pilot (link chờ, script riêng, slug và SEO title, URL 404 sau publish, cache gộp doc-kit, brand khác, thiếu profile). Mục tự phản biện thêm kiểm URL sau publish; luật link ngoài theo cả 2 chế độ của profile.
 - v1.0.1 (2026-10-27): `kiem_render.mjs --url` nhận doc-kit theo rule CSS và khối bấm chạy được (plugin cache gộp file). `kiem-sau-dang.md` thêm cách xử lý URL 404 sau publish do plugin permalink và ảnh trùng slug. Lý do: publish bài pilot trên site mẫu GTV.

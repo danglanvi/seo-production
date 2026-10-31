@@ -543,3 +543,9 @@ Luật ghi:
 - Người duyệt góp ý 31/10 trên 2 bài tài liệu nội bộ Claude Code: ảnh có brand là thực thể chính phải có logo hoặc linh vật; khung video mờ, không chỉ chỗ cần nhìn.
 - Luật media 9, 10 và 2 dòng tự phản biện. Không đổi script.
 - Files touched: skills/anh-trong-bai/SKILL.md, MIGRATION.md, log.md
+
+## [2026-10-31] refactor | v2026.10.58 — sơ đồ làn và vòng lặp, khối phóng ảnh và khung xem trước, brief video — @claude
+- Người duyệt yêu cầu 31/10 nâng skill sơ đồ, infographic, khối tương tác, video để làm cho khách.
+- anh-trong-bai 1.2.0, blog-interactive-tools 1.1, semantic-media 1.2, wp-dang-bai 1.2.4, wp-xuat-ban-bai 1.0.4. Chi tiết và kết quả kiểm ở MIGRATION.md.
+- Chưa port sang instance và fork Content: làm cùng đợt port fork kế tiếp.
+- Files touched: skills/{anh-trong-bai,blog-interactive-tools,semantic-media,wp-dang-bai,wp-xuat-ban-bai}/, .claude/skills/, .agents/skills/, MIGRATION.md, log.md

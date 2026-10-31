@@ -1,5 +1,5 @@
 ---
-master_version: v2026.10.57
+master_version: v2026.10.58
 ---
 
 # MIGRATION — Cập nhật instance lên version master mới
@@ -15,6 +15,17 @@ master_version: v2026.10.57
 ---
 
 ## 1. Có gì mới
+
+### v2026.10.58 (2026-10-31) — `anh-trong-bai` 1.2.0, `blog-interactive-tools` 1.1, `semantic-media` 1.2, `wp-dang-bai` 1.2.4, `wp-xuat-ban-bai` 1.0.4: sơ đồ làn và vòng lặp, khối phóng ảnh và khung xem trước, brief video
+
+- **Vì sao:** người duyệt yêu cầu 31/10/2026 nâng skill sơ đồ, infographic, khối tương tác và video để làm được cho khách, rút từ bài tài liệu nội bộ về chuẩn outline (3 sơ đồ, 2 video có lời, khối template).
+- **anh-trong-bai 1.2.0:** `svg_dung.py` thêm kiểu `lan` (làn nhiều vai, hình thoi quyết định), `vong-lap` (vòng sửa, vòng học), `so-lieu` (ô số trước → sau, bắt buộc nguồn). Bộ định tuyến mũi tên đi theo trục, không cắt hộp hay tên làn; nhãn mũi tên có viền nền ở mọi kiểu. `svg_kiem.mjs --png` xuất PNG 2x cạnh SVG. `media_plan.py chu-so-do` bỏ khoá `loai`.
+- **wp-dang-bai 1.2.4:** `doc-kit.js` thêm `figure.zoom` (phóng ảnh) và `[data-embed]` (khung xem trước Google Docs, Sheets, Drive, Looker Studio, nạp khi bấm). Style inline, `doc-kit.css` không đổi.
+- **wp-xuat-ban-bai 1.0.4:** `khoi-doc-kit.md` thêm markup phóng ảnh, khung template, video. `kiem_bai.py` báo LOI khi nút `data-embed` thiếu khung đích hoặc link ngoài danh sách; `kiem_render.mjs` bấm thử 2 khối mới.
+- **blog-interactive-tools 1.1:** mục "Công cụ hay khối bài" chọn giữa công cụ riêng và khối doc-kit.
+- **semantic-media 1.2:** luật 10 và `references/brief-video.md`: slot cần video dựng mới thì lập brief giao repo Video Production (`video-explainer --brand client`).
+- **Kiểm:** `tests/test_media_bai.py` 5/5 (ca mới: mũi tên theo trục, tên làn là vật cản, thiếu nguồn, cạnh sai); 3 sơ đồ thử `svg_kiem.mjs` 0 lỗi ở 760 và 320 px; `doc-kit.js` thử bằng Chrome headless (mở, Esc đóng, link ngoài không nạp); `tests/test_xuat_ban.py` 4/4; `skill_struct_check.py` đạt 4 skill, `wp-dang-bai` thiếu Bước 0 từ trước.
+- **Port sang instance:** GHI ĐÈ 5 skill và mirror bằng `python3 tools/port_skill.py --skills anh-trong-bai,blog-interactive-tools,semantic-media,wp-dang-bai,wp-xuat-ban-bai`, rồi `bash tools/sync-skills.sh`. Site đã cài mu-plugin doc-kit: deploy lại `doc-kit.js` qua `wp-staging-deploy`. Fork Content GTV, TAG có 3 skill wp và anh-trong-bai: port cùng lệnh. Cập nhật `master_version` thành `v2026.10.58`.
 
 ### v2026.10.57 (2026-10-31) — `anh-trong-bai` 1.1.0: logo brand trong media quan trọng, ảnh chụp cắt sát có khoanh
 

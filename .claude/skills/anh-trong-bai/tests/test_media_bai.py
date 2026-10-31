@@ -1,4 +1,4 @@
-"""Test offline: media_plan.py (tu-md, kiem, chu-so-do), svg_dung.py (7 kiểu), chen_media.py. Không cần Chrome.
+"""Test offline: media_plan.py (tu-md, kiem, chu-so-do), svg_dung.py (10 kiểu, định tuyến mũi tên), chen_media.py. Không cần Chrome.
 Chạy từ skills/anh-trong-bai/: python3 -B tests/test_media_bai.py"""
 import json
 import re
@@ -91,6 +91,57 @@ def test_svg_7_kieu_va_chu_so_do():
         assert rc != 0, "biểu đồ cột thiếu nguồn phải dừng"
 
 
+LAN = {"kieu": "lan", "lan": ["Bạn (SEO)", "AI · Claude Code", "Google Sheet"],
+       "buoc": [{"tieu_de": "Giao việc", "lan": 0}, {"tieu_de": "Lập outline", "lan": 1}, {"tieu_de": "Ghi lên Sheet", "lan": 2},
+                {"tieu_de": "Review", "lan": 0}, {"tieu_de": "Còn Chặn?", "lan": 0, "hoi": True},
+                {"tieu_de": "AI chỉnh", "lan": 1, "cot": 4}, {"tieu_de": "Sheet cập nhật", "lan": 2, "cot": 4},
+                {"tieu_de": "Chốt", "lan": 0, "cot": 5}],
+       "noi": [{"tu": 0, "den": 1}, {"tu": 1, "den": 2}, {"tu": 2, "den": 3}, {"tu": 3, "den": 4},
+               {"tu": 4, "den": 5, "nhan": "Có"}, {"tu": 5, "den": 6}, {"tu": 4, "den": 7, "nhan": "Không"}],
+       "vong": [{"tu": 6, "den": 3, "nhan": "Vòng sửa", "loai": "sua"}]}
+VONG = {"kieu": "vong-lap", "buoc": [{"tieu_de": "Nộp bài"}, {"tieu_de": "Máy kiểm"}, {"tieu_de": "AI gắn cờ"}, {"tieu_de": "Người quyết"}],
+        "vong": [{"tu": 1, "den": 0, "nhan": "Còn lỗi", "loai": "sua"}, {"tu": 3, "den": 0, "nhan": "Có Chặn", "loai": "sua"},
+                 {"tu": 3, "den": 2, "nhan": "Bài học tuần", "loai": "hoc"}]}
+SO = {"kieu": "so-lieu", "nguon": "Trạm mẫu 2026", "so": [{"truoc": "40", "gia_tri": "15", "nhan": "Mục người chấm", "to": True},
+                                                        {"gia_tri": "47", "don_vi": "%", "nhan": "Giảm ký tự"}]}
+
+
+def test_lan_vong_lap_so_lieu():
+    sys.path.insert(0, str(SCRIPTS))
+    import svg_dung as m
+    pal, font = m.palette(json.loads(PROFILE.read_text(encoding="utf-8")))
+    # mọi mũi tên đi theo trục, không cắt hộp hay tên làn (ca lỗi: mũi tên chéo, mũi tên đè tên làn 31/10/2026)
+    for sp in (LAN, VONG):
+        s = m.Svg(760, pal, font, "t", "d", "x")
+        m.KIND[sp["kieu"]](s, sp, False)
+        assert all(ok for _, _, ok in s.tuyen), [(e, ok) for e, _, ok in s.tuyen]
+        if sp.get("lan"):
+            assert len(s.rects) == len(sp["buoc"]) + len(sp["lan"]), "tên làn phải là vật cản khi định tuyến"
+        for _, pts, _ in s.tuyen:
+            assert all(a[0] == b[0] or a[1] == b[1] for a, b in zip(pts, pts[1:])), pts
+    with tempfile.TemporaryDirectory() as d:
+        items = [{"id": f"IMG-0{i}", "loai": "so-do", "alt": f"Sơ đồ {k}", "caption": "c", "ten_file": k, "so_do": sp}
+                 for i, (k, sp) in enumerate((("lan", LAN), ("vong-lap", VONG), ("so-lieu", SO)), 1)]
+        p = Path(d, "media_plan.json")
+        p.write_text(json.dumps({"items": items}, ensure_ascii=False), encoding="utf-8")
+        rc, log = run(SCRIPTS / "svg_dung.py", p, "--profile", PROFILE, "--out", Path(d, "media"))
+        assert rc == 0, log
+        for k in ("lan", "vong-lap", "so-lieu"):
+            for suf in ("", "-m"):
+                assert Path(d, "media", f"{k}{suf}.svg").read_text(encoding="utf-8").startswith("<svg"), k + suf
+        v = Path(d, "media", "vong-lap.svg").read_text(encoding="utf-8")
+        assert 'stroke="#DC2626"' in v and 'stroke-dasharray' in v and 'paint-order="stroke"' in v
+        assert "Nguồn: Trạm mẫu 2026" in Path(d, "media", "so-lieu.svg").read_text(encoding="utf-8")
+        run(SCRIPTS / "media_plan.py", "chu-so-do", p, "--out", Path(d, "chu.json"))
+        chu = json.loads(Path(d, "chu.json").read_text(encoding="utf-8"))["items"]
+        assert "sua" not in chu[1]["json_prompt"]["elements"][0]["items"] and "Mục người chấm 15" in chu[2]["json_prompt"]["elements"][0]["items"]
+        for bad in ({**SO, "nguon": ""}, {**LAN, "buoc": [{"tieu_de": "X", "lan": 5}]}, {**VONG, "vong": [{"tu": 1, "den": 9}]}):
+            items[0]["so_do"] = bad
+            p.write_text(json.dumps({"items": items}, ensure_ascii=False), encoding="utf-8")
+            rc, _ = run(SCRIPTS / "svg_dung.py", p, "--profile", PROFILE, "--out", Path(d, "media"), "--only", "IMG-01")
+            assert rc != 0, bad
+
+
 def test_kiem_luat():
     items = [
         {"id": "IMG-01", "loai": "so-do", "alt": "Ảnh sơ đồ tưới", "caption": "x", "ten_file": "a"},
@@ -134,6 +185,7 @@ def test_chen_media():
 if __name__ == "__main__":
     test_tu_md()
     test_svg_7_kieu_va_chu_so_do()
+    test_lan_vong_lap_so_lieu()
     test_kiem_luat()
     test_chen_media()
-    print("OK 4 test")
+    print("OK 5 test")

@@ -2,7 +2,7 @@
 name: blog-interactive-tools
 description: "Nhúng công cụ tương tác vào thân bài blog (xem trước SERP, gom từ khoá, checklist, máy tính chỉ số), viết bằng JS thuần. Server in sẵn khung và chữ cho crawler, chỉ nạp ở bài có công cụ, chèn bằng điều kiện MD5, có rollback, đo axe và CLS."
 metadata:
-  version: "1.0"
+  version: "1.1"
 ---
 
 # blog-interactive-tools — công cụ tương tác trong bài blog
@@ -17,6 +17,20 @@ Gốc đường dẫn là root repo. File ở `skills/blog-interactive-tools/`:
 | `scripts/rollback_shortcode.php` | Trả bài về bản trước. Bài đã bị người khác sửa thì chỉ gỡ đúng đoạn shortcode |
 | `assets/tools-library.php` | Mẫu mu-plugin có 8 công cụ: `serp`, `kw-group`, `seo-checklist`, `swot`, `fb-cover`, `faq-schema`, `fb-ads`, `alt-text` |
 | `tests/replay_insert.php` | Chạy `insert_shortcode.php` ngoài WordPress trên file nội dung, để kiểm vị trí chèn |
+
+## Công cụ hay khối bài
+
+Skill này dựng **công cụ**: code tính toán riêng của bài, chạy bằng mu-plugin và shortcode. Phần lớn nhu cầu tương tác trong bài không cần công cụ riêng. Chọn theo bảng:
+
+| Người đọc cần | Dùng | Nơi có markup |
+|---|---|---|
+| Xem từng bước, tự kiểm hiểu, đánh dấu việc, chép lệnh | khối doc-kit `.btabs`, `.bquiz`, `.bchk`, `.bcmd` | `skills/wp-xuat-ban-bai/references/khoi-doc-kit.md` |
+| Tự chấm theo vài thanh trượt | `.calc` | như trên |
+| Xem ảnh chụp cỡ lớn, mở template hoặc bảng tính ngay trong bài | `figure.zoom`, `.tpl` + `data-embed` | như trên |
+| Xem quy trình khó hình dung bằng chữ | `figure.vid` có lời và phụ đề, brief từ `semantic-media` | như trên |
+| Nhập dữ liệu của mình và nhận kết quả theo công thức của bài (đo title, gom từ khoá, tính chỉ số) | công cụ của skill này | `assets/tools-library.php` |
+
+Cả 2 loại theo cùng luật: server in sẵn chữ, nhãn, link thật và kết quả mẫu; JS chỉ thêm tương tác. Khối doc-kit chạy trên site đã cài mu-plugin doc-kit (`wp-dang-bai`). Màu khối lấy từ biến CSS của site khách, không mang màu GTV sang.
 
 ## Khi nào dùng
 
@@ -122,4 +136,5 @@ Bản tốt nhất phải có:
 
 ## Changelog
 
+- v1.1 (2026-10-31): mục "Công cụ hay khối bài": chọn giữa công cụ riêng và khối doc-kit (tab, quiz, checklist, nút Chép, `.calc`, phóng ảnh, khung xem trước, video). Phóng ảnh và khung xem trước thêm vào `doc-kit.js` (`wp-dang-bai` 1.2.4), chạy thử trên bài tài liệu nội bộ về chuẩn outline 31/10.
 - v1.0 (2026-10-19): bản đầu, gom từ 8 công cụ chạy trên production của một site nội bộ (19/10) và cách nạp công cụ theo bài của theme site còn lại. Lượt thử: `insert_shortcode.php` phát lại trên nội dung trước khi chèn cho đúng vị trí và kiểu bài 8/8.

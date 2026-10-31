@@ -65,11 +65,12 @@ def test_kiem_bai_luat():
                        '<p>Vườn Khác cũng làm vậy. <a href="https://ngoai.example.net/x">nguồn</a> Hoàn 100% tiền.</p>'
                        '<div class="calc"><input type="range" data-i="a"><b data-f="alert(a)">0</b></div>'
                        '<div class="bchk"><label><input type="checkbox"></label></div>'
+                       '<button type="button" data-embed="tpl-x" data-src="https://evil.example.net/x">Xem</button>'
                        '<script>alert(1)</script></main>')
     rc, out = kiem(bad)
     assert rc == 1
     for s in ("brand bên kia", "link ra ngoài https://ngoai.example.net/x", "cam kết hoàn tiền", "công thức .calc",
-              "thiếu data-key", "<script>"):
+              "thiếu data-key", "<script>", 'không có phần tử id="tpl-x"', "không phải link Google"):
         assert s in out, s
     no_sig = page.replace("Vườn Mẫu - Vườn nhỏ cho nhà phố", "")
     rc, out = kiem(no_sig)

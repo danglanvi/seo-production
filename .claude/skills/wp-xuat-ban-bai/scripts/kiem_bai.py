@@ -6,7 +6,8 @@
 LOI (chặn đăng): không đúng 1 H1 · còn chuỗi giữ chỗ ([LINK-CHỜ, [Chờ media, TODO, {{, [[) · có <script> trong thân ·
 câu cam kết hoàn tiền · nhắc brand bên kia · link ra ngoài khi profile link_ngoai = "chu-thich" · thiếu chữ ký thương hiệu ·
 ảnh thiếu alt · khối bấm sai cấu trúc (quiz thiếu data-ok, checklist thiếu data-key, tab lệch số nút và số pane,
-công thức .calc ngoài phép tính an toàn) · --online: link nội bộ trả 4xx/5xx.
+công thức .calc ngoài phép tính an toàn, nút data-embed thiếu khung đích hoặc link ngoài Google Docs/Drive/Looker Studio) ·
+--online: link nội bộ trả 4xx/5xx.
 CANH_BAO: H2 không có hình, bảng hay khối bấm · bài không có khối bấm · ảnh thiếu width/height · title hoặc meta
 description dài · link nội bộ chuyển hướng · không có link nội bộ.
 Cuối báo cáo in luat_rieng của profile để người đăng đọc lại. Mã thoát: 0 đạt, 1 có LOI. Chỉ dùng Python stdlib.
@@ -22,7 +23,8 @@ import urllib.request
 
 CLAIMS = re.compile(r'hoàn\s*(100\s*%|tiền|lại\s*tiền)|money[- ]back|cam\s*kết\s*hoàn', re.I)
 HOLD = re.compile(r'\[LINK-CH[ỜO]|\[Ch[ờo] media|\bTODO\b|\{\{|\[\[|\[IMG-\d+\]|cho-media|LINK-CHO', re.I)
-VISUAL = re.compile(r'<(figure|table|svg|video)\b|class="[^"]*\b(btabs|bquiz|bchk|calc|tabs|say2|cards|tuong-tac|bcmd)\b')
+VISUAL = re.compile(r'<(figure|table|svg|video)\b|class="[^"]*\b(btabs|bquiz|bchk|calc|tabs|say2|cards|tuong-tac|bcmd|tpl)\b')
+EMBED = re.compile(r'^https://(docs|drive|lookerstudio)\.google\.com/')  # cùng danh sách với doc-kit.js
 SAFE = re.compile(r'^[\s\d.+\-*/(),]*$')
 UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) wp-xuat-ban-bai/1.0'
 
@@ -127,6 +129,13 @@ def main():
         npn = len(re.findall(r'class="btab-pane"', t))
         if bar and nb != npn:
             loi.append(f'khối tab có {nb} nút nhưng {npn} pane')
+    for b in re.findall(r'<[^>]*\bdata-embed="[^"]*"[^>]*>', body):
+        tid = re.search(r'data-embed="([^"]*)"', b).group(1)
+        src = html.unescape((re.search(r'data-src="([^"]*)"', b) or [None, ''])[1])
+        if f'id="{tid}"' not in body:
+            loi.append(f'khung xem trước data-embed="{tid}" không có phần tử id="{tid}"')
+        if not EMBED.match(src):
+            loi.append(f'khung xem trước data-src "{src[:60]}" không phải link Google Docs/Drive/Looker Studio: doc-kit.js không nạp')
     for calc in blocks(body, 'calc'):
         names = re.findall(r'data-i="(\w+)"', calc)
         for f in re.findall(r'data-f="([^"]+)"', calc):

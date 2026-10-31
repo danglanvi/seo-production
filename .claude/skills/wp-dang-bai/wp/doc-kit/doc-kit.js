@@ -1,5 +1,6 @@
 /* doc-kit: tương tác của format bài blog (pages.dev) trên WordPress. Chỉ chạy trong .doc-kit.
-   Khối: .btabs, .bquiz, .bchk, .bcmd (blog.js); .tabs, .cmd, [data-quiz], .calc (mag.js); .shot, .chk (doc.js).
+   Khối: .btabs, .bquiz, .bchk, .bcmd (blog.js); .tabs, .cmd, [data-quiz], .calc (mag.js); .shot, .chk (doc.js);
+   figure.zoom img (phóng ảnh), [data-embed] (khung xem trước Google Docs/Sheets/Drive/Looker Studio nạp khi bấm).
    .calc chỉ tính công thức gồm tên thanh trượt, số, + - * / ( ) và round(): bài do Người đăng bài viết không chạy được JS tuỳ ý. */
 (function () {
   var root = document.querySelector('.doc-kit');
@@ -108,6 +109,41 @@
     pins.forEach(function (p, i) { p.addEventListener('mouseenter', function () { on(i); }); p.addEventListener('click', function () { on(i); }); });
     items.forEach(function (li, i) { li.addEventListener('mouseenter', function () { on(i); }); });
     f.addEventListener('mouseleave', function () { on(-1); });
+  });
+
+  // Phóng ảnh: lớp phủ đặt trong .doc-kit, style inline vì doc-kit.css sinh từ blog.css của site tài liệu.
+  $$('figure.zoom img').forEach(function (im) {
+    im.style.cursor = 'zoom-in';
+    im.addEventListener('click', function () {
+      var o = document.createElement('div'), big = new Image();
+      o.className = 'lbx'; o.setAttribute('role', 'dialog'); o.setAttribute('aria-label', im.alt || 'Ảnh cỡ lớn');
+      o.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(20,20,19,.86);overflow:auto;padding:16px;cursor:zoom-out';
+      big.src = im.currentSrc || im.src; big.alt = im.alt;
+      big.style.cssText = 'display:block;width:auto;max-width:none;margin:0 auto;border-radius:6px';
+      function close() { o.remove(); document.removeEventListener('keydown', esc); }
+      function esc(e) { if (e.key === 'Escape') close(); }
+      o.appendChild(big); o.addEventListener('click', close); document.addEventListener('keydown', esc);
+      root.appendChild(o);
+    });
+  });
+
+  // Khung xem trước: chỉ nhận link https của Google Docs, Sheets, Drive, Looker Studio. Link mở thường nằm sẵn trong HTML cho crawler.
+  var EMBED = /^https:\/\/(docs|drive|lookerstudio)\.google\.com\//;
+  $$('[data-embed]').forEach(function (b) {
+    var box = document.getElementById(b.getAttribute('data-embed')), src = b.getAttribute('data-src') || '', label = b.textContent;
+    if (!box || !EMBED.test(src)) return;
+    b.setAttribute('aria-expanded', 'false');
+    b.addEventListener('click', function () {
+      if (!box.querySelector('iframe')) {
+        var f = document.createElement('iframe');
+        f.src = src; f.title = b.getAttribute('data-title') || label; f.loading = 'lazy';
+        f.style.cssText = 'display:block;width:100%;height:' + (parseInt(box.getAttribute('data-h'), 10) || 520) + 'px;border:1px solid var(--line);border-radius:10px;background:#fff';
+        box.insertBefore(f, box.firstChild);
+      }
+      box.hidden = !box.hidden;
+      b.setAttribute('aria-expanded', box.hidden ? 'false' : 'true');
+      b.textContent = box.hidden ? label : (b.getAttribute('data-hide') || 'Ẩn khung');
+    });
   });
 
   var chk = $$('.chk input[type=checkbox]'), saved = {};

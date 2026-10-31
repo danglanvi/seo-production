@@ -69,7 +69,7 @@ const MEASURE = sel => `(async () => {
       if (fs < ${MIN_SVG_PX}) { svg_nho.push((s.closest('figure')?.dataset.img || 'svg') + ': "' + t.textContent.trim().slice(0, 40) + '" ' + fs.toFixed(1) + 'px'); break; }
     }
   }
-  const bam = {tab: 0, tab_loi: 0, quiz: 0, quiz_loi: 0, chk: 0, chk_loi: 0, calc: 0, calc_loi: 0};
+  const bam = {tab: 0, tab_loi: 0, quiz: 0, quiz_loi: 0, chk: 0, chk_loi: 0, calc: 0, calc_loi: 0, zoom: 0, zoom_loi: 0, embed: 0, embed_loi: 0};
   for (const g of box.querySelectorAll('.btabs, .tabs')) {
     const bs = g.querySelectorAll('.btab-bar button, [role=tab]');
     if (bs.length < 2) continue;
@@ -100,10 +100,24 @@ const MEASURE = sel => `(async () => {
     await new Promise(r => setTimeout(r, 60));
     if (out.textContent === before) bam.calc_loi++;
   }
+  const zi = box.querySelector('figure.zoom img');
+  if (zi) {
+    bam.zoom++; zi.click(); await new Promise(r => setTimeout(r, 60));
+    const lb = document.querySelector('.doc-kit .lbx');
+    if (!lb) bam.zoom_loi++; else lb.click();
+  }
+  for (const b of box.querySelectorAll('[data-embed]')) {
+    const t = document.getElementById(b.dataset.embed);
+    if (!t) continue;
+    bam.embed++; b.click(); await new Promise(r => setTimeout(r, 60));
+    if (t.hidden || !t.querySelector('iframe')) bam.embed_loi++;
+    b.click();
+  }
   // Plugin cache có thể gộp CSS, JS thành file mới (ca thật 27/10/2026, LiteSpeed): không tìm theo tên file mà theo
   // rule .doc-kit trong stylesheet và theo khối bấm chạy được.
   const cssRule = [...document.styleSheets].some(s => { try { return [...s.cssRules].some(x => (x.selectorText || '').includes('.doc-kit')); } catch (e) { return false; } });
-  const n = bam.tab + bam.quiz + bam.chk + bam.calc, nl = bam.tab_loi + bam.quiz_loi + bam.chk_loi + bam.calc_loi;
+  const n = bam.tab + bam.quiz + bam.chk + bam.calc + bam.zoom + bam.embed;
+  const nl = bam.tab_loi + bam.quiz_loi + bam.chk_loi + bam.calc_loi + bam.zoom_loi + bam.embed_loi;
   return {rong: W, scroll_w: document.documentElement.scrollWidth, tran, anh_hong, svg_nho, bam,
     doc_kit: !!document.querySelector('.doc-kit'), css_doc_kit: !!document.querySelector('link[href*="doc-kit.css"]') || cssRule,
     js_doc_kit: !!document.querySelector('script[src*="doc-kit.js"]') || (n > 0 && nl === 0), h1: document.querySelectorAll('h1').length};
@@ -133,7 +147,7 @@ try {
     if (m.tran_ngang || m.tran.length) fails.push('tràn ngang');
     if (m.anh_hong.length) fails.push('ảnh hỏng');
     if (m.loi_js.length) fails.push('lỗi JS');
-    if (m.bam.tab_loi || m.bam.quiz_loi || m.bam.chk_loi || m.bam.calc_loi) fails.push('khối bấm không chạy');
+    if (m.bam.tab_loi || m.bam.quiz_loi || m.bam.chk_loi || m.bam.calc_loi || m.bam.zoom_loi || m.bam.embed_loi) fails.push('khối bấm không chạy');
     if (ten === 'mobile' && m.svg_nho.length) fails.push('chữ sơ đồ nhỏ');
     if (o.url && !(m.doc_kit && m.css_doc_kit && m.js_doc_kit)) fails.push('thiếu doc-kit');
     m.loi = fails; loi += fails.length;

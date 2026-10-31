@@ -151,7 +151,7 @@ def kiem(a):
 
 def chu_so_do(a):
     plan = json.load(open(a.plan, encoding='utf-8'))
-    skip = {'kieu', 'net', 'to', 'tu', 'den'}
+    skip = {'kieu', 'net', 'to', 'tu', 'den', 'loai'}
 
     def gom(v, out, key=''):
         if isinstance(v, str) and key not in skip and v.strip():
