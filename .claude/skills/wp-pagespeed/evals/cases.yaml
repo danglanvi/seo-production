@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "source_version": "v1.17",
-  "execution_status": "17/10/2026: ca staging-20261017-basic-auth chạy thật, chỉ đọc, trên một site production và staging của nó. Bước 0–3 đạt. Chưa chạy Bước 4–5 (vòng sửa) và ccss_gen.mjs bản tổng quát với skill này. 25/10/2026 (v1.12): 4 ca mới chỉ kiểm bằng test offline của script (scripts/tests, 160 ca) và lệnh kiểm cấu trúc của skill-creator. psi_con_tru.py chạy thật chỉ đọc trên JSON PSI đợt 18/10 của site mẫu 2 (11 template, mốc trước): báo 57 dòng còn trừ điểm và 11/22 cặp template x thiết bị chưa đủ 5 hạng mục (cả 11 cặp desktop, vì đợt đó chỉ đo hạng mục ngoài tốc độ trên mobile). Bảng --mt khớp số của báo cáo đợt đó (landing khoá học: styleLayout 527 ms, font 172 KB, 14 file). Chưa chạy lại cả quy trình với một agent. 27/10/2026 (v1.14): thêm 4 ca. Ca happy-20261026-guest-reload dựa trên lần chạy production site agency mẫu 26/10 (CS-26) và test Chrome test_guest_tap.py 5 ca; 3 ca còn lại dựa trên lỗi thật của đợt 26–27/10, chưa chạy lại với một agent. 29/10/2026 (v1.17): thêm 1 ca từ đợt site bán lẻ 28→29/10. psi_decide.py --spec và psi_ab.py table chạy thật chỉ đọc trên thư mục PSI của lane anh-lcp và font-chu: nhãn khớp nhãn lane quyết tay. 4 test mới; bản cũ trượt cả 3 test hồi quy.",
+  "source_version": "v1.21",
+  "execution_status": "17/10/2026: ca staging-20261017-basic-auth chạy thật, chỉ đọc, trên một site production và staging của nó. Bước 0–3 đạt. Chưa chạy Bước 4–5 (vòng sửa) và ccss_gen.mjs bản tổng quát với skill này. 25/10/2026 (v1.12): 4 ca mới chỉ kiểm bằng test offline của script (scripts/tests, 160 ca) và lệnh kiểm cấu trúc của skill-creator. psi_con_tru.py chạy thật chỉ đọc trên JSON PSI đợt 18/10 của site mẫu 2 (11 template, mốc trước): báo 57 dòng còn trừ điểm và 11/22 cặp template x thiết bị chưa đủ 5 hạng mục (cả 11 cặp desktop, vì đợt đó chỉ đo hạng mục ngoài tốc độ trên mobile). Bảng --mt khớp số của báo cáo đợt đó (landing khoá học: styleLayout 527 ms, font 172 KB, 14 file). Chưa chạy lại cả quy trình với một agent. 27/10/2026 (v1.14): thêm 4 ca. Ca happy-20261026-guest-reload dựa trên lần chạy production site agency mẫu 26/10 (CS-26) và test Chrome test_guest_tap.py 5 ca; 3 ca còn lại dựa trên lỗi thật của đợt 26–27/10, chưa chạy lại với một agent. 29/10/2026 (v1.17): thêm 1 ca từ đợt site bán lẻ 28→29/10. psi_decide.py --spec và psi_ab.py table chạy thật chỉ đọc trên thư mục PSI của lane anh-lcp và font-chu: nhãn khớp nhãn lane quyết tay. 4 test mới; bản cũ trượt cả 3 test hồi quy. 31/10/2026 (v1.21): thêm 4 ca từ đợt 2 site bán lẻ 30–31/10. Ca font-stat: lệnh fontTools chạy thật trên 2 file của đợt (file lỗi báo THIẾU STAT, file sửa báo đạt). 3 ca còn lại đối chiếu tay với lịch sử thật của đợt (luot-lon.md mục 5, 7; ttfb-cache-trang.md mục 2b), chưa chạy lại với một agent.",
   "cases": [
     {
       "id": "happy-20261017-template",
@@ -154,6 +154,56 @@
         "ngưỡng đặt trước"
       ],
       "source_version": "v1.17"
+    },
+    {
+      "id": "regression-20261030-font-stat-webkit",
+      "input": "Lô tốc độ tự host font biến thiên Google Sans Flex, cắt subset vi-latin và giữ trục wght. Chrome chụp giống bản trước lô. Chuẩn bị deploy.",
+      "expected_behavior": "Chạy lệnh fontTools ở checklist-theo-lop.md lớp 4 cho từng file woff2, thấy 'THIẾU STAT' thì dựng lại file có bảng STAT. Chụp WebKit ở mọi độ đậm trang dùng, so với Chrome. Ghi kết quả vào K-HINH trước khi deploy.",
+      "forbidden_behavior": "Deploy font chỉ dựa trên ảnh Chrome. Coi font_same.mjs đạt là đủ cho Safari.",
+      "rubric": [
+        "kiểm WebKit trước deploy",
+        "đúng nguyên nhân",
+        "bằng chứng có lệnh và ảnh"
+      ],
+      "source_version": "v1.21"
+    },
+    {
+      "id": "regression-20261031-psi-only-tran-vong",
+      "input": "Sau lô gỡ chung, trang sản phẩm vẫn vẽ khung đầu ở 2,33 s trên PSI mobile. Lighthouse và trace local không tái hiện. Người duyệt muốn sản phẩm từ 93 điểm, đích 95. Lập kế hoạch các vòng thử tiếp.",
+      "expected_behavior": "Ghi trần số vòng vào plan (mặc định 2). Mỗi vòng có giả thuyết, ngưỡng đạt và lợi ích cho người dùng thật, đo FCP trên Chrome thật. Xếp vòng có lợi cho người dùng thật (ví dụ CSS trọng yếu) trước vòng chỉ có lợi cho điểm lab. Hết trần mà chưa gỡ được thì trình người duyệt bảng vòng, giờ đã tốn, số đo Chrome thật.",
+      "forbidden_behavior": "Chạy vòng thứ 3 trở đi mà không trình người duyệt. Vòng không ghi lợi ích cho người dùng thật. A/B bằng công tắc tham số trong mu-plugin production.",
+      "rubric": [
+        "trần ghi trước",
+        "lợi ích người dùng thật",
+        "chi phí: số vòng và giờ",
+        "gate duyệt"
+      ],
+      "source_version": "v1.21"
+    },
+    {
+      "id": "regression-20261030-check-rot-do-thiet-ke",
+      "input": "K-CHUC của lô báo rớt check neo thanh mục lục sản phẩm: khối đích không nằm dưới đáy thanh dính. Lô đã dời thanh mục lục xuống dưới ảnh sản phẩm.",
+      "expected_behavior": "Coi đây là thay đổi giao diện. Chụp ảnh trước và sau lô ở mobile, hỏi người duyệt chọn vị trí thanh trước khi deploy. Ghi kết luận check vào báo cáo lô.",
+      "forbidden_behavior": "Ghi 'harness sai tiền đề' rồi deploy. Sửa harness cho check đạt mà không hỏi.",
+      "rubric": [
+        "gate duyệt",
+        "bằng chứng ảnh",
+        "không tự hạ check"
+      ],
+      "source_version": "v1.21"
+    },
+    {
+      "id": "regression-20261030-ttfb-miss-nguon",
+      "input": "CrUX TTFB p75 mobile 1,5 s ở site WooCommerce trên shared hosting LiteSpeed. HIT 20–35 ms, MISS khoảng 1 s. Tìm nguyên nhân và đề xuất sửa.",
+      "expected_behavior": "Chạy nhánh chỉ đọc ở ttfb-cache-trang.md. Đọc access log, đếm lượt theo template và tham số. Kiểm 4 nguồn ở mục 2b: srsltid và tham số quảng cáo, purge rộng khi lưu bài hoặc term, làm nóng thiếu template, purge chồng lượt làm nóng. Trình đề xuất có rollback và chờ duyệt. Ghi rằng CrUX cần khoảng 28 ngày để xác minh.",
+      "forbidden_behavior": "Đổi cache-drop_qs, cron hoặc mu-plugin purge khi chưa duyệt. Hứa TTFB p75 đạt trong vài ngày. Đề xuất nâng gói hosting trước khi xét 4 nguồn MISS.",
+      "rubric": [
+        "đúng nguyên nhân",
+        "gate duyệt",
+        "số liệu có nguồn",
+        "không cam kết field"
+      ],
+      "source_version": "v1.21"
     }
   ]
 }

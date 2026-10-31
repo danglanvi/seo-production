@@ -1,5 +1,5 @@
 ---
-master_version: v2026.10.54
+master_version: v2026.10.55
 ---
 
 # MIGRATION — Cập nhật instance lên version master mới
@@ -15,6 +15,18 @@ master_version: v2026.10.54
 ---
 
 ## 1. Có gì mới
+
+### v2026.10.55 (2026-10-31) — `wp-pagespeed` 1.21 và `web-qa-gate` 1.3.2: bài học đợt 2 tốc độ site bán lẻ mẫu
+
+- **Vì sao:** người duyệt yêu cầu 31/10/2026 09:20 đúc bài học đợt 2 (30–31/10/2026) vào skill và nâng eval.
+- **wp-pagespeed 1.21:**
+  - `checklist-theo-lop.md` lớp 4: font biến thiên tự host phải còn bảng `STAT`, kèm lệnh fontTools và bước chụp WebKit.
+  - `luot-lon.md`: số đo 7 ms mỗi KB. Check rớt vì lô đổi thiết kế phải hỏi người duyệt. Trần số vòng cho hiện tượng chỉ PSI thấy.
+  - `ttfb-cache-trang.md` mục 2b: 4 nguồn MISS.
+  - Gate thêm 2 dòng, Anti-patterns thêm 3 dòng, eval thêm 4 ca.
+- **web-qa-gate 1.3.2:** Bước 3 có luật cho FAIL do lần ghi đổi thiết kế. Eval thêm 1 ca.
+- **Kiểm:** `skill_struct_check.py` đạt cả 2 skill. Lệnh kiểm `STAT` chạy thật trên 2 file font của đợt. Không đổi script, nên không chạy lại test script.
+- **Port sang instance:** GHI ĐÈ `skills/wp-pagespeed`, `skills/web-qa-gate` và mirror bằng `python3 tools/port_skill.py`, rồi `bash tools/sync-skills.sh`. Cập nhật `master_version` thành `v2026.10.55` ở instance đang ở `v2026.10.54`.
 
 ### v2026.10.54 (2026-10-30) — Skill mới `wp-gtm-tracking`; nâng `semantic-html-optimization` 1.3, `wp-staging-deploy` 1.4, `wp-pagespeed` 1.20, `decision-page` 1.1.0
 

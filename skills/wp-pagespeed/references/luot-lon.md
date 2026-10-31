@@ -33,6 +33,8 @@ Nguồn: site bán lẻ mẫu (WooCommerce, theme riêng do agency web dựng, s
 ## 3. Chọn việc theo byte trước LCP
 
 - Điểm lab mobile chủ yếu theo tổng byte tải trước LCP: HTML, CSS chặn hiển thị, font, ảnh LCP. Đợt mẫu ước lượng khoảng 5 ms mỗi KB. Ban ngày 29/10, A/B từng việc nhỏ không đổi được điểm, vì tổng byte trước LCP vẫn còn khoảng 1 MB.
+  - Số đo của đợt mẫu: chênh 425 KB font icon (603 → 1.028 KB, trung vị) ứng với +3,03 s FCP mô phỏng, khoảng 7 ms mỗi KB, hệ số tương quan 0,88. Băng thông mô phỏng 1,6 Mbps cho 5 ms mỗi KB, phần còn lại là RTT.
+  - Dùng hệ số này để xếp việc trước khi đo. Không dùng hệ số này để hứa điểm.
 - Đo byte theo loại trước lô bằng `psi_table.py --detail` hoặc Chrome mô phỏng. Xếp việc theo số KB cắt được.
 - Lô đầu của site mẫu (byte mobile, trung vị 16 URL):
 
@@ -68,6 +70,8 @@ Chạy bộ kiểm trên bản xem trước. Sau deploy, chạy lại trên site
 
 - Chặn tracking khi kiểm phải chặn cả `www.google.com/g/collect` và `www.google.com/rmkt/collect`. Trả 204 cục bộ, không abort. Khi bị abort, gtag gửi lại hit sang hai địa chỉ này. Lỗi đã gặp 30/10/2026 05:49–05:59: khoảng 48 `page_view` GA4 và 26 hit remarketing tới Google thật. Phải ghi annotation GA4 cho khung giờ đó.
 - Giỏ thử: thêm 1 món rồi xoá. Không đặt đơn, không chạm cổng thanh toán.
+- Nếu một check rớt vì lô đổi thiết kế (khối dời chỗ, thẻ đổi loại, thanh dính đổi vị trí), coi đó là thay đổi giao diện. Hỏi người duyệt kèm ảnh trước và sau. Không kết luận "harness sai tiền đề" rồi bỏ qua check. Lỗi đã gặp 30/10/2026: check neo của thanh mục lục sản phẩm rớt sau khi lô dời thanh xuống dưới ảnh. Lane ghi "harness sai tiền đề" và deploy. Người duyệt báo đúng lỗi đó lúc 23:12, nên phải sửa template và purge, làm nóng 411 sản phẩm.
+- Lô có đổi font: chạy K-HINH trên cả WebKit, không chỉ Chrome (`checklist-theo-lop.md` lớp 4, bẫy bảng `STAT`).
 
 ## 6. Deploy theo tầng, đo một lần
 
@@ -85,6 +89,14 @@ Chạy bộ kiểm trên bản xem trước. Sau deploy, chạy lại trên site
 
 - Đọc `benchmarkIndex` và `parseHTML` của lượt tụt trước khi kết luận (`do-dac.md` mục 2).
 - Nếu hiện tượng chỉ PSI thấy và máy local không tái hiện, gỡ cùng lúc mọi nguyên nhân ứng viên trong lô kế, rồi đo một lần. Ca đã gặp 30/10/2026: mốc vẽ đầu 2,33 s ở 16 template chỉ có trên máy PSI. Lighthouse và trace local không tái hiện.
+- Nếu lô gỡ chung không gỡ được hiện tượng, chạy vòng thử bằng bản HTML tĩnh theo trần ghi trong plan:
+  1. Ghi trước số vòng tối đa vào plan. Mặc định là 2 vòng.
+  2. Mỗi vòng ghi giả thuyết, ngưỡng đạt và lợi ích cho người dùng thật (FCP hoặc LCP trên Chrome thật, CrUX). Vòng chỉ có lợi cho điểm lab thì ghi rõ "chỉ điểm lab".
+  3. Nếu hết trần mà chưa gỡ được, dừng và trình người duyệt một bảng: các vòng đã chạy, giờ đã tốn, số đo Chrome thật, việc còn lại. Người duyệt chọn chạy tiếp hay dừng.
+- Ca thật ở site bán lẻ mẫu 30–31/10/2026, mốc vẽ 2,33 s:
+  - Bài viết: CSS gọn nhúng vào `<head>` cộng jQuery defer gỡ được mốc ở vòng đầu. Mốc vẽ ở bài giảm từ 13/15 lượt xuống 0/15.
+  - Trang sản phẩm: 6 vòng không gỡ hẳn được mốc. Các vòng gồm cách của bài viết, bỏ preload font, cắt DOM, `content-visibility`, ẩn menu và footer, CSS trọng yếu. Vòng cắt DOM chỉ gỡ được mốc ở 4/8 lượt. Chrome thật đo FCP 1,24 s, không có mốc này.
+  - Vòng CSS trọng yếu vẫn có lợi riêng: FCP trên Chrome thật giảm từ 1,24 s xuống 0,27 s, điểm trung vị ban ngày tăng 95 → 96. Vì vậy, xếp các vòng có lợi cho người dùng thật lên trước các vòng chỉ có lợi cho điểm lab.
 - Nếu lô vẫn xấu hơn, chia lô làm đôi và A/B hai nửa theo `do-dac.md` mục 3. Lặp tới khi tìm ra việc gây tụt. Không A/B từng việc từ đầu.
 
 ## 8. Bẫy của lô lớn

@@ -2,7 +2,7 @@
 name: web-qa-gate
 description: "Kiểm site WordPress sau mỗi lần ghi, trước khi lên production và đầu workstream web: tràn ngang có và không cache, axe, focus, form, tracking, plugin, HTTP, redirect, canonical, schema, OG, menu và slider bấm thật, bố cục, landmark, Jev ui-visual. Một lệnh ra PASS/FAIL."
 metadata:
-  version: "1.3.1"
+  version: "1.3.2"
 ---
 
 # web-qa-gate — cổng kiểm sau mỗi lần ghi lên site
@@ -98,6 +98,7 @@ Chế độ cổng trước production, audit đầu workstream và kiểm độ
 
 1. Đọc bảng tổng của `report.md`. Khi cần biết luật chấm, đọc `references/hang-muc.md` (hạng mục 1–12) hoặc `references/hang-muc-13-15.md` (tương tác, bố cục, landmark, OG).
 2. Với mỗi FAIL, tìm nguyên nhân trong lần ghi vừa rồi.
+   - Nếu FAIL vì lần ghi đổi thiết kế (khối dời chỗ, thẻ đổi loại, thanh dính đổi vị trí), coi đó là thay đổi giao diện. Hỏi người duyệt kèm ảnh trước và sau. Không kết luận script sai tiền đề rồi bỏ qua. Ca thật 30/10/2026 ở site bán lẻ mẫu: check thanh mục lục sản phẩm rớt sau khi lô dời thanh, lane ghi "harness sai tiền đề". Người duyệt báo đúng lỗi đó sau deploy, nên phải sửa và purge lại 411 sản phẩm.
 3. Với mỗi WARN, xem bằng chứng:
    - Dòng Jev: mở ảnh `raw/shots/<tên>_<bề rộng>_<số>.jpg`, xem hộp lỗi `box` trong `report.json`. Xem thêm 1 màn cho mỗi template ở mỗi bề rộng, kể cả màn Jev không gắn cờ.
    - Dòng focus FAIL: xem ảnh trước khi kết luận. Site có thể dùng chỉ báo mà script chưa đo.
@@ -230,6 +231,7 @@ Bản tốt nhất phải có:
 
 ## Changelog
 
+- v1.3.2 (2026-10-31): Bước 3 thêm luật cho FAIL do lần ghi đổi thiết kế: hỏi người duyệt kèm ảnh, không bỏ qua vì "script sai tiền đề". Nguồn: đợt 2 tốc độ site bán lẻ mẫu 30/10/2026 (instance của site, `03-audits/technical/toi-uu-pagespeed/dot2-3010/luot2/deploy/2b-chuc-nang.md` mục 5.3, `decisions.md`). Eval thêm 1 ca. Không đổi script.
 - v1.3.1 (2026-10-27): `_cdp.mjs` thêm `dnsRules()`: mọi host trong danh sách chặn tracking bị chặn thêm ở tầng DNS (`--host-resolver-rules ... ~NOTFOUND`), vì beacon gửi lúc đóng tab không đi qua `Network.setBlockedURLs`. Ca thật 26/10/2026: Chrome headless của một lane trên production lọt khoảng 12 page_view và 15 sự kiện thử vào GA4. Test `tests/test_dns_block.py` chạy Chrome thật (có luật: 0 lượt tới host chặn; không luật: 1 lượt). Eval thêm 1 ca.
 - v1.3 (2026-10-25): ui-2, qa-2, qa-1, ui-5, hs-8. `references/hang-muc-13-15.md` mục 15 thêm dòng trỏ `featured-image-seo/references/og-trang.md` mục 8 (og:image, og:image:type, Scrape Again) khi chạy trong workspace của Vincent. Hạng mục 13 tương tác (`interact_probe.mjs`: menu bấm thật, slider chạm thật, `forcePseudoState`, màu kit hai chiều), 14 bố cục (lưới, số heading, CTA trùng, cặp VI/EN, landmark bằng `landmarks.mjs`), 15 OG; `--cache both`, `--tabs`, `--resume`, `--sample`, `--plan`, `--page-timeout`; chụp đủ màn, ẩn nút nổi, `chrome_cleanup.mjs`; checklist đường đi lead ở mục 4; chế độ cổng trước production, audit đầu workstream, kiểm độc lập (3 reference mới, `truoc_production.py`: skeleton, diff, controls, headers, urls); 14a, 14c, 14d về WARN theo đặc tả; checklist gộp còn 8 mục. Test 40/40 offline, `truoc_production.py` thử trên 22 trang HTML đã lưu của site mẫu.
 - v1.2 (2026-10-24): `pad_image` thu ảnh gửi Jev về ≤ 0,8 MP và đệm ảnh dẹt lên tỉ lệ cao/rộng 0,3, vì Jev trả `http_400` với ảnh trên khoảng 1 MP hoặc dẹt hơn 0,3. Test thêm ca màn desktop 1366×768 và ô 1200×200. `hang-muc.md` mục 12 mới: chữ dễ đọc sau khi thêm copy (dòng chữ dính, line-height, đoạn dài căn giữa, tràn sau khi thêm chữ) ở 6 bề rộng; LiteSpeed hoãn JS tới tương tác nên rê chuột trước khi đo. Nguồn: `Deliverables/GTV-Brand/GTV-Website/ui-20261020/doc-de-2310/sua/CHECKPOINT.md` và `bao-cao.md` (line-height < 1,6 từ 1.122 xuống 339 ô, đoạn dài căn giữa từ 367 xuống 14).

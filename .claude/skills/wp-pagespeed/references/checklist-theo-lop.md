@@ -149,6 +149,13 @@ Mỗi mu-plugin chạy trên filter của LiteSpeed (`litespeed_buffer_before` h
   - Site mẫu 2: tự host Roboto thay Google Fonts ở 2 landing. A/B bằng bản HTML tĩnh tăng 68,5 → 85. Đo thật trên một landing tăng 62 → 92 mobile.
 - Bẫy:
   - Không gọi `document.fonts.load()` trong `<head>` trước frame đầu. Chrome của PSI (HeadlessChrome 153) coi font nạp bằng API này là tài nguyên chặn hiển thị. Gọi sau `requestAnimationFrame` rồi `setTimeout(0)`. Chrome trên máy không tái hiện được độ trễ này, nên phải A/B trên PSI (`do-dac.md` mục 3).
+  - Font biến thiên tự host phải còn bảng `STAT`. Nếu thiếu `STAT`, Safari và WebKit không áp độ đậm, còn Chrome vẫn hiện đúng. Sau mỗi lần cắt subset hoặc cắt trục, chạy lệnh dưới cho từng file. Sau đó chụp WebKit ở mọi độ đậm trang dùng (`npx playwright install webkit` nếu máy chưa có).
+
+    ```bash
+    python3 -c "import sys; from fontTools.ttLib import TTFont; f=TTFont(sys.argv[1]); print(sys.argv[1], 'THIẾU STAT' if 'fvar' in f and 'STAT' not in f else 'đạt')" <file.woff2>
+    ```
+
+    Lỗi đã gặp ở site bán lẻ mẫu 30/10/2026: file Google Sans Flex tự host (vi-latin, giữ trục `wght`) thiếu `STAT` và lên production lúc 01:30. Người duyệt thấy chữ mờ trên Safari lúc 17:07, nên phải hotfix bằng bản có `STAT`. Lệnh trên báo "THIẾU STAT" ở file lỗi và "đạt" ở file sửa.
   - Preload font trong `<head>` làm Chrome chờ font trước lần vẽ đầu: A/B ở site mẫu 2 (18/10/2026) cho LCP mô phỏng chậm thêm 0,8 s ở trang có LCP là chữ. Không preload font. Site agency mẫu 24/10, preload Montserrat cho `/website/` kể cả `fetchpriority="low"`: CLS 0,0993 → 0, nhưng FCP lab chậm 0,4–0,7 s tuỳ nhóm máy PSI (trung vị 1,09 → 1,80 s, 11/12 lượt), nên đã trả lại.
   - Font dự phòng khai `local('Arial')` kèm `size-adjust`. Máy đo PSI (HeadlessChrome trên Linux, đo 18/10/2026) khớp được `local('Arial')`, `local('Liberation Sans')`, `local('FreeSans')`, `local('NotoSans-Regular')`; không khớp `local('Roboto')`, `local('DejaVu Sans')`, `local('Arimo')`. Điện thoại Android thật không có Arial, chỉ có Roboto.
     - Thêm `local('Liberation Sans'),local('LiberationSans')` cho Linux thật và một họ dự phòng thứ hai dùng `local('Roboto')` cho Android, số đo tính riêng, đặt ngay sau họ Arial trong `font-family`.

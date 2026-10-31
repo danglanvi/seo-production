@@ -23,6 +23,26 @@ Site agency mẫu 21/10/2026 làm nhánh này trong khoảng 6 giờ. Thứ tự
 
 `lam_nong.sh` chỉ gửi GET, chạy 1 luồng, nghỉ ít nhất 0,5 s giữa các lượt và thử lại lượt lỗi một lần sau 60 s. Mã thoát 2 nghĩa là còn lượt lỗi. Chạy `-n` trước để xem kế hoạch.
 
+## 2b. Nguồn MISS hay gặp
+
+Đọc access log trước khi sửa. Đếm lượt xem HTML theo template và theo tham số query, tách lượt của người, bot và lượt kiểm nội bộ. Rồi kiểm 4 nguồn dưới đây. Mọi việc sửa chạm config sống, nên cần duyệt.
+
+| Nguồn | Cách nhận ra | Cách sửa |
+|---|---|---|
+| Tham số quảng cáo và tham số Google tạo khoá cache mới: `srsltid`, `gad_source`, `_gl` | Lượt có tham số luôn MISS. Mỗi giá trị khác lại MISS | Thêm tham số vào `cache-drop_qs`. Kiểm robots và canonical bằng `cache_variants.py` sau khi đổi |
+| Lưu một sản phẩm, danh mục hoặc thẻ làm purge rộng (mọi sản phẩm hoặc cả site) | Log purge có dòng toàn site sau khi sửa một bài hoặc một term | Purge theo tag của bài hoặc term. Thử bằng một term tạm: tạo, sửa tên, xoá, rồi đọc log purge |
+| Làm nóng thiếu template nhiều khách, thường là trang sản phẩm | Danh sách làm nóng không có template đó. Mẫu sitemap của template có tỉ lệ HIT thấp | Cron làm nóng theo sitemap, cả bản mobile và desktop, chạy theo ngưỡng tải của máy |
+| Purge hàng loạt chạy chồng lượt làm nóng | Một nhóm URL MISS ở một thiết bị sau đợt purge, thiết bị kia vẫn HIT | Dùng chung một khoá cho purge và lượt làm nóng. Sau purge, làm nóng lại đúng các path đó ở cả 2 thiết bị |
+
+Ca thật ở site bán lẻ mẫu (WooCommerce, shared hosting LiteSpeed), 30/10/2026:
+
+- CrUX TTFB p75 mobile là 1.522 ms. HIT mất 20–35 ms, MISS mất 0,75–1,28 s.
+- `srsltid` có trong 24% lượt xem mobile của người, trong 23–30/10.
+- Trước 13:41 ngày 30/10, lưu một sản phẩm xoá cache của mọi trang sản phẩm. Danh sách làm nóng có 40 URL và không có trang sản phẩm. Trang sản phẩm chiếm 42% lượt xem mobile.
+- Sau khi sửa: URL có tham số trả HIT 22–29 ms. Term tạm có 0 lượt purge toàn site. Lượt làm nóng 23:52 có 1.068/1.068 HIT.
+- Purge 537 path chạy chồng lượt làm nóng lúc 21:39. Kết quả: 58 sản phẩm MISS bản desktop tới lượt làm nóng sau. Job quét CSS gọn chỉ làm nóng lại bản mobile.
+- Field data chưa đo lại. CrUX cần khoảng 28 ngày, nên mức giảm TTFB p75 chưa xác minh.
+
 ## 3. Thời gian dựng trang khi miss
 
 - Đo TTFB của URL có tham số nằm trong `cache-exc_qs` (không vào cache), 5 lượt mỗi URL. Đọc option trước, không thêm tham số mới.
@@ -88,7 +108,7 @@ Average response time trong GSC Crawl stats đo lúc Googlebot crawl, chủ yế
 
 ## 5. Ngoài phạm vi skill này
 
-- Cấu hình OPcache, log OOM của kernel, cron làm nóng định kỳ trên VPS là việc cấp server. Ghi số đo và đề xuất vào báo cáo, giao người quản trị server.
+- Cấu hình OPcache, log OOM của kernel, cron làm nóng định kỳ trên VPS là việc cấp server. Shared hosting có crontab của tài khoản thì cron làm nóng thuộc mục 2b, cần duyệt. Ghi số đo và đề xuất vào báo cáo, giao người quản trị server.
 - Danh sách tham số bỏ khỏi khoá cache (`cache-drop_qs`) của từng site ghi ở `00-client-context/wp-server.md`.
 
 ## 6. Ghi vào báo cáo
