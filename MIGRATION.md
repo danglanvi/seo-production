@@ -1,5 +1,5 @@
 ---
-master_version: v2026.10.55
+master_version: v2026.10.56
 ---
 
 # MIGRATION — Cập nhật instance lên version master mới
@@ -15,6 +15,15 @@ master_version: v2026.10.55
 ---
 
 ## 1. Có gì mới
+
+### v2026.10.56 (2026-10-31) — `wp-pagespeed` 1.22, `wp-gtm-tracking` 1.1.0, `wp-ucss` 1.2.2: bài học đợt trang chủ site bán lẻ mẫu
+
+- **Vì sao:** người duyệt yêu cầu 31/10/2026 nâng skill tốc độ theo các chỉnh sửa trong đợt trang chủ, rồi đẩy lên GitHub.
+- **wp-pagespeed 1.22:** `checklist-theo-lop.md` lớp 3 (insight image-delivery không nhân DPR, cỡ `srcset` trung gian), lớp 5 (`contain-intrinsic-size` lấy content-box, đo lại khi DOM đổi), lớp 5b (khối khuyến mãi hết hạn, thẻ gọn có công tắc), lớp 6 (`defer` cho `hooks.min.js`), lớp 7 (thư viện Ads nạp 2 lần, script bắt đầu trước LCP quan sát bị tính vào LCP). Anti-patterns thêm 2 dòng.
+- **wp-gtm-tracking 1.1.0:** mẫu `gtm-delay-loader-option.php` nạp thẻ AW của plugin và GTM cùng mốc, `async=false` để AW thực thi trước, nên thư viện AW chỉ nạp 1 lần. `tests/run.sh` nhận biến `PREFIX` cho bản cài đổi tiền tố, harness thêm 1 ca. `kiem-va-ap.md` mục 8 thêm 3 bẫy.
+- **wp-ucss 1.2.2:** Anti-patterns thêm bẫy sinh lại CSS gọn khi khối có thể quay lại đang ẩn.
+- **Kiểm:** `skill_struct_check.py` đạt 3 skill. Harness loader đạt với mẫu và bản cài của site mẫu, bản cũ rớt đúng ca mới. Loader chạy production site mẫu, kiểm hit có chặn ở 4 trang.
+- **Port sang instance:** GHI ĐÈ `skills/wp-pagespeed`, `skills/wp-gtm-tracking`, `skills/wp-ucss` và mirror bằng `python3 tools/port_skill.py`, rồi `bash tools/sync-skills.sh`. Site đã cài mẫu loader v1.0.0 của `wp-gtm-tracking`: cài lại khối JS mới và chạy `LOADER=<bản cài> PREFIX=<tiền tố> bash skills/wp-gtm-tracking/tests/run.sh`. Cập nhật `master_version` thành `v2026.10.56` ở instance đang ở `v2026.10.55`.
 
 ### v2026.10.55 (2026-10-31) — `wp-pagespeed` 1.21 và `web-qa-gate` 1.3.2: bài học đợt 2 tốc độ site bán lẻ mẫu
 

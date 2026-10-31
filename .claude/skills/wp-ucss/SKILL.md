@@ -2,7 +2,7 @@
 name: wp-ucss
 description: "Dựng CSS gọn theo trang cho site WordPress dùng CSS gộp LiteSpeed: render mọi trạng thái giao diện, kiểm computed style, đổi link bằng mu-plugin theo map md5, purge và làm nóng cả CDN, tái tạo hằng ngày. Dùng khi CSS gộp lớn làm chậm FCP, LCP hoặc tốn lượt crawl."
 metadata:
-  version: "1.2.1"
+  version: "1.2.2"
 ---
 
 # wp-ucss — CSS gọn theo trang, kiểm trước khi đổi link
@@ -149,9 +149,11 @@ Bản tốt nhất phải có:
 - Xoá file gọn cũ ngay sau khi đổi map.
 - Dùng Jev làm cổng khi rubric chưa hiệu chuẩn.
 - Giao map mới khi lượt kiểm có nhiều cặp "bỏ qua". Đọc `verify.log` trước, và giữ cổng `MAX_LOST` của `regen.sh`.
+- Sinh lại CSS gọn của một trang khi khối có thể quay lại đang ẩn: khuyến mãi hết hạn, thẻ gọn có công tắc trả về thẻ đầy đủ. Bản mới mất rule của khối đó, nên khi khối hiện lại thì không có kiểu. Giữ bản sinh lúc khối còn hiện, hoặc thêm selector của khối vào safelist rồi mới sinh lại. Nguồn: site bán lẻ mẫu 31/10/2026, trang chủ ẩn Flash Deal hết hạn và bỏ nút, nhãn thông số của thẻ sản phẩm; CSS gọn giữ bản cũ, vẫn còn rule `sale-timer-banner`, `product-card__actions`, `product-card__specs`.
 
 ## Changelog
 
+- v1.2.2 (2026-10-31): Anti-patterns thêm bẫy sinh lại CSS gọn khi khối có thể quay lại đang ẩn. Đã kiểm trên production site bán lẻ mẫu 31/10: trang chủ sau đợt gọn DOM vẫn nạp CSS gọn cũ có đủ rule của khối ẩn. Không đổi script.
 - v1.2.1 (2026-10-28): Anti-patterns thêm bẫy CSS chèn ở `wp_head` bị gộp vào file gộp, làm map và khoá `all` mất hiệu lực. Đã xảy ra và đã sửa trên production site agency mẫu 28/10: lane regen dựng holdout mới, giao map lúc 05:38, kiểm độc lập đạt (105/105 bản bài holdout tải CSS gọn). Không đổi script.
 - v1.2.0 (2026-10-27): nguồn người duyệt 27/10 22:24 "nâng cấp skills speed … khi có trải nghiệm và chạy thực tế rồi", đề xuất và phản biện của đợt rà speed 27/10. Đã thử trên production site agency mẫu 27/10/2026: safelist `^owl-…` (giao 18:14, kiểm live 20/20 lượt, 8/8 carousel trùng bản gộp); `verify_init.mjs` port từ script A/B khởi tạo của lane (16/16 cặp khớp sau sửa), test fixture Owl trên Chrome; khoá `all` trong `make_map.py` và mu-plugin mẫu (ma trận staging, giao 17:52, holdout 48/48, 230/231 bài), bỏ qua bài có iframe YouTube tải ngay (giao 18:20, PSI 3 lượt), test 7 ca make_map và 6 ca mu-plugin; thứ tự giao chép file trước khi ghi map (lỗi 2 phút 18:14); A/B critical CSS 96 lượt; QUIC.cloud UCSS (0/274 HTML sau 05:19). `map_diff.py --inv` port cổng theo cặp đã chạy làm cổng giao 2 lần, 0 cặp mất; chưa có ca dừng thật, test bằng dữ liệu giả lập, nên `regen.sh` chỉ cảnh báo cặp mất (`MAX_LOST_PAIRS` mặc định 100000), giao tay vẫn chặn. Khoá `css_src_lockdir` thay tên khoá riêng của workstream. Bài chưa thử ghi ở `chua-thu.md` của đợt.
 

@@ -101,6 +101,10 @@ Mỗi mu-plugin chạy trên filter của LiteSpeed (`litespeed_buffer_before` h
   - Site agency mẫu 27/10/2026, production: ảnh hero hiển thị 446 px ở khung 1180–1366. Mục "phân phối hình ảnh" của PSI desktop từ 37,4 KiB còn 4,2 KiB.
 - PSI vẫn báo "tăng hệ số nén" sau khi đúng cỡ: mục tiêu của PSI xấp xỉ số điểm ảnh hiển thị chia 6 byte (khớp 40 ảnh của site mẫu 27/10). PSI hết báo khi file nhỏ hơn mục tiêu cộng 5 KiB. Ví dụ ảnh 446×417: mục tiêu 30.997 B, file phải dưới 36.117 B.
   - Ảnh có kênh alpha: đo SSIM trên màu nền thật của vị trí ảnh. Site mẫu: SSIM 0,9737 trên nền thật, nhưng 0,9616 trên nền đen hoặc trắng.
+- Insight "Improve image delivery" (Lighthouse 12+) so cỡ file với cỡ hiển thị CSS, không nhân DPR. Ảnh 300 px hiển thị 210 px vẫn bị báo thừa, dù DPR 1,75 cần khoảng 370 px.
+  - Không thu ảnh về cỡ CSS chỉ để hết cờ. Ảnh sẽ mờ trên máy DPR 2–3.
+  - Nén lại file, rồi thêm cỡ `srcset` trung gian khi bề rộng hiển thị × 1,75 rơi vào khoảng trống lớn giữa 2 cỡ có sẵn. Site bán lẻ mẫu 31/10/2026: thumb danh mục hiển thị 199 px tải bản 600 px, vì `srcset` chỉ có 300w và 600w. Thêm bản 360w, mục ảnh trang chủ của PSI mobile từ 51 KiB còn 19 KiB.
+  - Thêm cỡ cho một attachment: tạo `<tên>-<w>x<h>.<đuôi>` và bản `.webp` cạnh nó, rồi thêm vào mảng `sizes` của `_wp_attachment_metadata` bằng `update_post_meta`. Không gọi `wp_update_attachment_metadata`, vì plugin tối ưu ảnh (LiteSpeed) móc vào hook đó và có thể gửi ảnh đi tối ưu lại. Backup meta trước. Kiểm bằng `wp_get_attachment_image_srcset`.
 - Sinh bản ảnh nhẹ cho đúng ảnh trang dùng (logo dải chạy, cỡ 400/560/720w, avatar 96w):
 
   ```bash
@@ -207,6 +211,10 @@ Mỗi mu-plugin chạy trên filter của LiteSpeed (`litespeed_buffer_before` h
 - Rollback: chuyển thư mục critical CSS ra ngoài. Mu-plugin thấy thiếu file thì giữ HTML cũ.
 - Trang dài, `mainthread-work-breakdown` của PSI báo `styleLayout` từ 500 ms: thêm `content-visibility:auto` cho section từ thứ 3 trở đi.
   - `contain-intrinsic-size: auto <chiều cao>`: lấy chiều cao trung bình đo thật của section, tách mobile và desktop. Site mẫu 2: landing mobile ~2.600 px, desktop ~1.600 px. Ước tính 900 px làm chiều cao trang lệch 50%.
+  - Lấy chiều cao content-box (trừ padding và border), vì padding của section vẫn tính thêm ngoài `contain-intrinsic-size`. Đo khi đã gỡ khối CSS `content-visibility` khỏi trang.
+  - Kiểm: chiều cao trang lúc tải, trước khi cuộn, bằng chiều cao sau khi cuộn hết (lệch tối đa vài px).
+  - Đo lại mỗi khi DOM của section đổi (bỏ khối, thẻ gọn hơn, khối ẩn theo hạn).
+  - Site bán lẻ mẫu 31/10/2026: bản đầu lấy chiều cao gồm padding, trang chủ dài thêm 660 px (mobile) và 800 px (desktop) trước khi cuộn tới.
   - Kiểm phần tử `position:fixed` (thanh giá, nút nổi) nằm ngoài section. Section có `content-visibility` trở thành khung chứa của phần tử fixed bên trong.
   - Bẫy: nhảy tới `#mục` bị lệch vì section phía trên còn mang chiều cao ước tính. Khi người xem bấm link `#mục` hoặc mở URL có `#`, gắn một class trên `<html>` để tắt `content-visibility` trước khi trình duyệt cuộn (listener `click` ở capture phase).
   - Chrome headless không chạy cuộn mượt ổn định, nên không dùng bài thử bấm link trong headless để kết luận lệch hay đúng. So vị trí mục sau khi tắt class với bản production.
@@ -236,6 +244,8 @@ Trả lời từng câu. Câu nào "có" thì ghi việc sửa vào plan, hoặc
 | Có `preconnect`, `dns-prefetch` tới host mà trang không dùng? | Gỡ thẻ hint theo từng trang bằng mu-plugin. Giữ host còn xuất hiện trong HTML ngoài thẻ hint, hoặc trong CSS, JS local của trang | Site agency mẫu 27/10, production: A/B PSI "không đổi" ở 4/4 trang × thiết bị. Lighthouse nêu host thừa 4 → 1. Lợi ích tối đa khoảng 50 ms |
 | Font, ảnh, CSS, JS có cache trình duyệt dưới 1 năm (`max-age`, `ExpiresByType`)? | Lớp 1, kèm luật đổi tên file | 7 ngày → 1 năm |
 | Script đọc layout ngay khi nạp trang (PSI báo `forced-reflow`)? | Lớp 6 | 73 ms ở thanh tiến độ cuộn |
+| Khối khuyến mãi có hạn (Flash Deal, đồng hồ đếm ngược) vẫn in khi đã hết hạn? | Template không in khối khi hết hạn. Đọc ngày bằng múi giờ của site. Đặt TTL cache trang bằng số giây còn lại (`litespeed_control_set_ttl`), để trang tự làm mới đúng lúc hết hạn | Site bán lẻ mẫu 31/10/2026: khối đã hết hạn vẫn in 2 dãy thẻ sản phẩm |
+| Trang dài có thẻ lặp nặng (thẻ sản phẩm có nút, nhãn thông số)? | Bản thẻ gọn chỉ ở trang đó, kèm công tắc tắt bằng file. Kiểm các template khác bằng HTML không qua cache. Kiểm lượt nạp AJAX vẫn trả thẻ đầy đủ | Site bán lẻ mẫu 31/10/2026: trang chủ 2.960 → 2.331 phần tử DOM, 3 template khác không đổi |
 
 Rollback: mỗi việc ghi file đã sửa và bản backup. Speculation rules và CSS form trả lại bằng cách gỡ filter đã thêm.
 
@@ -253,6 +263,9 @@ Rollback: mỗi việc ghi file đã sửa và bản backup. Speculation rules v
   - Template còn dùng file CSS gộp đầy đủ thì làm `wp-ucss` trước khi sửa JS.
   - Site agency mẫu 27/10/2026 (WordPress, LiteSpeed Delay JS): bên thứ ba chặn 0 ms trong lượt đo. Long task JS duy nhất là hàm khởi tạo slider (50–87 ms, CPU 4x). Một script sửa lỗi lazy-load bị nghi trước đó có 0 lệnh gọi từ 8 ms ở 6 trang × 2 thiết bị, nên không sửa. Một template mobile dùng file CSS gộp đầy đủ sau đợt đổi DOM có TBT trung vị 281,5 ms, toàn bộ là layout.
 - Sửa:
+  - Script đồng bộ còn lại ở cuối `body` (ví dụ `wp-includes/js/dist/hooks.min.js`) làm PSI báo chuỗi phụ thuộc mạng. Thêm `defer` bằng filter output buffer, chỉ khi mọi script dùng nó đã `defer` và đứng sau.
+    - Giải mã các script `src="data:text/javascript;base64,…"` mà plugin cache tạo từ script inline. Kiểm không có lệnh đồng bộ nào gọi `wp.hooks` hoặc `wp.i18n`.
+    - Site bán lẻ mẫu 31/10/2026: trang chủ, PSI hết báo chuỗi `hooks.min.js` 375 ms, 0 lỗi JS ở 8 lượt Chrome.
   - Bỏ thư viện trùng trong HTML bằng mu-plugin. Giữ bản nạp sau cùng để cascade không đổi. Site mẫu: jQuery 3.6.0 trùng jQuery của WordPress, Slick 2 nguồn, Bootstrap 2 lần, Font Awesome 5 và 7.
   - Bỏ thẻ trỏ tới file không tồn tại trong thư mục theme.
   - Delay JS: phân loại script bằng Jev `asset-delay`, chỉ dùng nhãn từ 0,7. Loại `render_critical` và `early_interaction` khỏi danh sách delay.
@@ -280,6 +293,8 @@ Rollback: mỗi việc ghi file đã sửa và bản backup. Speculation rules v
 Đổi container, sửa sự kiện GA4 hay Ads, hoặc cài loader hoãn GTM: làm theo skill `wp-gtm-tracking`. Mục này giữ phần đánh đổi tốc độ.
 
 - Dấu hiệu: GTM, Pixel, Hotjar, chat widget, YouTube embed chiếm TBT hoặc byte lớn.
+- PSI báo `gtag/js?id=AW-…` 2 lần, một bản có `&cx=c`: thư viện Ads nạp trùng. Sửa theo `wp-gtm-tracking`, `kiem-va-ap.md` mục 8. Đo TBT và LCP trước và sau, vì gỡ sai bản có thể làm TBT tăng.
+- Không cho script bên thứ ba bắt đầu sớm hơn mốc hoãn đã A/B. Lantern tính mọi script bắt đầu trước LCP quan sát vào LCP mô phỏng. LCP quan sát của PSI mobile thường 2,3–2,6 s vì cổng vẽ, nên script ở load + 1,4 s vẫn lọt vào. Site bán lẻ mẫu 31/10/2026: thư viện AW 147 KB nạp sớm 600 ms, LCP mô phỏng 2,2 → 3,7–3,85 s ở 3/6 lượt. Kiểm bằng `networkRequestTime` của script so với `observedLargestContentfulPaint`.
 - Không tự sửa. Đổi thời điểm nạp tracking là đổi dữ liệu đo lường. Người duyệt đồng ý từng mục.
 - Đề xuất được phép: tải chậm YouTube embed bằng ảnh thumbnail, gỡ site Hotjar không dùng, rà tag trùng trong GTM.
 - Ảnh thumbnail YouTube: dùng `https://i.ytimg.com/vi_webp/<id>/maxresdefault.webp` (khoảng 60 KB), không dùng `vi/<id>/maxresdefault.jpg` (khoảng 165 KB). Nếu video thiếu bản maxres, bản WebP trả 404 và bản JPEG trả ảnh xám 120px. Cho JS đổi về `hqdefault`, rồi về JPEG. Kiểm trong `onload` bằng `naturalWidth < 200`, không chỉ trong `onerror`. Ảnh xám 120px trả mã 404 kèm thân ảnh hợp lệ, nên trình duyệt chạy `onload` và `onerror` không chạy (site agency mẫu, 19/10/2026). Ví dụ: file block PHP và JS trong theme của một site mẫu khác, 18/10/2026.

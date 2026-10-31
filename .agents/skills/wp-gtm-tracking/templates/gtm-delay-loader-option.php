@@ -12,7 +12,12 @@
  *  2. In loader hoãn thay cho snippet GTM. ID container lấy từ hằng số GTVD_GTM_ID, nếu trống thì lấy từ chính option
  *     (nên đổi snippet sang GTM-BBBB222 ở option thì loader tự theo, không sửa file này).
  *  3. Chỉ khi gtag G-xxx bị bỏ: bọc đầu ra của Google Listings & Ads ở wp_head (ưu tiên 999999). Thẻ `gtag/js?id=AW-…` đổi thành
- *     thẻ meta `gtvd-defer-src`. Loader nạp thẻ đó cùng lúc với GTM. Lệnh gtag() inline của plugin giữ nguyên và chờ trong dataLayer.
+ *     thẻ meta `gtvd-defer-src`. Lệnh gtag() inline của plugin giữ nguyên và chờ trong dataLayer.
+ *     Loader nạp thẻ AW đó và GTM cùng một mốc (hẹn giờ hoặc tương tác), cả hai `async=false`: tải song song, thực thi theo thứ tự
+ *     chèn, AW trước gtm.js. Google tag trong GTM thấy AW đã đăng ký nên không nạp lại `AW…&cx=c`: AW nạp 1 lần.
+ *     Không nạp AW sớm hơn GTM: script bắt đầu trước LCP quan sát bị Lantern tính vào LCP (site bán lẻ mẫu 31/10/2026: 2,2 → 3,7 s).
+ *     Dự phòng: 4 s sau khi gtm.js nạp xong mà window.google_tag_manager chưa có ID AW, hoặc gtm.js lỗi, loader nạp lại thẻ meta.
+ *     URL quảng cáo (gọi g() khi trang đang parse): GTM nạp ngay, Google tag tự nạp AW, dự phòng như trên.
  *     Khi còn giữ gtag G-xxx thì không hoãn AW: gtag.js của G tự nạp gtag/js?id=AW ngay khi thấy lệnh config AW (đã đo: AW tải lúc 348 ms trong bản giữ gtag G).
  *  4. Giỏ, checkout, trang cảm ơn: in snippet GTM chuẩn (nạp ngay), không đụng thẻ AW của plugin.
  *
@@ -244,13 +249,13 @@ function gtvd_gtm_print() {
 	}
 	?>
 <script data-no-optimize="1" data-no-defer="1">/*gtvd-gtm-delay*/(function(w,d,id,t){w.dataLayer=w.dataLayer||[];w.dataLayer.push({'gtm.start':new Date().getTime(),event:'gtm.js'});
-var e=['mouseover','touchstart','scroll','keydown','click'],o={passive:true,capture:true},x=0,r=0,q=[];
+var e=['mouseover','touchstart','scroll','keydown','click'],o={passive:true,capture:true},x=0,r=0,q=[],u='https://www.googletagmanager.com/gtm.js?id='+id,c=[function(){f();setTimeout(a,4000)},function(){z();a()}];
 function k(v){if(r)return;var a=v.target&&v.target.closest&&v.target.closest('a[href],area[href]');if(a&&q.length<5)q.push(a)}
 function f(){r=1;d.removeEventListener('click',k,true);var l=q;q=[];l.forEach(function(a){if(!d.contains(a))return;w.dataLayer.push({event:'gtm.linkClick','gtm.element':a,'gtm.elementClasses':typeof a.className==='string'?a.className:'','gtm.elementId':a.id||'','gtm.elementTarget':a.target||'','gtm.elementUrl':a.href||''})})}
 function z(){r=1;q=[];d.removeEventListener('click',k,true)}
-function s(u,c){var j=d.createElement('script');j.async=true;j.src=u;if(c){j.onload=c[0];j.onerror=c[1]}d.head.appendChild(j)}
-function a(){[].forEach.call(d.querySelectorAll('meta[name="gtvd-defer-src"]'),function(m){s(m.content)})}
-function g(){if(x)return;x=1;e.forEach(function(n){w.removeEventListener(n,g,o)});s('https://www.googletagmanager.com/gtm.js?id='+id,[f,z]);d.readyState==='loading'?d.addEventListener('DOMContentLoaded',a,{once:true}):a()}
+function s(u,c,n){var j=d.createElement('script');j.async=!n;j.src=u;if(c){j.onload=c[0];j.onerror=c[1]}d.head.appendChild(j)}
+function a(){var c=w.google_tag_manager;[].forEach.call(d.querySelectorAll('meta[name="gtvd-defer-src"]'),function(m){var i=(m.content.match(/[?&]id=([^&]+)/)||[])[1];if(!(c&&i&&c[i]))s(m.content)})}
+function g(){if(x)return;x=1;e.forEach(function(n){w.removeEventListener(n,g,o)});if(d.readyState!=='loading')[].forEach.call(d.querySelectorAll('meta[name="gtvd-defer-src"]'),function(v){s(v.content,0,1)});s(u,c,1)}
 d.addEventListener('click',k,true);
 if(/[?&](gclid|gbraid|wbraid|fbclid|ttclid|utm_[a-z]+)=/.test(location.search))return g();
 e.forEach(function(n){w.addEventListener(n,g,o)});

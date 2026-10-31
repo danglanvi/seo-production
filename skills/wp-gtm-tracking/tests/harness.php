@@ -160,6 +160,7 @@ if ( 'container' === $scenario ) {
 			$ok( 'ghi chú gtag=drop', false !== strpos( $head, 'gtag=drop' ) );
 			$ok( 'thẻ AW đã thành meta gtvd-defer-src', false !== strpos( $head, '<meta name="gtvd-defer-src" content="https://www.googletagmanager.com/gtag/js?id=AW-1000000001">' ) && false === strpos( $head, '<script async src="https://www.googletagmanager.com/gtag/js?id=AW' ) );
 			$ok( 'lệnh gtag() inline của GLA còn nguyên', false !== strpos( $head, 'gtag("config", "AW-1000000001"' ) && false !== strpos( $head, 'function gtag()' ) );
+			$ok( 'AW và GTM cùng mốc, async=false để AW thực thi trước, có dự phòng', false !== strpos( $head, 'j.async=!n' ) && false !== strpos( $head, 's(v.content,0,1)});s(u,c,1)}' ) && false !== strpos( $head, 'setTimeout(g,t)' ) && false !== strpos( $head, 'setTimeout(a,4000)' ) && false === strpos( $head, 't-600' ) );
 			$ok( 'thứ tự: page_type trước loader', strpos( $head, 'page_type' ) < strpos( $head, 'gtvd-gtm-delay' ) );
 			$ok( 'số ms hẹn giờ đúng (' . GTVD_GTM_WAIT_MS . ')', false !== strpos( $head, "'GTM-AAAA111'," . GTVD_GTM_WAIT_MS . ');' ) );
 			$ok( 'không ghi log lỗi', '' === trim( $log ) );

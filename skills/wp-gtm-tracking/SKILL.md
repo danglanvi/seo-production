@@ -2,7 +2,7 @@
 name: wp-gtm-tracking
 description: "Sửa tracking GA4, Google Ads qua GTM trên site WordPress có quyền server: kiểm hit thật có chặn, dựng container bằng API, dataLayer tiền tố ga4_, hoãn GTM có trần, publish có backup, theo dõi 7 ngày. Dùng khi đổi container, sự kiện thiếu hoặc đôi, hoãn GTM vì tốc độ."
 metadata:
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # wp-gtm-tracking — GTM, GA4 và Ads trên site WordPress
@@ -63,8 +63,9 @@ Kiểm thêm: `php -v` có PHP CLI (test loader cần), và `bash "$GT/tests/run
 4. **Hoãn GTM** (chỉ khi người duyệt cho phép và đặt trần).
    - Site chèn snippet bằng option plugin (Insert Headers and Footers): dùng `templates/gtm-delay-loader-option.php`. Site chèn ở theme: dùng `templates/gtm-delay-loader.php` của `wp-pagespeed`.
    - Loader nạp ngay ở giỏ, checkout, trang cảm ơn và URL có `utm_`, `gclid`, `fbclid`. Loader bỏ gtag G gắn thẳng khi container có Google tag, hoãn thẻ AW của plugin Ads, tái phát tối đa 5 click link, tắt bằng đuôi `.off`.
+   - Loader nạp thẻ AW của plugin cùng mốc với GTM, `async=false` để AW thực thi trước, nên Google tag không nạp lại `AW…&cx=c` (`kiem-va-ap.md` mục 8). Không nạp AW sớm hơn GTM. Kiểm bằng danh sách request: mỗi trang chỉ một thư viện `gtag/js?id=AW-…`.
    - Chọn N bằng A/B có ngưỡng ghi trước, trong trần (`kiem-va-ap.md` mục 5). Đây là trường hợp "tham số chọn bằng số đo" của `wp-pagespeed`, `luot-lon.md` mục 1.
-   - Đổi hằng số hoặc tiền tố trong bản cài thì chạy `LOADER=<bản cài> bash "$GT/tests/run.sh"`.
+   - Đổi hằng số trong bản cài thì chạy `LOADER=<bản cài> bash "$GT/tests/run.sh"`. Bản cài đổi tiền tố (ví dụ `site_gtm_`, `site-defer-src`) thì thêm `PREFIX=site`. Thiếu `PREFIX`, harness báo lỗi giả ở mọi bản cài.
 5. **Trang quyết.** Dựng bằng `decision-page`: mỗi câu có ảnh hoặc ví dụ hit, đề xuất và lý do. Câu cần chọn rõ: publish và đổi snippet, lọc conversion Ads, cài đặt GA4 (tự phát hiện email, loại trừ referral), N giây và mốc tính.
 6. **Áp một lượt** theo `kiem-va-ap.md` mục 6, sau khi người duyệt chọn. Mu-plugin đổi tên sự kiện lên trước, publish sau. Purge theo URL, lô tối đa 12.
 7. **Kiểm sau áp và theo dõi 7 ngày** theo `kiem-va-ap.md` mục 1 (chế độ LIVE) và mục 7. Chép bảng kiểm sang `13-cro/<CLIENT>_tracking-qa_v<N>.md` và trace công đoạn #34.
@@ -77,11 +78,10 @@ Bản tốt nhất phải có:
 - [ ] Sự kiện thương mại trong dataLayer có tiền tố `ga4_` khi site có plugin gọi `gtag('event', …)` cùng tên. Nguồn lỗi: site bán lẻ mẫu 30/10/2026, preview lượt 1 đạt 7/9 ca, `view_item` và `add_to_cart` đôi.
 - [ ] Plan ghi thứ tự: mu-plugin đổi tên trước, publish sau, rollback ngược lại. Nguồn: thiết kế đã kiểm ở site bán lẻ mẫu 30/10/2026.
 - [ ] Conversion Ads chỉ tính đơn đạt luật `purchase`; không thêm tag Ads trong GTM khi plugin còn bắn. Nguồn lỗi: site bán lẻ mẫu, 13 đơn có cờ conversion trong 7 ngày, 8 đơn sandbox.
-- [ ] N giây chọn bằng A/B PSI có ngưỡng ghi trước, trong trần người duyệt đặt, ghi mốc tính từ `load`. Nguồn: site bán lẻ mẫu 30/10/2026, 1,5 s đo kém hơn 2 s ở 2 đợt nên người duyệt chọn lại 2 s.
+- [ ] N giây chọn bằng A/B PSI có ngưỡng ghi trước, trong trần người duyệt đặt, ghi mốc tính từ `load`. Mỗi thư viện tag nạp 1 lần (đếm `gtag/js?id=` theo ID). Mọi đổi thứ tự hay mốc nạp tag có PSI cả 2 thiết bị trước khi áp, xem TBT và LCP. Nguồn: site bán lẻ mẫu 30/10/2026, 1,5 s đo kém hơn 2 s ở 2 đợt nên người duyệt chọn lại 2 s. Ngày 31/10: thư viện AW nạp 2 lần; bản sửa v1.3 làm TBT desktop tăng khoảng 60 ms; v1.4 nạp AW sớm 600 ms làm LCP mobile 2,2 → 3,7 s ở 3/6 lượt.
 - [ ] Bản loader sẽ cài đạt `tests/run.sh`, gồm ca option không còn gtag G (`nog`) và listener `{once:true}`. Nguồn lỗi: site bán lẻ mẫu 30/10/2026 09:02, loader v1.1 để thẻ AW tải thẳng; plugin đánh giá phát lại `DOMContentLoaded` làm `add_to_cart` đôi.
 - [ ] Loader tái phát click link đến trước khi GTM nạp, và bảng "hoãn GTM có mất gì" nêu 2 giới hạn còn lại. Nguồn lỗi: site agency mẫu 22/10/2026, mất click Zalo đầu tiên.
 - [ ] Trang quyết có minh hoạ và đề xuất cho từng câu. Nguồn lỗi: người duyệt 30/10/2026 12:02 nói trang quyết khó hiểu.
-
 ## Output
 
 - Thư mục làm việc: `hien-trang.md`, `thiet-ke.md`, `de-xuat.md`, `decisions.md`, bảng kết quả kiểm preview và kiểm sau áp, `theo-doi-7-ngay.md`, trang quyết.
@@ -111,4 +111,5 @@ Bản tốt nhất phải có:
 
 ## Changelog
 
+- v1.1.0 (2026-10-31): mẫu loader nạp thẻ AW của plugin và GTM cùng mốc, `async=false` để AW thực thi trước, dự phòng 4 s qua `google_tag_manager`; harness thêm 1 ca và biến `PREFIX` cho bản cài đổi tiền tố; `kiem-va-ap.md` mục 8 thêm bẫy AW nạp 2 lần, bẫy nạp AW sớm hơn GTM (LCP mobile) và bẫy A/B bằng `setBlockedURLs`; tự phản biện mục N giây thêm kiểm mỗi thư viện tag nạp 1 lần và PSI cả TBT lẫn LCP. Nguồn: site bán lẻ mẫu 31/10/2026 (instance của site, `03-audits/technical/gtm-3010/aw-mot-noi-3110/ket-qua.md`), loader v1.3, v1.4 rồi v1.5 trên production. Đã thử: Chrome có chặn hit trên 4 trang sống, AW 1 lần, hit như cũ, 0 hit lọt; harness đạt với mẫu và bản cài, bản v1.4 rớt đúng ca.
 - v1.0.0 (2026-10-30): tạo mới từ site agency mẫu 22/10/2026 (loader tái phát click link) và site bán lẻ mẫu 28–30/10/2026 (container 10 tag dựng bằng API, preview 9/9 ca có chặn hit, tiền tố `ga4_`, lọc conversion plugin Ads, A/B N giây, thứ tự áp, theo dõi 7 ngày). Mẫu `gtm-delay-loader-option.php` là bản v1.2 đang chạy ở site bán lẻ mẫu, đã ẩn tên và ID. Harness PHP 11 kịch bản, 49 ca. `gtm_api.py` gồm inventory, preview-url, version, publish; publish chưa chạy qua script này (site mẫu publish bằng script riêng cùng lời gọi API).
