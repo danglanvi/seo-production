@@ -1,6 +1,8 @@
 # Chia quyền Drive cho robot
 
 > Ai cũng đọc được: người mới cần biết xin gì, Lead cần biết cấp gì.
+>
+> Chỉ áp cho repo dùng robot. Đi bằng `gws` (bắt buộc mọi repo) thì file share cho domain công ty là đủ.
 
 ## Nguyên tắc
 

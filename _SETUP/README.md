@@ -14,16 +14,21 @@ wiki nội bộ «setup-kit» (ngoài repo, hỏi Lead/Vincent)            ← c
 | File | Ai đọc | Vai trò |
 |---|---|---|
 | `SETUP-MAY.md` | AI | Runbook 6 bước — AI đọc rồi làm, không đưa cho người dùng |
-| `HUONG-DAN-GOOGLE-CREDENTIAL.md` | Người dùng | Tự tạo service account riêng, 6 bước trên trình duyệt |
+| `HUONG-DAN-GOOGLE-CREDENTIAL.md` | Người dùng | Phần 1: đăng nhập `gws` (bắt buộc). Phần 2: tạo service account riêng (repo dùng robot) |
 | `CHIA-QUYEN-DRIVE.md` | Người dùng + Lead | Share gì, quyền gì, vì sao Editor chứ không Viewer |
-| `setup_doctor.py` | AI chạy | Khám máy 4 tầng: nền · thư viện · chìa khóa · quyền |
+| `setup_doctor.py` | AI chạy | Khám máy 4 tầng: nền (có `gws`) · thư viện · đăng nhập (gws bắt buộc, robot khi repo cần) · quyền robot |
 | `setup_credential.py` | AI chạy | `detect` / `register` / `share` / `check` |
 | `sync-skills.sh` | Người vận hành | Dựng lại mirror skill trong clone standalone (không có `tools/` của workspace) |
 | `skill/setup-may/SKILL.md` | Claude Code | Cửa vào bằng ngôn ngữ tự nhiên |
 
 ## Mô hình credential
 
-**Mỗi người một service account riêng.** Repo không chứa robot của ai. Người dùng tự tạo trong
+**`gws` là bắt buộc ở mọi repo** (Vincent chốt 01/11/2026). Mỗi người tạo OAuth client riêng, đăng
+nhập `gws` bằng email công ty. File Google của công ty share cho cả domain, nên không phải xin quyền
+từng file. Doctor kiểm `gws` đã đăng nhập đúng domain và đủ quyền drive, sheets, docs.
+
+**Robot chỉ cho repo có script cần nó** (doctor suy từ `requirements.txt` có thư viện google, hoặc
+bản mẫu MCP khai service account). Mỗi người một service account riêng. Repo không chứa robot của ai. Người dùng tự tạo trong
 Google Cloud của mình, `register` gắn vào repo, rồi xin Lead share file Drive cho địa chỉ robot đó
 với quyền **Editor**.
 

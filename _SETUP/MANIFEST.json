@@ -1,28 +1,28 @@
 {
   "kit": "gtv-setup-kit",
-  "version": "2026.08.28",
-  "generated_at": "2026-08-28T21:14:07",
+  "version": "2026.11.01",
+  "generated_at": "2026-11-01T08:34:43",
   "source": "_Shared/setup-kit",
   "file_count": 8,
   "files": {
     "_SETUP/CHIA-QUYEN-DRIVE.md": {
-      "sha256": "a0b70ba69dff6c0f4040718433d5bfd05e3e8d878b3b55f06f57d25f085cc9ce",
-      "bytes": 4107,
+      "sha256": "28af69b353dd32c98c0aca2a28162055aa661aaa173b77ed413b303ef30382b3",
+      "bytes": 4233,
       "text": true
     },
     "_SETUP/HUONG-DAN-GOOGLE-CREDENTIAL.md": {
-      "sha256": "39ebb93a05fc1d432d175ec62f757a5d8c4a89990fd3923ec6b621ab147ed9ad",
-      "bytes": 4200,
+      "sha256": "ce4880789ba771bd53189d45fe7db5510adc33a00c102ece46d33c424779a059",
+      "bytes": 6424,
       "text": true
     },
     "_SETUP/README.md": {
-      "sha256": "58916df17d6c32cb155e03b086e3b230a5289a8f41b6d8e57b8a9e9d6d9fa9af",
-      "bytes": 2744,
+      "sha256": "a10b2ced1270aca9a6818f9c27d4f75401c59b87bc79e1876b6f8bcdb1120e54",
+      "bytes": 3379,
       "text": true
     },
     "_SETUP/SETUP-MAY.md": {
-      "sha256": "41c79b76487e694985c83eb24abac4756be5c7b6def6f6e17c12dac0d9dd34ea",
-      "bytes": 7407,
+      "sha256": "6410ec81c93965b3f329ae8bacce06a72aac9080ca0df42b8c0a2682fa713931",
+      "bytes": 9297,
       "text": true
     },
     "_SETUP/setup_credential.py": {
@@ -31,8 +31,8 @@
       "text": true
     },
     "_SETUP/setup_doctor.py": {
-      "sha256": "e4029977621ff44391bb6f1526ae4fee735a31924cfd8c07e9cd7519a6b8443c",
-      "bytes": 16054,
+      "sha256": "129e57f5777e32ebcea8036386943c1c927fd76efa76d03ad8a89df6a2ab233e",
+      "bytes": 18606,
       "text": true
     },
     "_SETUP/sync-skills.sh": {
@@ -41,8 +41,8 @@
       "text": true
     },
     "skills/setup-may/SKILL.md": {
-      "sha256": "613d4defd8e31277e200352613c2ffca97ca774374cb739ce621a5dd5eb06cec",
-      "bytes": 2017,
+      "sha256": "fc16b25e819cff2127b8b4a4685e508689205b02aeddc580beadcce1f16e0da0",
+      "bytes": 1444,
       "text": true
     }
   }

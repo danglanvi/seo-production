@@ -9,10 +9,11 @@ Chạy từ root repo (Account Production / BD Production / SEO Production / Con
     python3 _SETUP/setup_doctor.py --tier C     # chỉ chạy 1 tầng (A|B|C|D)
 
 Bốn tầng, chạy theo thứ tự — tầng sau chỉ có nghĩa khi tầng trước đạt:
-    A. NỀN       python3 / git / node / npx / uv — cài bằng brew
+    A. NỀN       python3 / git / node / npx / uv / gws — cài bằng brew, gws bằng npm
     B. THƯ VIỆN  import từng lib khai trong requirements.txt của repo
-    C. CHÌA KHÓA credential Google: có file, đúng định dạng service account, đọc được
-    D. QUYỀN     gọi Drive/Sheets API thật trên từng ID repo cần → có quyền EDIT chưa
+    C. ĐĂNG NHẬP gws đăng nhập email công ty, đủ quyền drive/sheets/docs — BẮT BUỘC mọi repo.
+                 Robot (service account) chỉ khi repo có script cần: có file, đúng định dạng, đọc được
+    D. QUYỀN     (chỉ repo dùng robot) gọi Drive/Sheets API thật trên từng ID repo cần → có quyền EDIT chưa
 
 Script chỉ ĐỌC và chẩn đoán (trừ --fix). Không sửa file nào của repo, không ghi credential.
 Chỉ thư viện chuẩn ở tầng A-C — chạy được trên máy chưa cài gì. Tầng D dùng lib Google đã kiểm ở tầng B.
@@ -52,7 +53,18 @@ BASE_TOOLS = [
     ("node", "node", "brew install node", "https://nodejs.org"),
     ("npx", "npx", "brew install node", "https://nodejs.org"),
     ("uv", "uv", "brew install uv", "https://docs.astral.sh/uv/getting-started/installation/"),
+    ("gws", "gws", "npm install -g @googleworkspace/cli", "npm install -g @googleworkspace/cli"),
 ]
+
+# gws (Google Workspace CLI) là đường chính vào Google của mọi repo: đăng nhập bằng email công ty,
+# file Drive share cho cả domain nên không phải xin quyền từng file.
+WORKSPACE_DOMAIN = "gtvseo.com"
+GWS_SCOPES = {
+    "drive": "https://www.googleapis.com/auth/drive",
+    "sheets": "https://www.googleapis.com/auth/spreadsheets",
+    "docs": "https://www.googleapis.com/auth/documents",
+}
+GWS_LOGIN = "gws auth login -s drive,sheets,docs"
 
 
 # ---------------------------------------------------------------- tiện ích
@@ -147,6 +159,45 @@ def tier_b(res):
 
 # ---------------------------------------------------------------- tầng C
 
+def gws_status():
+    """Đọc `gws auth status` -> dict, hoặc None. Lệnh in thêm dòng chữ ngoài JSON nên chỉ lấy khối JSON."""
+    _, out = run(["gws", "auth", "status"])
+    start = out.find("{")
+    if start < 0:
+        return None
+    try:
+        return json.JSONDecoder().raw_decode(out[start:])[0]
+    except ValueError:
+        return None
+
+
+def tier_c_gws(res):
+    guide = "_SETUP/HUONG-DAN-GOOGLE-CREDENTIAL.md phần 1"
+    if not shutil.which("gws"):
+        res.add("C", "gws đăng nhập", False, "chưa cài gws (tầng A)", "npm install -g @googleworkspace/cli")
+        return
+    st = gws_status()
+    if st is None:
+        res.add("C", "gws đăng nhập", False, "không đọc được `gws auth status`", GWS_LOGIN)
+        return
+    user = st.get("user") or ""
+    if st.get("client_config_exists") is False:
+        res.add("C", "gws đăng nhập", False, "thiếu OAuth client (~/.config/gws/client_secret.json)", guide)
+        return
+    if not user or not (st.get("token_valid") or st.get("has_refresh_token")):
+        res.add("C", "gws đăng nhập", False, "chưa đăng nhập", GWS_LOGIN)
+        return
+    if not user.lower().endswith("@" + WORKSPACE_DOMAIN):
+        res.add("C", "gws đăng nhập", False, "%s — cần email @%s" % (user, WORKSPACE_DOMAIN),
+                "gws auth logout && " + GWS_LOGIN)
+        return
+    res.add("C", "gws đăng nhập", True, user)
+    scopes = st.get("scopes") or []
+    missing = [name for name, url in GWS_SCOPES.items() if url not in scopes]
+    res.add("C", "gws quyền drive, sheets, docs", not missing,
+            "thiếu: %s" % ", ".join(missing) if missing else "đủ", GWS_LOGIN)
+
+
 def find_credential():
     """Tìm chìa khóa theo đúng thứ tự ưu tiên mà mọi script trong hệ đang dùng.
 
@@ -196,7 +247,7 @@ def needs_google():
     """Repo có thật sự cần credential Google không — suy từ chính repo, không cấu hình riêng.
 
     Có nếu: requirements.txt khai thư viện google, HOẶC bản mẫu MCP khai service account.
-    Content Production chẳng hạn không đụng Google API nào, tầng C không được đòi credential của nó.
+    Repo đi Google bằng gws (vd Content Production) không cần robot; gws kiểm riêng ở tier_c_gws.
     """
     for name, line in read_requirements():
         if name.lower().startswith("google-"):
@@ -212,25 +263,26 @@ def needs_google():
 
 
 def tier_c(res):
+    tier_c_gws(res)
     fix = "python3 _SETUP/setup_credential.py detect"
     if not needs_google():
-        res.add("C", "chìa khóa Google", True, "repo không dùng API Google — không cần", skipped=True)
+        res.add("C", "robot (service account)", True, "repo không có script cần robot — gws là đủ", skipped=True)
         return None
     path, source = find_credential()
     if not path:
-        res.add("C", "chìa khóa Google", False,
+        res.add("C", "robot (service account)", False,
                 "chưa khai ở env, config/local.yaml hay .claude/settings.local.json", fix)
         return None
     if not os.path.isfile(path):
-        res.add("C", "chìa khóa Google", False, "%s (khai ở %s) — không thấy file" % (path, source), fix)
+        res.add("C", "robot (service account)", False, "%s (khai ở %s) — không thấy file" % (path, source), fix)
         return None
 
     data, err = read_credential(path)
     if err:
-        res.add("C", "chìa khóa Google", False, "%s — %s" % (path, err), fix)
+        res.add("C", "robot (service account)", False, "%s — %s" % (path, err), fix)
         return None
 
-    res.add("C", "chìa khóa Google", True, "%s (khai ở %s)" % (path, source))
+    res.add("C", "robot (service account)", True, "%s (khai ở %s)" % (path, source))
     res.add("C", "robot email", True, data["client_email"])
     mode = oct(os.stat(path).st_mode & 0o777)
     res.add("C", "quyền file key", mode == "0o600", "chmod %s" % mode,
@@ -297,8 +349,8 @@ MARK = {True: "OK  ", False: "THIẾU"}
 TIER_TITLE = {
     "A": "A. NỀN — phần mềm cơ bản của máy",
     "B": "B. THƯ VIỆN — gói Python repo cần",
-    "C": "C. CHÌA KHÓA — credential Google của bạn",
-    "D": "D. QUYỀN — robot đã được share file chưa",
+    "C": "C. ĐĂNG NHẬP — gws (bắt buộc) và robot (khi repo cần)",
+    "D": "D. QUYỀN — robot đã được share file chưa (chỉ repo dùng robot)",
 }
 
 
@@ -353,7 +405,7 @@ def main():
             if not res.tier_ok("B"):
                 res.add("D", "quyền Google", True, "chờ tầng B xong mới kiểm được", skipped=True)
             elif "C" in order and not needs_google():
-                res.add("D", "quyền Google", True, "repo không dùng API Google — không cần", skipped=True)
+                res.add("D", "quyền Google", True, "repo không dùng robot — file share cho domain, gws là đủ", skipped=True)
             elif "C" in order and not cred:
                 res.add("D", "quyền Google", True, "chờ tầng C xong mới kiểm được", skipped=True)
             else:
