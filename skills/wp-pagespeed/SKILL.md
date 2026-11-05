@@ -110,6 +110,8 @@ ssh -o BatchMode=yes <alias> 'echo ssh: có'
 
 Đọc `references/doc-field-va-lab.md` khi đánh giá báo cáo trước đó hoặc so field/lab: ghi rõ URL/origin, thiết bị, cửa sổ và mẫu. RUM thiên về desktop hoặc CrUX origin không đủ để bác bỏ lỗi mobile của một URL. Không gọi LCP 2,66 s là đạt ngưỡng tốt.
 
+Đổi exclude Delay JS: đọc thêm mục cùng tên trong reference trên. Kiểm script có trở thành render-blocking và đo lại phạm vi chịu tác động, bên cạnh kiểm thứ tự thực thi.
+
 0. Đọc field trước lab: `loadingExperience` (URL) và `originLoadingExperience` (origin) trong JSON PSI. Field p75 đạt (LCP ≤ 2,5 s, CLS ≤ 0,1, INP ≤ 200 ms) thì không mở vòng sửa riêng chỉ để đuổi CLS hoặc LCP lab. Ghi vào plan: lợi ích chỉ là điểm lab, chi phí ước tính. Chỉ làm khi người duyệt chọn tối đa điểm lab. Lỗi đã gặp 22/10/2026: một lane đuổi CLS lab 118 phút ở trang có field đã đạt.
 1. Đọc `psi_table.py --detail` của từng template: phần tử LCP, 4 pha LCP, tài nguyên chặn hiển thị, byte theo loại, bên thứ ba. Với staging, đọc `probe_table.py --detail`: phần tử LCP và nguồn layout shift. Lập bảng chi phí theo nguyên nhân: `python3 -I "$WPS/scripts/psi_con_tru.py" <ev>/psi-base --mt`.
 2. Xếp nguyên nhân vào 7 lớp của `references/checklist-theo-lop.md`. Tách nguyên nhân chung với nguyên nhân riêng của template. Rà đủ câu hỏi của lớp 5b (chi phí render của theme), kể cả khi điểm đã cao.

@@ -17,3 +17,10 @@
 - So tối đa hai phương án có căn cứ: bổ sung CSS màn đầu còn thiếu, hoặc bỏ async/CCSS trong phạm vi thích hợp. Không mặc định đổi cấu hình toàn site từ một URL.
 - Staging tắt LiteSpeed nên không đại diện pipeline CSS production: dùng HTML tĩnh cùng tài nguyên để A/B. Config cấp site phải phủ nhiều template và trạng thái chưa/có CCSS trong hàng đợi; bản vá riêng hero kiểm cả desktop/mobile.
 - Giữ lựa chọn hạ tầng ngoài scope (ví dụ HTTP/3). Báo byte nguồn, byte HTML và byte truyền qua mạng riêng.
+
+## Loại script khỏi Delay JS
+
+- Exclude khỏi Delay JS có thể biến script thành tài nguyên chặn hiển thị. Kiểm thẻ HTML sau optimizer, render-blocking audit, FCP/LCP và thứ tự thực thi; số thư viện bằng một chưa đủ.
+- Giữ dependency và loại fallback tải trùng trước khi quyết định có cần exclude. Kiểm click đầu, tương tác sau khi chờ lâu, menu, slider và form. Không đổi sang async nếu inline còn phụ thuộc thứ tự.
+- Ca thực tế 05/11/2026: thêm exclude jQuery/Slick làm xuất hiện khoảng 41 KB script blocking, trước đó không có. Trang Giới thiệu giảm trung vị 98→94, LCP tăng 375 ms ở lô đo đầu. Máy PSI khác nhau; lượt có benchmark gần nhau cũng chậm hơn nên phải điều tra, không gán hết cho nhiễu. Ước tính tiết kiệm trong audit không phải hiệu quả chắc chắn của patch.
+- Có hồi quy mới hoặc sửa thứ tự JS toàn site thì đo lại phạm vi bị ảnh hưởng sau sửa. Giữ riêng JSON của các lô; không dùng số của nguồn cũ làm kết quả cuối.

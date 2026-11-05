@@ -10,6 +10,7 @@
 - Backup local đặt ở `~/Backups/<site>/<ngày>/<đợt>/`: thư mục 0700, file 0600. Báo cáo chỉ giữ pointer/hash.
 - Rollback: kiểm archive và danh sách entry, chụp bản hiện tại, khôi phục đúng đường dẫn/owner/mode. Chỉ gỡ file mới do lô này thêm; không quét xoá theo glob rộng.
 - Staging lệch production: ghi phần lệch và áp bản vá theo đúng đoạn/hash; không chép cả bản ghi cũ lên production. Backup mới không ghi đè backup trước.
+- Trước khi sửa file staging, kiểm realpath và inode để loại symlink/hardlink sang production. Fixture tạm phải có backup và trả đúng byte cũ; ưu tiên override response trong trình duyệt nếu chỉ cần chuẩn hoá môi trường thử.
 - Một người/agent sở hữu một tài nguyên. Tôn trọng khoá nguồn CSS, khoá HTTP và khe WP-CLI hiện có. Không chạy benchmark trong lúc agent khác đang purge hoặc sửa cấu hình cùng site.
 
 ## 2. Kết quả lệnh không thay cho trạng thái thật
@@ -19,6 +20,7 @@
 - WP-CLI có thể không dùng cùng object cache với web. Sau ghi DB, xoá đúng key/group theo API và drop-in đang dùng; kiểm lại bằng getter WordPress trong tiến trình mới, trạng thái object cache và HTML origin mới. Không dùng `flushall` để chữa một bản ghi cũ.
 - Payload dài: dùng file đầu vào hoặc chia dòng trong `eval-file`; không nhét một dòng base64 cực dài. Lượt mẫu từng trả mã 0 kèm giá trị `null`, bản ghi không đổi. Không đổi cấu hình PHP toàn server chỉ để vượt lỗi truyền input.
 - Chỉ đưa tên khoá và kết quả đã che vào output. Không `cat`/`grep` cả `wp-config.php`, `.env` hay dump cấu hình. Chọn trường cần đọc trong code, giữ secret trong bộ nhớ.
+- Che hostname staging trong cả trường JSON lồng nhau trước khi ghi file hoặc in output. Chỉ che chuỗi console chưa đủ nếu `href`, stack hoặc network record còn URL gốc. Leakcheck chỉ trả số lượng và đường dẫn đã che.
 
 ## 3. Chọn kiểm chứng theo tác động
 
@@ -32,6 +34,12 @@
 Đổi `id` hoặc thuộc tính của thẻ style có thể đổi cách optimizer gom và khử trùng CSS, dù nội dung CSS giữ nguyên. Chạy cả bước thu thập nguồn CSS của plugin, không chỉ minifier của một chuỗi. Style trong noscript phải giữ đúng hành vi khi bật/tắt JavaScript sau pipeline production.
 
 Sửa jQuery trùng cần kiểm dependency WordPress và hook delay thật của phiên bản cache đang chạy. Một hook được đăng ký nhưng plugin không gọi vẫn không có hiệu lực. Loader chạy sớm có thể nạp fallback trước core; xoá thẻ CDN riêng lẻ chưa đủ. Kiểm số thư viện, version trước/sau tương tác và slider sau resize.
+
+Exclude khỏi Delay JS có thể đưa script về trạng thái chặn hiển thị. Kiểm FCP/LCP và render-blocking sau optimizer, cùng click đầu và tương tác sau khi chờ lâu. Không coi “một jQuery, không lỗi console” là đủ để kết luận bản sửa đạt tốc độ.
+
+Kiểm thời điểm plugin đọc hook. Conditional tag như `is_page()` không đáng tin trước main query. Không ép `defer` khi WordPress từ chối vì dependency hoặc inline-after; phải hiểu chuỗi thực thi trước.
+
+Staging có thể rewrite HTML nhưng không rewrite URL trong CSS tĩnh. Khi kiểm preload, so URL chuẩn hoá gồm scheme, host, port, path và định dạng ảnh. Giữ URL trình duyệt chuẩn, đặt tunnel ở lớp kết nối. Sai lệch fixture không phải lỗi production; không dùng lượt thiếu asset hoặc bị chặn DNS làm bằng chứng đạt. Smoke một URL trước khi chạy ma trận.
 
 Nếu chỉ comment đổi, đầu ra minify giống từng byte, hash CSS gộp và map không đổi ở các biến thể: không cần dựng thêm mu-plugin preview, đổi cache config hay chờ job CSS đêm. Vẫn xác minh nguồn DB mới và HTML origin. Byte nguồn giảm không đồng nghĩa byte mạng giảm.
 

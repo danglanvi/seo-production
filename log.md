@@ -583,3 +583,7 @@ Luật ghi:
 - `wp-ucss/scripts/inventory.py`: nhận marker `data-ucss` của template và biến thể có tiền tố site; test đổi sang tên trung lập, `run.sh` đạt cả cổng tên site gốc.
 - `wp-code-footprint`: `js_comments.mjs` tự tìm Acorn ở `~/.cache/wp-code-footprint`, thêm lệnh cài; bỏ tên file riêng của site mẫu. 17/17 test đạt không cần `ACORN_PATH`.
 - Files touched: skills/{wp-ucss,wp-code-footprint}/, mirror, MIGRATION.md, log.md
+
+## [2026-11-05] fix | v2026.11.4 — scan_html.py trung lập, ghi bù MIGRATION cdn-speed-setup — @claude
+- Bản học viên quét ra danh sách `data-*` riêng của site mẫu trong `scan_html.py`; đổi sang biến `FOOTPRINT_DATA_ATTRS`, khoá `data_attrs_site`. 17/17 test đạt.
+- Files touched: skills/wp-code-footprint/{SKILL.md,scripts/scan_html.py}, mirror, MIGRATION.md, log.md

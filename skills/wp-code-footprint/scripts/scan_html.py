@@ -4,6 +4,7 @@ Chạy: python3 -I scan_html.py <html_dir> <out_dir>
 Ra: scan_html.json, scan_html.md, jev_comments.jsonl, jev_scripts.jsonl, jev_sections.jsonl, emb_scripts.jsonl
 """
 import json
+import os
 import hashlib
 import re
 import subprocess
@@ -13,6 +14,8 @@ from html.parser import HTMLParser
 from pathlib import Path
 
 VI = re.compile(r"[ăâđêôơưáàảãạấầẩẫậắằẳẵặéèẻẽẹếềểễệíìỉĩịóòỏõọốồổỗộớờởỡợúùủũụứừửữựýỳỷỹỵĂÂĐÊÔƠƯÁÀẢÃẠẤẦẨẪẬẮẰẲẴẶÉÈẺẼẸẾỀỂỄỆÍÌỈĨỊÓÒỎÕỌỐỒỔỖỘỚỜỞỠỢÚÙỦŨỤỨỪỬỮỰÝỲỶỸỴ]")
+# Thuộc tính data-* riêng của site cần liệt kê đủ (theme, plugin tự viết), ví dụ FOOTPRINT_DATA_ATTRS="data-vidu-|data-scroll-to"
+SITE_ATTRS = [s for s in os.environ.get("FOOTPRINT_DATA_ATTRS", "").split("|") if s]
 LANDMARKS = ["header", "nav", "main", "article", "section", "aside", "footer", "form", "figure", "time", "h1", "h2", "h3", "h4", "h5", "h6", "b", "i", "strong", "em"]
 
 
@@ -253,7 +256,7 @@ def scan_file(path: Path):
         "html_comments_vi": sum(1 for c in html_comments if c["vi"]),
         "tags": {t: p.tags.get(t, 0) for t in LANDMARKS},
         "roles": p.roles,
-        "data_attrs_gtv": {k: v for k, v in p.data_attrs.items() if "gtv" in k or k in ("data-sb-a", "data-sbf", "data-scroll-to", "data-cur", "data-alt", "data-alt-url", "data-alt-exact", "data-no-defer")},
+        "data_attrs_site": {k: v for k, v in p.data_attrs.items() if any(s in k for s in SITE_ATTRS)},
         "data_attrs_top": p.data_attrs.most_common(25),
         "dup_ids": dup_ids,
         "headings": outline,

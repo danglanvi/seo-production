@@ -1,5 +1,5 @@
 ---
-master_version: v2026.11.3
+master_version: v2026.11.4
 ---
 
 # MIGRATION — Cập nhật instance lên version master mới
@@ -15,6 +15,12 @@ master_version: v2026.11.3
 ---
 
 ## 1. Có gì mới
+
+### v2026.11.4 (2026-11-05) — `wp-code-footprint` trung lập hoá `scan_html.py`; ghi bù `cdn-speed-setup` 1.3.2
+
+- **wp-code-footprint:** `scan_html.py` bỏ danh sách thuộc tính `data-*` riêng của site mẫu. Khoá JSON `data_attrs_gtv` đổi thành `data_attrs_site`, lọc theo biến `FOOTPRINT_DATA_ATTRS` (rỗng thì `{}`); `data_attrs_top` giữ nguyên. Không đổi version skill.
+- **cdn-speed-setup 1.3.2 (02/11, đã có trong commit v2026.11.3, thiếu dòng ở đây):** `cdn_monitor.py` gọi lại trang từ 3 probe Globalping ở Mỹ khi máy giám sát nhận mã 0 từ trạm CDN, tránh báo giả; `origin-sau-cdn.md` §3 thêm bước làm nóng. Test monitor 35 ca.
+- **Port sang instance:** `python3 tools/port_skill.py --skills wp-code-footprint,cdn-speed-setup`. Cập nhật `master_version` thành `v2026.11.4`.
 
 ### v2026.11.3 (2026-11-05) — Kiểm chứng footprint, staging, semantic HTML và PageSpeed
 
