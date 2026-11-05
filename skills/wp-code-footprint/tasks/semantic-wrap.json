@@ -1,0 +1,19 @@
+{
+  "name": "semantic-wrap",
+  "version": "2026-11-05.1",
+  "questions": {
+    "fit": {
+      "type": "choice",
+      "instructions": "On page state.page of a company website, one HTML element with tag state.tag (section, article or aside) has CSS class state.class, first heading state.heading (empty string when it has no heading inside) and visible text state.text (first 400 characters of state.text_len). Judge whether the tag matches the HTML5 meaning of the element: article is a self-contained composition that makes sense on its own (a blog post, a case study, a product card with its own title); section is a thematic grouping of content that normally has its own heading; aside is content only tangentially related to the main content (sidebar, related links, author box, call-out).",
+      "criteria": {
+        "correct": "The tag matches the content. Example: an article containing one blog post card with its title and excerpt; a section with an h2 and the paragraphs under it; an aside holding related posts.",
+        "should_be_div": "The element is only a layout or styling wrapper with no heading and no standalone meaning, such as a row of logos, a grid container, a hero background, a button row or a single paragraph. A div would be the honest tag.",
+        "should_be_section": "The element groups thematic content under a heading but is marked as article or aside.",
+        "should_be_article": "The element is a self-contained item (a post card, a case study, a testimonial with author) but is marked as section or aside.",
+        "should_be_aside": "The element is tangential side content (related posts, author box, sidebar call-out, share buttons) but is marked as section or article.",
+        "should_be_nav": "The element is a list of navigation links (menu, table of contents, breadcrumb, pagination) but is marked as section, article or aside.",
+        "unknown": "The text, heading and class do not show enough to decide."
+      }
+    }
+  }
+}

@@ -1,0 +1,179 @@
+{
+  "_note": "Skill-defined bundles of stable check IDs, not Google weights. Live base: core. Draft base: pre_publish, replacing core. Union matching content presets and explicit extra checks; deduplicate. Screen all Applies when conditions. Unselected is not Not applicable.",
+  "core": {
+    "use_for": "Quick pass for almost any page",
+    "check_ids": [
+      "PS01",
+      "PS02",
+      "PS03",
+      "PS04",
+      "PS05",
+      "PS06",
+      "CQ01",
+      "CQ02",
+      "CQ03",
+      "CQ06",
+      "CQ07",
+      "CQ09",
+      "CQ10",
+      "CQ11",
+      "CQ12",
+      "TA01",
+      "TA03",
+      "TA04",
+      "TA06",
+      "TA07",
+      "PE01",
+      "PE02",
+      "PE03",
+      "PE05",
+      "PE08",
+      "MT01",
+      "SP01"
+    ]
+  },
+  "review": {
+    "use_for": "Product/service reviews, comparisons, 'best' lists, affiliate content",
+    "adds_to_core": true,
+    "check_ids": [
+      "TA08",
+      "TA11",
+      "CP06",
+      "CP09",
+      "RC01",
+      "RC02",
+      "RC03",
+      "RC04",
+      "RC05",
+      "RC06",
+      "RC07",
+      "RC08",
+      "RC09",
+      "RC10",
+      "RC11",
+      "SP07"
+    ]
+  },
+  "ymyl": {
+    "use_for": "Health, finance, safety, legal or civic information and advice",
+    "adds_to_core": true,
+    "check_ids": [
+      "TA02",
+      "TA05",
+      "TA08",
+      "TA09",
+      "TA10",
+      "TA12",
+      "TA13"
+    ]
+  },
+  "ai_assisted": {
+    "use_for": "Content produced with AI or automation",
+    "adds_to_core": true,
+    "check_ids": [
+      "CQ08",
+      "AI01",
+      "AI02",
+      "AI03",
+      "AI04",
+      "AI05",
+      "CP01",
+      "EV01"
+    ]
+  },
+  "ecommerce": {
+    "use_for": "Product, category and transactional pages",
+    "adds_to_core": true,
+    "check_ids": [
+      "TA10",
+      "TA11",
+      "AI05",
+      "CP06",
+      "PE04",
+      "PE09",
+      "MT03",
+      "SP03",
+      "SP04",
+      "SP07"
+    ]
+  },
+  "programmatic": {
+    "use_for": "Templated, location/keyword-variant or large-scale pages",
+    "adds_to_core": true,
+    "check_ids": [
+      "PS08",
+      "CQ08",
+      "CP01",
+      "CP02",
+      "CP04",
+      "MT02",
+      "SP02",
+      "SP03"
+    ]
+  },
+  "core_update": {
+    "use_for": "Diagnosing traffic changes after a Google core update (assess on winner and loser samples)",
+    "adds_to_core": true,
+    "check_ids": [
+      "PS02",
+      "PS09",
+      "CQ08",
+      "TA05",
+      "TA09",
+      "TA10",
+      "CP01",
+      "CP02",
+      "CP03",
+      "CP08",
+      "CP09",
+      "CP10",
+      "MT02",
+      "EV01",
+      "EV02"
+    ]
+  },
+  "ai_search": {
+    "use_for": "Eligibility and presentation for Google AI Overviews / AI Mode",
+    "adds_to_core": true,
+    "check_ids": [
+      "CP07",
+      "SP02",
+      "SP03",
+      "SP04",
+      "SP05",
+      "SP06",
+      "SP08",
+      "EV02"
+    ]
+  },
+  "pre_publish": {
+    "use_for": "Briefs and drafts before publication (Core minus live-only field data and crawl checks, plus independent review)",
+    "check_ids": [
+      "PS01",
+      "PS02",
+      "PS03",
+      "PS04",
+      "PS05",
+      "PS06",
+      "CQ01",
+      "CQ02",
+      "CQ03",
+      "CQ06",
+      "CQ07",
+      "CQ09",
+      "CQ10",
+      "CQ11",
+      "CQ12",
+      "TA01",
+      "TA03",
+      "TA04",
+      "TA06",
+      "TA07",
+      "PE05",
+      "PE08",
+      "MT01",
+      "EV01"
+    ],
+    "replaces_core": true
+  }
+}

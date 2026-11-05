@@ -69,6 +69,14 @@ Dùng danh sách trắng: pseudo nằm ngoài nhóm "Giữ" thì bỏ.
 - `verify_init.mjs` phủ giới hạn này. Script tải HTML một lần, nạp trang hai lượt bằng đúng HTML đó: lượt đầu trả CSS gộp, lượt sau trả CSS gọn (qua request interception, không ghi server). Mỗi lượt có chuột, Shift, chạm (mobile), cuộn hết trang. Script so chiều cao trang và chiều cao từng widget trong `init_widgets`. Lệch quá `INIT_TOL` px (mặc định 2) là LỆCH.
 - Site agency mẫu 27/10/2026: 17/95 path trong map có carousel (Owl, slick, Swiper, Elementor). Chạy `verify_init.mjs` cho mọi path có widget, không chỉ path đang nghi.
 
+### Dữ liệu và ngẫu nhiên trong bộ kiểm
+
+- Đọc log request bị chặn trước khi nhận kết quả. Carousel lấy dữ liệu bằng GET JSON phải có dữ liệu trong cả hai nhánh. Cho phép đúng asset công khai hoặc dùng cùng snapshot; không mở mọi request.
+- Khai báo selector widget thật trong `init_widgets`. Kiểm số item lớn hơn 0 khi trang phải có item. Hai mảng widget rỗng bằng nhau không chứng minh carousel đạt.
+- Nếu A/A (CSS gốc so với chính nó) cũng lệch, truy nguyên yếu tố không cố định trước. Không nới `INIT_TOL` để bỏ qua.
+- Nếu code dùng `Math.random()` đổi vị trí field, có thể cố định cùng PRNG seed trước khi khởi tạo hai nhánh thử. Giữ thay đổi trong fixture, ghi cách làm và kiểm thứ tự field; không sửa sản phẩm.
+- Ca thực tế 05/11/2026: bộ kiểm chặn JSON danh sách logo; WPForms chọn ngẫu nhiên vị trí honeypot làm chiều cao form lệch 18 px cả A/A. Bằng chứng này giải thích lỗi bộ thử, chưa thay thế lượt A/B đạt với dữ liệu và điều kiện đã cố định.
+
 ## 6. Jev cho lệch còn lại
 
 - `jev_ucss.py prep <outDir>` so pixel 2 ảnh, ghép ảnh cạnh nhau có vạch phân cách, ghi `items.jsonl`. `read` đọc `visible_change.p_yes` và `change_kind`.

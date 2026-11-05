@@ -1,0 +1,26 @@
+{
+  "name": "eeat-ai-spam",
+  "version": "2026-11-02.1",
+  "questions": {
+    "scaled_template": {
+      "type": "noul",
+      "instructions": "state.text is the main content of one public web page (title and H1 first), written in state.lang (vi = Vietnamese, en = English), possibly cut at the end. state.site is the website name. Judge only this text. Does this page look like one of many pages filled from the same template, where mainly a keyword, product name or place name changes and little information is specific to this page? Answer no when the page has substantial specific details (local addresses, prices, schedules, own data, unique examples)."
+    },
+    "doorway_variant": {
+      "type": "noul",
+      "instructions": "state.text is the main content of one public web page (title and H1 first), written in state.lang (vi = Vietnamese, en = English), possibly cut at the end. state.site is the website name. Judge only this text. Does this page target a city, district or keyword variant while offering nothing a reader in that place could not get from a general page, for example no local address, local prices, local team, local examples or local conditions?"
+    },
+    "rewritten_summary": {
+      "type": "noul",
+      "instructions": "state.text is the main content of one public web page (title and H1 first), written in state.lang (vi = Vietnamese, en = English), possibly cut at the end. state.site is the website name. Judge only this text. Does the page mostly summarize, translate or reword information that is widely available elsewhere, without adding own analysis, examples, data or experience?"
+    },
+    "language_errors": {
+      "type": "noul",
+      "instructions": "state.text is the main content of one public web page (title and H1 first), written in state.lang (vi = Vietnamese, en = English), possibly cut at the end. state.site is the website name. Judge only this text. Does the text contain noticeable language problems: spelling mistakes, broken or machine-translated sentences, wrong words, repeated sentences or unfinished sentences? Answer no for minor style choices."
+    },
+    "generic_ai_text": {
+      "type": "noul",
+      "instructions": "state.text is the main content of one public web page (title and H1 first), written in state.lang (vi = Vietnamese, en = English), possibly cut at the end. state.site is the website name. Judge only this text. Does the text read like unedited generic AI output: vague statements that fit any topic, repeated summary paragraphs, empty transitions ('In today's digital age', 'In conclusion, X plays an important role'), and no concrete detail tied to this publisher?"
+    }
+  }
+}

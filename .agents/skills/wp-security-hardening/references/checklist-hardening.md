@@ -19,6 +19,7 @@ Ghi stack và đường dẫn thật của site vào `00-client-context/wp-serve
 | Mục | Cách làm | Kiểm | Duyệt |
 |---|---|---|---|
 | Chặn PHP trong uploads, languages, upgrade | `RewriteRule ^wp-content/(uploads\|languages\|upgrade\|upgrade-temp-backup)/.*\.(php[0-9]?\|phtml\|phar\|pht)(/.*)?$ - [F,L,NC]`. Cửa hậu đã gặp trong `languages` (10/2026). File dịch `.l10n.php` vẫn nạp qua filesystem | Path `.php`, `.PHP`, `.php/a` ở 3 thư mục trả 403. 404 hoặc 410 nghĩa là rule chưa có: theme đang trả lời | Không |
+| Chặn PHP chỉ dành cho include | Theo `php-entrypoints.md`; kiểm ngoại lệ TinyMCE, multisite và endpoint plugin trước khi chọn rule | 403 ở origin và edge; editor, Ajax, REST, CSS/JS giữ hành vi | Restart theo stack và phạm vi đã duyệt |
 | Chặn XML-RPC | `RewriteRule ^xmlrpc\.php$ - [F]` | GET, POST `system.listMethods` trả 403 | Không, sau khi grep plugin dùng XML-RPC (Jetpack, app di động) |
 | Chặn file nhạy cảm | `^wp-config`, `\.(bak\|old\|orig\|sql\|tar\|tgz\|gz\|7z\|swp\|log)$`, `^\.user\.ini$`, `readme\.html`, `license\.txt` → 403 | `exposure_check.sh` | Không |
 | Chặn log plugin | `^wp-content/uploads/(wc-logs\|woocommerce_uploads)/` → 403 | Tải file Woo vẫn chạy (Woo dùng PHP đọc file) | Không |
@@ -38,7 +39,7 @@ Ghi stack và đường dẫn thật của site vào `00-client-context/wp-serve
 |---|---|---|
 | Chặn sửa file trong admin | `define('DISALLOW_FILE_EDIT', true);` | Menu Theme File Editor biến mất |
 | Quyền file | `chmod 640`, owner là user chạy PHP | `stat -c '%a %U'` |
-| Salt | 8 khoá + `WP_CACHE_KEY_SALT`, mỗi site riêng | So với backup: khác hết. Huỷ session admin |
+| Auth salt và namespace cache | 8 khoá xác thực tách biệt với `WP_CACHE_KEY_SALT`. Xác minh drop-in có đọc namespace này trước khi đổi | Auth salt đổi sẽ huỷ session; namespace cache chỉ đổi theo mục tiêu cách ly/invalidation có bằng chứng. Không in giá trị |
 | `WP_DEBUG` | Tắt trên production, không define 2 lần | Không có notice trong log mỗi request |
 | `disable_functions` | `exec, system, passthru, shell_exec, proc_open, popen` | `php -i` của bản PHP chạy site |
 | `open_basedir` | Webroot + `/tmp` cho từng vhost | Như trên |

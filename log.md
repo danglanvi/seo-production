@@ -554,3 +554,32 @@ Luật ghi:
 - Đầu mũi tên cỡ cố định, góc bo, đường cạnh bên cho vòng cùng cột, tên làn tự dời, khe cột giãn cho nhãn, nhãn né hộp, bản điện thoại chọn rãnh. Test 6/6.
 - Files touched: skills/anh-trong-bai/{SKILL.md,scripts/svg_dung.py,references/so-do-spec.md,tests/test_media_bai.py}, mirror, MIGRATION.md
 
+
+## [2026-11-02] refactor | v2026.11.1 — checklist E-E-A-T Aleyda vào QC — @claude
+- Người duyệt duyệt 02/11: Phase 4 của semantic-content-audit chấm theo trạng thái, gate AI + spam ở content-quality-lab, mode core update ở content-refresh, luật CANNOT-VERIFY/n/a ở §7.
+- semantic-content-audit 2.4, content-quality-lab 1.3.0, content-refresh 1.4. Chi tiết ở MIGRATION.md.
+- Chưa port sang instance và fork Content: làm cùng đợt port fork kế tiếp.
+- Skill mới eeat-site-qc 1.0.0 (rubric Jev chưa hiệu chuẩn; hiệu chuẩn + pilot ở đợt sau).
+- Files touched: CLAUDE.md, skills/{eeat-site-qc,semantic-content-audit,content-quality-lab,content-refresh}/, .claude/skills/, .agents/skills/, MIGRATION.md, log.md
+
+## [2026-11-05] refactor | Kiểm chứng footprint và triển khai web — @codex
+
+- Rút bài học review độc lập site agency mẫu: parser JS, CSS minifier/hash, DB/object cache, privacy cấu hình, HTML/ARIA runtime, field/lab theo phạm vi.
+- Files touched: `skills/{wp-code-footprint,wp-staging-deploy,wp-host-optimize,wp-ucss,semantic-html-optimization,wp-pagespeed,web-qa-gate}/`; `MIGRATION.md`; runtime mirrors sinh từ canonical. Thêm fixture parser và cổng incomplete; không đổi cấu hình website/job của instance.
+
+## [2026-11-05] fix | Tích hợp review hosting và bộ kiểm — @codex
+
+- Kế thừa health lọc domain của reviewer; thêm cửa sổ log/fail closed và 6 test. Sửa parser tên A/B có dấu gạch nối; 52 test PSI đạt.
+- Bổ sung raw-byte CAS, backup riêng tư, WP-CLI web user, helper riêng site và rollback. `wp-security-hardening` 1.10 thêm direct PHP, ngoại lệ endpoint và preflight restart dùng chung. Không áp rule server từ bản cập nhật skill.
+- Files touched: 8 skill trong mục v2026.11.3 của `MIGRATION.md`; sync runtime theo canonical.
+
+## [2026-11-05] fix | Inventory UCSS inline — @codex
+
+- Phép kiểm live bắt parser chỉ nhìn link CSS, bỏ sót marker inline. `wp-ucss/scripts/inventory.py` dùng HTMLParser, nhận đúng marker/hash, không lấy URL trong comment/script; byte theo UTF-8.
+- 7 test hồi quy đạt, gồm link swap giữ URL gốc trong onerror. Skill yêu cầu đủ ma trận và phân loại hàng bị map_diff bỏ qua; không suy 0 mất từ inventory thiếu.
+- Reference bổ sung kiểm JSON carousel, số item và đối chứng A/A khi form dùng ngẫu nhiên. Cố định điều kiện chỉ ở fixture; không nới ngưỡng hoặc sửa sản phẩm.
+
+## [2026-11-05] fix | Review chéo đợt v2026.11.3 trước khi push — @claude
+- `wp-ucss/scripts/inventory.py`: nhận marker `data-ucss` của template và biến thể có tiền tố site; test đổi sang tên trung lập, `run.sh` đạt cả cổng tên site gốc.
+- `wp-code-footprint`: `js_comments.mjs` tự tìm Acorn ở `~/.cache/wp-code-footprint`, thêm lệnh cài; bỏ tên file riêng của site mẫu. 17/17 test đạt không cần `ACORN_PATH`.
+- Files touched: skills/{wp-ucss,wp-code-footprint}/, mirror, MIGRATION.md, log.md

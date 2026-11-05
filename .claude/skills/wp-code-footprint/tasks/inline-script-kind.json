@@ -1,0 +1,23 @@
+{
+  "name": "inline-script-kind",
+  "version": "2026-11-05.1",
+  "questions": {
+    "kind": {
+      "type": "choice",
+      "instructions": "state.code_head is the beginning (up to 1800 characters) of one inline <script> block printed inside the HTML of page state.page of a WordPress company website. state.script_id is the id attribute of the block and state.bytes is its full size. Decide what the script mainly does.",
+      "criteria": {
+        "dom_patch_after_load": "After the page loads, the script repairs or rewrites markup produced by the theme or plugins: it adds or changes aria attributes, roles, labels, tabindex, wraps or moves elements, or watches the DOM with MutationObserver to re-apply fixes.",
+        "fallback_for_deferred_js": "The script re-implements or stubs behaviour of another script because that script is deferred, lazy-loaded or loads on first interaction, so that the first click still works.",
+        "feature": "The script provides its own user-facing feature: a slider or carousel init, a language suggestion box, a scroll-to button, a table of contents, a reading progress bar, a form helper, a lightbox.",
+        "config_or_data": "The script only holds data or configuration for another script: a JSON object, wp localize variables, JSON-LD structured data, a settings map.",
+        "third_party_tag": "An analytics, pixel, tag manager, chat widget or ads snippet from a third party.",
+        "vendor_library": "Minified library or framework code such as jQuery, Slick, Owl, Elementor runtime.",
+        "unknown": "The code head does not show enough to decide."
+      }
+    },
+    "belongs_in_file": {
+      "type": "noul",
+      "instructions": "state.code_head is the beginning of an inline <script> block of state.bytes bytes that is printed into the HTML of every page it applies to. Would an experienced WordPress developer ship this code as a separate enqueued .js file (cacheable, minified, versioned) instead of inline HTML? Answer yes when the block is larger than a few hundred bytes of real logic, is not a tiny config object, and is not a third-party tag that must stay inline."
+    }
+  }
+}

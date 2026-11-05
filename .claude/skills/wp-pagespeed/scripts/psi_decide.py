@@ -76,7 +76,7 @@ try:
         if not os.path.isdir(a.psi_dir):
             die('không thấy thư mục ' + a.psi_dir)
         for f in sorted(glob.glob(os.path.join(a.psi_dir, '*.json'))):
-            p = L.parse_ab_name(os.path.basename(f))
+            p = L.parse_ab_name(os.path.basename(f), spec.get('variants') or (a.a, a.b), spec.get('pages'))
             if not p or p['dev'] != a.dev or p['var'] not in (a.a, a.b):
                 continue
             r = L.load_run(f)

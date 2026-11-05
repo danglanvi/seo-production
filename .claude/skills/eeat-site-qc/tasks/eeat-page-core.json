@@ -1,0 +1,55 @@
+{
+  "name": "eeat-page-core",
+  "version": "2026-11-02.1",
+  "questions": {
+    "page_type": {
+      "type": "choice",
+      "instructions": "state.text is the main content of one public web page (title and H1 first), written in state.lang (vi = Vietnamese, en = English), possibly cut at the end. state.site is the website name. Judge only this text. What kind of page is this?",
+      "criteria": {
+        "article": "An informational article, guide, explainer or how-to.",
+        "review": "A review, comparison, 'best X' or ranked list that helps readers choose products, services or providers.",
+        "service": "A page that sells or describes the publisher's own service or course.",
+        "product": "A product page or a product category or listing page of a shop.",
+        "local": "A page for one city, district or branch location.",
+        "news": "News or an announcement about a recent event.",
+        "company": "About, contact, team, policy, careers or case study page about the publisher.",
+        "tool": "An online tool, calculator, template or download.",
+        "other": "None of the above.",
+        "unknown": "The text does not show enough to decide."
+      }
+    },
+    "ymyl_topic": {
+      "type": "choice",
+      "instructions": "state.text is the main content of one public web page (title and H1 first), written in state.lang (vi = Vietnamese, en = English), possibly cut at the end. state.site is the website name. Judge only this text. Could wrong or misleading information on this page seriously hurt a reader's health, money, safety, legal situation or civic rights? Choose the main area at risk.",
+      "criteria": {
+        "health": "Medical, health, medicine, nutrition or mental health advice or information.",
+        "finance": "Money decisions: investing, loans, insurance, taxes, large purchases, financial products.",
+        "legal": "Legal rights, contracts, lawsuits, immigration or regulations a reader must follow.",
+        "safety": "Physical safety, dangerous activities, emergencies, construction or electrical work.",
+        "civic": "Elections, government services, public policy information.",
+        "none": "Errors would not seriously hurt the reader (for example marketing, SEO, software tips, entertainment).",
+        "unknown": "The text does not show enough to decide."
+      }
+    },
+    "search_first": {
+      "type": "noul",
+      "instructions": "state.text is the main content of one public web page (title and H1 first), written in state.lang (vi = Vietnamese, en = English), possibly cut at the end. state.site is the website name. Judge only this text. Does the page look made mainly to attract search visits rather than to help a defined reader? Signs: it repeats a keyword phrase unnaturally, defines basic terms without a clear reader task, covers a trending topic unrelated to what the site offers, or stacks loosely related sections to reach a length. Answer no when the page serves a clear reader task, even if it is also optimized for search."
+    },
+    "promise_gap": {
+      "type": "noul",
+      "instructions": "state.text is the main content of one public web page (title and H1 first), written in state.lang (vi = Vietnamese, en = English), possibly cut at the end. state.site is the website name. Judge only this text. Does the main content fail to deliver what the title or H1 promises? Answer yes when the title promises something specific (a number of tips, a price, a step-by-step method, a comparison, a direct answer) and the content does not provide it, or provides only a vague version. Answer no when the promise is delivered."
+    },
+    "search_again": {
+      "type": "noul",
+      "instructions": "state.text is the main content of one public web page (title and H1 first), written in state.lang (vi = Vietnamese, en = English), possibly cut at the end. state.site is the website name. Judge only this text. After reading this page, would a typical reader with the task implied by the title still need to search elsewhere to complete that task? Answer yes when key steps, numbers, conditions or the actual answer are missing or only hinted at. Answer no when the page covers what the task needs."
+    },
+    "title_exaggeration": {
+      "type": "noul",
+      "instructions": "state.text is the main content of one public web page (title and H1 first), written in state.lang (vi = Vietnamese, en = English), possibly cut at the end. state.site is the website name. Judge only this text. Is the title or H1 exaggerated, sensational or misleading compared with the content? Examples: 'the best', 'guaranteed', 'number 1', 'secret', 'shocking' without support in the text, or a title about a topic the page barely covers. Answer no for a plain descriptive title."
+    },
+    "filler_first": {
+      "type": "noul",
+      "instructions": "state.text is the main content of one public web page (title and H1 first), written in state.lang (vi = Vietnamese, en = English), possibly cut at the end. state.site is the website name. Judge only this text. Must the reader get through a long introduction, background story, generic definitions or repeated phrases before reaching the useful content? Answer yes when roughly the first quarter of the text gives little that helps the task in the title. Answer no when useful content starts early."
+    }
+  }
+}

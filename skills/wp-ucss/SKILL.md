@@ -2,7 +2,7 @@
 name: wp-ucss
 description: "Dựng CSS gọn theo trang cho site WordPress dùng CSS gộp LiteSpeed: render mọi trạng thái giao diện, kiểm computed style, đổi link bằng mu-plugin theo map md5, purge và làm nóng cả CDN, tái tạo hằng ngày. Dùng khi CSS gộp lớn làm chậm FCP, LCP hoặc tốn lượt crawl."
 metadata:
-  version: "1.2.2"
+  version: "1.3.0"
 ---
 
 # wp-ucss — CSS gọn theo trang, kiểm trước khi đổi link
@@ -69,10 +69,13 @@ Thiếu module thì cài theo dòng đầu của `"$WU/scripts/lib-ucss.mjs"`. T
    - `python3 -I "$WU/scripts/chon_url.py" ds.json gsc.json inv.jsonl chon/chon.tsv --cfg chon/chon.json`.
    - Luật: mỗi file gộp lấy URL có click cao nhất nếu đạt ngưỡng; thêm danh sách bắt buộc (trang chủ, trang dịch vụ, bảng giá, liên hệ, lưu trữ blog); thêm mọi bài của chuyên mục ưu tiên; thêm bài core và outer nhiều click; thêm bài nhiều hiển thị ở vị trí tốt.
    - Site mẫu 26/10: 66 URL. Người duyệt chốt: đo trên URL template đại diện và bài có keyword tốt, ưu tiên chuyên mục chiến lược.
-3. **Quét 4 biến thể.** `inventory.py` với `m,d,p,q`: khách mobile và desktop gửi Accept có WebP (`m`, `d`), và gửi `*/*` (`q`, `p`). Googlebot smartphone dùng chung bản cache với `q`. Lập `jobs.txt` (`path biến_thể` mỗi dòng) cho cặp có đúng 1 file gộp. Chạy trong `plock.sh`.
+3. **Quét 4 biến thể.** Inventory nhận cả link CSS gộp và `style#ucss-inline[data-ucss-h]` (site có thể thêm tiền tố: `<site>-ucss-inline`, `data-<site>-h`); link đã swap lấy URL gốc từ phép gán `this.href` trong `onerror` chỉ khi có marker `data-ucss="1"` của `templates/ucss-swap.php` (hoặc `data-<site>-ucss="1"`); cùng hash khử trùng, nhiều hash giữ nguyên để báo chưa xác minh. Không coi danh sách link rỗng là mất CSS khi site đang nhúng UCSS inline. Đối chiếu số hàng với ma trận path × biến thể; phân loại mọi hàng khác 200 hoặc không đúng 1 hash trước khi đọc kết quả `map_diff.py`. Script map diff bỏ qua các hàng này, nên riêng số 0 mất chưa đủ PASS.
+
+   `inventory.py` với `m,d,p,q`: khách mobile và desktop gửi Accept có WebP (`m`, `d`), và gửi `*/*` (`q`, `p`). Googlebot smartphone dùng chung bản cache với `q`. Lập `jobs.txt` (`path biến_thể` mỗi dòng) cho cặp có đúng 1 file gộp. Chạy trong `plock.sh`.
 4. **Sinh và dựng.** `node "$WU/scripts/gen.mjs" --site site.json jobs.txt out 4`, rồi `node "$WU/scripts/build.mjs" --site site.json out`. Đọc dòng tóm tắt của build: số rule giữ, byte brotli, `parseFail`, `nestRules`, `scope` (`thuat-toan.md` §2).
 5. **Kiểm.** `node "$WU/scripts/verify.mjs" --site site.json jobs.txt out 4`. Mỗi cặp một file `out/verify/<v>_<slug>.json`. Lệch còn lại sau lượt xác nhận: đọc ảnh vùng lệch trong `out/shots/`, debug bằng `dbg_el.mjs`, sửa safelist, dựng và kiểm lại cặp đó. Có Jev thì xếp thứ tự bằng `jev_ucss.py prep` và `read` (`thuat-toan.md` §5–6).
    - Path có carousel hoặc slider (Owl, slick, Swiper, carousel Elementor) phải qua thêm `verify_init.mjs`. Script khởi tạo trang dưới CSS gộp và dưới CSS gọn từ đầu, cùng HTML, rồi so chiều cao trang và chiều cao widget. `verify.mjs` không bắt lỗi này, vì JS đã khởi tạo dưới CSS gộp (`thuat-toan.md` §5).
+   - Kiểm widget có dữ liệu thật. Request JSON bị chặn hoặc nguồn ngẫu nhiên làm A/A lệch phải được xử lý trong fixture trước khi chốt A/B; xem `thuat-toan.md` §5.
 
      ```bash
      bash "$WU/scripts/plock.sh" 60 900 node "$WU/scripts/verify_init.mjs" --site site.json jobs_widget.txt out/reduced out/init
@@ -98,8 +101,9 @@ Thiếu module thì cài theo dòng đầu của `"$WU/scripts/lib-ucss.mjs"`. T
     - `regen.sh` gọi `map_diff.py`: so map trên site với map mới, dừng trước khi giao nếu map mới mất quá `MAX_LOST` path (mặc định 3), rồi ghi `purge_paths.txt` và `purge-groups.txt` (12 path mỗi nhóm).
     - `map_diff.py --inv <inv.jsonl>` đếm thêm theo cặp (path, biến thể) và file gộp trang đang phục vụ. Script dừng khi map mới mất CSS gọn ở quá `MAX_LOST_PAIRS` cặp (mặc định 0) mà path vẫn còn trong map. Cặp mất dưới ngưỡng, cặp chưa có CSS gọn ở cả hai map và map bỏ khoá `all` đều in dòng CẢNH BÁO.
     - `regen.sh` đặt `MAX_LOST_PAIRS` mặc định 100000, nên job đêm chỉ cảnh báo cặp mất và ghi `map_diff.txt`. Lý do: cổng này chưa có ca dừng thật, và dừng nhầm lúc đêm làm map không cập nhật. Đọc `map_diff.txt` sáng hôm sau.
-    - Giao map tay ngoài `regen.sh`: chạy `map_diff.py --inv` với inventory live vừa quét. Chỉ giao khi 0 cặp mất và 0 dòng CẢNH BÁO chưa có CSS gọn.
-    - Nếu một việc khác purge path có CSS gọn, chạy job tái tạo sau đợt purge đó: bản `p`, `q`, `g` có thể dựng lại bằng file gộp khác mà map chưa có (site mẫu 27/10/2026).
+    - Giao map tay ngoài `regen.sh`: chạy `map_diff.py --inv` với inventory live vừa quét, yêu cầu 0 cặp mất mới. Tách cặp đã không được phủ trước đợt khỏi hồi quy mới; ghi backlog cho coverage cũ, không nhận ngưỡng nới của job đêm làm gate giao tay.
+    - Sau purge, so hash CSS gộp/map ở đủ `m,d,p,q` (và `g` khi dùng). Chạy tái tạo nếu hash/coverage đổi; comment-only qua minifier cho byte giống nhau và map không đổi thì không bắt buộc regen. Đọc `wp-staging-deploy/references/bang-chung-sau-ghi.md`.
+    - `DRY=1` không mặc nhiên chỉ đọc: job có thể ghi inventory/out/map local. Thử trên bản sao thư mục output và so hash trước/sau trước khi gọi nó là preflight không thay đổi. Không chạy DRY vào output đang dùng để rollback.
 11. **Critical CSS (tuỳ chọn).** Dựng từ CSS gọn, kiểm khoảng hở bằng `node "$WU/scripts/ccss_gap.mjs" --site site.json <file.html> <m|d>` (mã 0 khi 0 phần tử lệch), rồi A/B (`giao-cdn-tai-tao.md` §6). Site mẫu đã có CSS gọn và điểm mobile 95–99: critical inline làm TBT tăng ở 5/6 trang. Chỉ giao khi A/B không có nhãn "xấu hơn" ở cả hai thiết bị.
 
 ### Tự phản biện trước khi trình
@@ -153,6 +157,7 @@ Bản tốt nhất phải có:
 
 ## Changelog
 
+- v1.3.0 (2026-11-05): gate 0 cặp mất mới cho giao tay, tách coverage cũ; kiểm 4 biến thể và đầu ra minifier trước khi regen, nhận diện side effect local của DRY. Không đổi ngưỡng job đêm hay script đang vận hành. Inventory dùng HTMLParser để nhận marker UCSS inline, không lấy URL trong comment/script làm bằng chứng; 7 test hồi quy đạt, gồm link đã swap giữ URL gốc trong onerror. Marker nhận `data-ucss` của `templates/ucss-swap.php` và biến thể có tiền tố site; bản đầu chỉ nhận tên riêng của site mẫu nên bỏ sót link swap của site dùng template (review chéo cùng ngày, 9 test).
 - v1.2.2 (2026-10-31): Anti-patterns thêm bẫy sinh lại CSS gọn khi khối có thể quay lại đang ẩn. Đã kiểm trên production site bán lẻ mẫu 31/10: trang chủ sau đợt gọn DOM vẫn nạp CSS gọn cũ có đủ rule của khối ẩn. Không đổi script.
 - v1.2.1 (2026-10-28): Anti-patterns thêm bẫy CSS chèn ở `wp_head` bị gộp vào file gộp, làm map và khoá `all` mất hiệu lực. Đã xảy ra và đã sửa trên production site agency mẫu 28/10: lane regen dựng holdout mới, giao map lúc 05:38, kiểm độc lập đạt (105/105 bản bài holdout tải CSS gọn). Không đổi script.
 - v1.2.0 (2026-10-27): nguồn người duyệt 27/10 22:24 "nâng cấp skills speed … khi có trải nghiệm và chạy thực tế rồi", đề xuất và phản biện của đợt rà speed 27/10. Đã thử trên production site agency mẫu 27/10/2026: safelist `^owl-…` (giao 18:14, kiểm live 20/20 lượt, 8/8 carousel trùng bản gộp); `verify_init.mjs` port từ script A/B khởi tạo của lane (16/16 cặp khớp sau sửa), test fixture Owl trên Chrome; khoá `all` trong `make_map.py` và mu-plugin mẫu (ma trận staging, giao 17:52, holdout 48/48, 230/231 bài), bỏ qua bài có iframe YouTube tải ngay (giao 18:20, PSI 3 lượt), test 7 ca make_map và 6 ca mu-plugin; thứ tự giao chép file trước khi ghi map (lỗi 2 phút 18:14); A/B critical CSS 96 lượt; QUIC.cloud UCSS (0/274 HTML sau 05:19). `map_diff.py --inv` port cổng theo cặp đã chạy làm cổng giao 2 lần, 0 cặp mất; chưa có ca dừng thật, test bằng dữ liệu giả lập, nên `regen.sh` chỉ cảnh báo cặp mất (`MAX_LOST_PAIRS` mặc định 100000), giao tay vẫn chặn. Khoá `css_src_lockdir` thay tên khoá riêng của workstream. Bài chưa thử ghi ở `chua-thu.md` của đợt.

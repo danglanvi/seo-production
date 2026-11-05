@@ -15,6 +15,18 @@ Ghi cấp của từng việc vào plan. Không hứa "staging trước" cho vi�
 - Việc cấp server ảnh hưởng mọi site trên máy. Kiểm các site khác sau khi áp.
 - Restart web server chỉ trong giờ thấp điểm hoặc khi người duyệt cho phép trong đợt đó.
 
+### Trước restart trên server dùng chung
+
+- Xác minh stack staging và production từ process/config; header hoặc ghi chú cũ chưa đủ.
+- Liệt kê vhost bị ảnh hưởng, lock đang giữ và phép đo đang chạy. Chờ hết ghi nguồn/purge/benchmark trước restart.
+- Chụp hash cấu hình và `.htaccess` có mtime sau lúc process khởi động. Mtime chỉ chọn ứng viên; đọc diff/nội dung để xét ảnh hưởng.
+- Config pending ngoài scope có thể được nạp cùng lần restart. Dừng nếu còn file/hash chưa review; không tự hoàn nguyên thay đổi của người khác.
+- Đọc kết quả kiểm cú pháp theo đúng version. OLS 1.9.4 có thể trả 1 khi chỉ có WARN; kiểm cả log, không bỏ qua ERROR hoặc mặc định coi mọi exit 1 là đạt.
+- Ghi số lần graceful restart và lần rollback dự phòng trong phạm vi xin duyệt. Nếu phải staging OLS trước, nạp staging và kiểm rồi mới ghi/nạp production.
+- Kiểm HTTP và log từng vhost sau restart. Cache nguội có thể làm lệch PSI; làm nóng rồi mới đo.
+
+Nguồn: [OLS rewrite](https://docs.openlitespeed.org/config/rewriterules/), [source kiểm cấu hình v1.9.4](https://github.com/litespeedtech/openlitespeed/blob/v1.9.4/src/main/lshttpdmain.cpp). Kiểm lại hành vi khi version khác.
+
 ## 2. Áp khối `.htaccess` hoặc vhost bằng script
 
 Dùng `skills/wp-security-hardening/scripts/apply_server_block.sh` cho mọi khối `.htaccess` và vhost. Script làm các việc sau:

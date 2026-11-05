@@ -2,7 +2,7 @@
 name: semantic-html-optimization
 description: "Semantic HTML cho SEO và AI: dựng template trang dịch vụ, landing; audit cấu trúc HTML theo mẫu template; sửa trên site WordPress đang chạy (main, article, aside, time, heading giả, b/i). Dùng khi tạo template, audit HTML hoặc sửa semantic HTML hàng loạt."
 metadata:
-  version: "1.3"
+  version: "1.4"
 ---
 
 # Semantic HTML Optimization
@@ -113,11 +113,9 @@ Semantic HTML giống như cấu trúc một tờ tạp chí:
 - Process section (groups steps)
 - Testimonials section
 
-**Rule 6: Use `<strong>/<em>` not `<b>/<i>`**
-```html
-✅ <p>Công ty có <strong>10+ năm</strong> kinh nghiệm</p>
-❌ <p>Công ty có <b>10+ năm</b> kinh nghiệm</p>
-```
+**Rule 6: Chọn thẻ theo nghĩa, không thay hàng loạt `<b>/<i>`**
+
+`<strong>` chỉ mức quan trọng, `<em>` nhấn ngữ điệu; `<b>` thu hút chú ý mà không tăng mức quan trọng, `<i>` dùng cho giọng/thuật ngữ khác. Chỉ để trang trí thì dùng CSS. Đây đều là thẻ hợp lệ; quyết định từ nội dung. Đọc `references/html-aria-runtime.md` trước khi sửa HTML, ID, tabs, accordion hoặc nhãn nút trên site sống.
 
 ## Quick Reference
 
@@ -300,38 +298,17 @@ Patent US12393768B2 (LAMPRET, granted 08/2025) cho các rule cấu trúc một c
 
 ---
 
-## Tabs vs Accordion vs Nội dung ẩn (Mobile-first) — 09/07/2026 (rev 2)
+## Tabs, accordion và nội dung ẩn — cập nhật 05/11/2026
 
-Fact-check myth "Google đọc accordion nhưng không đọc tab" / "`display:none` bị bỏ qua" (phát sinh khi review site khách mẫu và audit 2 trang sản phẩm thương mại điện tử, 07/2026). **Tách 2 TRỤC độc lập — gộp chúng là gốc rễ mọi hiểu nhầm:**
+Tách khả năng crawler truy cập nội dung khỏi mức nổi bật với người đọc. Google cho phép tổ chức cùng nội dung mobile bằng tabs/accordion; Google không tương tác để tải nội dung chỉ xuất hiện sau click. Có sẵn trong HTML/rendered DOM không bảo đảm được index, thứ hạng hoặc “full weight”. Kiểm bằng HTML nguồn và rendered HTML trong URL Inspection. [Google mobile-first guidance](https://developers.google.com/search/docs/crawling-indexing/mobile/mobile-sites-mobile-first-indexing).
 
-**TRỤC 1 — Có được INDEX không?** → quyết định bởi *nội dung có nằm trong DOM đã render không*, KHÔNG bởi tab-hay-accordion.
-- Nằm sẵn trong HTML/DOM (kể cả `display:none`) → **index đủ, full weight**. Nguồn: Illyes 2016 *"content hidden for UX should have full weight"*; Google MFI Best Practices *khuyến nghị* "moving content into accordions or tabs to save space"; Google nhiều lần: `display:none` trong tab/accordion **không bị phạt** ở mobile-first; Mueller đính chính "myth of hidden tab content" (SEJ).
-- Click-mới-nạp-bằng-JS (XHR/inject on click) → **KHÔNG index**. Đây mới là lỗi thật, dính cả tab lẫn accordion (Fresh Egg/Google: content revealed by JS không được index). Test: fetch HTML đầu (View Source/curl) + rendered HTML trong URL Inspection — content có mặt chưa.
-- ⟹ `display:none` KHÔNG phải thủ phạm; thủ phạm là **JS-reveal-on-click**.
+| Cách dựng | Khả năng truy cập nội dung | Lựa chọn biên tập |
+|---|---|---|
+| Nội dung luôn hiện + anchor navigation | Có sẵn khi render | Ưu tiên cho thông tin quyết định và lời giải thích chính |
+| Tab/accordion có sẵn nội dung trong DOM | Có thể được xử lý dù đang thu gọn | Dùng để tiết kiệm không gian, giữ parity mobile/desktop |
+| Nội dung chỉ được tải sau tương tác | Google không thực hiện tương tác để tải | Đưa nội dung chính vào HTML hoặc render không phụ thuộc click |
 
-**TRỤC 2 — Có thể là CENTERPIECE không (visual prominence)?** → quyết định bởi *có hiển thị mặc định (được vẽ ra) không*.
-- Ẩn mặc định — dù tab `display:none` HAY accordion `height:0`/collapse — đều **visual weight thấp, không thể là Centerpiece** (mô hình layout-aware đọc theo viewport render). Cơ chế CSS không đổi điều này → 2 dạng **tương đương** trên trục prominence.
-
-**Bảng quyết định:**
-
-| Kiểu dựng | Index? | Centerpiece-able? | Heading thật? | Mobile UX |
-|---|---|---|---|---|
-| `<section>` luôn hiển thị + nav = anchor jump-link | ✅ | ✅ | ✅ | ✅ **tốt nhất** |
-| Tab/Accordion, content **nằm sẵn DOM** (display:none / collapse) | ✅ full weight | ❌ (ẩn mặc định) | tùy code | 🟡 tab khó dùng mobile |
-| Tab/Accordion **JS nạp khi click** | ❌ | ❌ | — | — **tránh** |
-
-**Thứ tự ưu tiên khi build:**
-1. 🥇 Content quan trọng (spec/E-A-V, FAQ, answer chunk, thông tin định nghĩa "trang nói về gì") → **luôn in-flow**, mỗi cụm `<section>` + `<h2>/<h3>` thật, nav = anchor jump-link → thắng cả 2 trục.
-2. 🥈 Bắt buộc gom gọn (mobile) → accordion/tab với content **sẵn trong DOM** (index đủ) — nhưng đừng nhét thông tin quyết định vào đây (không là Centerpiece).
-3. ❌ Tránh: tab/accordion nạp content bằng JS khi click.
-
-**Heading thật, không `<strong>`:** tab-nav/accordion-header hay bị code thành `<strong>`/`<div>` → mất tầng heading. Mỗi tab/panel = `<section>` có `<h2>/<h3>` thật; tab-nav chỉ là anchor jump-link.
-
-**Kỹ thuật:** `<details>/<summary>` = accordion mà content vẫn trong DOM (index đủ); `hidden="until-found"` (Chromium) cho find-in-page/scroll-to-text tự mở nội dung ẩn. (Nguồn gốc myth: thời desktop-first trước 2018 nội dung ẩn bị discounted — hết hiệu lực từ khi mobile-first.)
-
-**⚠️ Đính chính myth (đừng lặp):** "`display:none` bị Google deweight/bỏ qua" = **SAI** — display:none nằm trong DOM vẫn full-weight. Đừng nhầm `display:none` (OK cho index) với **JS-reveal-on-click** (cái thật sự không index).
-
-**Ứng dụng:** mobile parity — SEO text/FAQ/taxonomy THU GỌN bằng accordion thay vì cắt bỏ; centerpiece + attribute quyết định (giá, lương, CTA info) phải visible mặc định.
+Nội dung ẩn ít nổi bật với người đọc ở màn hình ban đầu; đây không phải bằng chứng về trọng số của Google/LLM. Dùng heading thật theo cấu trúc nội dung. Tabs đúng nghĩa dùng pattern `tablist/tab/tabpanel`; anchor jump-link là một lựa chọn điều hướng khác, không thay thế tự động mọi tab. Accordion có thể dùng `details/summary` hoặc pattern nút điều khiển panel. Kiểm role, state và keyboard theo `references/html-aria-runtime.md`.
 
 ---
 
@@ -363,6 +340,7 @@ Verified qua crawl HTML thô 9 URL (mobile UA) + đối chiếu ranking Ahrefs:
 
 ## Changelog
 
+- v1.4 (2026-11-05): sửa quy tắc thay `<b>/<i>` hàng loạt; thêm kiểm raw HTML/DOM/runtime, ID/ARIA/keyboard và dependency; giới hạn claim index/full weight của nội dung thu gọn theo nguồn Google.
 - **v1.3 (2026-10-30):** nhánh WooCommerce và theme riêng: `references/ap-site-woocommerce.md` (phạm vi đủ template, số đo, 24 mẫu sửa, 12 bẫy, việc giao team, báo cáo có ảnh vị trí). Script mới: `scripts/deep_audit.py` (hơn 60 chỉ số landmark, heading, form, nút, bảng, ngày, breadcrumb; chạy bằng `-B` vì bs4 ở user site-packages) kèm `tests/test_deep_audit.py` 3 ca; `scripts/html_validate.sh` + `htmlvalidate-config.json` + `hv_strip.py` (ghi JSON ra file tạm vì Node cắt stdout qua pipe). Nhánh WordPress bước 1 thêm audit sâu và phạm vi. Tự phản biện thêm 1 mục. Nguồn: site bán lẻ mẫu 29–30/10/2026, 94 việc qua 8 lane, html-validate toàn site 13.761 → 5.912, 0 Fatal mới, 0 mã 5xx.
 - **v1.2 (2026-10-27):** nhánh site WordPress đang chạy. `references/ap-site-wordpress.md`; `scripts/semantic_audit.py` (audit theo mẫu template, test 3 ca), `scripts/scan_heading_gia.php` (quét heading giả sau `wpautop`); Phân việc model với Jev `semantic-role`; Tự phản biện 5 mục. Description viết lại tiếng Việt. Nguồn: đợt semantic HTML site agency mẫu 27/10/2026 (95 URL audit, 17 file theme, 436 op trên 109 bài, verify lệch 0). Phần đề xuất `section`/`article` cho trang core và đổi `b`/`i` ở template chưa xong lúc ghi bản này.
 - **v1.1 (2026-08-29):** gỡ claim không nguồn "90% ChatGPT citations từ well-structured pages" (5 chỗ: SKILL.md ×3, `references/heading-hierarchy.md`, `references/ai-optimization.md`); tách Schema.org/FAQ schema ra khỏi danh sách "LLM ưu tiên cite" thành block **"Rich results / entity — KHÔNG phải citation lever"** trỏ `schema-markup-generator` (causal DiD Ahrefs 1.885 trang 05/2026 ≈ 0; FAQ rich result chấm dứt 07/05/2026); Core Insight viết lại: semantic HTML = retrieval hygiene, citation = kiến trúc passage (AX1-AX6 / GE-16…GE-27); thêm rule heading tổ tiên có nghĩa (`includeAncestorHeadings`). Nguồn: FINDINGS 22/08/2026 §6b + `tier-1-geo.md` v2.0 guardrail 2. Vincent duyệt 29/08.

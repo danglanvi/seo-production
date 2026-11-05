@@ -6,7 +6,7 @@ Quy trình rút từ đợt sửa thật trên site agency mẫu ngày 27/10/202
 
 1. Chọn URL đại diện mỗi template (trang chủ, dịch vụ, bài, chuyên mục, case, trang tĩnh). Site đã có bộ URL của job CSS gọn hay PageSpeed thì dùng lại. Không audit toàn site.
 2. Chạy `python3 -I skills/semantic-html-optimization/scripts/semantic_audit.py --base https://<domain> chon.tsv <thư mục html> audit_truoc.csv`. Chỉ đọc, 1 request/giây.
-3. Tìm gốc lỗi trong template, không sửa từng trang. Grep mã nguồn theme, child theme và mu-plugin trên server: `<b>`, `<i>` có chữ, card không bọc `<article>`, ngày đăng không có `<time datetime>`. Lần đầu có 20 file theme phủ cả site.
+3. Tìm gốc trong template, không sửa từng trang. Grep tạo danh sách ứng viên, không tự coi `<b>`, `<i>` có chữ hoặc card không bọc `<article>` là lỗi. Đọc ngữ cảnh và `html-aria-runtime.md`; dùng validator cho lỗi cú pháp, AX/keyboard cho tương tác. Ngày hiển thị có thể dùng `<time datetime>` khi có nguồn ngày đúng.
 4. Lập bảng: lỗi, số trang, file gốc, cách sửa, ảnh hưởng giao diện. Đưa câu cần quyết lên trang duyệt (skill `decision-page` hoặc trang duyệt của `wp-content-review-apply`). Câu đã gặp: heading giả đổi thành heading thật hay giữ, bài có thêm `<time>` không, case có thêm ngày không, footer giữ chữ đậm hay đổi heading.
 
 ## 2. Sửa ở theme
@@ -15,9 +15,9 @@ Quy trình rút từ đợt sửa thật trên site agency mẫu ngày 27/10/202
 |---|---|
 | Trang không có `<main>` | Bọc vùng nội dung bằng `<main id="primary">` trong template |
 | Bài thiếu `<aside>`, `<time>` | Sidebar bọc `<aside>`. Ngày đăng `<time datetime="<?php echo esc_attr( get_the_date( 'c' ) ); ?>">` |
-| Card bài, card case không bọc `<article>` | Bọc từng card bằng `<article>` trong template part |
+| Card có nội dung tự đứng độc lập | Có thể bọc `<article>`; không áp cho mọi card chỉ có link/ảnh |
 | Nhảy cấp H1 → H3 ở trang chuyên mục | Nhãn mục là `h2`. Chuyên mục thiếu tiêu đề giới thiệu thì thêm `h2.screen-reader-text` |
-| `<b>`, `<i>` trong template | `<strong>` cho chữ nhấn có nghĩa, `<em>` cho nhấn ngữ điệu, `<span>` cho nhãn và số đếm. Giữ `<i>` của icon |
+| Nhấn chữ trong template | Chọn `<strong>`, `<em>`, `<b>`, `<i>` theo nghĩa; CSS cho trang trí. Không đổi hàng loạt, giữ icon và tên accessible |
 
 Bẫy khi sửa theme:
 

@@ -152,6 +152,38 @@ class PsiAb(unittest.TestCase):
         self.assertIn('4-5 lượt', r.stdout)
         self.assertIn('chưa đủ lượt', [l for l in r.stdout.splitlines() if 'v0→v4' in l][0])
 
+    def test_hyphenated_variant_uses_spec_for_table_and_decision(self):
+        self.build('--a', 'v0', '--b', 'v4')
+        spec_path = os.path.join(self.dir, 'spec.json')
+        spec = json.load(open(spec_path))
+        spec['variants']['font-early'] = spec['variants'].pop('v4')
+        spec['decision']['b'] = 'font-early'
+        spec['pages'] = {'home-mobile': 'https://site-a.example/'}
+        json.dump(spec, open(spec_path, 'w'))
+        psi = os.path.join(self.d, 'psi')
+        for k in range(1, 6):
+            write_psi(psi, 'home-mobile-v0-r%d_mobile_run1.json' % k, score=80)
+            write_psi(psi, 'home-mobile-font-early-r%d_mobile_run1.json' % k, score=95)
+        r = run('psi_ab.py', 'table', '--psi', psi, '--dir', self.dir)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertIn('mobile | home-mobile | font-early | ', r.stdout)
+        self.assertIn('v0→font-early', r.stdout)
+        r = run('psi_decide.py', psi, '--spec', self.dir, '--json')
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertEqual(list(json.loads(r.stdout)['pages']), ['home-mobile'])
+
+    def test_ambiguous_page_variant_name_stops_table(self):
+        self.build('--a', 'v0', '--b', 'v4')
+        spec_path = os.path.join(self.dir, 'spec.json')
+        spec = json.load(open(spec_path))
+        spec['pages']['home-font'] = 'https://site-a.example/x/'
+        spec['variants'].update({'early': [], 'font-early': []})
+        json.dump(spec, open(spec_path, 'w'))
+        self.fill_psi('font-early', 900, 90)
+        r = run('psi_ab.py', 'table', '--psi', os.path.join(self.d, 'psi'), '--dir', self.dir)
+        self.assertNotEqual(r.returncode, 0)
+        self.assertIn('mơ hồ', r.stderr)
+
     def test_table_without_decision_warns_not_fails(self):
         for k in (1, 2, 3):
             self.fill_psi('v0', 900, 90, k=k)

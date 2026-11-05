@@ -200,11 +200,15 @@ elif a.cmd == 'urls':
 
 elif a.cmd == 'table':
     need('psi')
+    sp_all = spec_meta() if a.dir else {}
     R = defaultdict(list)
     RS = defaultdict(list)  # (dev, trang, biến thể) -> run dict cho psi_lib.decide
     for f in glob.glob(os.path.join(a.psi, '*_mobile_run*.json')) + glob.glob(os.path.join(a.psi, '*_desktop_run*.json')):
         # Tên trang có thể có dấu gạch dưới (product_cat): tách bằng regex của psi_lib, không split('_').
-        nm = L.parse_ab_name(os.path.basename(f))
+        try:
+            nm = L.parse_ab_name(os.path.basename(f), sp_all.get('variants'), sp_all.get('pages'))
+        except ValueError as exc:
+            sys.exit(str(exc))
         if not nm:
             print('Bỏ file không theo tên psi_ab: ' + os.path.basename(f), file=sys.stderr)
             continue
@@ -232,7 +236,6 @@ elif a.cmd == 'table':
                 if g:
                     print(f"{dev} | {p} | {v} | {name} | {len(g)} | {st.median(r['score'] for r in g):.1f} | "
                           f"{st.median(r['lcp'] for r in g) / 1000:.1f} | {st.median(r['bench'] for r in g if r['bench'] is not None) if name != 'không rõ' else '–'}")
-    sp_all = spec_meta() if a.dir else {}
     sd = sp_all.get('decision') or {}
     if sd.get('a') and sd.get('b'):
         thr = {k: L.DEFAULT_THR[k] for k in L.THR_KEYS}

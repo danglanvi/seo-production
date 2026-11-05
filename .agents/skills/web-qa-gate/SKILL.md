@@ -2,12 +2,12 @@
 name: web-qa-gate
 description: "Kiểm site WordPress sau mỗi lần ghi, trước khi lên production và đầu workstream web: tràn ngang có và không cache, axe, focus, form, tracking, plugin, HTTP, redirect, canonical, schema, OG, menu và slider bấm thật, bố cục, landmark, Jev ui-visual. Một lệnh ra PASS/FAIL."
 metadata:
-  version: "1.3.2"
+  version: "1.4.0"
 ---
 
 # web-qa-gate — cổng kiểm sau mỗi lần ghi lên site
 
-Một lần ghi lên site (theme, plugin, CSS, nội dung, redirect) có thể làm hỏng phần khác. Skill này chạy một lệnh kiểm 14 hạng mục có script và ra `report.json` cùng `report.md` có PASS/FAIL cho từng hạng mục. Hạng mục 12 (chữ dễ đọc) kiểm tay. Lượt kiểm chỉ đọc: script không gửi form, chặn mọi request tracking, và chỉ bấm nút giao diện (nút mở menu, mũi tên slider).
+Một lần ghi lên site (theme, plugin, CSS, nội dung, redirect) có thể làm hỏng phần khác. Skill này chạy một lệnh kiểm 14 hạng mục có script và ra `report.json` cùng `report.md` có PASS/FAIL cho từng hạng mục. Hạng mục 12 (chữ dễ đọc) kiểm tay. Hạng mục 16 (footprint code: comment quy trình, cờ tắt minify, số khối inline) chạy `wp-code-footprint/scripts/footprint_count.py` trên HTML production đã tải và so với lượt trước. Lượt kiểm chỉ đọc: script không gửi form, chặn mọi request tracking, và chỉ bấm nút giao diện (nút mở menu, mũi tên slider).
 
 Skill chỉ kiểm. Việc sửa thuộc skill của việc ghi, ví dụ `wp-ui-fix` cho lỗi giao diện.
 
@@ -22,7 +22,7 @@ Gốc đường dẫn là root repo. Script nằm ở `skills/web-qa-gate/script
 | Audit đầu workstream | Mốc đầu của workstream web, trước khi sửa giao diện, theme hay nội dung hàng loạt | `references/audit-dau-workstream.md` |
 | Kiểm độc lập sau ghi nội dung | Người kiểm kết luận một lần ghi nội dung do người khác làm | `references/kiem-doc-lap-sau-ghi-noi-dung.md` |
 
-Không dùng khi: đo tốc độ (`wp-pagespeed`), audit technical SEO toàn site (`technical-seo-audit`), audit bố cục hay chuyển đổi để lập đề xuất (`visual-semantic-seo`, `cro-audit`), duyệt nội dung trước khi ghi (`wp-content-review-apply`), sửa lỗi giao diện (`wp-ui-fix`).
+Không dùng khi: đo tốc độ (`wp-pagespeed`), audit technical SEO toàn site (`technical-seo-audit`), audit bố cục hay chuyển đổi để lập đề xuất (`visual-semantic-seo`, `cro-audit`), duyệt nội dung trước khi ghi (`wp-content-review-apply`), sửa lỗi giao diện (`wp-ui-fix`), audit và dọn footprint code toàn site (`wp-code-footprint`).
 
 ## Input
 
@@ -53,7 +53,7 @@ Không dùng khi: đo tốc độ (`wp-pagespeed`), audit technical SEO toàn si
 Chạy "python3 tools/capabilities.py check --need 'python3,node,chrome,axe,playwright?,jev?,pillow?,ssh?,wp-cli?'" từ root repo. Nếu thiếu tool bắt buộc, dừng và báo tên tool. Nếu thiếu tool tuỳ chọn, dùng fallback ghi trong "tools/capabilities.md".
 
 - `axe`: script tìm `axe.min.js` ở `AXE_JS`, `~/.cache/web-qa-gate/`, `node_modules/axe-core/` và cache `npx`. Thiếu thì tải một lần theo `references/hang-muc.md` mục 2.
-- `playwright`: script gọi Chrome trực tiếp qua CDP, không cần thư viện Playwright. Máy không có Chrome thì script tự dùng Chromium do Playwright tải về.
+- `playwright`: script gọi Chrome trực tiếp qua CDP, không cần thư viện Playwright. Trên macOS dùng Chrome thật đã cập nhật và bật sandbox; không tự tải Chromium hoặc dùng cờ tắt sandbox. Thiếu Chrome thì báo dependency, không báo đã kiểm trình duyệt.
 - `jev`: thiếu key thì bỏ `--jev`. Hạng mục `ui-visual` SKIP.
 - `ssh`, `wp-cli`: chỉ dùng để lấy file plugin, danh sách URL cho smoke và dữ liệu của checklist đường đi lead, theo hồ sơ server.
 
@@ -203,6 +203,9 @@ Bản tốt nhất phải có:
 - [ ] Không báo PASS cho cả site từ lượt chạy `--sample`. Tin báo ghi số URL đã đo trên tổng số URL.
 - [ ] Checklist đường đi của lead chỉ đọc: che mật khẩu, API key, token của SMTP và nhà gửi mail; không tự đọc hộp thư.
 - [ ] Audit đầu workstream trình vấn đề lớn kể cả khi việc sửa nằm ngoài giai đoạn hiện tại; vấn đề nhỏ có dòng trong backlog.
+- [ ] Footprint dùng parser đúng: `scan_complete=1`, `comment_quytrinh=0`, `htmlcomment_quytrinh=0`; thiếu parser hoặc tập URL lệch không PASS. `htmlcomment_vi` là cờ đọc tay, không phải mọi tiếng Việt đều là rác. Đọc `wp-code-footprint/references/do-dung-footprint.md`.
+- [ ] Sửa HTML/ARIA: kiểm cả HTML thô, DOM sau khởi tạo và keyboard theo `semantic-html-optimization/references/html-aria-runtime.md`. Không xoá honeypot, skip-link focus target hoặc đổi CSS chỉ vì nhãn slider ẩn bị cờ 0px.
+- [ ] Chọn kiểm theo tác động ở `wp-staging-deploy/references/bang-chung-sau-ghi.md`; comment-only có token/output tương đương không cần chạy lại toàn bộ benchmark. Thay đổi chức năng vẫn phải kiểm tương tác và hồi quy tương ứng.
 
 ## Anti-patterns
 
@@ -228,9 +231,12 @@ Bản tốt nhất phải có:
 - Lấy danh sách URL smoke từ sitemap → dùng `wp post list`. Sitemap bỏ trang noindex và có thể còn URL cũ.
 - So header giữa bản VI và bản EN → `truoc_production.py skeleton` chỉ so trang cùng `<html lang>`. Menu bản dịch khác là chủ ý.
 - Gom lỗi UX thấy trong lúc làm vào "giai đoạn sau" mà không báo → ghi vấn đề lớn vào tin trình, vấn đề nhỏ vào backlog.
+- Báo cổng đạt khi DOM và PSI đạt mà không đọc view-source → chạy `footprint_count.py`. Site agency mẫu qua 8 lượt cổng đạt trong 17–29/10/2026 mà mỗi trang vẫn lọt 3–6 comment quy trình.
 
 ## Changelog
 
+- v1.4.0 (2026-11-05): gate quét hoàn tất, HTML thô + runtime + keyboard, phân biệt nhãn ẩn/honeypot; Chrome sandbox theo môi trường và mức kiểm theo tác động. Không gọi thiếu dữ liệu là PASS.
+- v1.3.3 (2026-11-05): hạng mục 16 footprint code. Gate thêm mục `comment_quytrinh=0` và số khối inline không tăng, đo bằng `wp-code-footprint/scripts/footprint_count.py`. Anti-pattern thêm "đạt DOM và PSI mà không đọc view-source". Nguồn: người duyệt mở view-source site agency mẫu 05/11/2026 thấy comment quy trình lọt ra HTML sau 8 lượt cổng đạt; audit `wp-code-footprint/references/lane-don.md` bảng số tham chiếu. Không đổi script.
 - v1.3.2 (2026-10-31): Bước 3 thêm luật cho FAIL do lần ghi đổi thiết kế: hỏi người duyệt kèm ảnh, không bỏ qua vì "script sai tiền đề". Nguồn: đợt 2 tốc độ site bán lẻ mẫu 30/10/2026 (instance của site, `03-audits/technical/toi-uu-pagespeed/dot2-3010/luot2/deploy/2b-chuc-nang.md` mục 5.3, `decisions.md`). Eval thêm 1 ca. Không đổi script.
 - v1.3.1 (2026-10-27): `_cdp.mjs` thêm `dnsRules()`: mọi host trong danh sách chặn tracking bị chặn thêm ở tầng DNS (`--host-resolver-rules ... ~NOTFOUND`), vì beacon gửi lúc đóng tab không đi qua `Network.setBlockedURLs`. Ca thật 26/10/2026: Chrome headless của một lane trên production lọt khoảng 12 page_view và 15 sự kiện thử vào GA4. Test `tests/test_dns_block.py` chạy Chrome thật (có luật: 0 lượt tới host chặn; không luật: 1 lượt). Eval thêm 1 ca.
 - v1.3 (2026-10-25): ui-2, qa-2, qa-1, ui-5, hs-8. `references/hang-muc-13-15.md` mục 15 thêm dòng trỏ `featured-image-seo/references/og-trang.md` mục 8 (og:image, og:image:type, Scrape Again) khi chạy trong workspace của Vincent. Hạng mục 13 tương tác (`interact_probe.mjs`: menu bấm thật, slider chạm thật, `forcePseudoState`, màu kit hai chiều), 14 bố cục (lưới, số heading, CTA trùng, cặp VI/EN, landmark bằng `landmarks.mjs`), 15 OG; `--cache both`, `--tabs`, `--resume`, `--sample`, `--plan`, `--page-timeout`; chụp đủ màn, ẩn nút nổi, `chrome_cleanup.mjs`; checklist đường đi lead ở mục 4; chế độ cổng trước production, audit đầu workstream, kiểm độc lập (3 reference mới, `truoc_production.py`: skeleton, diff, controls, headers, urls); 14a, 14c, 14d về WARN theo đặc tả; checklist gộp còn 8 mục. Test 40/40 offline, `truoc_production.py` thử trên 22 trang HTML đã lưu của site mẫu.

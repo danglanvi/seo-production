@@ -27,6 +27,7 @@ Nạp ở bước 5 của SKILL.md. Mục "chưa thử" là việc chưa chạy 
 - HTML lưu edge 1 ngày, nên cron làm nóng phải chạy hằng ngày (chưa thử).
 - Ảnh thường chiếm phần lớn lượt Googlebot. Site VN: ảnh 57%, trúng cache 1,6–1,8% khi chưa làm nóng ảnh.
 - Làm nóng theo image sitemap hoặc theo ảnh trong HTML.
+- Làm nóng mọi ảnh mỗi ngày, kể cả khi TTL là 30 ngày. Bunny xoá bản lưu của ảnh ít dùng sau 1–4 ngày. Site VN 01/11/2026: ảnh Googlebot MISS 106/334 lượt, 92 lượt là ảnh trong HTML làm nóng 25 ngày/lần. Ảnh làm nóng trong ngày: MISS 6/195.
 - Nếu origin đổi ảnh theo header `Accept` (WebP Express): làm nóng 2 biến thể Accept, hoặc sửa để origin trả URL webp riêng.
 - Nếu origin đổi HTML theo `Accept` (LiteSpeed WebP replacement): Bunny không tách cache HTML theo WebP. Vary WebP chỉ áp cho jpg, jpeg, webp, png, gif. Lượt đầu tiên sau purge quyết định bản HTML lưu ở shield. Làm nóng ngay sau purge bằng Accept có `image/webp`, cả UA desktop và mobile. Edge rule không đặt được header Accept: Bunny báo tên header dành riêng. Sửa gốc ở origin (site VN, 27/10/2026).
   - `scripts/warm.py` từ v1.2 gửi HTML với Accept như Chrome, có `image/webp` (`--accept`). Bản trước dùng Accept mặc định của curl (`*/*`), nên lượt làm nóng đầu có thể lưu bản không WebP.
@@ -72,6 +73,7 @@ Dùng `scripts/cdn_monitor.py`, cấu hình theo `templates/cdn-monitor.example.
   - Hai NS của nhà CDN trả lời tên chia vùng. Script tra IP của NS qua 1.1.1.1, không qua router.
   - HTTP 200 khi gọi thẳng origin.
   - Qua trạm CDN ở Mỹ (IP trạm tra qua 8.8.8.8 với ECS dải Mỹ): trang chủ trả 200, và URL có query (`?cdn-monitor=1`, đi xuyên tới origin vì rule bypass query) trả 200. Header `server` phải là của nhà CDN.
+  - Nếu máy giám sát không nhận phản hồi (mã 0), script gọi lại trang qua HTTP từ 3 probe Globalping ở Mỹ. Script chỉ tính lỗi khi đa số probe cũng lỗi. Đường quốc tế từ máy ở VN tới trạm Mỹ rớt vào giờ cao điểm. Site VN 28/10–02/11/2026: 20 vòng mã 0, log Bunny không có request của giám sát, cùng lúc Googlebot vẫn nhận 200. Thiếu quota Globalping thì giữ kết quả lỗi. Trạm trả mã lỗi thật (ví dụ 503) thì script báo ngay, không đo lại.
 - Mỗi giờ:
   - Globalping: 5 probe ở Mỹ không được nhận IP origin; 6 probe ở VN không được nhận IP CDN. Bỏ lượt khi quota thấp, thử lại sau 15 phút.
   - Tài khoản CDN: bị khoá là nghiêm trọng. API lỗi là cảnh báo, không kèm lệnh trả DNS. Tiền sắp cạn chỉ báo ban ngày, nhắc lại sau 24 giờ.

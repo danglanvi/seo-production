@@ -2,7 +2,7 @@
 name: wp-host-optimize
 description: "Tối ưu VPS chạy nhiều site WordPress (panel, OpenLiteSpeed, MySQL, Redis) mà không nâng gói: đo tải PHP theo nhóm actor, chặn trước PHP, WP-Cron hệ thống, trần PHP, MySQL, ổ đĩa, OS hết hạn. Dùng khi server chậm, thiếu RAM, OOM, ổ đầy, hoặc trước khi đề xuất nâng VPS."
 metadata:
-  version: "1.0.1"
+  version: "1.1.0"
 ---
 
 # wp-host-optimize — tối ưu VPS WordPress không nâng gói
@@ -24,6 +24,9 @@ Gốc đường dẫn là root repo. Script nằm ở `skills/wp-host-optimize/s
 - Không nâng trần PHP khi đỉnh do IP quét gây ra. Chặn nguồn trước PHP.
 - Mỗi việc có lệnh trả lại một dòng. Sửa file cấu hình theo khối có dòng `BEGIN`/`END`, không chép đè cả file.
 - Đọc giá trị live của mọi khoá trước khi plan đổi khoá đó.
+- Chỉ đọc trường cấu hình cần thiết bằng whitelist trong code; không in cả `wp-config.php`, `.env`, token hay salt. `WP_CACHE_KEY_SALT` là namespace cache, không đồng nhất với các authentication salt; xử lý đúng loại giá trị nếu có sự cố, không tự xoay toàn bộ secret.
+- Truy vấn DB có danh sách bảng/trường và giới hạn lô/thời gian. Không quét toàn DB bằng regex nặng rồi coi output thiếu là sạch; không huỷ query của tác vụ khác. Backup ngoài webroot, bản local có quyền hạn chế; không đưa dump vào deliverable chia sẻ.
+- Khi ghi DB/cache hoặc báo health, đọc `wp-staging-deploy/references/bang-chung-sau-ghi.md`. Kiểm nguồn mới qua WordPress/object cache/HTML; số 0 lỗi cần log đọc được và giờ đầu/cuối cụ thể.
 - Việc cấp server không có staging thay thế. Thay bằng backup, DRY, cổng và rollback đã thử (`wp-security-hardening` mục Luật).
 - Restart OLS ảnh hưởng mọi vhost và nạp mọi cấu hình đang chờ. Kiểm theo `references/danh-muc-viec.md` mục 8 trước mỗi lần restart.
 - Không đề xuất tăng phí tháng. OS hết hạn và thiếu tài nguyên đi đường ở `references/os-het-han.md`.
@@ -132,5 +135,6 @@ Bản tốt nhất phải có:
 
 ## Changelog
 
+- v1.1.0 (2026-11-05): đọc cấu hình theo whitelist, phân biệt cache salt/auth salt, truy vấn DB có giới hạn và backup riêng tư; bổ sung postcondition cache và bằng chứng health thay vì tin mã thoát.
 - v1.0.1 (2026-10-27): thêm từ file gom bài học của phiên tốc độ: sandbox A/B và PCRE2 khi nâng OLS, nhả khoá sau cache hit, purge CLI chưa đủ làm bằng chứng, redirect plugin sang rule tĩnh, mu-plugin bớt việc PHP, kiểm wp-admin bằng phiên tạm.
 - v1.0 (2026-10-27): tạo từ đợt tối ưu VPS site agency mẫu 23–27/10/2026 (plan, phản biện 23 điểm, Đợt 1, Đợt 2a, đo 48 giờ, 5 lane máy chủ ngày 27/10). Script `php_tai.sh`, `tong_hop_php_tai.py`, `rtreport_mau.sh`, `rtreport_phan_tich.py`, test 6 ca. Chạy thật `php_tai.sh` trên server mẫu 27/10/2026: phát hiện thiếu IP agent trong nhóm nội bộ, script tự thêm IP phiên SSH. Chưa có: số 7 ngày (04/11), kết quả gắn Ubuntu Pro (đêm 29→30/10), kết quả `dynReqPerSec`.

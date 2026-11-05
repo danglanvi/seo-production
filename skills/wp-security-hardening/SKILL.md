@@ -2,7 +2,7 @@
 name: wp-security-hardening
 description: "Ứng cứu sự cố và hardening site WordPress có quyền server (SSH + WP-CLI): backup, tìm IOC, file lộ, cách ly, đổi credentials, siết server, tài khoản team và 2FA, thu hồi quyền người nghỉ. Dùng khi site bị xâm nhập, rà bảo mật định kỳ, vá OS, PHP hoặc dựng tài khoản."
 metadata:
-  version: "1.9"
+  version: "1.10"
 ---
 
 # wp-security-hardening — ứng cứu và siết bảo mật WordPress
@@ -34,6 +34,7 @@ Gốc đường dẫn là root repo. Script nằm ở `skills/wp-security-harden
 - `00-client-context/wp-server.md`: cách vào server, web root, lệnh WP-CLI, stack, bẫy riêng của site. Chưa có thì tạo từ `_TEMPLATES/wp-server.md` cùng người vận hành.
 - `references/ung-cuu-su-co.md`: tìm IOC, sàng file bằng model, cách ly, dấu bám trụ. Đọc ở nhánh A.
 - `references/checklist-hardening.md`: checklist theo lớp, lệnh kiểm, rollback. Đọc ở Bước 4.
+- `references/php-entrypoints.md`: gọi thẳng PHP include, ngoại lệ endpoint và giới hạn kết luận bot. Đọc khi sửa rule PHP.
 - `references/ap-config-song.md`: cấp site hay cấp server, script áp khối, HSTS tăng dần. Đọc trước khi sửa `.htaccess`, vhost.
 - `references/va-os-php.md`: vá OS, vá PHP theo advisory. Đọc khi vá.
 - `references/xoa-an-toan.md`: checklist trước mọi thao tác xoá trên server.
@@ -172,6 +173,8 @@ Bản tốt nhất phải có:
 - Đếm 5xx bằng awk gán cứng một cột cho mọi log trên server. Ngày 23–24/10/2026, 4 lane trên một site OLS báo "0 5xx" ở site phụ vì log của site đó đặt mã ở cột khác. Dùng `log_health.py` (`references/ung-cuu-su-co.md` mục 1).
 
 ## Changelog
+
+- v1.10 (2026-11-05): kiểm chứng direct PHP bằng access/error log cùng domain và giây; rule theo endpoint thực, giữ TinyMCE/plugin endpoint. Restart OLS có inventory pending config/hash và phạm vi vhost; phân biệt kiểm regex/Apache với staging OLS. Tách auth salt khỏi namespace object cache. Nguồn: review site agency mẫu, rule mới đang chờ kiểm OLS; không coi fixture là production PASS.
 
 - v1.9 (2026-10-27): nhánh D. `references/tai-khoan-team-2fa.md`, mẫu `templates/tai-khoan-team/` (mu-plugin role và 2FA, `t.php`), `scripts/team_accounts_check.py` (bản dùng chung của bộ kiểm 30/30 trên 2 site mẫu ngày 27/10). `references/offboard-nhan-su.md` từ lượt rà Cloudflare 26/10. `scripts/tim_file_lo.sh` tìm file lộ trong web root, test 4 ca, từ ca 5 dump SQL công khai trên site WooCommerce 27/10. Tự phản biện và Gate thêm mục. Nguồn: đợt rà tổng thể phiên web 16–27/10 (`Deliverables/AI-Internal/Web-Skill-Review-2026-10/`).
 - v1.8 (2026-10-27): nhánh C và `references/ra-tai-khoan-cdn.md`: rà Worker, route, token, thành viên, 2FA, audit log, SSL theo host; kiểm từ ngoài bằng UA trình duyệt và UA Googlebot; ranh giới agent đọc, người dùng bấm; 8 bước khi secret bị lộ. Nguồn: sự cố Worker độc trên tài khoản Cloudflare của site agency mẫu (phát hiện 26/10/2026, người dùng xoá 14:1x, agent kiểm lại sạch) và 4 lần lộ secret tháng 10/2026. Eval thêm 2 ca. Chưa có script đọc tài khoản: token hiện có trả 403 ở Workers Routes.

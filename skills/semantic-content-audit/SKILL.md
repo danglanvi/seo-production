@@ -2,7 +2,7 @@
 name: semantic-content-audit
 description: "Audit nội dung đã có theo chuẩn semantic SEO: 60 Semantic Writing Rules (code đếm luật đếm được, Jev xếp đoạn cần đọc), E-E-A-T trải nghiệm thật, Helpful Content, dấu hiệu AI, gate G-BÀI. Dùng khi review hoặc tối ưu bài trước refresh, onpage hay QC."
 metadata:
-  version: "2.3"
+  version: "2.4"
 ---
 
 # Semantic Content Audit
@@ -55,12 +55,12 @@ Chạy "python3 tools/capabilities.py check --need 'python3,bs4?,jev?,numpy?'" t
 - Check 5C's compliance
 
 ### Phase 4: E-E-A-T & Helpful Content Audit
-- Experience signals present (CRITICAL)
-- Expertise demonstrated
-- Authority citations
-- Trust factors
-- Google Helpful Content compliance
-- Original value added và first-hand: dùng dấu hiệu effort `original_data`, `first_hand` của skill `content-quality-lab`. Không đo information gain bằng độ khác embedding.
+Đọc `references/eeat-aleyda.md` trước khi chấm. Phase 4 dùng checklist E-E-A-T của Aleyda Solis (83 check, 9 preset).
+1. Chọn check: `python3 -B -I skills/semantic-content-audit/scripts/eeat_checks.py select --presets core,<preset> --out <W>/checks.tsv`. Bản nháp thêm `--draft`.
+2. Chấm từng check bằng 5 trạng thái và đúng scope (Page, Site, Template, Workflow). Ghi `<W>/status.csv` gồm `check_id,status,evidence`.
+3. Suy 26 điểm: `eeat_checks.py points --status <W>/status.csv --out <W>/eeat_points.json`. Mục thiếu bằng chứng ghi CANNOT-VERIFY, không ghi là rớt.
+4. Original value và first-hand: dùng dấu hiệu effort `original_data`, `first_hand` của skill `content-quality-lab` làm bằng chứng cho CQ01, TA08. Không đo information gain bằng độ khác embedding.
+5. Báo cáo có bảng trạng thái, danh sách việc kèm completion test, và dòng ghi nguồn Aleyda ở cuối.
 
 ### Phase 5: AI-Pattern Detection — Humanness (chấm RIÊNG, không tính vào 66đ)
 - Chạy [references/ai-detection-checklist.md](references/ai-detection-checklist.md): quét 4 nhóm (Vocabulary/cliché · Grammar/structure · Statistical/rhythm · Content/experience) với ngưỡng đếm cụ thể.
@@ -90,6 +90,7 @@ Bản tốt nhất phải có:
 - [ ] Information gain và first-hand lấy từ dấu hiệu effort của `content-quality-lab`, không lấy từ embedding. Nguồn lỗi: pilot 10/2026, độ mới passage so với pool có AUC 0,52–0,55.
 - [ ] Cột `hedging` không dùng khi chưa có entry hiệu chuẩn. Nguồn lỗi: 19/10, 60 đoạn gold chỉ có 1 ca dương.
 - [ ] Câu sửa đề xuất không thêm "hàng đầu", "#1", "tốt nhất" hay cam kết. Nguồn lỗi: các vòng sửa 15–19/10 của site mẫu phải gỡ hàng chục câu "hàng đầu", "tốt nhất".
+- [ ] Phase 4 tách Not assessed (CANNOT-VERIFY) khỏi Does not meet, và mọi Meets, Does not meet, N/A có evidence. Nguồn lỗi: thang 16 + 10 điểm cũ cho 0 điểm khi thiếu bằng chứng, gộp "chưa xem" với "rớt" (rà theo checklist Aleyda 02/11/2026).
 
 ## Scoring System (66 Points Total + Humanness verdict riêng + gate G-BÀI riêng)
 
@@ -127,6 +128,8 @@ Bản tốt nhất phải có:
 | Dual measurements | 2 | Multiple units where needed |
 | Examples after plurals | 2 | Min 3 examples |
 | Serial comma correct | 2 | "A, B, và C" format |
+
+E-E-A-T 16 điểm và Helpful 10 điểm suy từ trạng thái check theo bảng ánh xạ ở `references/eeat-aleyda.md` §5. Hai bảng dưới giữ tên mục và số điểm để audit cũ so được.
 
 ### E-E-A-T Score (16 Points)
 
@@ -204,6 +207,7 @@ For detailed audit criteria, see reference files:
 
 | Topic | Reference File |
 |-------|----------------|
+| **Phase 4 theo checklist Aleyda** (trạng thái, scope, ánh xạ 26 điểm) | [references/eeat-aleyda.md](references/eeat-aleyda.md) |
 | **Extended E-E-A-T Audit** (Experience focus) | [references/extended-eeat-audit.md](references/extended-eeat-audit.md) |
 | Google Helpful Content Audit | [references/google-helpful-content-audit.md](references/google-helpful-content-audit.md) |
 | Review Content Audit | [references/review-content-audit.md](references/review-content-audit.md) |
@@ -216,6 +220,7 @@ For detailed audit criteria, see reference files:
 
 ## Changelog
 
+- v2.4 (2026-11-02): Phase 4 chấm theo checklist E-E-A-T của Aleyda Solis (bản 1.2.1, 29/10/2026): 5 trạng thái, 4 scope, preset theo loại trang. 26 điểm suy từ trạng thái, giữ thang 66 và mốc SOP ≥50/66; mục thiếu bằng chứng ghi CANNOT-VERIFY. Thêm `references/eeat-aleyda.md`, `references/eeat-checklist/`, `scripts/eeat_checks.py`, `tests/test_eeat_checks.py` (6 test).
 - v2.3 (2026-10-19): thêm `scripts/rules_jev.py` và rubric Jev `tasks/writing-rules.json` 2026-10-19.1 chấm luật theo đoạn; `references/writing-rules-routing.md` chia 60 luật cho code, Jev, Claude. Hiệu chuẩn 100 đoạn gold mù: Jev chỉ lọc cho Claude đọc. Information gain trỏ sang effort của `content-quality-lab`. Thêm Bước 0, phân việc model, tự phản biện. Test `tests/test_rules_jev.py`.
 - 2026-09-12: đóng gói bộ 60 rules canonical cho audit đầy đủ; giữ phân biệt subset 16 điểm và gate nguồn.
 

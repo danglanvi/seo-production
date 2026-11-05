@@ -1,0 +1,23 @@
+{
+  "name": "code-comment-leak",
+  "version": "2026-11-05.1",
+  "questions": {
+    "kind": {
+      "type": "choice",
+      "instructions": "state.comment is one source-code comment (JavaScript, CSS, PHP or HTML comment) found either in the public HTML output of a company website (state.where is script, style or html; state.page is the page) or in a PHP file on the server (state.file). Decide what kind of comment it is, judged by its text only.",
+      "criteria": {
+        "process_note": "The comment records project workflow rather than code: it names a person, an approval, a work session, a lane, a batch or round ('đợt', 'lô', 'lane', 'phiên'), a date of change, a ticket or a plan file. Example: 'v8-ky-thuat 26/10/2026 (Vincent duyệt bản 8 lô 1): bỏ chữ nghiêng'.",
+        "reasoning_note": "The comment explains in prose why the code exists or which problem it works around, such as another script being deferred, a theme bug, a browser behaviour or an accessibility rule. It does not name people, sessions or dates. Example: 'LiteSpeed hoãn JS tới lần chạm đầu, carousel sinh nút sau lần chạy đầu'.",
+        "section_marker": "A short structural label that only names the part of the code that follows, such as '---- mục lục ----', 'CTA giữa bài' or 'form tư vấn'.",
+        "license_or_vendor": "A license header or a banner of a third-party library, framework or plugin.",
+        "commented_out_code": "Disabled code kept inside a comment, such as an old CSS declaration or an old function call, possibly with a note like 'đã bỏ'.",
+        "unknown": "The text is too short or too unclear to decide."
+      }
+    },
+    "internal_exposure": {
+      "type": "score",
+      "instructions": "state.comment is a comment that an outsider can read in the public source of a company website. Rate how much it exposes the company's internal workflow, tooling, people, approvals or change dates.",
+      "criteria": ["Exposes nothing internal: generic code label or license text", "Exposes internal workflow clearly: names a person, an approval, a session or lane name, a batch number, a change date or an internal file"]
+    }
+  }
+}

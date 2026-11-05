@@ -1,0 +1,674 @@
+{
+ "note": "Định tuyến 83 check của checklist Aleyda Solis sang lane. Sửa file này thì chạy tests/test_site_qc.py.",
+ "version": "2026-11-02.1",
+ "checks": {
+  "PS01": [
+   {
+    "lane": "jev",
+    "rubric": "eeat-page-core",
+    "question": "search_first",
+    "yes": "Does not meet"
+   }
+  ],
+  "PS02": [
+   {
+    "lane": "reuse",
+    "from": "topical",
+    "field": "outlier"
+   }
+  ],
+  "PS03": [
+   {
+    "lane": "jev",
+    "rubric": "eeat-page-core",
+    "question": "promise_gap",
+    "yes": "Does not meet"
+   }
+  ],
+  "PS04": [
+   {
+    "lane": "jev",
+    "rubric": "eeat-page-core",
+    "question": "search_again",
+    "yes": "Does not meet"
+   }
+  ],
+  "PS05": [
+   {
+    "lane": "claude",
+    "note": "Độ dài theo việc của người đọc, không theo số từ: đọc cùng PS04 và CQ09"
+   }
+  ],
+  "PS06": [
+   {
+    "lane": "evidence",
+    "need": "So 2–3 trang cùng việc trên SERP (selected comparators), ghi URL, query, ngày"
+   }
+  ],
+  "PS07": [
+   {
+    "lane": "claude",
+    "note": "Chỉ áp cho trang tin, sự kiện chưa xác nhận"
+   }
+  ],
+  "PS08": [
+   {
+    "lane": "code",
+    "key": "lang"
+   }
+  ],
+  "PS09": [
+   {
+    "lane": "reuse",
+    "from": "topical",
+    "field": "outlier"
+   }
+  ],
+  "CQ01": [
+   {
+    "lane": "reuse",
+    "from": "effort",
+    "field": "original_data"
+   },
+   {
+    "lane": "reuse",
+    "from": "effort",
+    "field": "first_hand"
+   }
+  ],
+  "CQ02": [
+   {
+    "lane": "jev",
+    "rubric": "eeat-ai-spam",
+    "question": "rewritten_summary",
+    "yes": "Does not meet"
+   }
+  ],
+  "CQ03": [
+   {
+    "lane": "jev",
+    "rubric": "eeat-page-core",
+    "question": "title_exaggeration",
+    "yes": "Does not meet"
+   }
+  ],
+  "CQ04": [
+   {
+    "lane": "claude",
+    "note": "Đọc mẫu theo template"
+   }
+  ],
+  "CQ05": [
+   {
+    "lane": "claude",
+    "note": "Đọc mẫu theo template"
+   }
+  ],
+  "CQ06": [
+   {
+    "lane": "jev",
+    "rubric": "eeat-ai-spam",
+    "question": "language_errors",
+    "yes": "Does not meet"
+   }
+  ],
+  "CQ07": [
+   {
+    "lane": "code",
+    "key": "placeholder"
+   }
+  ],
+  "CQ08": [
+   {
+    "lane": "evidence",
+    "need": "Bản ghi biên tập: ai duyệt, bao nhiêu trang mỗi người mỗi tuần"
+   }
+  ],
+  "CQ09": [
+   {
+    "lane": "jev",
+    "rubric": "eeat-page-core",
+    "question": "filler_first",
+    "yes": "Does not meet"
+   }
+  ],
+  "CQ10": [
+   {
+    "lane": "reuse",
+    "from": "effort",
+    "field": "effort_low"
+   },
+   {
+    "lane": "jev",
+    "rubric": "eeat-ai-spam",
+    "question": "generic_ai_text",
+    "yes": "Does not meet"
+   }
+  ],
+  "CQ11": [
+   {
+    "lane": "claude",
+    "note": "Đọc mẫu theo template"
+   }
+  ],
+  "CQ12": [
+   {
+    "lane": "jev",
+    "rubric": "eeat-page-core",
+    "question": "search_again",
+    "yes": "Does not meet"
+   }
+  ],
+  "TA01": [
+   {
+    "lane": "code",
+    "key": "byline"
+   }
+  ],
+  "TA02": [
+   {
+    "lane": "code",
+    "key": "author_page"
+   }
+  ],
+  "TA03": [
+   {
+    "lane": "evidence",
+    "need": "Đối chiếu tên, bằng cấp với nguồn độc lập (hồ sơ nghề nghiệp, cơ quan cấp phép)"
+   }
+  ],
+  "TA04": [
+   {
+    "lane": "reuse",
+    "from": "claims",
+    "field": "unsourced_stat"
+   },
+   {
+    "lane": "jev",
+    "rubric": "eeat-ymyl-flag",
+    "question": "sources_for_claims",
+    "yes": "Meets",
+    "only": {
+     "ymyl": true
+    }
+   }
+  ],
+  "TA05": [
+   {
+    "lane": "evidence",
+    "need": "Tra uy tín độc lập: báo chí, review, diễn đàn; không có tin không phải uy tín xấu",
+    "skill": "geo-offsite-audit"
+   }
+  ],
+  "TA06": [
+   {
+    "lane": "jev",
+    "rubric": "eeat-ymyl-flag",
+    "question": "expert_shown",
+    "yes": "Meets",
+    "only": {
+     "ymyl": true
+    }
+   }
+  ],
+  "TA07": [
+   {
+    "lane": "claude",
+    "note": "Kiểm claim quan trọng với nguồn; dùng claims của content-quality-lab làm danh sách"
+   }
+  ],
+  "TA08": [
+   {
+    "lane": "reuse",
+    "from": "effort",
+    "field": "first_hand"
+   },
+   {
+    "lane": "jev",
+    "rubric": "eeat-review",
+    "question": "first_hand_evidence",
+    "yes": "Meets",
+    "only": {
+     "page_type": [
+      "review"
+     ]
+    }
+   }
+  ],
+  "TA09": [
+   {
+    "lane": "jev",
+    "rubric": "eeat-ymyl-flag",
+    "question": "high_stakes_advice",
+    "yes": "Does not meet",
+    "only": {
+     "ymyl": true
+    }
+   },
+   {
+    "lane": "jev",
+    "rubric": "eeat-ymyl-flag",
+    "question": "expert_shown",
+    "yes": "Meets",
+    "only": {
+     "ymyl": true
+    }
+   }
+  ],
+  "TA10": [
+   {
+    "lane": "code",
+    "key": "contact"
+   }
+  ],
+  "TA11": [
+   {
+    "lane": "code",
+    "key": "affiliate"
+   },
+   {
+    "lane": "jev",
+    "rubric": "eeat-review",
+    "question": "disclosure",
+    "yes": "Meets",
+    "only": {
+     "page_type": [
+      "review"
+     ]
+    }
+   }
+  ],
+  "TA12": [
+   {
+    "lane": "claude",
+    "note": "Claim nghiên cứu có nêu mẫu, thời gian, giới hạn"
+   }
+  ],
+  "TA13": [
+   {
+    "lane": "jev",
+    "rubric": "eeat-ymyl-flag",
+    "question": "consensus_conflict",
+    "yes": "Does not meet",
+    "only": {
+     "ymyl": true
+    }
+   }
+  ],
+  "AI01": [
+   {
+    "lane": "reuse",
+    "from": "effort",
+    "field": "effort_low"
+   },
+   {
+    "lane": "reuse",
+    "from": "dup",
+    "field": "dup_share"
+   }
+  ],
+  "AI02": [
+   {
+    "lane": "claude",
+    "note": "Chỉ khi người đọc có lý do mong biết việc dùng AI"
+   }
+  ],
+  "AI03": [
+   {
+    "lane": "evidence",
+    "need": "Bản ghi duyệt trước khi đăng: người duyệt + ngày"
+   }
+  ],
+  "AI04": [
+   {
+    "lane": "code",
+    "key": "title_meta_dup"
+   }
+  ],
+  "AI05": [
+   {
+    "lane": "evidence",
+    "need": "Feed Merchant Center và metadata ảnh AI; chỉ áp cho shop có Merchant Center"
+   }
+  ],
+  "CP01": [
+   {
+    "lane": "reuse",
+    "from": "dup",
+    "field": "dup_share"
+   },
+   {
+    "lane": "jev",
+    "rubric": "eeat-ai-spam",
+    "question": "scaled_template",
+    "yes": "Does not meet"
+   }
+  ],
+  "CP02": [
+   {
+    "lane": "jev",
+    "rubric": "eeat-ai-spam",
+    "question": "rewritten_summary",
+    "yes": "Does not meet"
+   }
+  ],
+  "CP03": [
+   {
+    "lane": "claude",
+    "note": "Khu vực nội dung của bên thứ ba trên site (coupon, đánh giá thuê): đọc chính sách site reputation abuse"
+   }
+  ],
+  "CP04": [
+   {
+    "lane": "jev",
+    "rubric": "eeat-ai-spam",
+    "question": "doorway_variant",
+    "yes": "Does not meet",
+    "only": {
+     "page_type": [
+      "local",
+      "service",
+      "product"
+     ]
+    }
+   },
+   {
+    "lane": "reuse",
+    "from": "dup",
+    "field": "dup_share"
+   }
+  ],
+  "CP05": [
+   {
+    "lane": "claude",
+    "note": "Công cụ trên trang chạy đúng như quảng cáo: bấm thử"
+   }
+  ],
+  "CP06": [
+   {
+    "lane": "code",
+    "key": "affiliate"
+   }
+  ],
+  "CP07": [
+   {
+    "lane": "code",
+    "key": "hidden_ai_text"
+   }
+  ],
+  "CP08": [
+   {
+    "lane": "evidence",
+    "need": "Lịch sử domain (Wayback) nếu domain mua lại"
+   }
+  ],
+  "CP09": [
+   {
+    "lane": "jev",
+    "rubric": "eeat-review",
+    "question": "merchant_copy",
+    "yes": "Does not meet",
+    "only": {
+     "page_type": [
+      "review"
+     ]
+    }
+   }
+  ],
+  "CP10": [
+   {
+    "lane": "code",
+    "key": "ugc_links"
+   }
+  ],
+  "RC01": [
+   {
+    "lane": "jev",
+    "rubric": "eeat-review",
+    "question": "first_hand_evidence",
+    "yes": "Meets",
+    "only": {
+     "page_type": [
+      "review"
+     ]
+    }
+   }
+  ],
+  "RC02": [
+   {
+    "lane": "jev",
+    "rubric": "eeat-review",
+    "question": "measured",
+    "yes": "Meets",
+    "only": {
+     "page_type": [
+      "review"
+     ]
+    }
+   }
+  ],
+  "RC03": [
+   {
+    "lane": "jev",
+    "rubric": "eeat-review",
+    "question": "alternatives",
+    "yes": "Meets",
+    "only": {
+     "page_type": [
+      "review"
+     ]
+    }
+   }
+  ],
+  "RC04": [
+   {
+    "lane": "jev",
+    "rubric": "eeat-review",
+    "question": "pros_cons",
+    "yes": "Meets",
+    "only": {
+     "page_type": [
+      "review"
+     ]
+    }
+   }
+  ],
+  "RC05": [
+   {
+    "lane": "claude",
+    "note": "Trang review: đọc mẫu"
+   }
+  ],
+  "RC06": [
+   {
+    "lane": "jev",
+    "rubric": "eeat-review",
+    "question": "best_justified",
+    "yes": "Meets",
+    "only": {
+     "page_type": [
+      "review"
+     ]
+    }
+   }
+  ],
+  "RC07": [
+   {
+    "lane": "claude",
+    "note": "Trang review: đọc mẫu"
+   }
+  ],
+  "RC08": [
+   {
+    "lane": "claude",
+    "note": "Trang review: đọc mẫu"
+   }
+  ],
+  "RC09": [
+   {
+    "lane": "claude",
+    "note": "Trang review: đọc mẫu"
+   }
+  ],
+  "RC10": [
+   {
+    "lane": "claude",
+    "note": "Trang review: đọc mẫu"
+   }
+  ],
+  "RC11": [
+   {
+    "lane": "claude",
+    "note": "Trang review: đọc mẫu"
+   }
+  ],
+  "PE01": [
+   {
+    "lane": "evidence",
+    "need": "CrUX field p75 LCP theo URL hoặc origin, ghi kỳ thu và thiết bị",
+    "skill": "wp-pagespeed"
+   }
+  ],
+  "PE02": [
+   {
+    "lane": "evidence",
+    "need": "CrUX field p75 INP",
+    "skill": "wp-pagespeed"
+   }
+  ],
+  "PE03": [
+   {
+    "lane": "evidence",
+    "need": "CrUX field p75 CLS",
+    "skill": "wp-pagespeed"
+   }
+  ],
+  "PE04": [
+   {
+    "lane": "code",
+    "key": "https"
+   }
+  ],
+  "PE05": [
+   {
+    "lane": "evidence",
+    "need": "Chụp khung điện thoại, tràn ngang",
+    "skill": "web-qa-gate"
+   }
+  ],
+  "PE06": [
+   {
+    "lane": "evidence",
+    "need": "Chụp màn đầu và khi cuộn: quảng cáo chen nội dung",
+    "skill": "web-qa-gate"
+   }
+  ],
+  "PE07": [
+   {
+    "lane": "evidence",
+    "need": "Popup, overlay che nội dung khi vào trang",
+    "skill": "web-qa-gate"
+   }
+  ],
+  "PE08": [
+   {
+    "lane": "evidence",
+    "need": "Màn đầu có nội dung chính rõ",
+    "skill": "web-qa-gate"
+   }
+  ],
+  "PE09": [
+   {
+    "lane": "evidence",
+    "need": "axe, focus, bàn phím cho hành trình chính",
+    "skill": "web-qa-gate"
+   }
+  ],
+  "MT01": [
+   {
+    "lane": "code",
+    "key": "date_year"
+   }
+  ],
+  "MT02": [
+   {
+    "lane": "evidence",
+    "need": "Quy tắc giữ, sửa, gộp, xoá bài",
+    "skill": "content-inventory-audit"
+   }
+  ],
+  "MT03": [
+   {
+    "lane": "evidence",
+    "need": "Người chịu trách nhiệm rà thông tin dễ lỗi thời"
+   }
+  ],
+  "MT04": [
+   {
+    "lane": "evidence",
+    "need": "Kênh báo lỗi trên site và bản ghi đã sửa lỗi người đọc báo"
+   }
+  ],
+  "SP01": [
+   {
+    "lane": "code",
+    "key": "indexable"
+   }
+  ],
+  "SP02": [
+   {
+    "lane": "code",
+    "key": "snippet"
+   }
+  ],
+  "SP03": [
+   {
+    "lane": "code",
+    "key": "schema"
+   }
+  ],
+  "SP04": [
+   {
+    "lane": "claude",
+    "note": "Ảnh và video giúp hiểu hoặc là bằng chứng; ảnh hàng loạt dùng visual-serp-lab"
+   }
+  ],
+  "SP05": [
+   {
+    "lane": "claude",
+    "note": "Cấu trúc phục vụ người đọc, không chia chunk giả cho AI"
+   }
+  ],
+  "SP06": [
+   {
+    "lane": "claude",
+    "note": "Câu quan trọng hiểu được khi tách khỏi ngữ cảnh"
+   }
+  ],
+  "SP07": [
+   {
+    "lane": "claude",
+    "note": "Claim sản phẩm, dịch vụ khớp nhau trên hành trình; dùng site-fact-consistency"
+   }
+  ],
+  "SP08": [
+   {
+    "lane": "evidence",
+    "need": "Nguồn nhắc thương hiệu tự nhiên, không mua",
+    "skill": "geo-offsite-audit"
+   }
+  ],
+  "EV01": [
+   {
+    "lane": "evidence",
+    "need": "Người độc lập kiểm độ hữu ích trước khi đăng"
+   }
+  ],
+  "EV02": [
+   {
+    "lane": "evidence",
+    "need": "Báo cáo sau đăng: GSC + chuyển đổi, cùng kỳ so sánh"
+   }
+  ]
+ }
+}

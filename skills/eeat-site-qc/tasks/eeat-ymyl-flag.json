@@ -1,0 +1,22 @@
+{
+  "name": "eeat-ymyl-flag",
+  "version": "2026-11-02.1",
+  "questions": {
+    "high_stakes_advice": {
+      "type": "noul",
+      "instructions": "state.text is the main content of one public web page (title and H1 first), written in state.lang (vi = Vietnamese, en = English), possibly cut at the end. state.site is the website name. Judge only this text. Does the page give specific advice or instructions where a mistake could seriously hurt the reader's health, money, safety or legal situation (for example dosages, investment actions, legal steps, electrical work)? Answer no for general background information."
+    },
+    "expert_shown": {
+      "type": "noul",
+      "instructions": "state.text is the main content of one public web page (title and H1 first), written in state.lang (vi = Vietnamese, en = English), possibly cut at the end. state.site is the website name. Judge only this text. Does the text name an author or reviewer and state a relevant qualification or experience for this topic (for example a doctor for medical advice, a lawyer for legal steps, a licensed adviser for finance)? Answer no when no person is named or no relevant qualification is stated."
+    },
+    "consensus_conflict": {
+      "type": "noul",
+      "instructions": "state.text is the main content of one public web page (title and H1 first), written in state.lang (vi = Vietnamese, en = English), possibly cut at the end. state.site is the website name. Judge only this text. Does the page make claims that contradict well-established expert or official consensus on the topic, or present a fringe claim as settled fact? Answer no when claims match mainstream expert guidance or are clearly labeled as opinion or uncertain."
+    },
+    "sources_for_claims": {
+      "type": "noul",
+      "instructions": "state.text is the main content of one public web page (title and H1 first), written in state.lang (vi = Vietnamese, en = English), possibly cut at the end. state.site is the website name. Judge only this text. Are the important factual or numeric claims on this page linked to named sources a reader could check (studies, official pages, laws, named experts)?"
+    }
+  }
+}

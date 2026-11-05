@@ -2,12 +2,14 @@
 name: wp-staging-deploy
 description: "Làm mới staging WordPress từ production, vào staging qua tunnel SSH, rồi deploy theme và mu-plugins lên production bằng gộp 3 phía có backup và rollback. Sinh lại CSS Elementor từng tài liệu, purge LiteSpeed theo URL. Các skill wp-* gọi skill này trước khi ghi production."
 metadata:
-  version: "1.4"
+  version: "1.5.0"
 ---
 
 # wp-staging-deploy — staging, gộp 3 phía, deploy có rollback
 
 Skill này là đường ghi chung cho site WordPress có quyền SSH và WP-CLI. Mọi thay đổi theme, mu-plugin hay CSS đi qua staging trước. Sau đó skill gộp thay đổi lên production bằng 3 phía và giữ bản backup để rollback.
+
+Trước khi ghi, đọc `references/bang-chung-sau-ghi.md`: backup + hash, staging lệch nguồn, xác minh DB/object cache/HTML và mức kiểm phù hợp thay đổi. Mã thoát 0 chưa đủ; comment-only có đầu ra minify giống byte không cần thêm preview plugin hay đổi cache config.
 
 Gốc đường dẫn là root repo. Script nằm ở `skills/wp-staging-deploy/scripts/`:
 
@@ -219,6 +221,9 @@ Bản tốt nhất phải có:
 - Không in secret, host staging hay mật khẩu ra terminal, log hoặc file.
 - Không chạy lệnh staging tự viết mà không pipe qua `stg_mask`.
 - Không báo xong đợt khi `stg_leak_check.sh` chưa trả 0 trên thư mục đợt.
+- Không ghi comment chứa tên người, lane, đợt, lô, ngày, số bản hay lời duyệt vào file PHP, JS, CSS đưa lên site. Docblock mu-plugin tối đa 3 dòng: tên, việc, công tắc tắt.
+- Không ghi comment trong chuỗi JS/CSS mà PHP echo ra HTML, trong heredoc, hay trong file JS/CSS bị nhúng nguyên văn. Không đặt `data-no-optimize` để tránh minify. Comment ở đó lọt ra view-source.
+- Không tạo mu-plugin mới cho mỗi lane hay mỗi đợt. Hook mới vào file chủ đề theo chức năng; file mới chỉ khi plan ghi tên file. Sau deploy chạy `wp-code-footprint/scripts/footprint_count.py` trên HTML production: `comment_quytrinh=0`.
 
 ## Anti-patterns
 
@@ -233,6 +238,8 @@ Bản tốt nhất phải có:
 
 ## Changelog
 
+- v1.5.0 (2026-11-05): thêm hợp đồng bằng chứng sau ghi: hash/backup hai nơi, postcondition có cấu trúc, getter mới và object cache web, kiểm minifier thực tế trước regen CSS, health có cửa sổ thời gian; đọc cấu hình theo whitelist, không lộ secret.
+- v1.4.1 (2026-11-05): Gate thêm 3 luật code sạch: không comment quy trình trong file lên site, không comment trong chuỗi echo hay `data-no-optimize`, không mu-plugin theo lane; kiểm bằng `footprint_count.py` sau deploy. Nguồn: audit footprint site agency mẫu 05/11/2026 (70 mu-plugin do 8 đợt lane tạo, comment quy trình lọt ra view-source), skill `wp-code-footprint`. Không đổi script.
 - v1.4 (2026-10-30): nhánh site không có staging: reference `khong-co-staging.md`, mẫu `templates/theme-preview.php.tpl` (bản 1.3 đã chạy trên production site bán lẻ mẫu, đã ẩn tên theme), `scripts/theme_preview_fill.py` sinh mã 0600 và điền mẫu, `tests/test_theme_preview.py` 2/2 kèm `php -l`. Nguồn: site bán lẻ mẫu 29–30/10/2026, theme xem trước 16/16 URL đạt có mã và không mã, rồi deploy lô 40 file; người duyệt yêu cầu sửa theo template ở tầng theme (29/10/2026 21:45). Tự phản biện gộp 2 mục plan gộp thành 1, thêm 1 mục nhánh không staging.
 
 - v1.3 (2026-10-28): thêm mục "Đổi phần dùng chung toàn site" và `scripts/site_paths.sh` (sitemap + dò `/page/N/` + `--extra`). Gate và tự phản biện thêm mục purge đủ danh sách và purge CDN. Nguồn: site agency mẫu 28/10/2026, đổi nút liên hệ nổi. Lượt đầu chỉ purge 33 trang chính, lượt sau purge 370 path theo 31 lô. Edge CDN còn 60/370 bản cũ tới khi purge riêng. Chạy thử `site_paths.sh` trên site thật: 346 path sitemap, 17 trang phân trang; 7 path ngoài sitemap cần `--extra` và `--archive`.

@@ -1,5 +1,5 @@
 ---
-master_version: v2026.10.59
+master_version: v2026.11.3
 ---
 
 # MIGRATION — Cập nhật instance lên version master mới
@@ -15,6 +15,33 @@ master_version: v2026.10.59
 ---
 
 ## 1. Có gì mới
+
+### v2026.11.3 (2026-11-05) — Kiểm chứng footprint, staging, semantic HTML và PageSpeed
+
+- **Vì sao:** review độc lập site agency mẫu phát hiện bộ đếm comment bằng regex, kết luận hash CSS khi chỉ đổi comment, lỗi ARIA sau khởi tạo và so sánh field/lab khác phạm vi. Các sửa này không đổi cấu hình website hay lịch job của instance.
+- **8 skill:** `wp-code-footprint` 1.1.0 (Acorn, dữ liệu inline riêng, INCOMPLETE, hash/UTF-8, kiểm coverage); `wp-staging-deploy` 1.5.0 và `wp-host-optimize` 1.1.0 (backup/hash, đọc cấu hình whitelist, postcondition DB/cache, health); `wp-ucss` 1.3.0 (0 cặp mất mới, 4 biến thể, DRY có thể ghi local); `semantic-html-optimization` 1.4 (b/i theo nghĩa, raw HTML/DOM/ARIA/keyboard); `wp-pagespeed` 1.23 (URL/origin, thiết bị, p75, RUM, CLS/CCSS); `web-qa-gate` 1.4.0 (quét hoàn tất và mức kiểm theo tác động); `wp-security-hardening` 1.10 (direct PHP, ngoại lệ endpoint, pending config/restart OLS). Health helper kế thừa lọc domain và thêm fail closed; parser PSI nhận tên biến thể có dấu gạch nối. Inventory CSS nhận marker inline bằng HTMLParser, không bỏ qua âm thầm biến thể chưa xác minh.
+- **Dependency mới:** bộ quét footprint cần Node + Acorn. Cài một lần: `npm install --prefix ~/.cache/wp-code-footprint acorn@8.19.0` (script tự tìm thư mục này), hoặc truyền `ACORN_PATH`; không tự tải package.
+- **Review chéo trước phát hành:** `wp-ucss/scripts/inventory.py` bản đầu chỉ nhận marker riêng của site mẫu, bỏ sót link swap mang `data-ucss="1"` của `templates/ucss-swap.php`. Đã sửa để nhận marker gốc và biến thể có tiền tố site; 9 test inventory và cổng "không còn tên site gốc" đạt. Thiếu dependency hoặc parse lỗi trả mã 2 và không PASS. `important` đổi tên thành `important_raw_html` để không bị hiểu là số khai báo CSS.
+- **Port sang instance:** chép 8 thư mục skill bằng `tools/port_skill.py --skills wp-code-footprint,wp-staging-deploy,wp-host-optimize,wp-ucss,semantic-html-optimization,wp-pagespeed,web-qa-gate,wp-security-hardening`, rồi đồng bộ runtime theo công cụ của instance. Giữ nguyên dữ liệu client, cấu hình site, bản backup và report cũ; kiểm fixture footprint sau khi cài Acorn. Cập nhật `master_version` thành `v2026.11.3`.
+
+### v2026.11.2 (2026-11-05) — Skill mới `wp-code-footprint` 1.0; `web-qa-gate` 1.3.3, `wp-staging-deploy` 1.4.1: footprint code do AI để lại
+
+- **Vì sao:** người duyệt mở view-source site agency mẫu 05/11/2026 thấy comment quy trình (tên người, ngày duyệt, lane, lô) lọt ra HTML công khai, cùng 70 mu-plugin và 79–134 KB inline mỗi trang, sau 8 lượt cổng kiểm đạt. Cổng cũ so DOM và PSI, không đọc view-source.
+- **Skill mới wp-code-footprint 1.0:** audit (quét HTML và server bằng code, Jev 3 rubric `code-comment-leak`, `inline-script-kind`, `semantic-wrap`, EmbeddingGemma gom mu-plugin trùng chức năng) và dọn theo 4 lane có cổng md5, backup, rollback, so token chứng minh "chỉ comment đổi". Đợt mẫu: comment quy trình trong HTML 3–6 mỗi trang → 0, mu-plugin 70 → 57, Jev process_note 93 → 3, 0 lỗi production. Test `tests/test_footprint.py` 7/7.
+- **web-qa-gate 1.3.3:** Gate thêm hạng mục 16 footprint (`footprint_count.py`, `comment_quytrinh=0`). **wp-staging-deploy 1.4.1:** Gate thêm 3 luật: không comment quy trình trong file lên site, không comment trong chuỗi echo hay `data-no-optimize`, không mu-plugin theo lane.
+- **tools/ai-assist:** 3 rubric mới trong `tasks/`, ngưỡng ở README §4.
+- **wp-code-footprint 1.0.1 (cùng ngày):** `health.sh` không phụ thuộc số cột log, `stg_get.sh` gọi https và nhận `STG_AUTH`; 2 anti-pattern mới (theme nhúng CSS nguyên văn, bản chép có slug đăng nhập). Chạy thử trên site đào tạo mẫu: 219 → 0 comment quy trình, 0 lỗi production.
+- **Port sang instance:** GHI ĐÈ 3 thư mục skill bằng `python3 tools/port_skill.py --skills wp-code-footprint,web-qa-gate,wp-staging-deploy`, chép 3 file `tools/ai-assist/tasks/{code-comment-leak,inline-script-kind,semantic-wrap}.json`, rồi `bash tools/sync-skills.sh`. Cập nhật `master_version` thành `v2026.11.2`.
+
+### v2026.11.1 (2026-11-02) — Checklist E-E-A-T của Aleyda Solis: skill mới `eeat-site-qc`; `semantic-content-audit` 2.4, `content-quality-lab` 1.3.0, `content-refresh` 1.4, luật QC §7
+
+- **Vì sao:** người duyệt duyệt ngày 02/11/2026 đưa checklist "Google's Content Quality, E-E-A-T, Helpfulness & Page Experience" của Aleyda Solis (83 check, bản skill 1.2.1 ngày 29/10/2026) vào quy trình QC. Thang E-E-A-T cũ cho 0 điểm khi thiếu bằng chứng, nên gộp "chưa xem" với "rớt".
+- **semantic-content-audit 2.4:** Phase 4 chấm theo 5 trạng thái và 4 scope (`references/eeat-aleyda.md`, dữ liệu `references/eeat-checklist/`). 26 điểm E-E-A-T + Helpful suy từ trạng thái bằng `scripts/eeat_checks.py`. Thang 66 và mốc ≥50/66 của SOP giữ nguyên. Test `tests/test_eeat_checks.py` 6/6.
+- **Skill mới eeat-site-qc 1.0.0:** QC cả site theo 83 check. Code chấm 16 check tất định, 4 rubric Jev (`tasks/eeat-*.json` 2026-11-02.1, chưa hiệu chuẩn) và output Gemma của `content-quality-lab`, `topical-focus` gắn cờ; Claude chốt mọi lỗi qua `doc-lai.tsv`. 43/83 check có tín hiệu máy, 20 check Claude đọc, 20 check cần bằng chứng ngoài trang. Test `tests/test_site_qc.py` 6/6.
+- **content-quality-lab 1.3.0:** bước 9 gate AI + spam (AI01–04, CP01, CP04, CP07, CP09), `references/gate-ai-spam.md`.
+- **content-refresh 1.4:** mode core update (`references/core-update.md`).
+- **Luật:** `CLAUDE.md` §7.2 bước 3: `CANNOT-VERIFY` không phải FAIL; `n/a` cần lý do; không có quyền truy cập là `CANNOT-VERIFY`.
+- **Port sang instance:** GHI ĐÈ `CLAUDE.md` và 4 thư mục skill bằng `python3 tools/port_skill.py --skills eeat-site-qc,semantic-content-audit,content-quality-lab,content-refresh`, rồi `bash tools/sync-skills.sh`. QC report cũ giữ nguyên. Cập nhật `master_version` thành `v2026.11.1`.
 
 ### v2026.10.59 (2026-10-31) — `anh-trong-bai` 1.2.1: mũi tên sơ đồ làn rõ và gọn hơn
 

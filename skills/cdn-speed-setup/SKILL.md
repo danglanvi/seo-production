@@ -108,13 +108,14 @@ Bản tốt nhất phải có:
 
 ## Kiểm thử
 
-- Test offline: chạy `python3 -B scripts/tests/test_cdn.py` (23 ca) và `python3 -B scripts/tests/test_monitor.py` (31 ca) từ folder skill. Không gọi mạng.
+- Test offline: chạy `python3 -B scripts/tests/test_cdn.py` (23 ca) và `python3 -B scripts/tests/test_monitor.py` (35 ca) từ folder skill. Không gọi mạng.
 - `test_monitor.py` giữ các ca từ rà soát đối kháng giám sát ngày 26/10/2026: gửi tin lỗi phải gửi lại ở vòng sau, lỗi chập chờn phải được báo, lỗi origin không kèm lệnh trả DNS, state hỏng được cách ly.
 - Ca thật trong bộ test: mã trạm Bunny "LA" (Los Angeles) trùng mã quốc gia Lào; hai danh sách vùng của template phải trùng `scripts/geo_rule.py`.
 - Chạy lại test sau mỗi lần sửa danh sách vùng trong template.
 
 ## Changelog
 
+- v1.3.2 (2026-11-02): `cdn_monitor.py` gọi lại trang qua HTTP từ 3 probe Globalping ở Mỹ (`confirm_far`) khi máy giám sát nhận mã 0 từ trạm CDN, thêm 4 test. Nguồn: site VN 28/10–02/11/2026 có 20 vòng báo giả. `origin-sau-cdn.md` §3: làm nóng mọi ảnh mỗi ngày (Bunny xoá ảnh ít dùng sau 1–4 ngày). §5: ghi bước gọi lại qua probe Mỹ.
 - v1.3.1 (2026-10-30): `nhanh-a-cloudflare-proxy.md` bước 2 thêm cách tách rule cache HTML và rule Bypass (thứ tự rule, cookie thử thách `cf_clearance`, `__cf_bm`, header `s-maxage` + `stale-while-revalidate`); bước 7 ghi ca APO chạy cùng LiteSpeed Cache khi tắt Guest Mode; mục 3 thêm kiểm `cf-cache-status` giỏ hàng. Nguồn: nhật ký tối ưu site TMĐT mẫu của SEO Lead dự án, 30/10/2026.
 - v1.3 (2026-10-27): `nhanh-b-chia-vung.md` §2b mới: edge rule theo mã khi Bunny lưu mã lỗi, sitemap 1 ngày, edge rule không đặt được `Accept-Encoding`; §2 bước 4 sửa rule ảnh và sitemap cho khớp. `origin-sau-cdn.md` §2 biến thể cache theo loại file, §3 bỏ nhãn "chưa thử" và thêm chờ 30 giây sau purge, §8 mới về Brotli ở Bunny. `do-va-kiem.md` §3 mục 7 đo Googlebot từ Mỹ theo bảng lớp × cache (từ VN, lượt HIT vẫn 738–802 ms). Quyền bật proxy dẫn sang `ra-tai-khoan-cdn.md`. Gate thêm 1 mục, Anti-pattern thêm 2 mục, eval thêm 2 ca. Đã chạy thật trên production site agency mẫu 27/10/2026, 2 lane đạt kiểm độc lập: 301 từ Mỹ 678–713 → 4–14 ms, 410 663–708 → 3–6 ms, sitemap HIT 2–9 ms; rule ảnh 30 ngày giữ 167 URL ảnh 404 trong 63 phút trước khi thêm điều kiện mã; Brotli 10/10 URL HTML, nhỏ hơn gzip 8,9%. Phần ước GSC và tác động lên Googlebot thật chờ lượt kiểm 31/10/2026.
 - v1.2 (2026-10-27): `warm.py` gửi HTML với Accept có `image/webp` (`--accept`), test `test_warm_html_accept_webp`; bản trước dùng `*/*` của curl, trái với `origin-sau-cdn.md` §2. §2 thêm cách làm nóng đúng trạm bot dùng bằng ECS (site VN: 85/85 lượt Googlebot vào một trạm). Mục mới "Quyền hành động trên Cloudflare" chép từ luật người duyệt chốt 26/10 (trước chỉ nằm trong memory của một runtime). Checklist mục 1 thêm phương án tự build. `evals/cases.yaml` 5 ca. Phần ngưỡng theo số GSC sau đổi apex: phiên CDN cập nhật sau lượt kiểm 31/10.

@@ -2,7 +2,7 @@
 name: content-quality-lab
 description: "Đo dấu hiệu effort bằng Jev, tìm khối chữ lặp bằng EmbeddingGemma, chặn claim rủi ro (cam kết, hoàn tiền, tự xếp hạng, số không nguồn, số lệch fact) và kiểm an toàn khi viết lại. Dùng khi rà trang trước refresh hoặc GEO, soát template, copy hay bản viết lại trước khi đăng."
 metadata:
-  version: "1.2.3"
+  version: "1.3.0"
 ---
 
 # content-quality-lab — trang có gì mà trang khác không chép được
@@ -23,6 +23,7 @@ Gốc đường dẫn là root repo. Script: `skills/content-quality-lab/scripts
 - Soát template: trang địa phương gần trùng nhau, lời chứng thực lặp, khối mẫu nằm sai mục.
 - Soát claim trên trang đã đăng hoặc copy nháp trước khi đăng: cam kết, tự xếp hạng, số không nguồn, số lệch bảng fact.
 - Soát bản viết lại trước khi đăng, nhất là trang có click: fact cũ còn đủ, không thêm cam kết, query đang mang click còn passage trả lời.
+- Bài hoặc trang làm bằng AI hay theo template sắp đăng: chạy gate AI + spam (`references/gate-ai-spam.md`).
 - Không dùng để chấm văn hay. Jev chỉ đọc dấu hiệu trong chữ. Lệnh `claims` chỉ so số với bảng fact đã chốt; lan truyền một fact vừa đổi thì dùng `site-fact-consistency`.
 
 ## Input
@@ -79,6 +80,7 @@ Chạy "python3 tools/capabilities.py check --need 'python3,numpy?,gemma?,jev?'"
    - Dữ liệu GSC chỉ đi vào Gemma chạy trên máy. Không đưa query GSC vào `pairs.jsonl` hay input Jev.
    - Site mới hoặc rubric đổi version: gán gold mù cho `facts` và `added` trước lượt Jev đầu, rồi chạy `calibrate.py cosine` trên P(dropped) + P(changed) để lấy `reject_below`, và `calibrate.py jev --question added --positive yes`.
    - Claude đọc mọi cặp "chặn" và "cần đọc", rồi mọi query "query cần đọc". Cặp "chặn" không đăng. Số mới chạy thêm lệnh `claims` trên bản mới.
+9. Gate AI + spam (bài làm bằng AI hoặc theo template, trước khi đăng): đọc `references/gate-ai-spam.md`. Chấm 8 check AI01–04, CP01, CP04, CP07, CP09 bằng kết quả bước 2, 5, 6 và bản ghi duyệt. Ghi verdict G-AI-SPAM vào `<W>/report.md`.
 
 ## Đọc số cho đúng
 
@@ -160,6 +162,7 @@ Bản tốt nhất phải có:
 - [ ] Không đề xuất bịa số liệu hay case. Thiếu số đo thì xin số từ dự án thật qua `expert-case-study`.
 - [ ] Không viết câu cam kết hoàn tiền, bảo đảm KPI hay thứ hạng mới. Chủ site quyết câu cam kết.
 - [ ] Lệnh rewrite: query GSC chỉ xử lý trên máy. `rw_jev_in.jsonl` chỉ có chữ trang và URL, và rỗng khi không có `--own-site`.
+- [ ] Gate AI + spam: mỗi check có trạng thái và bằng chứng; không ghi Does not meet chỉ vì trang dùng AI, template hay số lượng lớn; AI03 không có bản ghi duyệt thì ghi CANNOT-VERIFY.
 
 ## Anti-patterns
 
@@ -176,6 +179,7 @@ Bản tốt nhất phải có:
 
 ## Changelog
 
+- v1.3.0 (2026-11-02): bước 9 gate AI + spam (AI01–04, CP01, CP04, CP07, CP09 của checklist Aleyda Solis), `references/gate-ai-spam.md`. Gate dùng tín hiệu sẵn có của skill, chưa thêm rubric Jev; rubric cấp site nằm ở `eeat-site-qc`.
 - v1.2.3 (2026-10-19): cờ `--own-site` cho `rewrite` và `claims --text`. Bản nháp chưa đăng của site của chính đơn vị vận hành được gửi Jev. Bản nháp site khách không gửi Jev: input Jev rỗng, ghép `--jev-out` thì dừng, Claude đọc, chỉ chạy regex, cụm cấm và Gemma trên máy.
 - v1.2.2 (2026-10-19): rút description còn 273 ký tự.
 - v1.2.1 (2026-10-19): `claims --text` (chữ nháp chưa công khai) không gửi Jev: `jev_in.jsonl` và `fact_jev_in.jsonl` rỗng, ghép `--jev-out` thì dừng, câu chạm dấu hiệu chuyển Claude đọc. Cụm cấm của bảng fact dùng `strict_rx`: cụm sau dấu gạch nối không tính.

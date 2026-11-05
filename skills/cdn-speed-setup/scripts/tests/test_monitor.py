@@ -201,7 +201,7 @@ class RunFlow(unittest.TestCase):
                         origin_file=os.path.join(self.d, "origin"), heartbeat_hour=None, bunny_billing=False,
                         globalping_every_min=10 ** 9, geo_ns=[], cf_ns=[])
         self.sent, self.net, self.t = [], [True], [1_000_000.0]
-        self.orig = {k: getattr(m, k) for k in ("net_ok", "check_round", "send", "check_account")}
+        self.orig = {k: getattr(m, k) for k in ("net_ok", "check_round", "send", "check_account", "confirm_far")}
         self.orig_time = m.time.time
         m.net_ok = lambda: self.net[0]
         m.check_round = lambda cfg, origin, errors: ({"origin_http": (True, "mã 200")}, None)
@@ -245,6 +245,43 @@ class RunFlow(unittest.TestCase):
         self.tick()
         self.tick(900)
         self.assertTrue(any(m.TEN["cdn_api"] in x for x in self.sent))
+
+    def _cdn_lost(self, detail):
+        m.check_round = lambda cfg, origin, errors: ({"origin_http": (True, "mã 200"), "cdn_http": (False, detail)}, None)
+
+    def test_lost_path_confirmed_by_far_probes_no_alert(self):
+        # Ca 01/11/2026: máy nhà không tới trạm Miami, probe Mỹ vẫn nhận 200.
+        self._cdn_lost("mã 0, 0 ms, server -")
+        m.confirm_far = lambda cfg, keys: ({k: "3/3 probe Mỹ nhận 200 từ CDN" for k in keys}, "đo xong")
+        for _ in range(3):
+            self.tick()
+        self.assertEqual(self.sent, [])
+
+    def test_lost_path_far_probes_also_fail_alerts(self):
+        self._cdn_lost("mã 0, 0 ms, server -")
+        m.confirm_far = lambda cfg, keys: ({}, "đo xong")
+        self.tick()
+        self.tick()
+        self.assertTrue(any(m.TEN["cdn_http"] in x for x in self.sent))
+
+    def test_real_error_code_not_rechecked(self):
+        self._cdn_lost("mã 503, 40 ms, server BunnyCDN-MI1")
+        called = []
+        m.confirm_far = lambda cfg, keys: (called.append(keys) or {k: "x" for k in keys}, "đo xong")
+        self.tick()
+        self.tick()
+        self.assertEqual(called, [])
+        self.assertTrue(any(m.TEN["cdn_http"] in x for x in self.sent))
+
+    def test_confirm_error_keeps_failure(self):
+        self._cdn_lost("mã 0, 0 ms, server -")
+
+        def boom(cfg, keys):
+            raise OSError("timeout")
+        m.confirm_far = boom
+        self.tick()
+        self.tick()
+        self.assertTrue(any(m.TEN["cdn_http"] in x for x in self.sent))
 
     def test_dry_writes_no_state(self):
         self.t[0] += 300

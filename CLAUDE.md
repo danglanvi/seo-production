@@ -236,7 +236,7 @@ Không ghi tier → tra Ghi chú dòng #12 xem Tier 2 nào đã bật; chưa b�
 
 1. Tra ma trận M (§5) lấy đúng checklist cho công đoạn.
 2. Chạy Pre-work protocol (§3).
-3. Chấm **TỪNG item theo ID** với evidence trích từ deliverable (quote / số liệu / cell) — KHÔNG chấm gộp, không chấm cảm tính. Item không verify được → `CANNOT-VERIFY`, **không tính pass**.
+3. Chấm **TỪNG item theo ID** với evidence trích từ deliverable (quote / số liệu / cell) — KHÔNG chấm gộp, không chấm cảm tính. Item không verify được → `CANNOT-VERIFY`, **không tính pass**. `CANNOT-VERIFY` không phải FAIL: báo cáo liệt kê riêng, kèm bằng chứng cần lấy. Item `n/a` phải ghi lý do theo mục đích trang. Không có quyền truy cập hoặc chưa đo là `CANNOT-VERIFY`, không phải `n/a`.
 4. Xuất QC report: `03-audits/qc/QC-<##côngđoạn>-<slug>-<YYYYMMDD>.md` theo `_TEMPLATES/qc-report.md` (frontmatter + 3 bảng: kết quả theo item · việc phải sửa · verdict — mẫu ở `_REFERENCE/qc-report-format.md`).
 5. Update `index.md` (cột QC + status + bảng D) + append `log.md` op `qc`.
 

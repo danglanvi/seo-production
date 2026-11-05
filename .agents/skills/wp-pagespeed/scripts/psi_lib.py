@@ -44,8 +44,25 @@ def load_run(path):
     }
 
 
-def parse_ab_name(fname):
+def parse_ab_name(fname, variants=None, pages=None):
     """File do psi_ab + psi_run ghi: <trang>-<biến thể>-r<k>_<thiết bị>_run<m>.json. Trả None nếu tên khác."""
+    if variants:
+        suffix = re.match(r'^(?P<stem>.+)-r(?P<k>\d+)_(?P<dev>mobile|desktop)_run(?P<m>\d+)\.json$', fname)
+        if not suffix:
+            return None
+        stem = suffix['stem']
+        matches = []
+        for variant in variants:
+            if stem.endswith('-' + variant):
+                page = stem[:-len(variant) - 1]
+                if page:
+                    matches.append(dict(page=page, var=variant, k=suffix['k'], dev=suffix['dev'], m=suffix['m']))
+        in_spec = [match for match in matches if pages and match['page'] in pages]
+        if in_spec:
+            matches = in_spec
+        if len(matches) > 1:
+            raise ValueError('Tên file A/B mơ hồ trong spec: ' + fname)
+        return matches[0] if matches else None
     m = AB_NAME.match(fname)
     return m.groupdict() if m else None
 

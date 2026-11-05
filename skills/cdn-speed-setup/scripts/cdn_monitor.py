@@ -30,7 +30,8 @@ DEFAULTS = {"path": "/", "probe_query": "cdn-monitor=1", "resolvers": ["sys", "1
             "cf_ns": [], "ecs_far": "8.8.8.0/24", "interval_s": 300, "fail_after": 2, "window_fail": 3, "recover_after": 2,
             "repeat_min": 120, "gap_min": 15, "globalping_every_min": 60, "globalping_min_quota": 30,
             "globalping_far": [{"magic": "Ashburn"}, {"magic": "Dallas"}, {"magic": "Los Angeles"}, {"magic": "Chicago"}, {"magic": "New York"}],
-            "globalping_vn": {"country": "VN", "limit": 6}, "acct_every_min": 60, "trial_warn_days": 3, "min_balance_usd": 3,
+            "globalping_vn": {"country": "VN", "limit": 6},
+            "confirm_far": [{"magic": "Chicago"}, {"magic": "Ashburn"}, {"magic": "Dallas"}], "acct_every_min": 60, "trial_warn_days": 3, "min_balance_usd": 3,
             "cert_warn_days": 30, "heartbeat_hour": 8, "cdn_server_re": "bunny", "bunny_billing": False}
 CRIT = {"dns_mat", "flatten_loi", "ns_cdn", "origin_http", "cdn_http", "cdn_origin", "cdn_taikhoan"}
 UNSWITCH = {"dns_mat", "flatten_loi", "ns_cdn", "cdn_http", "cdn_origin", "cdn_taikhoan"}
@@ -205,6 +206,33 @@ def check_globalping(cfg, origin):
         else:
             notes.append("%s: không có câu trả lời" % key)
     return (out or None), "; ".join(notes) or "đo xong"
+
+
+def confirm_far(cfg, keys):
+    # Máy giám sát ở VN tới trạm CDN ở Mỹ bằng đường quốc tế. Đường này rớt giờ cao điểm: mã 0, request không tới trạm
+    # (log Bunny 01/11/2026 22:30–02/11 01:00, cùng lúc trạm vẫn trả 200 cho Googlebot). Đo lại bằng HTTP từ probe Mỹ.
+    # Trả {khoá: chi tiết} cho khoá được đa số probe xác nhận đạt. Thiếu quota hoặc probe lỗi thì giữ kết quả lỗi.
+    c, lim = _call("https://api.globalping.io/v1", {}, "GET", "/limits", timeout=20)
+    try:
+        left = lim["rateLimit"]["measurements"]["create"]["remaining"]
+    except Exception:
+        left = 0
+    if left < len(keys) * len(cfg["confirm_far"]):
+        return {}, "bỏ qua: Globalping còn %s probe" % left
+    out = {}
+    for key in keys:
+        req = {"method": "GET", "path": cfg["path"]}
+        if key == "cdn_origin":
+            req["query"] = cfg["probe_query"]
+        r = globalping({"type": "http", "target": cfg["domain"], "locations": cfg["confirm_far"],
+                        "measurementOptions": {"request": req, "protocol": "HTTPS", "port": 443}}, wait_s=40)
+        oks = []
+        for x in r.get("results", []):
+            h = {k.lower(): v for k, v in (x["result"].get("headers") or {}).items()}
+            oks.append(x["result"].get("statusCode") == 200 and re.search(cfg["cdn_server_re"], str(h.get("server") or ""), re.I) is not None)
+        if oks and sum(oks) * 2 > len(oks):
+            out[key] = "%d/%d probe Mỹ nhận 200 từ CDN" % (sum(oks), len(oks))
+    return out, "đo xong"
 
 
 def check_account(cfg, now_local):
@@ -414,6 +442,16 @@ def run(cfg, dry):
         if origin:
             r, ip = check_round(cfg, origin, errors)
             results.update(r)
+            # Chỉ đo lại lỗi "mã 0" (không có phản hồi). Trạm trả mã lỗi thật thì báo như cũ.
+            lost = [k for k in ("cdn_http", "cdn_origin") if k in results and not results[k][0] and results[k][1].startswith("mã 0,")]
+            if lost:
+                try:
+                    conf, note = confirm_far(cfg, lost)
+                except BaseException as e:  # noqa: B902
+                    conf, note = {}, "lỗi %s" % type(e).__name__
+                log["xac_nhan_xa"] = "%s: %s" % (",".join(lost), note)
+                for k, d in conf.items():
+                    results[k] = (True, "máy giám sát không tới được trạm CDN (%s); %s" % (results[k][1], d))
             if now - state.get("last_gp", 0) >= cfg["globalping_every_min"] * 60:
                 try:
                     gr, note = check_globalping(cfg, origin)

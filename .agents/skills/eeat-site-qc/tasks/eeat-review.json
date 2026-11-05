@@ -1,0 +1,34 @@
+{
+  "name": "eeat-review",
+  "version": "2026-11-02.1",
+  "questions": {
+    "first_hand_evidence": {
+      "type": "noul",
+      "instructions": "state.text is the main content of one public web page (title and H1 first), written in state.lang (vi = Vietnamese, en = English), possibly cut at the end. state.site is the website name. Judge only this text. This page reviews, compares or ranks products, services or providers. Does it show evidence that the reviewer actually used or tested them, such as own measurements, own photos described in text, test conditions, time of use or specific observations not found in official descriptions? Answer no when it only restates specifications, marketing claims or other people's reviews."
+    },
+    "measured": {
+      "type": "noul",
+      "instructions": "state.text is the main content of one public web page (title and H1 first), written in state.lang (vi = Vietnamese, en = English), possibly cut at the end. state.site is the website name. Judge only this text. This page reviews or compares products or services. Are the important performance claims backed by measurements or numbers (speed, results, durations, prices compared), not only adjectives such as fast, good or effective?"
+    },
+    "alternatives": {
+      "type": "noul",
+      "instructions": "state.text is the main content of one public web page (title and H1 first), written in state.lang (vi = Vietnamese, en = English), possibly cut at the end. state.site is the website name. Judge only this text. This page reviews or compares products or services. Does it compare options for specific reader needs or situations, for example 'choose A if you need X, B if you have a small budget', rather than one generic ranking?"
+    },
+    "pros_cons": {
+      "type": "noul",
+      "instructions": "state.text is the main content of one public web page (title and H1 first), written in state.lang (vi = Vietnamese, en = English), possibly cut at the end. state.site is the website name. Judge only this text. This page reviews or compares products or services. Does it state concrete drawbacks or limitations of the recommended options, not only benefits?"
+    },
+    "best_justified": {
+      "type": "noul",
+      "instructions": "state.text is the main content of one public web page (title and H1 first), written in state.lang (vi = Vietnamese, en = English), possibly cut at the end. state.site is the website name. Judge only this text. This page calls some options the best or ranks them. Is each 'best' choice or ranking position justified with stated criteria and evidence? Answer no when the ranking is asserted without criteria or evidence."
+    },
+    "merchant_copy": {
+      "type": "noul",
+      "instructions": "state.text is the main content of one public web page (title and H1 first), written in state.lang (vi = Vietnamese, en = English), possibly cut at the end. state.site is the website name. Judge only this text. Does most of the review text look copied or lightly reworded from merchant or manufacturer descriptions (feature lists, marketing phrases, specifications) with little independent analysis?"
+    },
+    "disclosure": {
+      "type": "noul",
+      "instructions": "state.text is the main content of one public web page (title and H1 first), written in state.lang (vi = Vietnamese, en = English), possibly cut at the end. state.site is the website name. Judge only this text. Does the page tell readers about a commercial relationship that could affect the recommendations, such as affiliate links, sponsorship, partnership or that the publisher sells one of the listed options? Answer yes only if such a disclosure is present in the text."
+    }
+  }
+}

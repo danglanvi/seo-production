@@ -60,6 +60,9 @@ Ngưỡng dưới đây hiệu chuẩn trên 2 site WordPress thật ngày 17/10
 | `gsc-cannibal-pair` | `technical-seo-audit` | Từ 0,7, Claude đọc mọi `duplicate_intent` | Chế độ chữ (`shared_queries` rỗng, `jev.py` chặn bằng code): 28/28 từ 0,7, phủ 60% (gold 17/10, kiểm 19/10). Không gửi query GSC |
 | `link-bridge` | `internal-linking` | `natural_bridge` từ 0,85; trang ít ứng viên hạ 0,6 | Claude chọn chỗ đặt link. Câu CTA chung hay lọt dưới ngưỡng |
 | `link-placement` | `internal-linking` Bước 4b | `zone` từ 0,7 thì nhận, dưới 0,7 Claude xếp mục theo title và outline. `fit` = `natural_bridge` từ 0,85 thì nhận, dưới 0,7 Claude đọc đoạn. `need` chỉ là tín hiệu phụ | Hiệu chuẩn 18/10/2026 trên 115 link có vị trí: `zone` từ 0,7 khớp nhãn Claude 80/82. Jev chấm theo đoạn hơn là theo mục, và xếp mở bài vào supplementary content: coi mở bài là main content bằng luật tất định |
+| `code-comment-leak` | `wp-code-footprint` bước A4 | `process_note` từ confidence 0,5 thì nhận, dưới 0,5 Claude đọc; `internal_exposure` từ 0,7 là danh sách đọc | Đợt mẫu 05/11/2026: 93 `process_note` trước dọn, 3 sau dọn và cả 3 là comment dev có ngày hoặc ID bài. Jev coi số và ngày là dấu vết quy trình, Claude đọc lại mọi mục |
+| `inline-script-kind` | `wp-code-footprint` bước A4 | `belongs_in_file` từ 0,7 là ứng viên ra file; chuyển thật cần A/B PSI | 103 khối, 41 ứng viên. Chưa nhãn tay |
+| `semantic-wrap` | `wp-code-footprint` bước A4 | `fit` khác `correct` từ confidence 0,5 thì Claude xem HTML | 320 mục, 44 gắn cờ, 35 mục confidence < 0,5. Không tự đổi thẻ |
 | `seo-text-qa` | `wp-content-review-apply` | Claude đọc mọi dòng gắn cờ | Đặt tên thương hiệu của site vào `state.brands` để Jev không báo sai chính tả |
 
 Bẫy đã gặp:

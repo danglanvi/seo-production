@@ -1,8 +1,8 @@
 ---
 name: content-refresh
-description: "Phát hiện và xếp hạng content decay sau publish từ data hiệu suất theo cửa sổ. Use when: (1) 'kiểm tra content decay [site]', 'bài nào đang rớt traffic', 'rà bài cần refresh [site/cluster]'; (2) 'traffic bài [URL] giảm, có cần update không'; (3) audit quý content sau publish."
+description: "Phát hiện và xếp hạng content decay sau publish từ data hiệu suất theo cửa sổ, hoặc chẩn đoán site tụt sau core update. Dùng khi hỏi bài nào đang rớt traffic, rà bài cần refresh, traffic URL giảm có cần update không, audit quý content."
 metadata:
-  version: "1.3"
+  version: "1.4"
 ---
 
 # Content Refresh — Decay Detection & Update Brief
@@ -53,6 +53,8 @@ Front-end DECAY-DETECTION cho vòng đời content sau publish: đọc data hi�
 - **Path C — URL + triệu chứng (đường lùi cuối):** user paste danh sách URL + mô tả triệu chứng. Skill chạy chế độ heuristic: classify nguyên nhân + liệt kê chính xác data cần lấy thêm; **KHÔNG chấm priority score bằng số** ở path này.
 
 ## Workflow
+
+**Chọn mode.** Traffic hay hiển thị đổi mạnh trong khoảng một đợt core update của Google: chạy mode core update theo [references/core-update.md](references/core-update.md), không chạy gate chain decay. Mode này vẫn dùng Bước 0, 0b và cách thu data của Bước 1. Còn lại: chạy mode decay từ Bước 0.
 
 ### Bước 0 — kiểm tool
 Chạy "python3 tools/capabilities.py check --need 'python3,gemma?,gsc?,ahrefs?,firecrawl?'" từ root repo. Nếu thiếu tool bắt buộc, dừng và báo tên tool. Nếu thiếu tool tuỳ chọn, dùng fallback ghi trong "tools/capabilities.md".
@@ -215,6 +217,7 @@ Bản tốt nhất phải có:
 
 ## Changelog
 
+- **v1.4 (2026-11-02):** mode core update (`references/core-update.md`): so tuần trước update với tuần đủ sau update, mẫu trang thắng và thua, chấm bằng preset `core_update` của checklist Aleyda Solis, báo cáo tương quan không kết luận nhân quả. Nguồn: trang Core updates của Google (31/12/2025) và skill eeat-helpfulness-assessment 1.2.1.
 - **v1.3 (2026-10-27):** hợp nhất bản root 27/10/2026: T15 "AI-cited + stale" (Bước 5, Output, bảng tín hiệu), T14b freshness window per-vertical và số liệu T14 per-engine (`references/decay-signals.md`), guardrail date-spoofing mở rộng. Nội dung này là bản root v1.1 (22/08/2026); bản root đánh số 1.2 cho mục v1.1 (19/10) bên dưới. Giữ `scripts/intent_shift.py` + test của bản SP.
 - **v1.1 (2026-10-19):** Bước 0 kiểm tool (Scope gate cũ thành Bước 0b). Bước 4a đo intent dịch chuyển: `drift` giữa tâm top 3 SERP và trang mình (`scripts/intent_shift.py`, `references/intent-shift.md`). `drift` tương quan vị trí GSC (Spearman 0,545, 25 truy vấn); chưa có ngưỡng REWRITE vì 15–19/10 chỉ có 1 quyết định viết lại. Thêm phân việc model, tự phản biện, test offline `tests/test_intent_shift.py`.
 - **v1.0 (2026-07-07):** khởi tạo — tổng hợp từ wiki Koray/GTV (Historical Data, Update Score, Traffic Box, Click Satisfaction, GEO) + web research (Ahrefs content-decay, User Growth academy, Animalz ×2, SEO Sherpa cannibalization); ngưỡng T1-T14 đánh dấu đề xuất thực nghiệm; boundary khóa với 10-update-pipeline / semantic-content-audit / backlink-plan.
