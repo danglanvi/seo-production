@@ -2,7 +2,7 @@
 
 Bộ công cụ này giúp agent chính (Claude) xử lý các việc lặp lại trên site WordPress: mã độc, redirect, PageSpeed, audit giao diện, GSC, QA chữ. Hai model chỉ phân loại và so khớp. Claude ra quyết định và thực thi theo skill của việc đó.
 
-Thư mục `tasks/` có 25 rubric, đủ cho các việc client-neutral. Bảng dưới ghi ngưỡng của các rubric skill trong repo này hay dùng. Ngưỡng của 8 rubric chép thêm ngày 25/10/2026 (`category-pick`, `chu-dinh`, `company-fact-claim`, `definition-consistency`, `featured-text-faithful`, `link-external`, `link-purpose`, `superlative-claim`) và của `approved-applied`, `timeframe-claim`, `spam-policy-claim` ghi ở README bản gốc và trong skill gọi rubric đó. Rubric mang tên khách, số liệu hoặc ảnh riêng của GTV, TAG nằm ở bản gốc của workspace GTV và không chép vào đây.
+Thư mục `tasks/` có 31 rubric, đủ cho các việc client-neutral. Bảng dưới ghi ngưỡng của các rubric skill trong repo này hay dùng. Ngưỡng của 8 rubric chép thêm ngày 25/10/2026 (`category-pick`, `chu-dinh`, `company-fact-claim`, `definition-consistency`, `featured-text-faithful`, `link-external`, `link-purpose`, `superlative-claim`) và của `approved-applied`, `timeframe-claim`, `spam-policy-claim` ghi ở README bản gốc và trong skill gọi rubric đó. Rubric mang tên khách, số liệu hoặc ảnh riêng của GTV, TAG nằm ở bản gốc của workspace GTV và không chép vào đây.
 
 Skill dùng bộ này: `wp-security-hardening`, `wp-pagespeed`, `wp-content-review-apply`, `wp-ui-fix`, `technical-seo-audit` (nhánh GSC), `internal-linking` (tuỳ chọn). Gốc đường dẫn là root repo.
 
@@ -55,6 +55,7 @@ Ngưỡng dưới đây hiệu chuẩn trên 2 site WordPress thật ngày 17/10
 | `asset-delay` | `wp-pagespeed` | Từ 0,7 | 14/46 script đạt ngưỡng. Dưới ngưỡng có nhãn sai rõ |
 | `ui-visual` | `wp-pagespeed` | Câu có/không từ 0,7 thì Claude xem ảnh | Không dùng điểm `polish` để loại. Thanh dính che chữ khi cuộn là hành vi bình thường |
 | `ui-type-align` | `wp-ui-fix`, `web-qa-gate` | `heading_imbalance`, `uneven_gap`, `long_lines` từ 0,6. `text_too_small` từ 0,5 thì Claude xem ảnh. Không dùng `cards_misaligned` | Hiệu chuẩn 19/10/2026 trên 26 ảnh gán tay của site agency mẫu: ba câu đầu khớp 25–26/26, `text_too_small` bắt 6/6 kèm 5 cờ nhầm. Khung lệch đo bằng DOM, không bằng Jev. Gửi `state` dạng list `[mô tả, {"image_path": …}]`. Chi tiết: `skills/wp-ui-fix/references/thang-chu.md` mục 8 |
+| `anh-net` | `image-seo-optimize` | Không dùng làm cổng. Chỉ so `blurry` trước/sau trên cùng một ảnh, giảm từ 0,1 là có cải thiện | Hiệu chuẩn 05/11/2026 trên 7 ảnh đã biết nhãn: xếp đúng chiều nhưng hai nhóm chồng nhau (ảnh hỏng 0,66, ảnh nét 0,67); `compression` gắn cờ 113/123 ảnh, không dùng. Ảnh chụp từng ảnh ở DPR thật, `state` dạng list `[mô tả, {image_path}]` |
 | `gsc-topical-fit` | `technical-seo-audit` | Từ 0,5 | 40/40 đúng từ 0,5. Bỏ sót ca giáp ranh. Chế độ chữ (không `top_queries`): 42/42 từ 0,5, phủ 93% |
 | `gsc-intent-match` | không dùng với dữ liệu GSC (input là query GSC); `technical-seo-audit` dùng `retrieval-lab route` | `match` từ 0,9, `intent` từ 0,5 | `match` 25/25, `intent` 44/44 |
 | `gsc-cannibal-pair` | `technical-seo-audit` | Từ 0,7, Claude đọc mọi `duplicate_intent` | Chế độ chữ (`shared_queries` rỗng, `jev.py` chặn bằng code): 28/28 từ 0,7, phủ 60% (gold 17/10, kiểm 19/10). Không gửi query GSC |

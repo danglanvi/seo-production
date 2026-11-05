@@ -13,6 +13,7 @@ Script nằm ở `scripts/`. Cần Pillow và numpy. `webp_recompress.py` cần 
 
 - Cách đo: trung bình 3 kênh RGB, cửa sổ đều 7x7. Đổi cách đo thì đo lại ngưỡng.
 - So bản mới với file đang phục vụ, không so với nguồn gốc. Mục tiêu là bản mới không khác bản khách đang thấy.
+- Ngoại lệ: nếu đợt trước đã ghi đè ảnh gốc hoặc sinh WebP từ bản đã nén, file đang phục vụ đã hỏng. Khi đó so với bản gốc trước tối ưu (backup) và làm theo `anh-mo-sau-nen.md`. Không bao giờ ghi đè file gốc trong `uploads/`.
 - Chọn `chu` khi không chắc. Ảnh có chữ vỡ trước ảnh thật.
 - Kiểm bằng mắt vài cặp ở 100% trước khi áp lô. Lượt 27/10 kiểm 4 cặp (banner có chữ và logo), không thấy khác biệt.
 

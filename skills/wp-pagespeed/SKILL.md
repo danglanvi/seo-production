@@ -2,7 +2,7 @@
 name: wp-pagespeed
 description: "Đo và tối ưu PageSpeed site WordPress theo template khi có quyền vào server: PSI trung vị 3 lượt, mô phỏng Chrome cho staging, sửa theo 7 lớp có A/B và rollback, phối hợp Jev + EmbeddingGemma. Dùng khi tăng điểm PageSpeed, Core Web Vitals hoặc so staging với production."
 metadata:
-  version: "1.23"
+  version: "1.24"
 ---
 
 # wp-pagespeed — tối ưu PageSpeed WordPress theo template
@@ -260,10 +260,13 @@ Hoãn GTM đã được duyệt: làm theo skill `wp-gtm-tracking` (kiểm hit c
 - Đuổi hiện tượng chỉ PSI thấy qua nhiều vòng mà không có trần ghi trước, hoặc không đo lợi ích trên Chrome thật (`luot-lon.md` mục 7).
 - Purge hàng loạt trong lúc cron làm nóng đang chạy, hoặc chỉ làm nóng lại một thiết bị sau purge (`ttfb-cache-trang.md` mục 2b).
 - Thu ảnh về đúng cỡ CSS chỉ để hết cờ "Improve image delivery". Lighthouse không nhân DPR, nên ảnh sẽ mờ trên điện thoại (lớp 3).
+- Ép `sizes` nhỏ cho ảnh LCP mobile, ghi đè ảnh gốc khi nén, hoặc sinh WebP từ ảnh đã nén. Ảnh mờ trên máy DPR 2–3 và mất bản gốc để sửa (lớp 3).
+- Vá thuộc tính HTML lặp theo từng ảnh, từng trang. Dọn một lần ở bộ lọc output cuối (lớp 3).
 - Đặt `contain-intrinsic-size` bằng chiều cao gồm padding, hoặc giữ số cũ sau khi DOM của section đổi (lớp 5).
 
 ## Changelog
 
+- v1.24 (2026-11-05): rút từ đợt sửa ảnh mờ và thuộc tính lặp trên một site WordPress agency mẫu. Lớp 3: không ép `sizes` nhỏ cho ảnh LCP mobile (ảnh 570 px cho chỗ 358 px CSS ở DPR 3); không ghi đè ảnh gốc, không sinh WebP từ ảnh đã nén; `naturalWidth` của ảnh có `srcset` đã chia density; thuộc tính `loading` lặp dọn ở bộ lọc output cuối và thử hàm lọc trên HTML production đã lưu khi staging không chạy tối ưu LiteSpeed (16 thẻ × 4 biến thể về 0, trang khác giữ nguyên byte). Anti-patterns thêm 2 dòng. Không đổi script.
 - v1.23 (2026-11-05): hợp đồng đọc field/lab theo phạm vi URL/origin và thiết bị, không suy người dùng thật đều nhanh từ RUM lệch mẫu; kiểm lượt độc lập/benchmark, hai phương án CLS có căn cứ và pipeline CCSS thực tế. Đo bằng runner, tổng hợp bảng gọn, không lặp phép đo chỉ để xác nhận. Parser A/B dùng tên biến thể trong spec để nhận đúng tên có dấu gạch nối; tên mơ hồ dừng lỗi. Bảng và quyết định dùng cùng parser; 52 test PSI đạt.
 - v1.22 (2026-10-31): rút từ đợt trang chủ site bán lẻ mẫu 31/10/2026 (instance của site, `03-audits/technical/toi-uu-pagespeed/trang-chu-3110/`). Lớp 3: insight image-delivery không nhân DPR, thêm cỡ `srcset` trung gian, thêm cỡ vào meta bằng `update_post_meta` (ảnh trang chủ 51 → 19 KiB). Lớp 5: `contain-intrinsic-size` lấy content-box, đo khi gỡ CSS, kiểm chiều cao lúc tải bằng chiều cao sau cuộn, đo lại khi DOM đổi. Lớp 5b: khối khuyến mãi hết hạn tự ẩn kèm TTL cache, thẻ lặp gọn chỉ ở một trang kèm công tắc (DOM 2.960 → 2.331). Lớp 6: `defer` cho `hooks.min.js` khi mọi script phụ thuộc đã `defer`. Lớp 7: trỏ sang `wp-gtm-tracking` khi thư viện Ads nạp 2 lần. Anti-patterns thêm 2 dòng. Đã chạy trên production: trung vị mobile trang chủ 91, desktop 100 ở 2/3 lượt. Không đổi script.
 - v1.21 (2026-10-31): rút từ đợt 2 tốc độ site bán lẻ mẫu 30–31/10/2026 (instance của site, `03-audits/technical/toi-uu-pagespeed/`, báo cáo v4, `HANDOFF.md` mục "Bẫy đã gặp"). Lớp 4: font biến thiên tự host phải còn bảng `STAT`, kèm lệnh fontTools và chụp WebKit. Lệnh đã thử trên 2 file thật: file lỗi báo "THIẾU STAT", file sửa báo "đạt". `luot-lon.md` mục 3: số đo 7 ms mỗi KB (r = 0,88). Mục 5: check rớt vì lô đổi thiết kế phải hỏi người duyệt; lô đổi font chạy K-HINH trên WebKit. Mục 7: trần số vòng thử ghi trong plan (mặc định 2), mỗi vòng ghi lợi ích cho người dùng thật, hết trần thì trình người duyệt; ca mốc vẽ 2,33 s (bài gỡ được ở vòng đầu, sản phẩm 6 vòng). `ttfb-cache-trang.md` mục 2b: 4 nguồn MISS (`srsltid`, purge rộng khi lưu bài hoặc term, làm nóng thiếu template, purge chồng lượt làm nóng). Cách sửa đã thử trên production; mức giảm CrUX TTFB chưa xác minh. Gate thêm 2 dòng, Anti-patterns thêm 3 dòng, eval thêm 4 ca. Không đổi script. Chưa đưa vào skill: mẫu CSS trọng yếu cho trang sản phẩm, chờ người duyệt chọn D12 và chạy trên production.

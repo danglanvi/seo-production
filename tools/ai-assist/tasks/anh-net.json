@@ -1,0 +1,9 @@
+{
+  "name": "anh-net",
+  "version": "2026-11-05.1",
+  "questions": {
+    "blurry": {"type": "noul", "instructions": "state has a short description and one screenshot of a single image as it appears on a website, captured at the real device pixel density. Ignore page text outside the photo. Does the image look blurry or soft, as if a small image was enlarged: faces, hands, edges or fine text are smeared rather than crisp? Intentional soft backgrounds, fades and gradients are not blur."},
+    "compression": {"type": "noul", "instructions": "Does the image show compression damage: blocky squares, smeared detail on faces or skin, ringing halos around edges, color blotches or posterized color bands in smooth areas?"},
+    "sharpness": {"type": "score", "instructions": "How sharp and clean does this image look on a modern phone or laptop screen?", "criteria": ["Very blurry or badly damaged", "Clearly soft or visibly compressed", "Acceptable, slightly soft", "Sharp and clean", "Crisp, like the original photo"]}
+  }
+}

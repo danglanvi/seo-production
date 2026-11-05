@@ -2,7 +2,7 @@
 name: image-seo-optimize
 description: "Tối ưu SEO ảnh ĐÃ CÓ: tên file, alt, caption, metadata, performance từng ảnh (size tier, AVIF/WebP, lazy/LCP, CLS), đổi tên ảnh đã đăng kèm 301, nén lại theo SSIM, kiểm alt mọi biến thể. Use when: 'tối ưu ảnh cho bài [X]', 'đổi tên ảnh trên site', 'nén lại ảnh', 'sửa alt ảnh'."
 metadata:
-  version: "1.3"
+  version: "1.4"
 ---
 
 # Image SEO Optimize — Semantic (bulk)
@@ -35,7 +35,7 @@ Tối ưu hàng loạt ảnh **đã có** cho 1 bài viết: filename + alt + ca
 ## Quy trình 6 bước
 
 ### Bước 0 — kiểm tool
-Chạy "python3 tools/capabilities.py check --need 'python3,cwebp,pillow?,numpy?,ssh?,wp-cli?,jev?,gemma?'" từ root repo. Nếu thiếu tool bắt buộc, dừng và báo tên tool. Nếu thiếu tool tuỳ chọn, dùng fallback ghi trong "tools/capabilities.md".
+Chạy "python3 tools/capabilities.py check --need 'python3,cwebp,pillow?,numpy?,opencv?,ssh?,wp-cli?,jev?,gemma?'" từ root repo. Nếu thiếu tool bắt buộc, dừng và báo tên tool. Nếu thiếu tool tuỳ chọn, dùng fallback ghi trong "tools/capabilities.md".
 
 ### Bước 0 — Context
 1. Đọc bài viết (file trong folder / `$ARTICLE_PATH` / Docs URL): lấy **Central Entity, target keyword, heading tree, số liệu đắt**.
@@ -96,6 +96,7 @@ Format ladder: **AVIF → WebP → JPEG fallback** (nhúng bằng `<picture>` + 
 - Ảnh có alpha: đo SSIM trên nền thật của trang bằng `scripts/ssim_luma.py --bg`. Nền đen hoặc trắng cho số thấp hơn.
 - Bản ảnh theo cỡ hiển thị: không tạo bản rộng hơn nguồn. Cách đo cỡ và viết `srcset`, `sizes` nằm ở `wp-pagespeed` `references/checklist-theo-lop.md` lớp 3.
 - Alt: tìm mọi nơi in alt (attachment và chuỗi cứng trong template), sửa hết, rồi chạy `scripts/alt_variants.py` cho khách desktop, khách mobile và Googlebot smartphone.
+- Ảnh bị báo mờ sau đợt nén: đọc `references/anh-mo-sau-nen.md`. Kiểm 3 nguyên nhân: gốc bị ghi đè, nén chồng, thiếu pixel cho DPR 2–3. So với bản gốc trước tối ưu, không so với file đang phục vụ. Tìm nguồn lớn hơn bằng `scripts/tim_anh_goc.py`, dựng lại ảnh thiết kế bằng `scripts/dung_lai_anh.py`, WebP q85 `-sharp_yuv`.
 
 ### Bước 5 — Apply hoặc Plan
 
@@ -131,6 +132,8 @@ Format ladder: **AVIF → WebP → JPEG fallback** (nhúng bằng `<picture>` + 
 - Nén ảnh đạt size tier nhưng vỡ chữ/số liệu trong ảnh — performance không được phá machine-gaze (Bước 4b OCR risk). Đo SSIM theo loại ảnh (Bước 4d).
 - Đo SSIM ảnh có alpha trên nền đen hoặc trắng khi trang dùng nền màu: cổng 0,97 cho kết quả khác nhau theo nền (Bước 4d).
 - Sửa alt của attachment rồi báo xong: chuỗi cứng trong template vẫn in alt cũ ở một biến thể (Bước 4d).
+- Ghi đè ảnh gốc trong `uploads/` bằng bản nén, hoặc sinh WebP từ ảnh đã nén. Ảnh bị nén chồng và mờ; lần sau không còn gốc để sửa (Bước 4d).
+- Đo pixel ảnh bằng `naturalWidth` khi ảnh có `srcset` dạng `w`: số đó đã chia density (Bước 4d).
 - Đổi tên ảnh đã đăng mà không 301 URL cũ, hoặc xoá file tên cũ thay vì cách ly.
 - Chỉ sửa tên ảnh trong DB khi trang dựng từ nguồn build: lần build sau đưa tên cũ trở lại.
 
@@ -142,6 +145,7 @@ Format ladder: **AVIF → WebP → JPEG fallback** (nhúng bằng `<picture>` + 
 
 ## Changelog
 
+- **v1.4 (2026-11-05):** nguồn: đợt sửa ảnh mờ trên 3 trang chính của một site WordPress agency mẫu (36 file, 331 vị trí ảnh đo trước/sau, 0 ảnh đổi cỡ hiển thị). Thêm `references/anh-mo-sau-nen.md`: 3 nguyên nhân (gốc bị ghi đè thành PNG 256 màu, WebP sinh từ bản đã nén, thiếu pixel cho DPR 3), đo pixel bằng `currentSrc` vì `naturalWidth` đã chia density, WebP q85 `-sharp_yuv` (q96 nặng gấp đôi mà mắt không phân biệt), giữ URL khi CSS cố định cỡ. Script mới `tim_anh_goc.py` (SIFT tìm bản gốc lớn hơn: 2 thumbnail có nguồn 3,6–4 lần) và `dung_lai_anh.py` (căn SIFT + chuyển màu cục bộ: hero mobile 570 → 786 px, 360 → 1080 px; ca hỏng banner mờ dần, đã ghi cách nhận biết). Test `scripts/tests/test_dung_lai_anh.py` 3 ca, bỏ qua khi không có opencv. `references/nen-lai-ssim-va-alt-bien-the.md` §1: so với bản gốc trước tối ưu khi đợt trước đã ghi đè. Bước 0 thêm `opencv?`. Rubric Jev `anh-net` chỉ dùng so trước/sau.
 - **v1.3 (2026-10-27):** nguồn: hai lượt production trên một site WordPress agency mẫu (nén 35 banner case study; sửa ảnh hero và alt 3 trang dịch vụ), đều có kiểm độc lập. Thêm Bước 4d và `references/nen-lai-ssim-va-alt-bien-the.md`: ngưỡng SSIM luma theo loại ảnh (0,98 ảnh có chữ hoặc logo, 0,97 ảnh thật; 32/35 banner, -20,4% byte); ảnh có alpha đo trên nền thật (0,9737 so với 0,9616); không tạo bản rộng hơn nguồn; alt kiểm ở khách desktop, khách mobile và Googlebot smartphone vì alt đến từ attachment và chuỗi cứng trong template (9/9). Script mới `ssim_luma.py`, `webp_recompress.py`, `alt_variants.py`; test `scripts/tests/test_image_tools.py` chạy tại máy: đạt, gồm ca nền alpha và ca UA mobile in alt cũ. Bước 0 thêm `numpy?`. Rút `description` từ 373 xuống dưới 280 ký tự để qua ca cấu trúc. Chưa thử và chưa vào skill: đổi `sizes` của banner theo cỡ hiển thị (`chua-thu.md`).
 - **v1.2.2 (2026-10-19):** bảng phân vai trỏ sang `semantic-media` (chọn media theo mục) và `visual-serp-lab` (đo alt khớp ảnh, ảnh khớp mục).
 - **v1.2.1 (2026-10-19):** alt tả đúng nội dung ảnh, bỏ ngưỡng 8-15 từ; tên file ảnh feature tả chủ đề bài, không đặt keyword mà ảnh không thể hiện (khớp P19, P20 mới của `seo-onpage`).

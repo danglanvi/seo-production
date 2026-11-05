@@ -16,6 +16,15 @@ master_version: v2026.11.4
 
 ## 1. Có gì mới
 
+### v2026.11.5 (2026-11-05) — `image-seo-optimize` 1.4, `wp-pagespeed` 1.24: ảnh mờ sau nén, thuộc tính lặp
+
+- **Vì sao:** site agency mẫu có ảnh hero mờ sau đợt tối ưu PageSpeed. Đợt nén cũ ghi đè ảnh gốc (PNG còn 256 màu), WebP và ảnh LCP sinh từ bản đã nén, ảnh LCP mobile bị ép bản 570 px cho màn DPR 3. Đợt sửa thay 36 file, 331 vị trí ảnh đo trước/sau, 0 ảnh đổi cỡ.
+- **image-seo-optimize 1.4:** reference mới `anh-mo-sau-nen.md` (3 nguyên nhân, đo pixel bằng `currentSrc`, WebP q85 `-sharp_yuv`, giữ URL khi CSS cố định cỡ). Script mới `tim_anh_goc.py` (SIFT tìm bản gốc lớn hơn) và `dung_lai_anh.py` (dựng lại ảnh thiết kế từ nguồn lớn, xuất heatmap sai khác). Test `test_dung_lai_anh.py` 3 ca. `nen-lai-ssim-va-alt-bien-the.md` §1: so với bản gốc trước tối ưu khi file đang phục vụ đã hỏng.
+- **wp-pagespeed 1.24:** lớp 3 thêm 4 luật (không ép `sizes` nhỏ cho ảnh LCP mobile; không ghi đè ảnh gốc; `naturalWidth` đã chia density; thuộc tính `loading` lặp dọn ở bộ lọc output cuối và thử hàm lọc trên HTML đã lưu). 2 anti-pattern mới. Không đổi script.
+- **Dependency mới (tuỳ chọn):** `opencv` trong `tools/capabilities.md`. Thiếu thì chỉ khôi phục bản gốc đã biết.
+- **ai-assist:** rubric Jev `tasks/anh-net.json`. Không dùng làm cổng; chỉ so trước/sau cùng ảnh.
+- **Port sang instance:** `python3 tools/port_skill.py --skills image-seo-optimize,wp-pagespeed`, chép `tools/ai-assist/tasks/anh-net.json`, `tools/capabilities.md`. Cập nhật `master_version` thành `v2026.11.5`.
+
 ### v2026.11.4 (2026-11-05) — `wp-code-footprint` trung lập hoá `scan_html.py`; ghi bù `cdn-speed-setup` 1.3.2
 
 - **wp-code-footprint:** `scan_html.py` bỏ danh sách thuộc tính `data-*` riêng của site mẫu. Khoá JSON `data_attrs_gtv` đổi thành `data_attrs_site`, lọc theo biến `FOOTPRINT_DATA_ATTRS` (rỗng thì `{}`); `data_attrs_top` giữ nguyên. Không đổi version skill.
