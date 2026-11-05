@@ -2,7 +2,7 @@
 name: cdn-speed-setup
 description: "Chọn, dựng và kiểm CDN cho site WordPress để giảm thời gian phản hồi Googlebot (GSC Crawl Stats) và TTFB khách: nhánh Global (proxy Cloudflare) hoặc nhánh VN (chia vùng, khách VN đi thẳng origin). Dùng khi site chậm với Googlebot hoặc cần CDN."
 metadata:
-  version: "1.3.1"
+  version: "1.3.2"
 ---
 
 # cdn-speed-setup — CDN theo vị trí origin và khách
